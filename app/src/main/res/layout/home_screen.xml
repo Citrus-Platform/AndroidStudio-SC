@@ -1,0 +1,127 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/id_home_screen"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/screen_background_color"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/id_bottom_options"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="2dip"
+        android:background="@color/header_footer_color"
+        android:orientation="horizontal"
+        android:weightSum="4" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dip"
+            android:layout_marginTop="3dp"
+            android:layout_weight="1" >
+
+            <ImageView
+                android:id="@+id/id_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/chat_icon_selector" />
+
+            <com.superchat.widgets.MyriadRegularTextView
+                android:id="@+id/id_total_unseens"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bubble"
+                android:layout_alignRight="@id/id_chat"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="@color/white"
+                android:textSize="9.0sp"
+                android:visibility="visible" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/id_channel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="2dip"
+             android:layout_marginTop="3dp"
+            android:layout_weight="1"
+            android:src="@drawable/channel_tab_icon" />
+ <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dip"
+             android:layout_marginTop="3dp"
+            android:layout_weight="1" >
+        <ImageView
+            android:id="@+id/id_contact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="2dip"
+            android:layout_weight="1"
+            android:src="@drawable/contact_icon_selector" />
+<com.superchat.widgets.MyriadRegularTextView
+                android:id="@+id/id_contact_unseens"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bubble"
+                android:layout_alignRight="@id/id_contact"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="@color/white"
+                android:textSize="9.0sp"
+                android:visibility="invisible" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dip"
+             android:layout_marginTop="3dp"
+            android:layout_weight="1" >
+
+            <ImageView
+	            android:id="@+id/id_more"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerHorizontal="true"
+	            android:layout_marginBottom="2dip"
+	            android:layout_weight="1"
+	            android:src="@drawable/more_icon_selector" />
+
+            <com.superchat.widgets.MyriadRegularTextView
+                android:id="@+id/id_bulletin_unseens"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bubble"
+                android:layout_alignRight="@id/id_more"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="@color/white"
+                android:textSize="9.0sp"
+                android:visibility="visible" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/main_frame"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/id_bottom_options"
+        android:paddingBottom="2.0dip" >
+
+        <com.superchat.ui.CustomViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerHorizontal="true" >
+        </com.superchat.ui.CustomViewPager>
+    </FrameLayout>
+
+    
+
+</RelativeLayout>

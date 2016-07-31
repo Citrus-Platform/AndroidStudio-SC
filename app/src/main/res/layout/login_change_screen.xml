@@ -1,0 +1,66 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/id_login_change_screen"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/header_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/header_color" >
+
+        <RelativeLayout
+            android:id="@+id/historyDetailHeaderLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/header_color" >
+
+            <ImageView
+                android:id="@+id/tvTopBarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="8dip"
+                android:background="@drawable/esiachat_white"
+                android:padding="@dimen/topbar_title_padding" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <com.superchat.widgets.RoundedImageView
+        android:id="@+id/id_profile_pic"
+        android:layout_width="170dip"
+        android:layout_height="170dip"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="20dip"
+        android:src="@drawable/profile_pic" />
+
+    <Button
+        android:id="@+id/id_existing_sign_in"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dip"
+        android:layout_marginLeft="35dip"
+        android:layout_marginRight="35dip"
+        android:background="@drawable/btn_background"
+        android:onClick="onExistingSignInClick"
+        android:text="@string/sign_in_as"
+        android:textColor="@color/white"
+        android:textColorHighlight="@color/header_color" />
+
+    <Button
+        android:id="@+id/id_new_sign_in"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="35dip"
+        android:layout_marginRight="35dip"
+        android:background="@drawable/btn_background"
+        android:onClick="onNewSignInClick"
+        android:text="@string/sign_in_new_user"
+        android:textColor="@color/white"
+        android:textColorHighlight="@color/header_color" />
+
+</LinearLayout>

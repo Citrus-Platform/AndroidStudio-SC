@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="header_color">#fff2750f</color>
+    <color name="screen_background_color">#ffffffff</color>
+    <color name="header_footer_color">#ff009dd6</color>
+     
+    <color name="home_sub_footer_color">#ffa3a5a8</color>
+    <color name="btn_text_color">#ff4f4f4f</color>
+     <color name="sky_blue_color">#ffcde1f5</color>
+     <color name="settings_bg_color">#ffededee</color>
+     
+      <color name="list_selcted_color">#4400ff00</color>
+    <color name="list_focused_color">#9900ff00</color>
+    
+    <color name="white">#ffffffff</color>
+    <color name="black">#ff000000</color>
+    <color name="color_call_screen_bg">#ff6a6b6e</color>
+    <color name="chat_name_color">#ff4e4d4d</color>
+    <color name="gray">#ffddddcc</color>
+    <color name="dark_gray">#ff8c90a9</color>
+    <color name="lightest_gray">#ffC7C8C9</color>
+    <color name="darkest_gray">#ff78787A</color>
+    <color name="text_background">#ffcccccc</color>
+    <color name="text_color_grayblack">#ff6d6e71</color>
+    <color name="text_color_darkred">#ffdd0000</color>
+    <color name="text_color_on_dark_grey">#ff808284</color>
+    <color name="text_color_on_darkest_grey">#ff565758</color>
+    <color name="green_text_color">#ff5fa003</color>
+    <color name="green_dark_text_color">#3D9140</color>
+    <color name="app_blue_txt_color">#ff30b7e6</color>
+    <color name="textShadow">#FFF</color>
+    <color name="text_color_on_white_light">#ff777777</color>
+    <color name="transparent">#00000000</color>
+    <color name="pf_BlackOpaque">#80000000</color>
+    <color name="greytext_on_white_light">#ff808284</color>
+    <color name="send_message_bg_color">#ffe5f1d5</color>
+    <color name="semitransparent">#4471bf44</color>
+    <color name="red">#980001</color>
+    <color name="red1">#ffff0000</color>
+    <color name="gray_bt_color">#f3f3f4</color>
+    <color name="blue">#ff058fff</color>
+    <color name="tag_blue">#ff0080ff</color>
+    <color name="orange">#fe4902</color>
+
+    <color name="sinch_purple">#ff63029d</color>
+    <color name="off_white">#fffafafa</color>
+    <color name="greyish">#fff2f1f2</color>
+
+
+
+    <color name="circle_background">#f2f2f2</color>
+    <color name="line_background">#cccccc</color>
+    <color name="ampm_text_color">#8c8c8c</color>
+    <color name="done_text_color_normal">#000000</color>
+    <color name="done_text_color_disabled">#cccccc</color>
+    <color name="numbers_text_color">#8c8c8c</color>
+
+    <color name="transparent_black">#7f000000</color>
+    <color name="blue_focused">#c1e8f7</color>
+    <color name="neutral_pressed">#33999999</color>
+    <color name="darker_blue">#0099cc</color>
+    <color name="date_picker_text_normal">#ff999999</color>
+    <color name="date_picker_text_disabled">#ccc</color>
+
+    <color name="calendar_header">#999999</color>
+    <color name="date_picker_view_animator">#f2f2f2</color>
+    <color name="calendar_selected_date_text">#ffd1d2d4</color>
+
+    <!-- Colors for red theme -->
+    <color name="red_focused">#853333</color>
+    <color name="light_gray">#404040</color>
+    <color name="line_dark">#808080</color>
+    <color name="done_text_color_dark_normal">#ffffff</color>
+    <color name="done_text_color_dark_disabled">#888888</color>
+    <color name="done_disabled_dark">#bfbfbf</color>
+
+    <color name="white_new">#f1f1f1</color>
+    <color name="blue25">#DEDEDE</color>
+    <color name="opaque_red">#f00</color>
+    <color name="heading_text_green">#70c0b3</color>
+    <color name="heading">#696969</color>
+    <color name="tips_color">#b0b0b0</color>
+    <color name="sub_heading">#919191</color>
+    <color  name="descovery_heading">#7b7b7b</color>
+    <color name="time_footnote">#ffa6a6a6</color>
+    <color name="hyperlink">#ff4c989c</color>
+    <color name="darkgray">#3B3B3B</color>
+    <color name="gray_dark">#919292</color>
+    <color name="graylight">#e4e4e4</color>
+    <color name="leftmenu_box">#dddddd</color>
+    <color name="group_profile_not_bg_color">#d4dee9</color>
+    <color name="add_participant_bg_color">#d4e2f8</color>
+    <color name="grp_profile_font_color">#424244</color>
+    <color name="color_attach_option_bg">#ffededed</color>
+    <color name="color_lite_blue">#00A6E3</color>
+    <color name="color_lite_gray">#ffa3a5a8</color>
+    <color name="voice_preview_bg_color">#ff9ddee8</color>
+    <color name="activity_bg">#e4e5e5</color>
+    <color name="primary">#52bf90</color>
+    
+    
+    <color name ="nav_sel">#7d7d7d</color>
+    <color name ="nav">#c2c2c2</color>
+    <color name ="audio_tag_bg_color">#94d7e6</color>
+</resources>

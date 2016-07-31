@@ -1,0 +1,371 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@color/screen_background_color">
+
+    <RelativeLayout
+        android:id="@+id/header_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/header_footer_color" >
+
+        <RelativeLayout
+            android:id="@+id/historyDetailHeaderLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/header_footer_color" >
+
+            <com.superchat.widgets.MyriadSemiboldTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_horizontal"
+                android:padding="@dimen/topbar_title_padding"
+                android:text="@string/invite_member"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+            
+            <Button
+                android:id="@+id/id_next_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dip"
+                android:background="@null"
+                android:text="@string/skip"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:textColorHighlight="@color/header_color"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/id_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dip"
+            android:padding="15dip"
+            android:capitalize="characters"
+            android:drawableLeft="@drawable/back_arrow_white"
+            android:onClick="onBackClick"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dip"
+            android:orientation="vertical"
+            android:padding="10dip" >
+
+            <com.superchat.widgets.MyriadRegularTextView
+                android:id="@+id/id_domain_name"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_rect"
+                android:hint="@string/domain"
+                android:inputType="textCapSentences"
+                android:maxLength="100"
+                android:padding="10dip"
+                android:singleLine="true"
+                android:textColor="@color/text_color_grayblack"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+
+            <AutoCompleteTextView
+                android:id="@+id/id_invite_name"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/round_rect"
+                android:hint="@string/name"
+                android:inputType="textCapSentences|textPersonName"
+                android:maxLength="50"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/text_color_grayblack"
+                android:textSize="18sp"
+                android:imeOptions="actionNext"
+                android:textStyle="normal" />
+ 		<com.superchat.widgets.MyriadRegularTextView
+                android:id="@+id/id_country_name"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_rect"
+                android:hint="India"
+                android:layout_marginTop="10dp"
+                android:inputType="textEmailAddress"
+                android:maxLength="100"
+                android:padding="10dip"
+                android:singleLine="true"
+                android:textColor="@color/text_color_grayblack"
+                android:textSize="18sp"
+            android:imeOptions="actionNext"
+                android:textStyle="normal" />
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dip"
+                android:gravity="center_horizontal" >
+
+                <Spinner
+                    android:id="@+id/id_city_drop_down"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dip"
+                    android:layout_marginTop="12dip"
+                    android:background="@drawable/round_rect"
+                    android:entries="@array/city_list_array"
+                    android:padding="5dip"
+                    android:prompt="@string/country_prompt" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="5dip"
+                    android:background="@drawable/spinner_arrow"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dip"
+                android:orientation="horizontal" >
+
+                <com.superchat.widgets.MyriadRegularTextView
+                    android:id="@+id/country_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:background="@drawable/round_rect"
+                    android:padding="10dip"
+                    android:text="+     "
+                    android:textColor="@color/text_color_grayblack"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:id="@+id/id_fetch_contact"
+                    android:layout_width="43dp"
+                    android:layout_height="43dp"
+                    android:gravity="center"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dip"
+                    android:text="+"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:background="@drawable/round_rect_blue" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/mobile_number"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dip"
+                    android:layout_toLeftOf="@id/id_fetch_contact"
+                    android:layout_toRightOf="@id/country_code"
+                    android:background="@drawable/round_rect"
+                    android:hint="@string/mobile_number"
+                    android:inputType="number"
+                    android:maxLength="15"
+                    android:padding="10dip"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textColor="@color/text_color_grayblack"
+                    android:textSize="18sp"
+                    android:imeOptions="actionNext"
+                    android:textStyle="normal" />
+            </RelativeLayout>
+
+            <AutoCompleteTextView
+                android:id="@+id/id_department"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/round_rect"
+                android:hint="@string/department"
+                android:inputType="textCapSentences"
+                android:maxLength="100"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/text_color_grayblack"
+                android:textSize="18sp"
+                android:imeOptions="actionNext"
+                android:textStyle="normal" />
+
+            <AutoCompleteTextView
+                android:id="@+id/id_designation"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/round_rect"
+                android:hint="@string/designation"
+                android:inputType="textCapSentences"
+                android:maxLength="127"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/text_color_grayblack"
+                android:textSize="18sp"
+                android:imeOptions="actionNext"
+                android:textStyle="normal" />
+
+            <AutoCompleteTextView
+                android:id="@+id/id_email"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/round_rect"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress"
+                android:maxLength="127"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/text_color_grayblack"
+                android:textSize="18sp"
+                android:imeOptions="actionNext"
+                android:textStyle="normal" />
+
+            <AutoCompleteTextView
+                android:id="@+id/id_empid"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/round_rect"
+                android:hint="@string/employee_id"
+                android:inputType="textEmailAddress"
+                android:maxLength="127"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/text_color_grayblack"
+                android:textSize="18sp"
+                android:imeOptions="actionDone"
+                android:textStyle="normal" />
+            
+            <LinearLayout
+            android:id="@+id/linearlayout_push"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"
+            android:gravity="left" >
+
+             
+            <TextView
+                android:id="@+id/push_notification_caption"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="20dp"
+                android:text="@string/gender"
+                android:gravity="center_vertical"
+                android:textSize="19sp"
+                android:textColor="@color/darkest_gray" />
+
+             <LinearLayout
+	            android:id="@+id/gender_layout"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginLeft="20dp"
+	            android:layout_marginTop="2dp"
+	            android:gravity="center"
+	            android:orientation="horizontal"
+	            >
+            <TextView
+                android:id="@+id/push_toggle_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:text="@string/male"
+                android:textColor="@color/darkest_gray" />
+
+            <ToggleButton
+                android:id="@+id/toggel_btn_pushnotification"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:background="@drawable/toggle_selector"
+                android:textOff=""
+                android:textOn="" />
+
+            <TextView
+                android:id="@+id/push_toggle_yes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="@string/female"
+                android:textColor="@color/darkest_gray" />
+            </LinearLayout>
+        </LinearLayout>
+        <com.superchat.widgets.MyriadRegularTextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:drawablePadding="5dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/gender"
+                android:drawableLeft="@drawable/profile_gender"
+                android:gravity="center_vertical"
+                android:textColor="@color/text_color_grayblack"
+                android:textStyle="normal" />
+            <Spinner
+		        android:id="@+id/gender_spinner"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+                android:layout_marginBottom="5dip"
+                android:entries="@array/gender_options"
+		        android:prompt="@string/gender"
+    		/>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_horizontal" >
+
+                <Button
+                    android:id="@+id/button1"
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:layout_marginTop="10dip"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/round_rect_blue"
+                    android:onClick="onDoneButtonClicked"
+                    android:text="@string/done"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textColorHighlight="@color/header_color"
+                    android:textSize="16sp" />
+
+                <Button
+                    android:id="@+id/button2"
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="5dip"
+                    android:layout_marginTop="10dip"
+                    android:layout_marginBottom="5dp"
+                    android:layout_toRightOf="@id/button1"
+                    android:background="@drawable/rounded_button_orange"
+                    android:onClick="onNextButtonClicked"
+                    android:text="@string/next_txt"
+                    android:textColor="@color/white"
+                    android:visibility="gone"
+                    android:textColorHighlight="@color/header_color"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -1,0 +1,46 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@null">
+
+   <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:visibility="visible" >
+
+<TextView
+                android:id="@+id/id_selector_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textColor="@color/white"
+                android:text="1 Selected"
+                android:layout_toRightOf="@id/id_back_arrow"
+                android:paddingLeft="5dp"
+                android:src="@drawable/back_arrow_green" />
+        <ImageView
+            android:id="@+id/id_copy_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@+id/id_delete_iv"
+            android:src="@drawable/copy_chat_icon" />
+
+        <ImageView
+            android:id="@+id/id_delete_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/delete_small" />
+
+        <ImageView
+            android:id="@+id/id_info_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@+id/id_copy_iv"
+            android:src="@drawable/info" />
+    </RelativeLayout>
+</LinearLayout>

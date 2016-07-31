@@ -1,0 +1,98 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/id_profile_screen"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/header_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/header_color" >
+
+        <RelativeLayout
+            android:id="@+id/historyDetailHeaderLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/header_footer_color"  >
+            <ImageView
+                android:id="@+id/id_back_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dip"
+                android:padding="15dip"
+                android:src="@drawable/back_arrow_white" />
+
+            <com.superchat.widgets.MyriadSemiboldTextView
+                android:id="@+id/id_back_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/id_back_arrow"
+                android:text=""
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+            <com.superchat.widgets.MyriadSemiboldTextView
+                android:id="@+id/id_save_contact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_alignParentRight="true"
+                android:padding="@dimen/topbar_title_padding"
+                android:text="@string/save_contact"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="normal" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <LinearLayout android:id="@+id/id_contact_details_rlayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical" 
+            android:background="@color/white">
+
+            <com.superchat.widgets.RoundedImageView
+                android:id="@+id/id_profile_pic"
+                android:layout_width="58.0dip"
+                android:layout_height="58.0dip"
+                android:onClick="onProfileImagePicClick"
+                android:scaleType="fitXY"
+                android:layout_margin="5dip"
+                android:src="@drawable/avatar" />
+
+            <com.superchat.widgets.MyriadSemiboldTextView
+                android:id="@+id/id_display_name_field"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="10dip"
+                android:layout_marginLeft="20dip"
+                android:layout_marginRight="20dip"
+                android:layout_toRightOf="@id/id_profile_pic"
+                android:hint="@string/display_name_hint"
+                android:inputType="textCapWords"
+                android:maxLength="25"
+                android:padding="10dip"
+                android:singleLine="true"
+                android:text=""
+                android:textColor="@color/header_color"
+                android:textSize="16sp"
+                android:textStyle="normal" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="0.1dip"
+                android:layout_below="@id/id_profile_pic"
+                android:layout_marginTop="15dip"
+                android:background="@color/black" >
+            </View>
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

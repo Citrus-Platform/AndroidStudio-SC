@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="3.0dip" >
+
+    <com.superchat.widgets.RoundedImageView
+        android:id="@+id/contact_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10.0dip"
+        android:padding="1dp"
+        android:src="@drawable/avatar" />
+
+    <ImageView
+        android:id="@+id/contact_icon_default"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10.0dip"
+        android:src="@drawable/avatar" />
+
+    <CheckBox
+        android:id="@+id/contact_sel_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:button="@drawable/custom_check_box"
+        android:padding="20dip"
+        android:visibility="visible" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10.0dip"
+        android:layout_marginRight="10.0dip"
+        android:layout_toLeftOf="@id/contact_sel_box"
+        android:layout_toRightOf="@id/contact_icon"
+        android:orientation="vertical" >
+
+        <com.superchat.widgets.MyriadRegularTextView
+            android:id="@+id/id_contact_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxLines="1"
+            android:text="Aaret"
+            android:textColor="@color/text_color_grayblack"
+            android:textSize="20.0sp"
+            android:textStyle="bold" />
+
+        <com.superchat.widgets.MyriadRegularTextView
+            android:id="@+id/id_contact_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxLines="1"
+            android:text="+918103002248"
+            android:textColor="@color/text_color_grayblack"
+            android:textSize="13.0sp" />
+    </LinearLayout>
+
+</RelativeLayout>

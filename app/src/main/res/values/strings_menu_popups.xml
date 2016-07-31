@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+ <string name="strActionMemberMenu_MakeSuperAdmin">Make Super Admin</string>
+ <string name="strActionMemberMenu_RemoveSuperAdmin">Remove Super Admin</string>
+ <string name="strActionMemberMenu_ReactivateUser">Reactivate User</string>
+ <string name="strActionMemberMenu_DeactivateUser">Deactivate User</string>
+ <string name="strActionMemberMenu_ViewProfile">View Profile</string>
+ <string name="strActionMemberMenu_EditProfile">Edit Profile</string>
+ <string name="strActionMemberMenu_Message">Message</string>
+
+</resources>

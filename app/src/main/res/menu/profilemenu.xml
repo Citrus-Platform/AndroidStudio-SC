@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent" android:layout_width="fill_parent">
+	
+	
+	<item
+		android:id="@+id/reportprofile"
+		android:icon="@drawable/reportfriend"
+		android:title="Report Profile" />
+	<item
+		android:id="@+id/shareprofile"
+		android:icon="@drawable/share_media1"
+		android:title="Share Profile" />
+		
+	<item
+		android:id="@+id/profilesendmessage"
+		android:icon="@drawable/messagefriend"
+		android:title="Send Message" />
+		<item
+		android:id="@+id/profilefollow"
+		android:icon="@drawable/redcheck"
+		android:title="Follow" />
+	<item
+		android:id="@+id/profileunfollow"
+		android:icon="@drawable/reduncheck"
+		android:title="Unfollow" />
+		<item
+		android:id="@+id/home"
+		android:title="Home Feed" android:icon="@drawable/menu_rt_home"/>
+	<item
+		android:id="@+id/inbox"
+		android:icon="@drawable/iconinbox"
+		android:title="Message Box" />
+</menu>
+

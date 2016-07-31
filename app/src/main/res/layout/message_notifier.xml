@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white" >
+
+    <ImageView
+        android:id="@+id/imagenotileft"
+        android:layout_width="48.0dip"
+        android:layout_height="48.0dip"
+        android:padding="2.0dip"
+        android:layout_margin= "10dip"
+        android:src="@drawable/chart_profile_white" 
+        android:layout_centerVertical="true"/>
+
+    <RelativeLayout
+        android:id="@+id/rlChatBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-15.0dip"
+        android:layout_marginLeft="5dip"
+        android:gravity="center_vertical"
+        android:visibility="visible" >
+
+        <ImageView
+            android:id="@+id/chat_notification_bubble"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/bubble" />
+
+        <TextView
+            android:id="@+id/chat_notification_bubble_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="1"
+            android:textColor="@color/white"
+            android:textSize="11.0sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+       android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/imagenotileft" >
+
+        <TextView
+            android:id="@+id/chat_person_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxLines="1"
+            android:text="@string/app_name"
+            android:textColor="@color/btn_text_color"
+            android:textSize="16.0sp" />
+
+        <TextView
+            android:id="@+id/chat_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/chat_person_name"
+            android:singleLine="true"
+            android:text="@string/app_name"
+            android:textColor="@color/btn_text_color"
+            android:textSize="12.0sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

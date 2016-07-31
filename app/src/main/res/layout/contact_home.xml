@@ -1,0 +1,181 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/id_chat_home"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/screen_background_color"
+    android:gravity="center_horizontal" >
+
+    <LinearLayout
+        android:id="@+id/id_header_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dip"
+        android:background="@color/header_footer_color"
+        android:gravity="center_vertical"
+        android:isScrollContainer="false"
+        android:orientation="vertical"
+        android:visibility="visible" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@color/header_footer_color"
+            android:gravity="center_vertical" >
+
+            <com.superchat.widgets.RoundedImageView
+                android:id="@+id/id_sg_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="3dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="3dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/logo_small"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/id_sg_name_label"
+                 android:layout_width="145dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center_vertical"
+                 android:singleLine="true"
+                android:text="@string/app_name"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/id_back_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:padding="5dp"
+                android:src="@drawable/back_arrow_white"
+                android:visibility="gone" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/heder_height"
+                android:background="@color/header_footer_color"
+                android:gravity="right|center_vertical" >
+
+                <EditText
+                    android:id="@+id/id_search_field"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:hint="@string/search"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/gray"
+                    android:textCursorDrawable="@null"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="@color/header_footer_color"
+                    android:gravity="center_vertical" >
+
+                    <ImageView
+                        android:id="@+id/id_search_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:padding="5dp"
+                        android:src="@drawable/search_icon"
+                        android:visibility="visible" />
+
+                    <ImageView
+                        android:id="@+id/sync_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="OnSyncClick"
+                        android:src="@drawable/contacts_sync_icon"
+                        android:visibility="visible" />
+
+                    <ImageView
+                        android:id="@+id/id_more_option1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:onClick="showPopup"
+                        android:padding="10dp"
+                        android:src="@drawable/dots"
+                        android:visibility="visible" />
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/header_footer_color" >
+
+            <TextView
+                android:id="@+id/id_all_tab"
+                style="@style/style_screen_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="5dp"
+                android:gravity="center"
+                android:text="@string/contact" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/id_search_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/id_header_view"
+        android:layout_margin="5dp"
+        android:gravity="center" >
+
+        <com.superchat.widgets.MyriadSemiboldEditText
+            android:id="@+id/id_search_user"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_rect_profile_bg"
+            android:gravity="center"
+            android:hint="@string/search"
+            android:padding="5dip"
+            android:singleLine="true"
+            android:textColor="@color/greytext_on_white_light"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/id_search_cross"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@id/id_search_user"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/cross"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/id_search_layout"
+        android:divider="@drawable/list_divider"
+        android:dividerHeight="0.3dip"
+        android:fastScrollEnabled="true"
+        android:longClickable="true"
+        android:scrollbarSize="4dip"
+        android:scrollbarThumbVertical="@color/color_lite_blue" />
+
+</RelativeLayout>

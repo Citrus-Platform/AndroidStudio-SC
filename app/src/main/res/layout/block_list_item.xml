@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="3.0dip" >
+
+    <com.superchat.widgets.RoundedImageView
+        android:id="@+id/contact_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10.0dip"
+        android:padding="1dp"
+        android:src="@drawable/avatar" />
+
+    <ImageView
+        android:id="@+id/contact_icon_default"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10.0dip"
+        android:src="@drawable/avatar" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10.0dip"
+        android:layout_marginRight="10.0dip"
+        android:layout_toRightOf="@id/contact_icon"
+        android:orientation="vertical" >
+
+        <com.superchat.widgets.MyriadRegularTextView
+            android:id="@+id/id_contact_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxLines="1"
+            android:text="Aaret"
+            android:textColor="@color/text_color_grayblack"
+            android:textSize="20.0sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView android:id="@+id/id_unblock_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/round_rect_green"
+        android:text="@string/unblock"
+        android:textColor="@color/white"
+        android:textSize="20sp" >
+    </TextView>
+
+</RelativeLayout>

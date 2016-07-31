@@ -1,0 +1,94 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/id_custom_dialog"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/transparent"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/darkgray"
+        android:gravity="center"
+        android:padding="0.1dip" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@color/white"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <com.superchat.widgets.MyriadRegularTextView
+                android:id="@+id/id_dialog_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/header_footer_color"
+                android:gravity="center"
+                android:padding="5dip"
+                android:text="@string/snooze_notifications"
+                android:textColor="@color/white"
+                android:textSize="18sp" >
+            </com.superchat.widgets.MyriadRegularTextView>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dip"
+                android:background="@color/blue" >
+            </View>
+
+            <com.superchat.widgets.MyriadRegularTextView
+                android:id="@+id/id_dialog_message"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dip"
+                android:text="@string/do_not_disturb_for"
+                android:textColor="@color/dark_gray"
+                android:textSize="18sp" >
+            </com.superchat.widgets.MyriadRegularTextView>
+<Spinner
+      android:id="@+id/spinner"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:spinnerMode="dropdown"
+      android:entries="@array/snooze_list_array"
+      android:layout_marginBottom="30dp"/>
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="1dip"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="2" >
+
+                <com.superchat.widgets.MyriadRegularTextView
+                    android:id="@+id/id_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left|bottom"
+                    android:padding="15dp"
+                    android:text="@string/cancel"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="20sp" >
+                </com.superchat.widgets.MyriadRegularTextView>
+
+                <com.superchat.widgets.MyriadRegularTextView
+                    android:id="@+id/id_set_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right|bottom"
+                    android:layout_alignParentRight="true"
+                    android:padding="15dp"
+                    android:text="@string/set_button"
+                    android:textColor="#ff36a9de"
+                    android:textSize="20sp"
+                    android:textStyle="bold" >
+                </com.superchat.widgets.MyriadRegularTextView>
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

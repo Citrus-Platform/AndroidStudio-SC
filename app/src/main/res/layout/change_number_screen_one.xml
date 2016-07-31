@@ -1,0 +1,86 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/id_contact_detail"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal" >
+
+    <RelativeLayout
+        android:id="@+id/id_header_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/header_color" >
+
+        <com.superchat.widgets.MyriadSemiboldTextView
+            android:id="@+id/id_change_number_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="20dip"
+            android:text="@string/change_number"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="20dip"
+            android:onClick="onBackClick" >
+
+            <ImageView
+                android:id="@+id/id_back_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dip"
+                android:layout_marginRight="5dip"
+                android:background="@drawable/back_arrow_white" 
+                android:visibility="gone"/>
+
+            <com.superchat.widgets.MyriadSemiboldTextView
+                android:id="@+id/id_back_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dip"
+                android:layout_toRightOf="@id/id_back_arrow"
+                android:text="@string/cancel"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/id_header_view"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="18dip"
+        android:gravity="center_horizontal"
+        android:scrollbarSize="4dip"
+        android:scrollbarThumbVertical="@color/header_color" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginRight="5dip"
+            android:orientation="vertical" >
+
+            <com.superchat.widgets.MyriadSemiboldTextView
+                android:id="@+id/id_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dip"
+                android:text="@string/change_number_message"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <com.superchat.widgets.MyriadSemiboldTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/identity_number"
+                android:textColor="@color/header_color" />
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

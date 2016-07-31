@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/screen_background_color"
+    android:descendantFocusability="blocksDescendants"
+    android:padding="3.0dip">
+    <com.superchat.widgets.RoundedImageView
+        android:id="@+id/contact_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:padding="2.0dip"
+        android:layout_marginLeft="10.0dip"
+        android:src="@drawable/avtar_background" />
+    <ImageView
+        android:id="@+id/contact_icon_default"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10.0dip"
+        android:src="@drawable/avtar_background" />
+	<com.superchat.widgets.RoundedImageView
+        android:id="@+id/id_admin_option"
+        android:layout_width="30dip"
+        android:layout_height="30dip"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dip"
+        android:padding="2.0dip" />
+    <!--RelativeLayout  android:id="@+id/contact_icon_layout"
+        android:layout_width="58.0dip"
+        android:layout_height="58.0dip">
+
+        <com.superchat.widgets.RoundedImageView
+            android:id="@+id/contact_icon"
+            android:layout_width="58.0dip"
+            android:layout_height="58.0dip"
+            android:layout_centerVertical="true"
+            android:padding="2.0dip"
+            android:src="@drawable/avtar_background" />
+
+        <TextView  android:id="@+id/id_icon_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            android:textStyle="bold"/>
+    </RelativeLayout -->
+
+    <RelativeLayout
+        android:id="@+id/id_right_rlayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerInParent="true"
+        android:layout_marginRight="16dip">
+
+        <ImageView
+            android:id="@+id/id_esia_contact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+
+            android:background="@drawable/chat_icon_green"
+            android:visibility="gone" />
+
+        <com.superchat.widgets.MyriadRegularTextView
+            android:id="@+id/user_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:text=""
+            android:textColor="@color/text_color_grayblack"
+            android:textSize="13.0sp" />
+
+        <com.superchat.widgets.MyriadRegularTextView
+            android:id="@+id/id_status_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/id_esia_contact"
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxLines="1"
+            android:text="yesterday"
+            android:textColor="@color/text_color_grayblack"
+            android:textSize="10.0sp"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/id_contact_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10.0dip"
+        android:layout_toLeftOf="@id/id_right_rlayout"
+        android:layout_toRightOf="@id/contact_icon"
+        android:orientation="vertical">
+
+        <com.superchat.widgets.MyriadRegularTextView
+            android:id="@+id/id_contact_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxLines="1"
+            android:text="Aaret"
+            android:textColor="@color/chat_name_color"
+            android:textSize="20.0sp"
+            android:textStyle="bold" />
+
+        <com.superchat.widgets.MyriadRegularTextView
+            android:id="@+id/id_contact_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxLines="1"
+            android:text=""
+            android:textColor="@color/text_color_grayblack"
+            android:textSize="13.0sp" />
+    </LinearLayout>
+
+
+</RelativeLayout>

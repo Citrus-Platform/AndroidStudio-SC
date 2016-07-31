@@ -1,0 +1,622 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="http://schemas.android.com/tools">
+
+    <string name="app_name">SuperChat</string>
+    <string name="profile">Profile</string>
+    <string name="manage_profile">Manage Profile</string>
+    <string name="user_profile">My Profile</string>
+     <string name="edit_profile">Edit profile</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="superchat_welcome">Welcome to</string>
+    <string name="verification_code_sent">Please enter the verification code sent to your phone.</string>
+    <string name="please_make_sure">Please make sure your mobile number is active</string>
+    <string name="registration_title">START A NEW SUPERGROUP</string>
+    <string name="verify_phone_number_msg">Please enter the phone number you would like to use. We will send a verification code to that number.</string>
+    <string name="self_verify_phone_number_msg">Unable to verify this time, please try after sometime.</string>
+    <string name="lbl_please_try_later">Sorry, could not create the group due to a technical error. Please try after sometime.</string>
+    <string name="error_network_connection">No network connection. Please check your network/Wi-Fi settings.</string>
+    <string name="create_group_validation_message">Please enter a group name.</string>
+    <string name="lbl_server_not_responding">Cannot connect to the server, please try after some time.</string>
+    <string name="network_not_responding">Unable to connect to the network, please try again.</string>
+    <string name="carrier_sms_charge_msg">Carrier SMS charge may apply</string>
+    <string name="check_net_connection">Please check network connection!</string>
+    <string name="country_mobile_validation">Please select your country and enter mobile number.</string>
+    <string name="country_validation">Please select your country.</string>
+    <string name="domain_validation">Please enter the name of your SuperGroup.</string>
+    <string name="please_enter_name">Please enter a profile name between 3 and 50 characters containing only alphabet.</string>
+    <string name="please_enter_name_alpha">Please enter a profile name between 3 and 50 characters containing only alphabet.</string>
+    <string name="please_enter_valid_name">Please enter a profile name between 3 and 50 characters containing only alphabet.</string>
+    <string name="please_enter_pass">Please enter a password.</string>
+    <string name="please_enter_pass_length">Please enter at least 6 characters for password.</string>
+    <string name="please_enter_conf_pass">Please confirm your password.</string>
+    <string name="please_enter_conf_pass_length">Please enter at least 6 characters for confirm password.</string>
+    <string name="please_enter_pass_mismatch">Passwords do not match!</string>
+    <string name="password_mismatch_on_toast">Your passwords do not match! \n Please try again.</string>
+     <string name="password_tips">Your password must be 6 characters long.</string>
+    <string name="please_write_status">Please write some text for status update.</string>
+    <string name="no_image_delete">No image to delete.</string>
+    <string name="please_enter_email">Please enter a valid email address.</string>
+    <string name="please_enter_org_name">Please enter your organization’s name.</string>
+    <string name="photo_upload_failed">Photo upload failed! Please try again.</string>
+    <string name="failed">Failed</string>
+     <string name="enter_valid_name">Please enter valid name.</string>
+    <string name="mobile_validation">Please enter your mobile number.</string>
+    <string name="mobile_validation_length">Please enter a valid number in range [8 - 16]</string>
+    <string name="invalid_audio_message">Please record minimum 3 secs to send voice message</string>
+    <string name="no_data_to_display">No data to display</string>
+    <string name="start_chat">Start Chat</string>
+    <string name="next_txt">Next</string>
+    <string name="camera">Camera</string>
+    <string name="coming_soon_lbl">Coming soon</string>
+    <string name="gallery">Gallery</string>
+    <string name="remove">Remove</string>
+    <string name="chat">Chats</string>
+    <string name="inbox">Inbox</string>
+    <string name="small_chat">Chats</string>
+    <string name="pin_not_entered">Please enter verification code.</string>
+    <string name="all_contacts">All Contacts</string>
+    <string name="all">ALL</string>
+    <string name="sms">SMS</string>
+    <string name="close">Close</string>
+    <string name="reply">Reply</string>
+    <string name="invite_in_group">Invite</string>
+    <string name="ppt">PPT</string>
+    <string name="doc">DOC</string>
+    <string name="xls">XLS</string>
+    <string name="pdf">PDF</string>
+    <string name="ok">Ok</string>
+    <string name="contact">Contacts</string>
+     <string name="contacts_search">Contacts search</string>
+    <string name="contact_detail">Contact Detail</string>
+    <string name="contact_info">Contact Info</string>
+    <string name="block_contact">Block this contact</string>
+    <string name="block">Block</string>
+    <string name="unblock">Unblock</string>
+    <string name="block_alert">You have blocked this user. To send a message, you will first have to unblock this user.</string>
+    <string name="block_successful">User blocked successfully.</string>
+   <string name="block_confirmation">Are you sure you want to block this person? You will no longer be able to send or receive messages and calls from this person.</string>
+   <string name="unblock_confirmation">Are you sure you want to unblock this person? Unblocking will allow them to message/call or contact you.</string>
+     <string name="unblock_successful">User unblocked successfully.</string>
+    <string name="block_you">You</string>
+    <!-- More Screen -->
+    <string name="more_title">More</string>
+    <!-- Personal Data Screen -->
+    <string name="personal_data">Personal Data</string>
+    <string name="name">Name(*)</string>
+     <string name="name_label">Name</string>
+    <string name="type_group_name">Type group name</string>
+    <string name="type_broadcast_name">Type broadcast name</string>
+    <string name="dob">Birthday</string>
+    <string name="plz_select_dob">Please enter your birthday</string>
+    <string name="gender">Gender</string>
+    <string name="who_is_this_supergroup">Who is this SuperGroup for?</string>
+     <string name="please_select_who_this_for">Please select who this SuperGroup is for:</string>
+    <string name="registered_number">Registered number</string>
+    <string name="registered_email">Registered email</string>
+    <string name="identity_type">Identity type</string>
+    <string name="identity_number">Identity number</string>
+    <!-- Change Number Screen -->
+    <string name="change_number_message">Use change number to migrate your SuperChat JD, account info, groups and setting from your Current Phone Number to your New Phone Number.\n\n You can\'t undo this change\n\n\ To process, please confirm that your new number able to receive SMS or Calls. Tap Next to verify the number.</string>
+    <!-- Account Screen -->
+    <string name="manage_block_user">Manage Block User</string>
+    <string name="network_usage">Network Usage</string>
+    <string name="change_number">Change Number</string>
+    <!-- Open Groups Screen -->
+    <string name="my_groups">My Groups</string>
+    <string name="open_groups">Discover</string>
+    <!-- Group Info Screen -->
+    <string name="groups">Groups</string>
+    <string name="group_info">Group Info</string>
+    <string name="message_info">Message Info</string>
+    <string name="group_name">Desired group name</string>
+    <string name="enter_group_name_hinttxt">Enter Group Name*</string>
+    <string name="channel_name">Open Group Name(*)</string>
+    <string name="broadcast_hint">Broadcast Name(*)</string>
+    <string name="new_group">New Group</string>
+    <string name="new_broadcast">New Broadcast</string>
+    <string name="enter_description">Type description(*)</string>
+    <string name="description">Description</string>
+    <string name="new_description">Add a description (optional) \n (Up to 500 characters.)</string>
+    <string name="new_description_optional">Add a description (optional)  - (Up to 500 characters.)</string>
+    <string name="create_closed_group_subtitle">Closed - Members cannot join without an invitation from an admin</string>
+    <string name="create_open_group_subtitle">All members of your SuperGroup will be able to search for and join this group.</string>
+    <string name="create_group_bottomtitle">You can have both private or public groups within your SuperGroup.</string>
+    <string name="create_group">Create Group</string>
+    <string name="create">Create</string>
+    <string name="back">Back</string>
+    <string name="back_large">BACK</string>
+    <string name="group_Chat">Group Chat</string>
+    <string name="edit_group">Edit</string>
+    <string name="edit_group_title">Edit Group</string>
+    <string name="edit_channel_title">Edit Open Group</string>
+    <string name="add_new">Add New</string>
+    <string name="create_broadcast">Create Broadcast</string>
+    <string name="edit_broadcast">Edit Broadcast</string>
+    <string name="broadcast">Broadcast</string>
+    <string name="broadcast_message">Broadcast Message</string>
+    <string name="done">Done</string>
+    <string name="done_caps">DONE</string>
+    <string name="add">Add</string>
+    <string name="type_contact_name">Type contact name</string>
+    <string name="message_hint">Message...</string>
+    <string name="add_broadcast_list">Add Broadcast List</string>
+    <string name="search_name_here">Search Name Here</string>
+    <string name="search">Search</string>
+    <string name="view_all_media">View All Media</string>
+    <string name="view_all_docs">View All Documents</string>
+    <string name="docs">Documents</string>
+    <string name="media">Media</string>
+    <string name="group_notification">Group Notification</string>
+    <string name="mute_group_chat">Mute Group Chat</string>
+    <string name="owner">Owner</string>
+    <string name="admin">Admin</string>
+    <string name="add_group_participants">Add participant</string>
+    <string name="add_more_participants">Add More Participants</string>
+    <string name="email_group_chat">Email Chat</string>
+    <string name="clear_group_chat">Clear Chat</string>
+    <string name="leave_group_chat">Leave Chat</string>
+    <string name="leave_group">Leave</string>
+    <string name="email_lbl">Email</string>
+    <string name="more_info_lbl">For more information, please contact \n SuperChat Support</string>
+    <string name="topup">TOPUP</string>
+    <string name="package_txt">PACKAGE</string>
+    <string name="more">MORE</string>
+    <string name="more_lbl">More</string>
+    <!-- More dialog options -->
+    <string name="mute">Mute</string>
+    <string name="unmute">Unmute</string>
+    <string name="clear_chat">Clear Chat</string>
+    <string name="email_chat">Email Chat</string>
+    <string name="delete_group">Deactivate Group</string>
+    <string name="delete_channel">Deactivate</string>
+    <string name="delete_official_id">Delete Official ID</string>
+    <!-- Register Screen -->
+    <string name="register">Register</string>
+    <string name="registration_message">You are successfully register SuperChat \n Now, you can start chatting with all of your friends\n\nSuperChat not only provide chatting feature, but you also can SMS to all of your friends\n\nPlease register for activate your SMS feature</string>
+    <string name="later">Later</string>
+    <!-- Agree TermsConditions Screen -->
+    <string name="agree_terms_condition">Agree terms &amp; condition</string>
+    <string name="term_and_condition">BY USING THE SERVICE, YOU ACKNOWLEDGE AND AGREE TO THESE TERMS OF SERVICE, AND \n\n</string>
+    <string name="confirm_txt">Confirm</string>
+     <string name="confirmation">Confirmation</string>
+    <string name="agree">Agree</string>
+    <string name="none_selected">Please select a contact.</string>
+    <string name="enter_channel_name">Please enter a group name.</string>
+    <string name="group_name_shouldnt_null">Please enter group name.</string>
+    <string name="cancel">Cancel</string>
+    <string name="cancel_large">CANCEL</string>
+    <string name="edit_txt">Edit</string>
+    <string name="display_name">Display Name</string>
+    <string name="status">Status</string>
+    <string name="set_date_of_birth">Set your date of birth</string>
+    <string name="date_of_birth">Date of birth</string>
+    <string name="designation">Designation</string>
+    <string name="department">Department</string>
+    <string name="display_name_hint">Please enter your full name</string>
+    <string name="display_name_hint_to_continue">Please enter your full name to continue</string>
+    <string name="display_ur_name_hint">Please enter your name</string>
+    <string name="status_hint">I Am On SuperChat</string>
+    <string name="didnt_receive_pin">Didn\'t receive verification code?</string>
+    <string name="invalid_pin_please_try_again">INVALID PIN PLEASE TRY AGAIN</string>
+    <string name="resend">Resend</string>
+    <string name="send">Send</string>
+    <string name="send_caps">SEND</string>
+    <string name="caption_tips">Add a caption....</string>
+    <string name="tap_to_add_caption">Tap to add caption</string>
+    <string name="receive_call">Receive call</string>
+    <string name="self_verify">Self verify by SMS</string>
+    <string name="registration">Registration</string>
+    <string name="sign_in_new_user">I am not</string>
+    <string name="sign_in_as">Sign in as</string>
+    <string name="your_phone_number">Phone number</string>
+    <string name="mobile_number">Mobile number(*)</string>
+    <string name="number">Mobile Number</string>
+    <string name="enter_domain">SuperGroup Name(*)</string>
+    <string name="domain">SuperGroup(*)</string>
+    <string name="country_prompt">Choose a country</string>
+    <string name="select_country">Select Country</string>
+    <string name="all_media">All Media</string>
+    <string name="account">Account</string>
+    <string name="about_asia_chat_lbl">About SuperChat</string>
+    <string name="current_version_lbl">Current Version</string>
+    <string name="current_version_no">1.0.0</string>
+    <string name="latest_version_no">1.0.1</string>
+    <string name="latest_version_lbl">Latest Version</string>
+    <string name="plz_update_msg">Please update your SuperChat Application \n Open Playstore > SuperChat > Update</string>
+    <string name="help_customer_msg01">SuperChat  Customer Support</string>
+    <string name="help_customer_msg02">+9121 90 8000 10 | superchat@gmail.com</string>
+    <string name="term_of_use_lbl">Term of Use</string>
+    <string name="term_of_service">Terms of Service</string>
+     <string name="privacy_policy">Privacy Policy</string>
+    <string name="faq_lbl">FAQ</string>
+    <string name="contact_us_lbl">Contact us</string>
+    <string name="chat_via_esiachat_lbl"></string>
+    <string name="contact_header_lbl">Contact Us</string>
+    <string name="user_block_list">Block List</string>
+    <string name="about">About</string>
+    <string name="about_me">About Me</string>
+    <string name="help">Help</string>
+    <string name="balance">Balance</string>
+    <string name="sticker_shop">Sticker Shop</string>
+    <string name="invite_friends">Invite Friends</string>
+    <string name="settings">Settings</string>
+    <string name="advanced_sg_settings">Advanced settings</string>
+    <string name="advanced_supergroup_settings">Advanced SuperGroup settings</string>
+    <string name="select_recipient">Select Recipients</string>
+    <string name="delete">Delete</string>
+    <string name="read">read</string>
+    <string name="recieved">delivered</string>
+    <string name="not_sent">not sent</string>
+    <string name="sent">sent</string>
+    <string name="wait">wait</string>
+    <string name="selected">Selected</string>
+    <string name="new_chat">New Chat</string>
+    <string name="info">Info</string>
+    <string name="message_user">Message User</string>
+    <string name="send_message">Send Message</string>
+    <string name="add_as_admin">Make Admin</string>
+    <string name="remove_as_admin">Remove As Admin</string>
+    <string name="remove_user">Remove Member</string>
+    <string name="i_am_on_superchat">I Am OnChat</string>
+    <string name="tap_to_start">Tap to start</string>
+    <string name="tap_to_stop">Tap to stop</string>
+    <string name="review_and_send">Review and send.</string>
+    <string name="tap_and_record_upto_five">Tap to start and stop. \n You can record upto 5 minutes.</string>
+    <string name="invite_member">Invite Member</string>
+    <string name="invite_large">INVITE</string>
+    <string name="re_invite">Re-invite</string>
+    <string name="add_member">Add Members</string>
+    <string name="select_contact_send_invite">Select contacts to send invite</string>
+
+    <string-array name="city_list_array">
+        <item>+91 India</item>
+        <item>+62 Indonesia</item>
+        <item>+65 Singapore</item>
+        <item>+34 Spain</item>
+        <item>+49 Great Britain</item>
+    </string-array>
+ 	<string name="msgs_cleared">All messages cleared.</string>
+    <string name="invite_text">I\'am using SuperChat messenger. It\'s really fun and addicted. \n It\'s simple smartphone messenger  and I really  enjoy it. This app let me send picture, video, and other multimedia SuperChat messanger available for Iphone and Android Smartphone. \n Get it now and Download it at Playstore or Appstore </string>
+    <string name="invite">Invite to SuperChat</string>
+    <string name="delete_broadcast_list">Delete broadcast list</string>
+    <string name="member">Member</string>
+    <string name="view_profile">View Profile</string>
+    <string name="broadcast_info">Broadcast Info</string>
+    <string name="channel_info">Open Group Info</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="enter_password">Password(*)</string>
+    <string name="enter_conf_password">Confirm password(*)</string>
+    <string name="enter_email">Your email</string>
+    <string name="clear">Clear</string>
+    <string name="email">Email(*)</string>
+    <string name="email_profile">Email</string>
+    <string name="employee_id">Employee id</string>
+    <string name="employee_name">Employee Name</string>
+    <string name="enter_name">Your Name</string>
+    <string name="admin_name">Enter your full name(*)</string>
+    <string name="enter_org_name">Organization Name</string>
+    <string name="register_as_user">Join</string>
+    <string name="register_as_admin">Register SuperGroup/Admin</string>
+    <string name="join_as_admin">Join as Admin</string>
+    <string name="terms_heading">SuperChat\nVer.1.2\nLicensed to Citrus Platform Solutions Pvt. Ltd.\n</string>
+    <string name="broadcast_list_name">Broadcast list name(*)</string>
+    <string name="broadcast_list">Broadcast list</string>
+    <string name="enter_broadcast_name">Please enter broadcast list name.</string>
+    <string name="add_boradcast_participants">Add participant</string>
+    <string name="broadcast_chat">Broadcast Chat</string>
+    <string name="attach_pic">Gallery</string>
+    <string name="attach_document_title">Attach document</string>
+    <string name="attach_file">Documents</string>
+    <string name="video">Video</string>
+    <string name="audio">Audio</string>
+    <string name="share_location">Location</string>
+    <string name="share_contact">Contact</string>
+    <string name="current_location">Current Location</string>
+    <string name="title_attach_audio_track">Attach audio track</string>
+    <string name="select_audio_track">Select audio track</string>
+    <string name="use_recorder">Use Recorder</string>
+    <string name="address">Address</string>
+    <string name="flat_number">Flat Number</string>
+    <string name="building_number">Building Number</string>
+    <string name="residence_type">Residence Type</string>
+    <string name="work_address">Work Location</string>
+    <string name="save_contact">Save Contact</string>
+    <string name="save">Save</string>
+    <string name="domain_validation_alert">Please enter valid SuperGroup name between 2 to 50 characters. Special characters and space not allowed.</string>
+    <string name="password_reason">(This password will be used to login on the web console.)</string>
+    <string name="create_poll">Create Poll</string>
+    <string name="option_1">1) </string>
+    <string name="option_2">2) </string>
+    <string name="option_3">3) </string>
+    <string name="option_4">4) </string>
+    <string name="option_5">5) </string>
+    <string name="poll_options">Enter poll options</string>
+    <string name="poll_text_lbl">Enter poll text here in max 500 characters.</string>
+    <string name="option_one">Option 1</string>
+    <string name="option_two">Option 2</string>
+    <string name="option_three">Option 3</string>
+    <string name="option_four">Option 4</string>
+    <string name="option_five">Option 5</string>
+    <string name="option_text_hint">Poll text</string>
+    <string name="poll_title">Poll title</string>
+    <string name="publish_poll">Publish</string>
+    <string name="set_start_date">Start date</string>
+    <string name="set_start_time">Start time</string>
+    <string name="set_end_date">End date</string>
+    <string name="set_end_time">End time</string>
+    <string name="set_dob">Set Birthday</string>
+    <string name="poll_title_lable">Enter poll title(max 100 characters)</string>
+    <string name="enter_date_and_time">Set date and time for poll</string>
+    <string name="done_label">Done</string>
+    <string name="poll">Polls</string>
+    <string name="doodle">Doodle</string>
+    <string name="pick">Pick</string>
+    <string name="emboss">Emboss</string>
+    <string name="blur">Blur</string>
+    <string name="background_color">Background Color</string>
+    <string name="_2px">2px</string>
+    <string name="_4px">4px</string>
+    <string name="_6px">6px</string>
+    <string name="_8px">8px</string>
+    <string name="_10px">10px</string>
+    <string name="_12px">12px</string>
+    <string name="rub">Rub</string>
+    <string name="clear_all">Clear all</string>
+    <string name="clear_all_msg">Do you want to clear the canvas? Your work will be lost.</string>
+    <string name="draw_something">Please draw something to attach</string>
+    <string name="choose_from_library">Choose from library</string>
+    <string name="take_photo">Take a photo</string>
+    <string name="record_with_camera">Record with camera</string>
+    <string name="take_picture">Take picture</string>
+    <string name="record_video">Record video</string>
+    <string name="pencil">Pencil</string>
+    <string name="erase">Erase</string>
+    <string name="color">Color</string>
+    <string name="exit_canvas">Do you want to close Canvas?</string>
+    <string name="question_mark">\?!</string>
+    <string name="alert_no_camera">Sorry, we could not find a camera on your device.</string>
+    <string name="connect">Connect a device</string>
+    <string name="discoverable">Make discoverable</string>
+    <string name="questionmark">\?!</string>
+    <string name="nosdcard">There is no SD card</string>
+    <string name="active_polls">All Polls</string>
+    <string name="no_active_polls">No active polls!</string>
+    <string name="add_participants">Add Participants</string>
+    <string name="participants">Participants</string>
+    <string name="grp_owner">Group Owner</string>
+    <string name="grp_admin">Group Admin</string>
+    <string name="channel_owner">Owner</string>
+    <string name="channel_admin">Admin</string>
+    <string name="bcst_owner">Broadcast Owner</string>
+    <string name="bcst_admin">Broadcast Admin</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="created_by">Created by </string>
+    <string name="snooze_settings">Mute settings</string>
+    <string name="privacy_settings">Privacy settings</string>
+    <string name="call_privacy_settings">Call privacy settings</string>
+    <string name="chat_privacy_settings">Chat privacy settings</string>
+    <string name="call_settings">Call settings</string>
+    <string name="chat_settings">Chat settings</string>
+    <string name="for_personal_messages_only">For personal messages only</string>
+    <string name="allow_messages_from_everyone">Allow messages from everyone</string>
+    <string name="allow_messages_only_my_contacts">Allow messages only from my contacts</string>
+    <string name="do_not_allow_any_private_messages">Do not allow any private messages</string>
+    <string name="no_one_can_message_you">No one can message you.</string>
+     <string name="no_one_can_call_you">No one can call you.</string>
+    <string name="super_admins_can_always_message_you">Please note: The Super Admins can always message you.</string>
+    <string name="super_admins_can_always_call_you">Please note: The Super Admins can always call you.</string>
+    <string name="for_in_app_calling_only">For in-app calling only</string>
+    <string name="allow_calls_from_everyone">Allow calls from everyone</string>
+    <string name="allow_calls_only_from_my_contacts">Allow calls only from my contacts</string>
+    <string name="do_not_allow_any_calls">Do not allow any calls</string>
+    <string name="set_button">SET</string>
+    <string name="snooze_notifications">Mute notifications</string>
+    <string name="do_not_disturb_for">Do not disturb for</string>
+ 	<string name="dnm_alert">This member does not allow personal messaging.</string>
+  	<string name="dnc_alert">This member does not allow call.</string>
+    <string-array name="snooze_list_array">
+        <item>Unmute</item>
+        <item>20 minutes</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>4 hours</item>
+        <item>8 hours</item>
+        <item>24 hours</item>
+    </string-array>
+     <string-array name="domain_type_array">
+        <item>company|Corporate</item>
+        <item>rwa|RWA (Housing)</item>
+        <item>others|Other</item>
+    </string-array>
+    <string name="feedback">Feedback</string>
+    <string name="send_feedback">Send feedback</string>
+    <string name="supergroup_profile">SuperGroup Profile</string>
+    <string name="about_supergroup">About [SuperGroup name]</string>
+    <string name="user_domain">SuperGroup</string>
+    <string name="check_update">Check for app updates</string>
+    <string name="manage_members">Manage Members</string>
+    <string name="select_admin_owner">Select Admins</string>
+    <string name="view_member_stats">View Member Stats</string>
+    <string name="create_channel">Create Open Group</string>
+    <string name="member_stats">Member Stats</string>
+    <string name="invited_members">Member Invited</string>
+    <string name="joined_member">Member Joined</string>
+    <string name="pending_invitation">Pending Invitation</string>
+    <string name="create_broadcast_list">Create Broadcast List</string>
+    <string name="enter_channel_description">Tap to open group description</string>
+    <string name="connecting_txt">Connecting..</string>
+    <string name="select_gender">Select Gender</string>
+    <string name="open_supergroup">Open (public) – This type of SuperGroup can be searched for and joined by everyone.</string>
+    <string name="open_group">Open (Public) – This type of group can be searched for and joined by everyone.</string>
+     <string name="close_group_creation_option">Closed (Private) – Private or Closed SuperGroups- these are private groups that need an invitation from the SuperGroup Admins to join.</string>
+    <string name="closed_supergroup">Closed (private) – Members cannot join without an invitation from the admins.</string>
+    <string name="select_group_type">What kind of SuperGroup is this? \nPlease select one - open (public) or closed (private)</string>
+    <string name="select_group_type_in_creation">What kind of group is this? \nPlease select one - open (public) or closed (private)</string>
+    <string name="welcome_to_superchat">Welcome to Superchat</string>
+    <string name="join_a_group">JOIN A GROUP</string>
+    <string name="or">OR</string>
+    <string name="continue_txt">Continue</string>
+    <string name="start_su_group1">START</string>
+    <string name="join_a_su_group1">JOIN</string>
+    <string name="start_su_group">NEW SUPERGROUP</string>
+    <string name="join_a_su_group">A SUPERGROUP</string>
+    <string name="join_a_su_group2">JOIN \nA SUPERGROUP</string>
+    <string name="join_aol">Join ART OF LIVING</string>
+    <string name="get_started">Let’s get started.</string>
+    <string name="circle_hint">Enter SuperGroup name</string>
+    <string name="welcome_additionla_text">Join a SuperGroup</string>
+    <string name="welcome_connecting_text">For groups within your group.\nConnecting teams, organizations, social groups of all sizes.</string>
+    <string name="welcome_supergroups_text">Welcome to SuperChat’s SuperGroups</string>
+    <string name="terms_and_condtions">You agree to our <a href="link">Privacy Policy</a> and <a href="link">Terms.</a></string>
+    <string name="terms_condition">Terms &amp; conditions</string>
+    <string name="domain_reg2">Now, tell us about your SuperGroup</string>
+    <string name="domain_selection_label">Select a name for your SuperGroup</string>
+    <string name="domain_desired_name">Enter desired name</string>
+    <string name="anyone_can_join">(Anyone can join)</string>
+    <string name="invitee_can_join">(Only people you invite can join)</string>
+    <string name="supergroup_validation">Please select SuperGroup type – open or close.</string>
+    <string name="validation_privacy">You need to agree to terms and conditions to go on. </string>
+    <string name="validation_dob">Please add your date of birth.</string>
+    <string name="validation_gender">Please select your gender.</string>
+    <string name="validation_curr_location">Please add your current location – city and state only.</string>
+    <string name="skip">Skip</string>
+     <string name="skip_upper_caps">SKIP</string>
+    <string name="too_many_members">Too many members?</string>
+    <string name="have_large_list">Have a large list of members to invite?</string>
+    <string name="have_an_excel">Have an excel sheet or doc for employee list?</string>
+    <string name="email_us_and"><a href="mailto:bulkupload@citrusplatform.com">Email us</a> and let us know how we can help.</string>
+
+     <string name="sg_profile">"SuperGroup profile"</string>
+    <string name="bulletin_board">"Bulletin Board"</string>
+    <string name="apps_n_more">"Via apps &amp; more"</string>
+    <string name="invite_language">$username has invited you to join \'$groupname\' on SuperChat. Here is your invite: http://www.superchat3c.com</string>
+    <string name="copy_invite_link">"Copy invite link"</string>
+    <string name="text_copied">"Text copied"</string>
+    <string name="join_sg">"Join Supergroup"</string>
+    <string name="superchat_title">"Superchat"</string>
+    <string name="select_superchat_to_join">"Please select a SuperGroup to join"</string>
+    <string name="select_superchat_to_join_new">"Please enter a SuperGroup to join"</string>
+    <string name="invite_waiting">"Your invite is waiting"</string>
+    <string name="welcome">"Welcome"</string>
+    <string name="enter_alternate_sg">"Or enter another SuperGroup’s name"</string>
+    <string name="enter_alternate_sg_new">"Enter SuperGroup’s name"</string>
+    <string name="creation_tell_us">"Tell us about your SuperGroup"</string>
+    <string name="creation_name_sg">"Name your SuperGroup"</string>
+    <string name="creation_name_sg_address">"SuperGroup's real address"</string>
+    <string name="creation_email_sg">"Please enter your email address"</string>
+    <string name="creation_email_note">"Your email address will be used for special announcements for SuperGroup owners."</string>
+    <string name="sg_creation_not">"This is the supergroup's address that you and team will use internally to signin to Superchat."</string>
+    <string name="creation_url_sg">"Website if any (Optional)"</string>
+    <string name="creation_orgname_sg">"What is the name of your organization, team or company? (Optional)"</string>
+    <string name="creation_photo_sg">"Please add a picture or logo for your SuperGroup"</string>
+    <string name="bulleting_welcome1">"Welcome to "</string>
+    <string name="bulleting_welcome2">" bulletin board "</string>
+    <string name="group_title">"Group name"</string>
+    <string name="group_description">"Group description"</string>
+    <string name="enter_sg_name_to_continue">"Please enter a SuperGroup name to continue."</string>
+    <string name="one_poll_alert">"There is already a poll active for this group. Please try again later."</string>
+    <string name="first_time_gp_creation_alert">"Please create a few groups for your members to join. \nYou can create both open and closed groups within your SuperGroup."</string>
+    <string name="sg_already_owned_alert">"Looks like you already own a SuperGroup. We do not currently support owning more than one SuperGroup. Please select the SuperGroup you own or have joined to continue."</string>
+    <string name="welcome_to">"Welcome to SuperGroup"</string>
+    <string name="supergroup_name">"SuperGroup Name"</string>
+    <string name="sg_vited_by">"Invited By"</string>
+    <string name="sg_org_name">"Organization Name"</string>
+    <string name="closed_sg">"Closed SuperGroup"</string>
+    <string name="open_sg">"Open SuperGroup"</string>
+    <string name="shared_id">"Common official ID"</string>
+    <string name="re_invite_confirmation">"Do you want to re-invite "</string>
+    <string name="reactivate_alert">"Your account has been deactivated on this phone, please reactivate your account or contact your domain Admin."</string>
+    <string name="support_txt">"If you are having problems with the app or signing up, please contact us.\nIf you are a large organization, team or group contact us and we will help with set up."
+	</string>
+    <string name="shared_is_popup">"What is this? \n\nIf you want more than one users to manage messages sent to a single entity like ‘Customer service’ or ‘Accounts’, use a Common official ID.\n\nNOTE: The Common official ID gets added to all members’ contact list.\n\nCreate a Common official ID?"
+	</string>
+	<string name="create_shared_id">Create official ID</string>
+	<string name="chared_id_title">Please enter title for this ID</string>
+	<string name="no_not_now">No, not now</string>
+	<string name="add_a_picture">Add picture or icon</string>
+	<string name="connected_members">Connected members</string>
+	<string name="official">Official</string>
+	<string name="what_is_this">What is this?</string>
+	<string name="flat_num_txt">Flat No. </string>
+	<string name="building_num_txt">Building No. </string>
+	<string name="sharedid_remove_admin">Do you want to remove</string>
+	<string name="sharedid_deactivate">Are you sure you want to delete this Official ID? It will be removed from all members contacts and will no longer be accessible \nDelete Official ID?</string>
+    <string name="login">Login</string>
+    <string name="submit">SUBMIT</string>
+    <string name="set_pass">Set password</string>
+    <string name="conf_pass">Confirm password</string>
+    <string name="config_console_pass">Configure console password</string>
+    <string name="set_console_pass">Set console password</string>
+    <string name="pass_validation_alert">Must be at least 8 characters and must have at least one letter, one number and one symbol (special character).</string>
+    <!--
+         Content description for the hour selector in the time picker, which displays
+         selectable hours of the day along the inside edge of a circle, as in an analog clock.
+         [CHAR LIMIT=50]
+
+    -->
+    <string name="hour_picker_description">Hours circular slider</string>
+    <!--
+         Content description for the minute selector in the time picker, which displays
+         selectable five-minute intervals along the inside edge of a circle, as in an analog clock.
+         [CHAR LIMIT=50]
+
+    -->
+    <string name="minute_picker_description">Minutes circular slider</string>
+    <!-- Accessibility announcement for hour circular picker [CHAR LIMIT=NONE] -->
+    <string name="select_hours">Select hours</string>
+    <!-- Accessibility announcement for minute circular picker [CHAR LIMIT=NONE] -->
+    <string name="select_minutes">Select minutes</string>
+
+    <!--
+        Content description for the month and day selector in the date picker, which displays
+        a selectable grid of days laid out by month.
+        [CHAR LIMIT=50]
+
+    -->
+    <string name="day_picker_description">Month grid of days</string>
+    <!--
+        Content description for the year selector in the date picker, which displays
+        a scrolling, vertical list of years.
+        [CHAR LIMIT=50]
+
+    -->
+    <string name="year_picker_description">Year list</string>
+    <!-- Accessibility announcement for the day picker [CHAR LIMIT=NONE] -->
+    <string name="select_day">Select month and day</string>
+    <!-- Accessibility announcement for the year picker [CHAR LIMIT=NONE] -->
+    <string name="select_year">Select year</string>
+    <!-- Accessibility description for the item that is currently selected. -->
+    <string name="item_is_selected"><xliff:g id="item" example="2013">%1$s</xliff:g> selected</string>
+    <!-- Accessibility announcement when a number that had been typed in is deleted [CHAR_LIMIT=NONE] -->
+    <string name="deleted_key"><xliff:g id="key" example="4">%1$s</xliff:g> deleted</string>
+
+    <!-- DO NOT TRANSLATE -->
+    <string name="time_placeholder">--</string>
+    <!-- DO NOT TRANSLATE -->
+    <string name="time_separator">:</string>
+
+    <!-- DO NOT TRANSLATE -->
+    <string name="radial_numbers_typeface">sans-serif</string>
+    <!-- DO NOT TRANSLATE -->
+    <string name="sans_serif">sans-serif</string>
+
+    <!-- DO NOT TRANSLATE -->
+    <string name="day_of_week_label_typeface">sans-serif</string>
+
+    <string-array name="gender_options">
+        <item>Select Gender</item>
+        <item>Male</item>
+        <item>Female</item>
+        <item>Do not want to disclose</item>
+    </string-array>
+    <string-array name="residence_type_options">
+        <item>Select Residence Type</item>
+        <item>Owner</item>
+        <item>Tenant</item>
+        <item>Others</item>
+    </string-array>
+
+</resources>

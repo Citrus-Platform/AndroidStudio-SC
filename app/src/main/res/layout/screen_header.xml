@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/header_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/header" >
+
+    <RelativeLayout
+        android:id="@+id/historyDetailHeaderLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/heder_height"
+        android:background="@drawable/header" >
+
+        <ImageView
+                android:id="@+id/tvTopBarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:padding="@dimen/topbar_title_padding"
+                android:background="@drawable/esiachat_white" 
+                android:layout_margin="8dip"/>
+    </RelativeLayout>
+
+</RelativeLayout>

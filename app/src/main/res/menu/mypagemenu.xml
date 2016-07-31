@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent" android:layout_width="fill_parent">
+	
+	<item
+		android:id="@+id/home"
+		android:title="Home Feed" android:icon="@drawable/menu_rt_home"/>
+	<item
+		android:id="@+id/inbox"
+		android:icon="@drawable/iconinbox"
+		android:title="Message Box" />
+	
+		<item
+		android:id="@+id/privacy"
+		android:icon="@drawable/lock_open"
+		android:title="Privacy Settings" />
+	
+</menu>

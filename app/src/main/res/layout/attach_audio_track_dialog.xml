@@ -1,0 +1,78 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="bottom|center_horizontal"
+    android:background="@color/white"
+    android:gravity="bottom"
+    android:orientation="vertical" >
+<LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom|center_horizontal"
+    android:background="@color/white"
+    android:gravity="bottom"
+    android:orientation="vertical" >
+    <TextView
+        style="@style/style_screen_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/header_footer_color"
+        android:gravity="center"
+        android:padding="10dip"
+        android:text="@string/title_attach_audio_track"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/id_select_audio_track"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/white"
+        android:drawablePadding="20dip"
+        android:drawableStart="@drawable/icon_audio_track"
+        android:padding="10dip"
+        android:text="@string/select_audio_track"
+        android:textColor="@color/btn_text_color"
+        android:textSize="21sp" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.5dip"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:background="@color/dark_gray" />
+
+    <TextView
+        android:id="@+id/id_use_recorder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/white"
+        android:drawablePadding="20dip"
+        android:drawableStart="@drawable/microphone_gray"
+        android:padding="10dip"
+        android:text="@string/use_recorder"
+        android:textColor="@color/btn_text_color"
+        android:textSize="21sp" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.5dip"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:background="@color/gray" />
+
+    <TextView
+        android:id="@+id/id_cancel_track_dialog"
+        style="@style/style_screen_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/gray"
+        android:gravity="center"
+        android:padding="10dip"
+        android:text="@string/cancel_large"
+        android:textColor="@color/btn_text_color"
+        android:textStyle="bold" />
+
+</LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,132 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <!--include
+        android:id="@+id/id_ViewTopHeader"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/screen_header" /-->
+    <RelativeLayout
+        android:id="@+id/id_header"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/heder_height"
+        android:background="@color/white"
+        android:layout_gravity="center_horizontal"
+        android:visibility="visible"
+        android:padding="10dip">
+    <com.superchat.widgets.MyriadSemiboldTextView
+                android:id="@+id/id_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text=""
+                style="@style/style_screen_title"  />
+
+    <ImageView
+        android:id="@+id/id_support"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:padding="10dp"
+        android:background="@drawable/help_support"
+        android:onClick="showPopup" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_weight=".12"
+            android:background="@drawable/login_img" />
+
+        <com.superchat.widgets.MyriadRegularTextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/id_ViewTopHeader"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/gray_dark"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/welcome_connecting_text"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="normal"
+            android:visibility="gone" />
+
+        <com.superchat.widgets.MyriadSemiboldEditText
+            android:id="@+id/id_display_name_field"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="20dp"
+            android:background="@null"
+            android:gravity="center"
+            android:hint="@string/circle_hint"
+            android:inputType="textCapWords"
+            android:maxLength="100"
+            android:padding="5dip"
+            android:singleLine="true"
+            android:textColor="@color/text_color_grayblack"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            android:visibility="gone" >
+
+            <requestFocus />
+        </com.superchat.widgets.MyriadSemiboldEditText>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dip"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:background="@color/color_lite_blue"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:layout_weight=".8"
+            android:orientation="horizontal" >
+        
+            <Button
+                android:id="@+id/as_user_join_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+           		 android:layout_marginRight="15dp"
+           		 android:layout_weight=".5"
+                android:background="@drawable/join_button"
+                android:textColorHighlight="@color/header_color"
+                android:textSize="14sp"
+                android:visibility="visible" />
+
+            <Button
+                 android:id="@+id/as_sg_join_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                 android:layout_weight=".5"
+            	 android:layout_marginLeft="10dp"
+            	android:layout_marginRight="20dp"
+                android:background="@drawable/start_button"
+                android:textColorHighlight="@color/header_color"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

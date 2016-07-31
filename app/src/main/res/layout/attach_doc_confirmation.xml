@@ -1,0 +1,96 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/id_custom_dialog"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/transparent"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@color/white"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="1dip" >
+
+            <com.superchat.widgets.MyriadRegularTextView
+                android:id="@+id/id_dialog_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/header_footer_color"
+                android:gravity="center_vertical"
+                android:padding="10dip"
+                android:text="@string/attach_document_title"
+                style="@style/style_screen_title">
+            </com.superchat.widgets.MyriadRegularTextView>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dip"
+                android:background="@color/blue" >
+            </View>
+
+            <com.superchat.widgets.MyriadRegularTextView
+                android:id="@+id/id_msg_file_confirm"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dip"
+                android:gravity="center_vertical"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="18sp" >
+            </com.superchat.widgets.MyriadRegularTextView>
+ 		<View
+                android:layout_width="fill_parent"
+                android:layout_height="0.1dip"
+                android:background="@color/dark_gray" >
+            </View>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:orientation="horizontal" 
+                    android:weightSum="2"
+                    android:paddingTop="5dip"
+                    android:paddingBottom="5dip"
+                    android:background="@color/graylight">
+                    <com.superchat.widgets.MyriadRegularTextView
+                        android:id="@+id/id_cancel_file"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dip"
+                        android:text="@string/cancel_large"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        android:layout_weight="1"
+                        android:textStyle="bold">
+                    </com.superchat.widgets.MyriadRegularTextView>
+                    <com.superchat.widgets.MyriadRegularTextView
+                        android:id="@+id/id_send_file"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dip"
+                        android:text="@string/send_caps"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" 
+                        android:layout_weight="1"
+                        android:textStyle="bold">
+                    </com.superchat.widgets.MyriadRegularTextView>
+
+                </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

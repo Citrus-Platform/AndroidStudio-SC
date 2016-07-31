@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/transparent"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.1dip"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip"
+        android:background="@color/darkest_gray" >
+    </View>
+
+    <com.superchat.widgets.MyriadRegularTextView
+        android:id="@+id/id_take_picture_item"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="15dip"
+        android:text="@string/take_picture"
+        android:textColor="@color/chat_name_color"
+        android:textSize="18sp" >
+    </com.superchat.widgets.MyriadRegularTextView>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.1dip"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip"
+        android:background="@color/darkest_gray" >
+    </View>
+
+    <com.superchat.widgets.MyriadRegularTextView
+        android:id="@+id/id_video_record_item"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="15dip"
+        android:text="@string/record_video"
+        android:textColor="@color/chat_name_color"
+        android:textSize="18sp" >
+    </com.superchat.widgets.MyriadRegularTextView>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.1dip"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip"
+        android:background="@color/darkest_gray"
+        android:visibility="visible" >
+    </View>
+
+</LinearLayout>

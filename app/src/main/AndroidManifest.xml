@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.superchat"
+    android:installLocation="preferExternal"
+    android:versionCode="67"
+    android:versionName="3.7.8">
+
+    <uses-sdk
+        android:minSdkVersion="13"
+        android:targetSdkVersion="15" />
+
+    <permission
+        android:name="com.superchat.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+    
+    <uses-feature android:name="android.hardware.camera" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_SMS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL"/>
+    
+    <uses-permission android:name="com.superchat.PERMISSION" />
+    <!-- Only this application can receive the messages and registration result -->
+    <uses-permission android:name="superchat.permission.C2D_MESSAGE" />
+    <!-- This app has permission to register and receive message -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    
+    <!-- for Samsung -->
+    <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
+    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" />
+
+    <!-- for htc -->
+    <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" />
+
+    <!-- for sony -->
+    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
+
+    <!-- for apex -->
+    <uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT" />
+
+    <!-- for solid -->
+    <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE" />
+
+    <!-- for map -->
+    <uses-permission android:name="com.superchat.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <application
+        android:name="com.superchat.SuperChatApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCo2JZjLANTLPWSdoxeGBiB_AZvj3wCTZc" />
+        <meta-data
+            android:name="com.google.android.gms.analytics.globalConfigResource"
+            android:resource="@xml/global_tracker" />
+
+        <activity
+            android:name="com.superchat.ui.RTCanvas"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.MainActivity"
+            android:label="@string/title_activity_main"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.LocationActivity"
+            android:screenOrientation="portrait"></activity>
+         <activity
+            android:name="com.superchat.ui.CountryChooserScreen"
+            android:screenOrientation="portrait" ></activity>
+        <activity
+            android:name="com.superchat.ui.BulkInvitationScreen"
+            android:screenOrientation="portrait" 
+            android:windowSoftInputMode="adjustResize"></activity>
+         <activity
+            android:name="com.superchat.ui.InviteViaEmailScreen"
+            android:screenOrientation="portrait"></activity>
+         <activity
+            android:name="com.superchat.ui.PrivacyCallSettings"
+            android:screenOrientation="portrait"></activity>
+         <activity
+            android:name="com.superchat.ui.PrivacyChatSettings"
+            android:screenOrientation="portrait"></activity>
+         <activity
+            android:name="com.superchat.ui.SupergroupListingScreen"
+            android:screenOrientation="portrait"></activity>
+                
+        <activity
+            android:name="com.superchat.ui.MobileVerificationScreen"
+            android:configChanges="keyboardHidden|orientation"
+   			android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.ProfileScreen"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"></activity>
+        <activity
+            android:name="com.superchat.ui.ContactViewScreen"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.HelpScreen"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.AboutScreen"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.ContactUsScreen"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.SmsRegistrationScreen"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.LoginChangeScreen"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.BlockListScreen"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.SuperGroupProfileActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.ShareScreen"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="application/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="video/*" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.superchat.ui.HomeScreen"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan">
+        </activity>
+        <activity
+            android:name="com.superchat.ui.ContactDetails"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.GenerateConsolePasswordActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.BulletinScreen"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"></activity>
+        <activity
+            android:name="com.superchat.ui.MoreScreen"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"></activity>
+        <activity
+            android:name="com.superchat.ui.SharedIDScreen"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"></activity>
+       <activity
+            android:name="com.superchat.ui.ChatListScreen"
+            android:screenOrientation="portrait"
+            android:theme="@style/chat_bg"
+            android:windowSoftInputMode="stateHidden"></activity>
+        <activity
+            android:name="com.superchat.ui.GroupProfileScreen"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.GroupStausInfoScreen"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.CreateGroupScreen"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"></activity>
+        <activity
+            android:name="com.superchat.ui.CreateSharedIDActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"></activity>
+        <activity
+            android:name="com.superchat.ui.CreateBroadCastScreen"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.RegistrationOptions"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.WelcomeScreen"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.EsiaChatContactsScreen"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.AccountScreen"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.superchat.ui.InviteMemberScreen"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.superchat.ui.UsersProfileScreen"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.superchat.ui.TermAndConditionScreen"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.EsiaSplashScreen"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+         <activity
+            android:name="com.superchat.ui.PublicGroupInfoScreen"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.superchat.ui.CallScreenActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.superchat.ui.IncomingCallScreenActivity"
+            android:noHistory="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.superchat.ui.PlaceCallActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.superchat.ui.MemberInviteWithGroupOrBroadCast"
+            android:screenOrientation="portrait" />
+         <activity
+            android:name="com.superchat.ui.MemberStatsScreen"
+            android:screenOrientation="portrait" />
+
+        <service android:name="com.chat.sdk.ChatService">
+            <intent-filter>
+                <action android:name="com.chat.sdk.ChatService" />
+            </intent-filter>
+        </service>
+        <service android:name="com.superchat.ui.SinchService">
+            <intent-filter>
+                <action android:name="com.superchat.ui.SinchService" />
+            </intent-filter>
+        </service>
+        <service android:name=".GcmIntentService" />
+
+        <receiver
+            android:name=".GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+
+                <!-- Receives the actual messages. -->
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+                <category android:name="com.superchat" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.superchat.service.XmppStateReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="2dd9ecbc00f90dff7152815506e742a886c447d9" />
+    </application>
+
+</manifest>

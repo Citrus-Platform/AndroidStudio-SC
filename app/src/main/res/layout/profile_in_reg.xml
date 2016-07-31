@@ -1,0 +1,319 @@
+
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/id_profile_screen"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:background="@color/screen_background_color">
+
+        <RelativeLayout
+            android:id="@+id/header_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/header_footer_color" >
+
+            <RelativeLayout
+                android:id="@+id/historyDetailHeaderLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/header_footer_color" >
+
+                <!--
+                ImageView
+                android:id="@+id/tvTopBarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:padding="@dimen/topbar_title_padding"
+                android:background="@drawable/esiachat_white"
+                android:textSize="25sp"
+                android:textColor="@color/white" 
+                android:layout_margin="10dip"/
+                -->
+
+                <com.superchat.widgets.MyriadSemiboldTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="@dimen/topbar_title_padding"
+                    android:text="@string/profile"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+            
+            <TextView
+            android:id="@+id/id_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dip"
+            android:capitalize="characters"
+            android:drawableLeft="@drawable/back_arrow_white"
+            android:padding="15dp"
+            android:onClick="onBackClick"
+            android:text=""
+            android:visibility="gone"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/id_next_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dip"
+                android:background="@null"
+                android:text="@string/done"
+                android:textColor="@color/white"
+                android:textColorHighlight="@color/header_color"
+                android:visibility="gone" />
+            <ImageView
+                android:id="@+id/call_option"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+               android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="25dip"
+                android:onClick="onCallClicked"
+                android:background="@drawable/call_icon1"
+                android:visibility="gone" />
+        </RelativeLayout>
+<ScrollView
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" 
+            android:paddingBottom="20dip">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center_horizontal" >
+
+                <com.superchat.widgets.RoundedImageView
+                    android:id="@+id/id_profile_pic"
+                    android:layout_width="150dip"
+                    android:layout_height="150dip"
+                    android:layout_centerHorizontal="true"
+                    android:onClick="onProfileImagePicClick"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/profile_pic" />
+                 <LinearLayout
+		            android:layout_width="150dp"
+                    android:layout_alignParentBottom="true"
+		            android:gravity="right"
+		            android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/id_edit_pic"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:onClick="onProfilePicClick"
+                    android:src="@drawable/profile_camera" />
+             </LinearLayout>>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dip"
+                android:layout_marginTop="15dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_marginRight="20dip">
+            <com.superchat.widgets.MyriadSemiboldEditText
+                android:id="@+id/id_display_name_field"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:hint="@string/display_name_hint"
+                android:inputType="textCapWords"
+                android:background="@null"
+                android:maxLength="25"
+                android:padding="5dip"
+                android:singleLine="true"
+                android:drawableRight="@drawable/pencil_img"
+                android:text=""
+                android:textColor="@color/text_color_grayblack"
+                android:textSize="16sp"
+                android:layout_weight=".8"
+                android:textStyle="normal" />
+            </LinearLayout>>
+            
+            <View
+                android:id="@+id/view_display_name"
+		        android:layout_width="fill_parent"
+		        android:layout_height="1dip"
+		        android:layout_marginLeft="20dp"
+		        android:layout_marginRight="20dp"
+		        android:layout_marginBottom="20dp"
+		        android:background="@color/lightest_gray" />
+			
+			<LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dip"
+                android:layout_marginRight="20dip"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:background="@drawable/round_rect_profile_bg"
+                android:orientation="vertical">
+    
+          <LinearLayout
+		        android:id="@+id/id_dob_layout"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:gravity="left"
+		        android:layout_marginTop="5dp"
+		        android:layout_weight=".8"
+		        android:layout_below="@id/id_header_view">
+		        <TextView
+		            android:id="@+id/lbl_dob"
+                    android:textColor="@color/darkest_gray"
+                    android:text="@string/plz_select_dob"
+                    style="@style/DTP.Labelleft"/>
+
+    </LinearLayout>
+   		 <View
+	        android:layout_width="fill_parent"
+	        android:layout_height="1dip"
+	        android:layout_marginTop="5dp"
+	        android:layout_marginBottom="5dp"
+	        android:background="@color/lightest_gray" />
+    <LinearLayout
+		        android:id="@+id/id_gender_layout"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:gravity="left"
+		        android:layout_marginBottom="5dp"
+		        android:layout_weight=".8"
+		        android:layout_below="@id/id_header_view">
+		
+		        <TextView
+                    android:id="@+id/lbl_gender"
+                    android:textColor="@color/darkest_gray"
+                    android:text="@string/select_gender"
+                    style="@style/DTP.Labelleft"/>
+
+    </LinearLayout>
+    
+    <View android:id="@+id/id_line_bar"
+	        android:layout_width="fill_parent"
+	        android:layout_height="1dip"
+	        android:layout_marginBottom="5dp"
+	        android:background="@color/lightest_gray" />
+    <LinearLayout android:id="@+id/id_location_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+		        android:visibility="visible">
+            
+          <RelativeLayout
+		        android:id="@+id/id_search_layout"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:gravity="center"
+		        android:layout_weight=".8"
+		        android:layout_below="@id/id_header_view">
+		
+		        <com.superchat.widgets.MyriadSemiboldEditText
+	                android:id="@+id/id_location_field"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_centerHorizontal="true"
+	                android:hint="@string/share_location"
+	                android:maxLength="160"
+	                android:padding="10dip"
+	                android:layout_marginRight="5dp"
+	                android:background="@null"
+	                android:inputType="textCapSentences|textMultiLine"
+	                android:textColor="@color/text_color_grayblack"
+	                android:textSize="16sp"
+	                android:textStyle="normal" />
+		
+		        <ImageView
+		            android:id="@+id/id_search_cross"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_marginRight="3dp"
+		            android:layout_alignRight="@id/id_location_field"
+		            android:layout_centerVertical="true"
+		            android:onClick="onClearCurrentLocationClicked"
+		            android:background="@drawable/cross"
+		            android:visibility="gone"/>
+    </RelativeLayout>
+			<ImageView
+                    android:id="@id/id_edit_pic"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:onClick="onCurrentLocationClicked"
+                    android:src="@drawable/profile_location" />
+			</LinearLayout>
+ </LinearLayout>
+
+			<Button
+			    android:id="@+id/profile_save"
+			    android:layout_width="fill_parent"
+			    android:layout_height="35dip"
+			    android:layout_marginLeft="20dip"
+			    android:layout_marginRight="20dip"
+			    android:layout_marginTop="15dp"
+			    android:layout_gravity="center"
+			    android:background="@drawable/round_rect_gray"
+			    android:text="@string/done"
+			    android:textColor="@color/white"
+			    android:textColorHighlight="@color/header_color"
+			    android:textSize="17sp"
+			    android:visibility="visible"
+			    android:textStyle="bold" />
+
+			
+			<LinearLayout
+                android:id="@+id/groups_incommon"
+                android:layout_width="fill_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:orientation="horizontal" >
+             <TextView
+                        android:id="@+id/id_participants_lbl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:padding="5dp"
+                        android:text="@string/participants"
+                        android:textColor="@color/grp_profile_font_color"
+                        android:textSize="18sp"
+                        android:visibility="visible" />
+                    <TextView
+                        android:id="@+id/id_participants_count"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:gravity="right"
+                        android:text="20/100"
+                        android:textColor="@color/grp_profile_font_color"
+                        android:textSize="18sp"
+                        android:visibility="visible" />
+		<View
+	        android:layout_width="fill_parent"
+	        android:layout_height="1dip"
+	        android:layout_marginLeft="20dp"
+	        android:layout_marginRight="20dp"
+	        android:layout_marginBottom="5dp"
+	        android:background="@color/dark_gray" />
+       </LinearLayout>
+        </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+

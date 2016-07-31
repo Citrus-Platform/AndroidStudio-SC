@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/screen_background_color"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/header_layout_top"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/header_footer_color" >
+
+        <RelativeLayout
+            android:id="@+id/historyDetailHeaderLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@color/header_footer_color" >
+
+            <com.superchat.widgets.MyriadSemiboldTextView
+                android:id="@+id/id_screen_title"
+                style="@style/style_screen_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/invite_in_group" />
+
+            <com.superchat.widgets.MyriadSemiboldTextView
+                android:id="@+id/id_select_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@id/id_screen_title"
+                android:layout_centerVertical="true"
+                android:text="(0)"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/id_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dip"
+            android:capitalize="characters"
+            android:drawableLeft="@drawable/back_arrow_white"
+            android:onClick="onBackClick"
+            android:padding="15dp"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/id_next_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dip"
+            android:background="@null"
+            android:text="@string/save"
+            android:textColor="@color/white"
+            android:textColorHighlight="@color/header_color"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/invite_tabs"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header_layout_top"
+        android:layout_centerHorizontal="true"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:weightSum="1" >
+
+        <LinearLayout
+            android:id="@+id/id_contacts"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:background="@color/white"
+            android:gravity="center" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:id="@+id/contacts_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/invite_contacts_sel"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/text_contacts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/contact"
+                    android:textColor="@color/header_footer_color"
+                    android:textSize="15sp"
+                    android:textStyle="normal"
+                    android:visibility="gone" />
+
+                <View
+                    android:id="@+id/view_contacts"
+                    android:layout_width="fill_parent"
+                    android:layout_height="4dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/color_lite_blue" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/id_other_apps"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:background="@color/white"
+            android:gravity="center" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:weightSum="2" >
+
+                <ImageView
+                    android:id="@+id/other_apps_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/invite_otherapps"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/text_otherapps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/apps_n_more"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="normal"
+                    android:visibility="gone" />
+
+                <View
+                    android:id="@+id/view_otherapps"
+                    android:layout_width="fill_parent"
+                    android:layout_height="4dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/color_lite_blue"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/header_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/heder_height"
+        android:layout_below="@+id/invite_tabs" >
+
+        <RelativeLayout
+            android:id="@+id/id_add_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="10dip" >
+
+            <ImageView
+                android:id="@+id/id_add_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@drawable/plus_add" />
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/id_search_box"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dip"
+            android:layout_toLeftOf="@id/id_add_layout"
+            android:background="@drawable/round_rect_profile_bg"
+            android:capitalize="characters"
+            android:drawableLeft="@drawable/search_gray_icon"
+            android:hint="@string/contacts_search"
+            android:paddingBottom="10dip"
+            android:paddingTop="10dip"
+            android:text=""
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/text_link_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/heder_height"
+        android:layout_below="@+id/header_layout"
+        android:gravity="center" >
+
+        <TextView
+            android:id="@+id/id_select_contact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/select_contact_send_invite"
+            android:textColor="@color/black"
+            android:textSize="17sp"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/id_copy_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/header_layout"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="5dp"
+            android:drawableLeft="@drawable/copy_link"
+            android:drawablePadding="10dp"
+            android:padding="4dip"
+            android:text="@string/copy_invite_link"
+            android:textColor="@color/color_lite_blue"
+            android:textSize="17sp"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/id_bulk_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/header_layout"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="5dip"
+            android:background="@drawable/info"
+            android:padding="15dip" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/id_bottom_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/graylight" >
+
+        <TextView
+            android:id="@+id/id_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="15dip"
+            android:text="@string/cancel_large" />
+
+        <View
+            android:layout_width="0.1dip"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dip"
+            android:layout_marginTop="10dip"
+            android:background="@color/dark_gray" />
+
+        <TextView
+            android:id="@+id/id_invite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="15dip"
+            android:text="@string/invite_large" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/id_contacts_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/id_bottom_layout"
+        android:layout_below="@id/text_link_layout"
+        android:divider="@color/dark_gray"
+        android:dividerHeight="0.3dip"
+        android:focusableInTouchMode="false"
+        android:longClickable="true"
+        android:scrollbars="none"
+        android:visibility="visible" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+    </ImageView>
+
+</RelativeLayout>

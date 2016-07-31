@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent" android:layout_width="fill_parent">
+	<item
+		android:id="@+id/mute"
+		android:icon="@drawable/sound_mute"
+		android:title="Mute" />
+	<item
+		android:id="@+id/log_out"
+		android:icon="@drawable/logout"
+		android:title="Logout" />
+	<item
+		android:id="@+id/_exit"
+		android:icon="@drawable/exit"
+		android:title="Exit" />
+</menu>

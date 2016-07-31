@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:id="@+id/id_member_stats_item"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="3.0dip" >
+
+    <com.superchat.widgets.RoundedImageView
+        android:id="@+id/contact_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:padding="1dp"
+         android:layout_marginLeft="10dip"
+        android:src="@drawable/avatar" />
+    <com.superchat.widgets.RoundedImageView
+        android:id="@+id/stats_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+         android:layout_marginLeft="10dip"
+        android:visibility="gone"/>
+    <ImageView
+        android:id="@+id/contact_icon_default"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+         android:layout_marginLeft="10dip"
+        android:src="@drawable/avatar" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20.0dip"
+        android:layout_toRightOf="@id/contact_icon"
+        android:orientation="vertical" >
+
+        <com.superchat.widgets.MyriadRegularTextView
+            android:id="@+id/id_contact_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxLines="1"
+            android:text="Superchatter"
+            android:textColor="@color/text_color_grayblack"
+            android:textSize="20.0sp"
+            android:textStyle="normal" />
+
+        <com.superchat.widgets.MyriadRegularTextView
+            android:id="@+id/id_contact_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxLines="1"
+            android:text="@string/i_am_on_superchat"
+            android:textColor="@color/text_color_grayblack"
+            android:textSize="13.0sp" 
+            android:visibility="gone"/>
+    </LinearLayout>
+
+  <TextView
+      android:id="@+id/id_re_invite_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="5dip"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="40dip"
+                     android:layout_alignParentRight="true"
+                    android:background="@null"
+                    android:text="@string/re_invite"
+                    android:textColor="@color/blue"
+                    android:textColorHighlight="@color/header_color"
+                    android:visibility="gone"
+                    android:textSize="16sp" />
+                    
+   
+    <TextView
+        android:id="@+id/id_stats_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="15dip"
+        android:padding="15dip"
+        android:layout_centerVertical="true"
+        android:text="20"
+        android:visibility="visible" />
+
+</RelativeLayout>

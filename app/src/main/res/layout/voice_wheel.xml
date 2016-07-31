@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ProgressWheel="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    tools:context=".ui.ChatListScreen" >
+
+    <RelativeLayout
+        android:id="@+id/wheel_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <com.superchat.ui.ProgressWheel
+            android:id="@+id/circular_progress"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_centerHorizontal="true"
+            ProgressWheel:barColor="#f67f7f"
+            ProgressWheel:barLength="60dp"
+            ProgressWheel:barWidth="5dp"
+            ProgressWheel:contourColor="#000000"
+            ProgressWheel:circleColor="#fafafa"
+            ProgressWheel:rimColor="#fafafa"
+            ProgressWheel:rimWidth="5dp"
+            ProgressWheel:spinSpeed="3dp"
+            ProgressWheel:text="0"
+            ProgressWheel:textColor="@color/red"
+            ProgressWheel:textSize="27sp"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+</LinearLayout>

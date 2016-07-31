@@ -1,0 +1,116 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/id_contact_detail"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal" >
+
+    <RelativeLayout
+        android:id="@+id/id_header_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="20dip"
+            android:onClick="onBackClick" >
+
+            <com.superchat.widgets.MyriadSemiboldTextView
+                android:id="@+id/id_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dip"
+                android:layout_toRightOf="@id/id_back_arrow"
+                android:text="@string/cancel"
+                android:textColor="@color/header_color"
+                android:textSize="15sp" />
+
+            <com.superchat.widgets.MyriadSemiboldTextView
+                android:id="@+id/id_send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dip"
+                android:text="@string/send"
+                android:textColor="@color/header_color"
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/id_group_info_header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dip"
+        android:gravity="center" >
+
+        <ImageView
+            android:id="@+id/id_trash_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dip"
+            android:background="@drawable/trash_green" />
+
+        <ImageView
+            android:id="@+id/id_crop_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dip"
+            android:background="@drawable/crop_green" />
+
+        <ImageView
+            android:id="@+id/id_rotate_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@drawable/rotate_green" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/id_preview_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="230dip"
+        android:layout_below="@id/id_group_info_header"
+        android:layout_margin="20dip"
+        android:background="@color/gray"
+        android:padding="5dip" >
+
+        <ImageView
+            android:id="@+id/id_preview_photo"
+            android:layout_width="fill_parent"
+            android:layout_height="230dip"
+            android:layout_centerVertical="true"
+            android:background="@color/white" />
+    </RelativeLayout>
+
+    <com.superchat.widgets.MyriadRegularEditText
+        android:id="@+id/id_add_caption"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/id_preview_layout"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:background="@color/gray"
+        android:hint="@string/tap_to_add_caption"
+        android:textColorHint="@color/white"
+        android:padding="5dip"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="italic" />
+
+    <GridView
+        android:id="@+id/gridView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/id_add_caption"
+        android:numColumns="auto_fit" >
+    </GridView>
+
+</RelativeLayout>

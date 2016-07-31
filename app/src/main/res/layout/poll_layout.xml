@@ -1,0 +1,506 @@
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/screen_background_color">
+
+        <ScrollView
+            android:id="@+id/scrollView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dip"
+                    android:capitalize="characters"
+                    android:text="@string/create_poll"
+                    android:textColor="@color/darkest_gray"
+                    android:textSize="18sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:gravity="left"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/poll_text_label1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dip"
+                    android:capitalize="characters"
+                    android:text="@string/poll_title_lable"
+                    android:textColor="@color/darkest_gray"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dip"
+                    android:orientation="horizontal" >
+
+                    <com.superchat.emojicon.EmojiconEditText
+                        android:id="@+id/poll_title"
+                        android:layout_width="fill_parent"
+                        android:layout_height="35dp"
+                        android:baselineAligned="false"
+                        android:background="@drawable/round_rect"
+                        android:hint="@string/poll_title"
+                        android:inputType="textCapSentences|textMultiLine"
+                        android:layout_weight="1"
+                        android:padding="10dip"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:maxLength="100"
+                        android:singleLine="false"
+                        android:textColor="@color/text_color_grayblack"
+                        android:textSize="14sp"
+                        android:textStyle="normal"
+                        android:imeOptions="actionNext"/>
+                </LinearLayout>
+
+                <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dip"
+                android:gravity="left"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/poll_text_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dip"
+                    android:capitalize="characters"
+                    android:text="@string/poll_text_lbl"
+                    android:textColor="@color/darkest_gray"
+                    android:textSize="16sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dip"
+                android:orientation="horizontal" >
+
+                <com.superchat.emojicon.EmojiconEditText
+                    android:id="@+id/poll_text_message"
+                    android:layout_width="fill_parent"
+                    android:layout_height="80dp"
+                    android:baselineAligned="false"
+                    android:background="@drawable/round_rect"
+                    android:hint="@string/option_text_hint"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:layout_weight="1"
+                    android:padding="10dip"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:maxLength="500"
+                    android:singleLine="false"
+                    android:textColor="@color/text_color_grayblack"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    android:imeOptions="actionNext"/>
+            </LinearLayout>
+                <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:gravity="left"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/options"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dip"
+                    android:capitalize="characters"
+                    android:text="@string/poll_options"
+                    android:textColor="@color/darkest_gray"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dip"
+                    android:gravity="left"
+                    android:orientation="horizontal" >
+
+
+                </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dip"
+                android:gravity="left"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/option_one"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dip"
+                    android:capitalize="characters"
+                    android:text="@string/option_1"
+                    android:textColor="@color/darkest_gray"
+                    android:textSize="20sp" />
+                <AutoCompleteTextView
+                    android:id="@+id/option_one_box"
+                    android:layout_width="160dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/round_rect"
+                    android:hint="@string/option_one"
+                    android:padding="8dip"
+                    android:singleLine="true"
+                    android:maxLength="50"
+                    android:textColor="@color/text_color_grayblack"
+                    android:textSize="13sp"
+                    android:textStyle="normal"
+                    android:inputType="textCapSentences"
+                    android:imeOptions="actionNext"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:gravity="left"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/option_two"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dip"
+                    android:capitalize="characters"
+                    android:text="@string/option_2"
+                    android:textColor="@color/darkest_gray"
+                    android:textSize="20sp" />
+                <AutoCompleteTextView
+                    android:id="@+id/option_two_box"
+                    android:layout_width="160dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/round_rect"
+                    android:hint="@string/option_two"
+                    android:padding="8dip"
+                    android:singleLine="true"
+                    android:maxLength="50"
+                    android:textColor="@color/text_color_grayblack"
+                    android:textSize="13sp"
+                    android:textStyle="normal"
+                    android:inputType="textCapSentences"
+                     android:imeOptions="actionNext"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:gravity="left"
+                android:visibility="visible"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/option_three"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dip"
+                    android:capitalize="characters"
+                    android:text="@string/option_3"
+                    android:textColor="@color/darkest_gray"
+                    android:textSize="20sp" />
+                <AutoCompleteTextView
+                    android:id="@+id/option_three_box"
+                    android:layout_width="160dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/round_rect"
+                    android:hint="@string/option_three"
+                    android:padding="8dip"
+                    android:singleLine="true"
+                    android:maxLength="50"
+                    android:textColor="@color/text_color_grayblack"
+                    android:textSize="13sp"
+                    android:textStyle="normal"
+                    android:inputType="textCapSentences"
+                     android:imeOptions="actionNext"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:gravity="left"
+                android:visibility="visible"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/option_four"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dip"
+                    android:capitalize="characters"
+                    android:text="@string/option_4"
+                    android:textColor="@color/darkest_gray"
+                    android:textSize="20sp" />
+                <AutoCompleteTextView
+                    android:id="@+id/option_four_box"
+                    android:layout_width="160dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/round_rect"
+                    android:hint="@string/option_four"
+                    android:padding="8dip"
+                    android:singleLine="true"
+                    android:maxLength="50"
+                    android:textColor="@color/text_color_grayblack"
+                    android:textSize="13sp"
+                    android:textStyle="normal"
+                    android:inputType="textCapSentences"
+                     android:imeOptions="actionNext"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:gravity="left"
+                android:visibility="visible"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/option_five"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dip"
+                    android:capitalize="characters"
+                    android:text="@string/option_5"
+                    android:textColor="@color/darkest_gray"
+                    android:textSize="20sp" />
+                <AutoCompleteTextView
+                    android:id="@+id/option_five_box"
+                    android:layout_width="160dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/round_rect"
+                    android:hint="@string/option_five"
+                    android:padding="8dip"
+                    android:singleLine="true"
+                    android:maxLength="50"
+                    android:textColor="@color/text_color_grayblack"
+                    android:textSize="13sp"
+                    android:textStyle="normal"
+                    android:inputType="textCapSentences"
+                    android:imeOptions="actionDone"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:gravity="left"
+                android:visibility="gone"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/option_five"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dip"
+                    android:capitalize="characters"
+                    android:text="@string/option_5"
+                    android:textColor="@color/darkest_gray"
+                    android:textSize="20sp" />
+                <AutoCompleteTextView
+                    android:id="@+id/option_five_box"
+                    android:layout_width="160dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/round_rect"
+                    android:hint="@string/option_five"
+                    android:padding="8dip"
+                    android:singleLine="true"
+                    android:maxLength="15"
+                    android:textColor="@color/text_color_grayblack"
+                    android:textSize="13sp"
+                    android:textStyle="normal"
+                    android:inputType="text"
+                    android:imeOptions="actionDone"
+                    />
+            </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dip"
+                    android:gravity="left"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:id="@+id/date_options"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dip"
+                        android:capitalize="characters"
+                        android:text="@string/enter_date_and_time"
+                        android:textColor="@color/darkest_gray"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dip"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/rectangle_blue"
+                    android:orientation="horizontal" >
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dip"
+                        android:gravity="left"
+                        android:layout_weight=".5"
+                        android:visibility="gone"
+                        android:orientation="vertical" >
+                        <TextView
+                            android:id="@+id/lbl_start_date"
+                            android:textColor="@color/darkest_gray"
+                            style="@style/DTP.Label"/>
+
+                        <TextView
+                            android:id="@+id/lbl_start_time"
+                            android:textColor="@color/darkest_gray"
+                            style="@style/DTP.Label"/>
+                        <Button
+                            android:id="@+id/btn_set_date1"
+                            android:layout_width="80dp"
+                            android:layout_height="30dp"
+                            android:layout_marginTop="5dip"
+                            android:background="@drawable/round_sent_msg_bg"
+                            android:textSize="14sp"
+                            android:text="@string/set_start_date"
+                            android:textColor="@color/darkest_gray"
+                            />
+                        <Button
+                            android:id="@+id/btn_set_time1"
+                            android:layout_width="80dp"
+                            android:layout_height="30dp"
+                            android:layout_marginTop="10dip"
+                            android:background="@drawable/round_sent_msg_bg"
+                            android:onClick="onNextButtonClick"
+                            android:textSize="14sp"
+                            android:text="@string/set_start_time"
+                            android:textColor="@color/darkest_gray"
+                            />
+                    </LinearLayout>
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="fill_parent"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="5dip"
+                        android:visibility="gone"
+                        android:background="@color/darkest_gray" />
+                    <LinearLayout
+                        android:layout_width="220dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dip"
+                        android:layout_marginBottom="5dip"
+                        android:layout_weight=".5"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical" >
+                        <TextView
+                            android:id="@+id/lbl_end_date"
+                            android:textColor="@color/darkest_gray"
+                            style="@style/DTP.Label"/>
+
+                        <TextView
+                            android:id="@+id/lbl_end_time"
+                            android:textColor="@color/darkest_gray"
+                            style="@style/DTP.Label"/>
+                        <Button
+                            android:id="@+id/btn_set_date2"
+                            android:layout_width="80dp"
+                            android:layout_height="30dp"
+                            android:layout_marginTop="5dip"
+                            android:background="@drawable/round_sent_msg_bg"
+                            android:textSize="14sp"
+                            android:text="@string/set_end_date"
+                            android:textColor="@color/darkest_gray"
+                            />
+                        <Button
+                            android:id="@+id/btn_set_time2"
+                            android:layout_width="80dp"
+                            android:layout_height="30dp"
+                            android:layout_marginTop="10dip"
+                            android:background="@drawable/round_sent_msg_bg"
+                            android:onClick="onNextButtonClick"
+                            android:textSize="14sp"
+                            android:text="@string/set_end_time"
+                            android:textColor="@color/darkest_gray"
+                            />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dip"
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/btn_cancel"
+                    android:layout_width="90dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="20dip"
+                    android:layout_marginTop="20dip"
+                    android:background="@drawable/round_rect_blue"
+                    android:textSize="16sp"
+                    android:text="@string/cancel"
+                    android:textColor="@color/white"
+                    />
+                <Button
+                    android:id="@+id/btn_submit"
+                    android:layout_width="90dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="20dip"
+                    android:layout_marginTop="20dip"
+                    android:background="@drawable/round_rect_blue"
+                    android:textSize="16sp"
+                    android:text="@string/publish_poll"
+                    android:textColor="@color/white"
+                    />
+            </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+

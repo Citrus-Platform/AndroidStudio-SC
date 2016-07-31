@@ -1,0 +1,56 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/id_chat_home"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:id="@+id/id_header_view"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/heder_height"
+        android:background="@color/header_footer_color">
+
+        <com.superchat.widgets.MyriadSemiboldTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/user_block_list"
+            style="@style/style_screen_title"  />
+
+        <ImageView
+            android:id="@+id/id_xmpp_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dip"
+            android:background="@drawable/red_dot"
+            android:visibility="gone" />
+        <TextView
+	            android:id="@+id/id_back"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerVertical="true"
+	            android:capitalize="characters"
+	            android:drawableLeft="@drawable/back_arrow_white"
+	            android:padding="10dp"
+	            android:text=""
+	            android:textColor="@color/white"
+	            android:textSize="12sp" />
+    </RelativeLayout>
+    <ListView
+        android:id="@+id/id_block_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:divider="@color/dark_gray"
+        android:dividerHeight="0.3dip"
+        android:fastScrollEnabled="true"
+        android:focusableInTouchMode="false"
+        android:longClickable="true"
+        android:scrollbarSize="4dip"
+        android:scrollbarThumbVertical="@color/header_color"
+        android:smoothScrollbar="true"
+        android:visibility="visible" />
+
+</LinearLayout>

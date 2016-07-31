@@ -1,0 +1,215 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/public_group_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/screen_background_color"
+    android:gravity="center_horizontal" >
+    
+    <RelativeLayout
+        android:id="@+id/id_header_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/header_footer_color" >
+
+        <com.superchat.widgets.MyriadSemiboldTextView
+            style="@style/style_screen_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/shared_id" />
+
+        <TextView
+            android:id="@+id/id_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:capitalize="characters"
+            android:drawableLeft="@drawable/back_arrow_white"
+            android:padding="15dp"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+        <ImageView
+		        android:id="@+id/id_info"
+		        android:layout_width="25dp"
+		        android:layout_height="25dp"
+		        android:layout_centerInParent="true"
+		        android:layout_alignParentRight="true"
+		        android:layout_toRightOf="@id/id_back_arrow"
+		        android:padding="10dp"
+		        android:layout_marginRight="5dp"
+		        android:background="@drawable/i"
+		        android:onClick="showPopup" />
+    </RelativeLayout>
+    
+    <LinearLayout
+        android:id="@+id/invite_tabs"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:weightSum="1" >
+
+        <LinearLayout
+            android:id="@+id/id_my_channel"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white" 
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:layout_weight=".5"
+            >
+
+             <LinearLayout
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		         android:gravity="center"
+		        android:layout_centerHorizontal="true" 
+		        android:orientation="vertical">
+	            <TextView
+	                android:id="@+id/text_contacts"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_centerInParent="true"
+	                android:layout_marginBottom="10dp"
+	                android:text="@string/my_groups"
+	                android:textColor="@color/color_lite_blue"
+	                android:textSize="16sp"
+	                android:visibility="visible"
+	                android:textStyle="bold"/>
+	            <View
+	                android:id="@+id/view_contacts"
+		            android:layout_width="fill_parent"
+		            android:layout_marginLeft="20dp"
+		            android:layout_marginRight="20dp"
+		            android:layout_height="4dp"
+		            android:background="@color/color_lite_blue" />
+            </LinearLayout>
+           
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/id_all_channels"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:layout_weight=".5">
+             
+            <LinearLayout
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_centerHorizontal="true" 
+		        android:gravity="center"
+		        android:orientation="vertical"
+		        android:weightSum="2">
+             <TextView
+                 android:id="@+id/text_otherapps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/open_groups"
+                android:textColor="@color/darkest_gray"
+                android:textSize="16sp"
+                android:layout_marginBottom="10dp"
+                android:visibility="visible"
+                android:textStyle="bold"/>
+              <View
+                  	android:id="@+id/view_otherapps"
+		            android:layout_width="fill_parent"
+		            android:layout_height="4dp"
+		            android:layout_marginLeft="20dp"
+		            android:layout_marginRight="20dp"
+		            android:visibility="gone"
+		            android:background="@color/color_lite_blue" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/id_search_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/id_header_view"
+        android:layout_margin="5dp"
+        android:visibility="visible"
+        android:gravity="center" >
+        <RelativeLayout
+	        android:id="@+id/id_create_gp_layout"
+	        android:layout_width="fill_parent"
+	        android:layout_height="40dp"
+	        android:background="@drawable/round_rect_profile_bg"
+	        android:layout_margin="10dp"
+	        android:visibility="visible"
+	        android:gravity="center" >
+           <ImageView
+	            android:id="@+id/id_create_icon"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerVertical="true"
+	            android:gravity="center"
+	            android:layout_marginLeft="10dip"
+	            android:background="@drawable/plus_add"
+	            android:visibility="visible" />
+           
+    <com.superchat.widgets.MyriadSemiboldTextView
+            android:id="@+id/id_create_group"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:text="@string/create_shared_id"
+            android:layout_toRightOf="@+id/id_create_icon"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:singleLine="true"
+            android:textColor="@color/greytext_on_white_light"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+        <com.superchat.widgets.MyriadSemiboldEditText
+            android:id="@+id/id_search_user"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/round_rect_profile_bg"
+            android:gravity="center"
+            android:hint="@string/search"
+            android:padding="5dip"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:singleLine="true"
+            android:textColor="@color/greytext_on_white_light"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/id_search_cross"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@id/id_search_user"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/cross"
+            android:visibility="gone" />
+    </RelativeLayout>
+    
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/id_search_layout"
+        android:divider="@drawable/list_divider"
+        android:dividerHeight="0.3dip"
+        android:fastScrollEnabled="true"
+        android:longClickable="true"
+        android:scrollbarSize="4dip"
+        android:scrollbarThumbVertical="@color/color_lite_blue" />
+
+</RelativeLayout>

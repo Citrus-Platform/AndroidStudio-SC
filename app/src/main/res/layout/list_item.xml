@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+    
+    <LinearLayout
+        android:id="@+id/row_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+         android:orientation="horizontal"
+         android:padding="3.0dip">
+
+    <RadioButton
+        android:id="@+id/id_sg_radio_button"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:layout_height="wrap_content"/>
+
+    <com.superchat.widgets.RoundedImageView
+        android:id="@+id/contact_icon"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:padding="5dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/logo_smallest" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:layout_marginRight="10.0dip"
+        android:orientation="vertical" >
+
+        <com.superchat.widgets.MyriadRegularTextView
+	        android:id="@+id/expandedListItem"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:paddingLeft="15dp"
+	        android:textColor="@color/black"
+	        android:textSize="18sp"
+	        android:text="Superchat"
+	        android:textStyle="bold"/>
+        
+
+        <com.superchat.widgets.MyriadRegularTextView
+            android:id="@+id/invited_by"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:paddingLeft="15dp"
+            android:lines="1"
+            android:maxLines="1"
+            android:text="Invited by Superchat"
+            android:textColor="@color/text_color_grayblack"
+            android:visibility="visible"
+            android:textSize="13.0sp" />
+    </LinearLayout>
+</LinearLayout>
+</LinearLayout>

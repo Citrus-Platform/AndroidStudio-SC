@@ -1,0 +1,90 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/id_login_change_screen"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dip"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="3" >
+
+        <RelativeLayout
+            android:id="@+id/id_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <ImageView
+                android:id="@+id/id_camera_icon"
+                android:layout_width="54dip"
+                android:layout_height="54dip"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/camera" />
+
+            <com.superchat.widgets.MyriadSemiboldTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+               android:layout_below="@id/id_camera_icon"
+                android:layout_centerHorizontal="true"
+                android:text="@string/camera"
+                android:textColor="@color/header_color"
+                android:textSize="18sp"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/id_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center" >
+
+            <ImageView
+                android:id="@+id/id_gallery_icon"
+                android:layout_width="54dip"
+                android:layout_height="54dip"
+                android:src="@drawable/gallery" 
+                 android:layout_centerHorizontal="true"/>
+
+            <com.superchat.widgets.MyriadSemiboldTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/id_gallery_icon"
+                android:layout_centerHorizontal="true"
+                android:text="@string/gallery"
+                android:textColor="@color/header_color"
+                android:textSize="18sp" 
+                android:visibility="gone"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/id_remove"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center" >
+
+            <ImageView
+                android:id="@+id/id_remove_icon"
+                android:layout_width="54dip"
+                android:layout_height="54dip"
+                android:src="@drawable/delete_chat_icon" 
+                 android:layout_centerHorizontal="true"/>
+
+            <com.superchat.widgets.MyriadSemiboldTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/id_remove_icon"
+                android:layout_centerHorizontal="true"
+                android:text="@string/remove"
+                android:textColor="@color/header_color"
+                android:textSize="18sp" 
+                android:visibility="gone"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,121 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#403e3f"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left" >
+
+        <ImageView
+            android:id="@+id/id_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="5dp"
+            android:padding="5dp"
+            android:src="@drawable/wrong" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout android:id="@+id/id_middle_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/id_member_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/round_rect_gray"
+                android:capitalize="characters"
+                android:text="@string/member"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:visibility="gone" />
+
+            <com.superchat.widgets.RoundedImageView
+                android:id="@+id/id_profile_pic"
+                android:layout_width="120dip"
+                android:layout_height="120dip"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/profile_pic"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/id_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:capitalize="characters"
+                android:text="@string/name"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/id_address1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:capitalize="characters"
+                android:gravity="center_vertical"
+                android:text="@string/address"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/id_address2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:capitalize="characters"
+                android:gravity="center_vertical"
+                android:text="@string/address"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            
+
+           
+        </LinearLayout>
+        
+         <LinearLayout android:id="@+id/id_bottom_btns"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="20dp"
+                >
+
+                <ImageView
+                    android:id="@+id/id_rwa_call_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:src="@drawable/rwa_call_btn" />
+
+                <ImageView
+                    android:id="@+id/id_rwa_msg_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:src="@drawable/rwa_msg_btn" />
+            </LinearLayout>
+            <ImageView
+                android:id="@+id/id_full_profile_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/view_profile_icon" 
+                android:layout_below="@id/id_middle_layout"
+                android:layout_above="@id/id_bottom_btns"/>
+    </RelativeLayout>
+
+</LinearLayout>
