@@ -44,6 +44,9 @@ import com.superchat.data.db.DatabaseConstants;
 import com.superchat.helper.UtilGlobal;
 import com.superchat.interfaces.interfaceInstances;
 import com.superchat.model.ErrorModel;
+import com.superchat.retrofit.api.RetrofitRetrofitCallback;
+import com.superchat.retrofit.request.model.UserAdminRequest;
+import com.superchat.retrofit.response.model.UserAdminResponse;
 import com.superchat.task.ImageLoaderWorker;
 import com.superchat.utils.ColorGenerator;
 import com.superchat.utils.Constants;
@@ -67,6 +70,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 //import com.superchat.widgets.DontPressWithParentLayout;
 
@@ -156,6 +162,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
         viewholder.userNames = cursor.getString(cursor.getColumnIndex(DatabaseConstants.USER_NAME_FIELD));
         String s = cursor.getString(cursor.getColumnIndex(DatabaseConstants.NAME_CONTACT_ID_FIELD));
+        viewholder.contentType = cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_TYPE_FIELD));
         viewholder.displayName = cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD));
         viewholder.voipumValue = cursor.getString(cursor.getColumnIndex(DatabaseConstants.VOPIUM_FIELD));
         String s2 = cursor.getString(cursor.getColumnIndex(DatabaseConstants.IS_FAVOURITE_FIELD));
@@ -256,6 +263,26 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
     }
 
 */
+
+    private boolean isSuperAdmin(final String contentType) {
+        boolean isSuperAdmin = false;
+        if (contentType != null && contentType.trim().equalsIgnoreCase("domainAdmin"))
+            isSuperAdmin = true;
+
+        return isSuperAdmin;
+    }
+
+    private void makeRemoveSuperAdmin(String userNames, String displayName, String contentType){
+        if (isSuperAdmin(contentType))
+            showDialogSuperAdmin("Remove Super Admin",
+                    "This member may be a Group Admin of one or more groups. You should appoint another Group Admin for those groups before removing this member",
+                    userNames, contentType);
+        else
+            showDialogSuperAdmin("Make Super Admin", "Do you want to activate " + displayName + ".",
+                    userNames, contentType);
+    }
+
+
     private void activateDeactivateUser(String userNames, String displayName){
         if (SharedPrefManager.getInstance().isUserExistence(userNames))
             showDialog("Deactivate Member", "This member may be a Group Admin of one or more groups. You should appoint another Group Admin for those groups before removing this member", userNames);
@@ -302,6 +329,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
         ImageView ivOverFlowMenuMembers;
         String userStatus;
         String userNames;
+        String contentType;
         String displayName;
         String voipumValue;
         ImageView imageDefault;
@@ -321,7 +349,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
                 switch (id) {
                     case R.id.ivOverFlowMenuMembers: {
                         isIdInSwitchFound = true;
-                        MenuPopup(v, userNames, displayName);
+                        MenuPopup(v, userNames, displayName, contentType);
                         break;
                     }
                 }
@@ -656,11 +684,86 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
         bteldialog.show();
     }
 
+
+
+    public void showDialogSuperAdmin(final String title, final String s, final String userNames, final String contentType) {
+        final Dialog bteldialog = new Dialog(context);
+        bteldialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        bteldialog.setCanceledOnTouchOutside(true);
+        bteldialog.setContentView(R.layout.custom_dialog_two_button);
+        if (title != null) {
+            ((TextView) bteldialog.findViewById(R.id.id_dialog_title)).setText(title);
+        }
+
+        ((TextView) bteldialog.findViewById(R.id.id_dialog_message)).setText(s);
+
+        if (isSuperAdmin(contentType))
+            ((TextView) bteldialog.findViewById(R.id.id_send)).setText("Remove Admin");
+        else
+            ((TextView) bteldialog.findViewById(R.id.id_send)).setText("Make Admin");
+
+        ((TextView) bteldialog.findViewById(R.id.id_send)).setOnTouchListener(new OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                bteldialog.cancel();
+
+                final ProgressDialog progressDialog = ProgressDialog.show(context, "", "Loading. Please wait...", true);
+
+                UserAdminRequest objUserAdmin = new UserAdminRequest();
+                objUserAdmin.setUserName(userNames);
+
+                Call call = null;
+
+                if(isSuperAdmin(contentType)) {
+                    call = objApi.getApi(context).removeAdmin(objUserAdmin);
+                }
+                else {
+                    call = objApi.getApi(context).makeAdmin(objUserAdmin);
+                }
+
+                progressDialog.show();
+                call.enqueue(new RetrofitRetrofitCallback<UserAdminResponse>(context) {
+                    @Override
+                    protected void onResponseVoidzResponse(Call call, Response response) {
+                    }
+
+                    @Override
+                    protected void onResponseVoidzObject(Call call, UserAdminResponse response) {
+                        if(response != null && response.getStatus() != null && response.getStatus().equalsIgnoreCase("success")){
+                            objToast.makeToast(context, ""+response.getMessage(), UtilGlobal.MODE_DEVELOPMENT);
+                            ((EsiaChatContactsScreen) context).finish();
+                        } else {
+                            String errorMessage = response.getMessage() != null ? response.getMessage() : "Please try later";
+                            showDialog(errorMessage);
+                        }
+                    }
+
+                    @Override
+                    protected void common() {
+                        progressDialog.cancel();
+                    }
+                });
+
+                return false;
+            }
+        });
+        ((TextView) bteldialog.findViewById(R.id.id_cancel)).setOnTouchListener(new OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                bteldialog.cancel();
+                return false;
+            }
+        });
+        bteldialog.show();
+    }
+
     /**
      * This method will open up flow window for a particular users with all applicable options
      */
 
-    public void MenuPopup(View v, final String userNames, final String displayName) {
+    public void MenuPopup(View v, final String userNames, final String displayName, final String contentType) {
         bubbleLayout = (BubbleLayout) LayoutInflater.from(context).inflate(R.layout.inflate_members_menu_popup, null);
         popupWindow = BubblePopupHelper.create(context, bubbleLayout);
 
@@ -678,16 +781,24 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
                 LinearLayout llMemberAction_EditProfile = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_EditProfile);
                 LinearLayout llMemberAction_Message = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_Message);
 
-                llMemberAction_MakeSuperAdmin.setOnClickListener(new MenuClickListerenr(userNames, displayName));
-                llMemberAction_RemoveSuperAdmin.setOnClickListener(new MenuClickListerenr(userNames, displayName));
-                llMemberAction_ReactivateUser.setOnClickListener(new MenuClickListerenr(userNames, displayName));
-                llMemberAction_DeactivateUser.setOnClickListener(new MenuClickListerenr(userNames, displayName));
-                llMemberAction_ViewProfile.setOnClickListener(new MenuClickListerenr(userNames, displayName));
-                llMemberAction_EditProfile.setOnClickListener(new MenuClickListerenr(userNames, displayName));
-                llMemberAction_Message.setOnClickListener(new MenuClickListerenr(userNames, displayName));
+                llMemberAction_MakeSuperAdmin.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
+                llMemberAction_RemoveSuperAdmin.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
+                llMemberAction_ReactivateUser.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
+                llMemberAction_DeactivateUser.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
+                llMemberAction_ViewProfile.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
+                llMemberAction_EditProfile.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
+                llMemberAction_Message.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
 
                 // Check Cursor Values and show / Hide view accordingly
                 {
+
+                    if (isSuperAdmin(contentType)) {
+                        llMemberAction_MakeSuperAdmin.setVisibility(View.GONE);
+                        llMemberAction_RemoveSuperAdmin.setVisibility(View.VISIBLE);
+                    } else {
+                        llMemberAction_MakeSuperAdmin.setVisibility(View.VISIBLE);
+                        llMemberAction_RemoveSuperAdmin.setVisibility(View.GONE);
+                    }
 
                     if (screenType == Constants.MEMBER_DELETE) {
                         if (!SharedPrefManager.getInstance().isUserExistence(userNames)) {
@@ -706,10 +817,12 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
         String displayName;
         String userNames;
+        String contentType;
 
-        public MenuClickListerenr(String userNames, String displayName) {
+        public MenuClickListerenr(String userNames, String displayName, String contentType) {
             this.userNames = userNames;
             this.displayName = displayName;
+            this.contentType = contentType;
         }
 
         @Override
@@ -720,12 +833,9 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
             }
             int id = v.getId();
             switch (id) {
-                case R.id.llMemberAction_MakeSuperAdmin: {
-                    objToast.makeToast(activity, "Make Super Admin Clicked", UtilGlobal.MODE_DEVELOPMENT);
-                    break;
-                }
+                case R.id.llMemberAction_MakeSuperAdmin:
                 case R.id.llMemberAction_RemoveSuperAdmin: {
-                    objToast.makeToast(activity, "Remove Super Admin Clicked", UtilGlobal.MODE_DEVELOPMENT);
+                    makeRemoveSuperAdmin(userNames, displayName, contentType);
                     break;
                 }
                 case R.id.llMemberAction_ReactivateUser:

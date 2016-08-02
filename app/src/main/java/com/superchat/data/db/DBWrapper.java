@@ -1,10 +1,11 @@
 package com.superchat.data.db;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 
-import com.chat.sdk.db.ChatDBConstants;
 import com.chat.sdk.db.ChatDBWrapper;
 import com.chatsdk.org.jivesoftware.smack.packet.Message;
 import com.google.gson.Gson;
@@ -13,11 +14,9 @@ import com.superchat.model.LoginResponseModel.UserResponseDetail;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 // Referenced classes of package com.vopium.data.db:
 //            PhoenixDatabaseHelper
@@ -988,35 +987,68 @@ private String convertStringArrayToString1(List<String> strList) {
 		}
 		return cursor;
 	}
+
 	public Cursor getEsiaContacts(ArrayList<String> previousUsers){
 		Cursor cursor = null;
 		String tags = "";
 		String sql = "";
 		try {
-			String colmsOfContactNumbers = DatabaseConstants._ID+", "+DatabaseConstants.NAME_CONTACT_ID_FIELD+", "+DatabaseConstants.CONTACT_NUMBERS_FIELD+", "+DatabaseConstants.CONTACT_NAMES_FIELD+", "+DatabaseConstants.CONTACT_COMPOSITE_FIELD+", "+DatabaseConstants.VOPIUM_FIELD+", "+DatabaseConstants.USER_NAME_FIELD+", "+DatabaseConstants.IS_FAVOURITE_FIELD;
+			String colmsOfContactNumbers = DatabaseConstants._ID+", "+DatabaseConstants.NAME_CONTACT_ID_FIELD+", "+DatabaseConstants.CONTACT_NUMBERS_FIELD+", "+DatabaseConstants.CONTACT_NAMES_FIELD+", "+DatabaseConstants.CONTACT_COMPOSITE_FIELD+", "+DatabaseConstants.VOPIUM_FIELD+", "+DatabaseConstants.USER_NAME_FIELD+", "+DatabaseConstants.IS_FAVOURITE_FIELD+", "+DatabaseConstants.CONTACT_TYPE_FIELD;
 			String colmsOfContactEmails = DatabaseConstants._ID+", "+DatabaseConstants.NAME_CONTACT_ID_FIELD+", "+DatabaseConstants.PHONE_EMAILS_FIELD+", "+DatabaseConstants.CONTACT_NAMES_FIELD+", "+DatabaseConstants.CONTACT_COMPOSITE_FIELD+", "+DatabaseConstants.VOPIUM_FIELD+", "+DatabaseConstants.USER_NAME_FIELD+", "+DatabaseConstants.IS_FAVOURITE_FIELD;
 			if(previousUsers!=null && !previousUsers.isEmpty()){
-		       tags = convertStringArrayToString(previousUsers);
-		 sql = "SELECT "+colmsOfContactNumbers + " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS
-				+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+ DatabaseConstants.USER_NAME_FIELD + " NOT IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' UNION "+
-				 "SELECT " +colmsOfContactEmails+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_EMAILS
-				+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+ DatabaseConstants.USER_NAME_FIELD + " NOT IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
+				tags = convertStringArrayToString(previousUsers);
+				sql = "SELECT "+colmsOfContactNumbers + " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS
+						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+ DatabaseConstants.USER_NAME_FIELD + " NOT IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' UNION "+
+						"SELECT " +colmsOfContactEmails+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_EMAILS
+						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+ DatabaseConstants.USER_NAME_FIELD + " NOT IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
 						+ DatabaseConstants.CONTACT_NAMES_FIELD
 						+ " COLLATE NOCASE";
 			}else{
-				 sql = "SELECT " +colmsOfContactNumbers+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS
-					+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' UNION "+"SELECT " +colmsOfContactEmails+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_EMAILS
-					+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
-							+ DatabaseConstants.CONTACT_NAMES_FIELD
-							+ " COLLATE NOCASE";
-				 }
-		cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
+				sql = "SELECT " +colmsOfContactNumbers+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS
+						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' UNION "+"SELECT " +colmsOfContactEmails+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_EMAILS
+						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
+						+ DatabaseConstants.CONTACT_NAMES_FIELD
+						+ " COLLATE NOCASE";
+			}
+			cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
 		} catch (Exception e) {
 			Log.e("DBWrapper",
 					"Exception in updateSeenStatus method " + e.toString());
 		}
 		return cursor;
 	}
+
+	/**
+	 * Munish Code
+	 * @param previousUsers
+	 * @return
+     */
+	public Cursor getEsiaContactsNew(ArrayList<String> previousUsers){
+		Cursor cursor = null;
+		String tags = "";
+		String sql = "";
+		try {
+			String colmsOfContactNumbers = DatabaseConstants._ID+", "+DatabaseConstants.NAME_CONTACT_ID_FIELD+", "+DatabaseConstants.CONTACT_NUMBERS_FIELD+", "+DatabaseConstants.CONTACT_NAMES_FIELD+", "+DatabaseConstants.CONTACT_COMPOSITE_FIELD+", "+DatabaseConstants.VOPIUM_FIELD+", "+DatabaseConstants.USER_NAME_FIELD+", "+DatabaseConstants.IS_FAVOURITE_FIELD+", "+DatabaseConstants.CONTACT_TYPE_FIELD;
+			if(previousUsers!=null && !previousUsers.isEmpty()){
+				tags = convertStringArrayToString(previousUsers);
+				sql = "SELECT "+colmsOfContactNumbers + " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS
+						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+ DatabaseConstants.USER_NAME_FIELD + " NOT IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
+						+ DatabaseConstants.CONTACT_NAMES_FIELD
+						+ " COLLATE NOCASE";
+			}else{
+				sql = "SELECT " +colmsOfContactNumbers+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS
+						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
+						+ DatabaseConstants.CONTACT_NAMES_FIELD
+						+ " COLLATE NOCASE";
+			}
+			cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
+		} catch (Exception e) {
+			Log.e("DBWrapper",
+					"Exception in updateSeenStatus method " + e.toString());
+		}
+		return cursor;
+	}
+
 	public ArrayList<String> getAllFilteredUsersForSG(ArrayList<String> previousUsers){
 		Cursor cursor = null;
 		String tags = "";
@@ -1063,30 +1095,64 @@ private String convertStringArrayToString1(List<String> strList) {
 		if(previousUsers == null)
 			previousUsers = new ArrayList<String>();
 		try {
-			String colmsOfContactNumbers = DatabaseConstants._ID+", "+DatabaseConstants.NAME_CONTACT_ID_FIELD+", "+DatabaseConstants.CONTACT_NUMBERS_FIELD+", "+DatabaseConstants.CONTACT_NAMES_FIELD+", "+DatabaseConstants.CONTACT_COMPOSITE_FIELD+", "+DatabaseConstants.VOPIUM_FIELD+", "+DatabaseConstants.USER_NAME_FIELD+", "+DatabaseConstants.IS_FAVOURITE_FIELD;
+			String colmsOfContactNumbers = DatabaseConstants._ID+", "+DatabaseConstants.NAME_CONTACT_ID_FIELD+", "+DatabaseConstants.CONTACT_NUMBERS_FIELD+", "+DatabaseConstants.CONTACT_NAMES_FIELD+", "+DatabaseConstants.CONTACT_COMPOSITE_FIELD+", "+DatabaseConstants.VOPIUM_FIELD+", "+DatabaseConstants.USER_NAME_FIELD+", "+DatabaseConstants.IS_FAVOURITE_FIELD+", "+DatabaseConstants.CONTACT_TYPE_FIELD;
 			String colmsOfContactEmails = DatabaseConstants._ID+", "+DatabaseConstants.NAME_CONTACT_ID_FIELD+", "+DatabaseConstants.PHONE_EMAILS_FIELD+", "+DatabaseConstants.CONTACT_NAMES_FIELD+", "+DatabaseConstants.CONTACT_COMPOSITE_FIELD+", "+DatabaseConstants.VOPIUM_FIELD+", "+DatabaseConstants.USER_NAME_FIELD+", "+DatabaseConstants.IS_FAVOURITE_FIELD;
 			if(previousUsers!=null && !previousUsers.isEmpty()){
-		       tags = convertStringArrayToString(previousUsers);
-		 sql = "SELECT "+colmsOfContactNumbers + " FROM " + DatabaseConstants.TABLE_NAME_ALL_CONTACT_NUMBERS
-				+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND " + DatabaseConstants.CONTACT_COMPOSITE_FIELD + "!='9999999999'" + " AND " + DatabaseConstants.USER_NAME_FIELD + " NOT IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' UNION "+
-				 "SELECT " +colmsOfContactEmails+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_EMAILS
-				+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+ DatabaseConstants.USER_NAME_FIELD + " NOT IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
+				tags = convertStringArrayToString(previousUsers);
+				sql = "SELECT "+colmsOfContactNumbers + " FROM " + DatabaseConstants.TABLE_NAME_ALL_CONTACT_NUMBERS
+						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND " + DatabaseConstants.CONTACT_COMPOSITE_FIELD + "!='9999999999'" + " AND " + DatabaseConstants.USER_NAME_FIELD + " NOT IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' UNION "+
+						"SELECT " +colmsOfContactEmails+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_EMAILS
+						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+ DatabaseConstants.USER_NAME_FIELD + " NOT IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
 						+ DatabaseConstants.CONTACT_NAMES_FIELD
 						+ " COLLATE NOCASE";
 			}else{
-				 sql = "SELECT " +colmsOfContactNumbers+ " FROM " + DatabaseConstants.TABLE_NAME_ALL_CONTACT_NUMBERS
-					+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND " + DatabaseConstants.CONTACT_COMPOSITE_FIELD + "!='9999999999'" + " AND " +DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' UNION "+"SELECT " +colmsOfContactEmails+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_EMAILS
-					+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
-							+ DatabaseConstants.CONTACT_NAMES_FIELD
-							+ " COLLATE NOCASE";
-				 }
-		cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
+				sql = "SELECT " +colmsOfContactNumbers+ " FROM " + DatabaseConstants.TABLE_NAME_ALL_CONTACT_NUMBERS
+						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND " + DatabaseConstants.CONTACT_COMPOSITE_FIELD + "!='9999999999'" + " AND " +DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' UNION "+"SELECT " +colmsOfContactEmails+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_EMAILS
+						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
+						+ DatabaseConstants.CONTACT_NAMES_FIELD
+						+ " COLLATE NOCASE";
+			}
+			cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
 		} catch (Exception e) {
 			Log.e("DBWrapper",
 					"Exception in updateSeenStatus method " + e.toString());
 		}
-	  return cursor;
+		return cursor;
 	}
+
+	/**
+	 * Munish Code
+	 * @param previousUsers
+	 * @return
+     */
+	public Cursor getCursorForFilteredUsersForSGNew(ArrayList<String> previousUsers){
+		Cursor cursor = null;
+		String tags = "";
+		String sql = "";
+		if(previousUsers == null)
+			previousUsers = new ArrayList<String>();
+		try {
+			String colmsOfContactNumbers = DatabaseConstants._ID+", "+DatabaseConstants.NAME_CONTACT_ID_FIELD+", "+DatabaseConstants.CONTACT_NUMBERS_FIELD+", "+DatabaseConstants.CONTACT_NAMES_FIELD+", "+DatabaseConstants.CONTACT_COMPOSITE_FIELD+", "+DatabaseConstants.VOPIUM_FIELD+", "+DatabaseConstants.USER_NAME_FIELD+", "+DatabaseConstants.IS_FAVOURITE_FIELD+", "+DatabaseConstants.CONTACT_TYPE_FIELD;
+			if(previousUsers!=null && !previousUsers.isEmpty()){
+				tags = convertStringArrayToString(previousUsers);
+				sql = "SELECT "+colmsOfContactNumbers + " FROM " + DatabaseConstants.TABLE_NAME_ALL_CONTACT_NUMBERS
+						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND " + DatabaseConstants.CONTACT_COMPOSITE_FIELD + "!='9999999999'" + " AND " + DatabaseConstants.USER_NAME_FIELD + " NOT IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
+						+ DatabaseConstants.CONTACT_NAMES_FIELD
+						+ " COLLATE NOCASE";
+			}else{
+				sql = "SELECT " +colmsOfContactNumbers+ " FROM " + DatabaseConstants.TABLE_NAME_ALL_CONTACT_NUMBERS
+						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND " + DatabaseConstants.CONTACT_COMPOSITE_FIELD + "!='9999999999'" + " AND " +DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
+						+ DatabaseConstants.CONTACT_NAMES_FIELD
+						+ " COLLATE NOCASE";
+			}
+			cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
+		} catch (Exception e) {
+			Log.e("DBWrapper",
+					"Exception in updateSeenStatus method " + e.toString());
+		}
+		return cursor;
+	}
+
 	public ArrayList<String> getAllUsers(ArrayList<String> previousUsers){
 		Cursor cursor = null;
 		String tags = "";

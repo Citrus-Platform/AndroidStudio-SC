@@ -14,8 +14,8 @@ import com.superchat.interfaces.interfaceInstances;
  */
 public class UtilGlobal implements interfaceInstances {
 
-    private static boolean isDEVELOPMENT = false;
-    private static boolean isTESTING = false;
+    private static boolean isDEVELOPMENT = true;
+    private static boolean isTESTING = true;
     private static boolean isRELEASE = true;
 
     public static String MODE_DEVELOPMENT = "Development";
