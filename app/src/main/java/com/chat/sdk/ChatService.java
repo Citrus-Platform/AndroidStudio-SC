@@ -1234,8 +1234,10 @@ public class ChatService extends Service{
 						return;
 					}else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeMakeSGSubAdmin.ordinal()){
                         prefManager.setAsDomainSubAdmin(true);
+						return;
                     }else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeRemoveSGSubAdmin.ordinal()){
                         prefManager.setAsDomainSubAdmin(false);
+						return;
                     }else if(xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeDeactivateUser.ordinal()){
 						Log.d(TAG, "atMeXmppMessageTypeDeactivateUser: User deactivated.");
 						String captionTag  = message.getMediaTagMessage();

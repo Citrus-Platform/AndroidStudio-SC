@@ -1,30 +1,5 @@
 package com.superchat.ui;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
-
-import com.chat.sdk.ChatCountListener;
-import com.chat.sdk.ChatService;
-import com.chat.sdk.ConnectionStatusListener;
-import com.chat.sdk.ProfileUpdateListener;
-import com.chat.sdk.db.ChatDBWrapper;
-import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
-import com.chatsdk.org.jivesoftware.smack.packet.Message.SeenState;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.data.db.DBWrapper;
-import com.superchat.data.db.DatabaseConstants;
-import com.superchat.utils.BitmapDownloader;
-import com.superchat.utils.Constants;
-import com.superchat.utils.Log;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.widgets.BulletinScreenAdapter;
-import com.superchat.widgets.RoundedImageView;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -37,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -60,6 +34,31 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.chat.sdk.ChatCountListener;
+import com.chat.sdk.ChatService;
+import com.chat.sdk.ConnectionStatusListener;
+import com.chat.sdk.ProfileUpdateListener;
+import com.chat.sdk.db.ChatDBWrapper;
+import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
+import com.chatsdk.org.jivesoftware.smack.packet.Message.SeenState;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.data.db.DBWrapper;
+import com.superchat.data.db.DatabaseConstants;
+import com.superchat.utils.BitmapDownloader;
+import com.superchat.utils.Constants;
+import com.superchat.utils.Log;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.widgets.BulletinScreenAdapter;
+import com.superchat.widgets.RoundedImageView;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
 
 public class BulletinScreen extends ListFragment  implements ChatCountListener,ConnectionStatusListener, ProfileUpdateListener, OnClickListener{//,TypingListener {
 	public static final String TAG = "BulletinScreen";
@@ -335,7 +334,7 @@ public class BulletinScreen extends ListFragment  implements ChatCountListener,C
 	     }
 	     protected String doInBackground(String... args) {
 	    	 ChatDBWrapper wraper = ChatDBWrapper.getInstance(SuperChatApplication.context);
-	    	 if(SharedPrefManager.getInstance().isDomainAdmin()){
+	    	 if(SharedPrefManager.getInstance().isDomainAdminORSubAdmin()){
 	    		 cursor = wraper.getBulletinList(BULLETIN_ADMIN);
 	    		 if(cursor!=null && cursor.getCount() == 0){
 	    			 saveMessage(bulletinDomainName, bulletinDomainName, getString(R.string.bulleting_welcome1) + SharedPrefManager.getInstance().getUserDomain() + "'s" + getString(R.string.bulleting_welcome2));
@@ -440,7 +439,7 @@ public class BulletinScreen extends ListFragment  implements ChatCountListener,C
 	private final Handler notifyActivityCreatedHandler = new Handler() {
 	    public void handleMessage(android.os.Message msg) {
 			ChatDBWrapper wraper = ChatDBWrapper.getInstance(SuperChatApplication.context);
-			if(SharedPrefManager.getInstance().isDomainAdmin())
+			if(SharedPrefManager.getInstance().isDomainAdminORSubAdmin())
 				cursor = wraper.getBulletinList(BULLETIN_ADMIN);
 			else
 				cursor = wraper.getBulletinList(BULLETIN_MEMBER);
@@ -672,7 +671,7 @@ private void onNotifiUI(){
 					xmppStatusView.setImageResource(R.drawable.red_dot);
 					}
 					Cursor cursor1 = null;
-					if(SharedPrefManager.getInstance().isDomainAdmin())
+					if(SharedPrefManager.getInstance().isDomainAdminORSubAdmin())
 						cursor1 = ChatDBWrapper.getInstance().getBulletinList(BULLETIN_ADMIN);
 					else
 						cursor1 = ChatDBWrapper.getInstance().getBulletinList(BULLETIN_MEMBER);
@@ -707,7 +706,7 @@ private void onNotifiUI(){
 	    public void handleMessage(android.os.Message msg) {
 	    	if(onForeground && adapter!=null){
 				Cursor cursor1 = null;
-				if(SharedPrefManager.getInstance().isDomainAdmin())
+				if(SharedPrefManager.getInstance().isDomainAdminORSubAdmin())
 					cursor1 = ChatDBWrapper.getInstance().getBulletinList(BULLETIN_ADMIN);
 				else
 					cursor1 = ChatDBWrapper.getInstance().getBulletinList(BULLETIN_MEMBER);

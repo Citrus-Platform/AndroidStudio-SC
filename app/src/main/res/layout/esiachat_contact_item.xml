@@ -50,7 +50,7 @@
             android:lines="1"
             android:maxLines="1"
             android:text="@string/i_am_on_superchat"
-            android:textColor="@color/text_color_grayblack"
+            android:textColor="@color/blue"
             android:textSize="13.0sp" />
     </LinearLayout>
 

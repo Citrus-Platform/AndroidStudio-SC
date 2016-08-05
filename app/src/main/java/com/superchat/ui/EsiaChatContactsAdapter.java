@@ -105,8 +105,9 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
     BubbleLayout bubbleLayout;
     PopupWindow popupWindow;
 
-    public EsiaChatContactsAdapter(Context context1, int i, Cursor cursor, String as[], int ai[], int j, int screenType) {
+    public EsiaChatContactsAdapter(Activity activity, Context context1, int i, Cursor cursor, String as[], int ai[], int j, int screenType) {
         super(context1, i, cursor, as, ai, j);
+        this.activity = activity;
         context = context1;
         this.screenType = screenType;
         layout = i;
@@ -721,7 +722,6 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
     private void AddRemoveSuperAdmin(final String userNames, final String contentType){
         try{
-
             final ProgressDialog progressDialog = ProgressDialog.show(context, "", "Loading. Please wait...", true);
 
             UserAdminRequest objUserAdmin = new UserAdminRequest();
@@ -749,8 +749,24 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
                         if(isSuperAdmin){
                             hmAdmins.remove(userNames);
+                            try {
+                                EsiaChatContactsScreen parentActivity = ((EsiaChatContactsScreen) activity);
+                                if (parentActivity != null && parentActivity != null) {
+                                    parentActivity.addRemoveAdmin(userNames, false);
+                                }
+                            } catch(Exception e){
+
+                            }
                         } else {
                             hmAdmins.put(userNames, null);
+                            try {
+                                EsiaChatContactsScreen parentActivity = ((EsiaChatContactsScreen) activity);
+                                if (parentActivity != null && parentActivity != null) {
+                                    parentActivity.addRemoveAdmin(userNames, true);
+                                }
+                            } catch(Exception e){
+
+                            }
                             objToast.makeToast(context, "Member has been promoted as SuperAdmin", UtilGlobal.MODE_RELEASE);
                         }
                     } else {
@@ -878,13 +894,14 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
                         }
                     } else if(isDomainSubAdmin){
 
+                        llMemberAction_MakeSuperAdmin.setVisibility(View.GONE);
+                        llMemberAction_RemoveSuperAdmin.setVisibility(View.GONE);
+
                         boolean isCurrentUserSuperOrSubAdmin = (isCurrentUserAdmin || isCurrentUserSubAdmin);
 
                         if(isCurrentUserSuperOrSubAdmin){
                             llMemberAction_ReactivateUser.setVisibility(View.GONE);
                             llMemberAction_DeactivateUser.setVisibility(View.GONE);
-                            llMemberAction_MakeSuperAdmin.setVisibility(View.GONE);
-                            llMemberAction_RemoveSuperAdmin.setVisibility(View.GONE);
                             llMemberAction_EditProfile.setVisibility(View.GONE);
                         } else {
 

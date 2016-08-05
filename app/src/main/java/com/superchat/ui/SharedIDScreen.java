@@ -1,22 +1,5 @@
 package com.superchat.ui;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import com.chat.sdk.ChatService;
-import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.model.LoginResponseModel;
-import com.superchat.utils.Constants;
-import com.superchat.utils.Log;
-import com.superchat.utils.SharedPrefManager;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -46,6 +29,22 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
+
+import com.chat.sdk.ChatService;
+import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.model.LoginResponseModel;
+import com.superchat.utils.Constants;
+import com.superchat.utils.Log;
+import com.superchat.utils.SharedPrefManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class SharedIDScreen extends Activity implements OnClickListener{//, OnMenuItemClickListener{
 	public static final String TAG = "PublicGroupScreen";
@@ -125,7 +124,7 @@ public class SharedIDScreen extends Activity implements OnClickListener{//, OnMe
 //		}
 		
 		createGroup = (RelativeLayout) findViewById(R.id.id_create_gp_layout);
-		if(SharedPrefManager.getInstance().isDomainAdmin())
+		if(SharedPrefManager.getInstance().isDomainAdmin() || SharedPrefManager.getInstance().isDomainSubAdmin())
 			createGroup.setVisibility(View.VISIBLE);
 		else
 			createGroup.setVisibility(View.GONE);

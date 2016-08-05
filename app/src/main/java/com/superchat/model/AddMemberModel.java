@@ -1,15 +1,10 @@
 package com.superchat.model;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import com.google.gson.annotations.SerializedName;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
 public class AddMemberModel implements Serializable {
 public static final String TAG = "AddMemberModel";
@@ -55,6 +50,9 @@ public static final String TAG = "AddMemberModel";
 
 		@SerializedName("broadcastCsv")
 		public String broadcastCsv;
+
+		@SerializedName("makeSubAdmin")
+		public boolean makeSubAdmin = false;
 
 	}
 

@@ -470,7 +470,9 @@
     <string name="welcome_additionla_text">Join a SuperGroup</string>
     <string name="welcome_connecting_text">For groups within your group.\nConnecting teams, organizations, social groups of all sizes.</string>
     <string name="welcome_supergroups_text">Welcome to SuperChat’s SuperGroups</string>
-    <string name="terms_and_condtions">You agree to our <a href="link">Privacy Policy</a> and <a href="link">Terms.</a></string>
+ <string name="terms_and_condtions">You agree to our <a href="link">Privacy Policy</a> and <a href="link">Terms.</a></string>
+
+ <string name="makeAsSuperAdmin">Make as Super Admin</string>
     <string name="terms_condition">Terms &amp; conditions</string>
     <string name="domain_reg2">Now, tell us about your SuperGroup</string>
     <string name="domain_selection_label">Select a name for your SuperGroup</string>

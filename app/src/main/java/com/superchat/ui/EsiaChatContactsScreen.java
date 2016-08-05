@@ -443,7 +443,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
             } else
                 cursor = DBWrapper.getInstance().getEsiaContactsNew(previousUsersList);
 
-            adapter = new EsiaChatContactsAdapter(EsiaChatContactsScreen.this, R.layout.esiachat_contact_item, cursor, as, ai, 0, screenType);
+            adapter = new EsiaChatContactsAdapter(EsiaChatContactsScreen.this, EsiaChatContactsScreen.this, R.layout.esiachat_contact_item, cursor, as, ai, 0, screenType);
             if (screenType == Constants.GROUP_USER_CHAT_CREATE) {
                 titleView.setText(getString(R.string.manage_members));
                 adapter.setEditableContact(true);
@@ -1030,6 +1030,16 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                 return;
         }
 
+    }
+
+    public void addRemoveAdmin(String userName, boolean isAdded){
+        if(service != null) {
+            if (isAdded) {
+                service.sendSGSubAdminAddRemove(userName, XMPPMessageType.atMeXmppMessageTypeMakeSGSubAdmin);
+            } else {
+                service.sendSGSubAdminAddRemove(userName, XMPPMessageType.atMeXmppMessageTypeRemoveSGSubAdmin);
+            }
+        }
     }
 
     private class AsyncCreateTask extends AsyncTask<String, Void, String> {

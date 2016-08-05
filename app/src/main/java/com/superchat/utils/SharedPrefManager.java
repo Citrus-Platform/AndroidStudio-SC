@@ -287,6 +287,11 @@ public class SharedPrefManager {
 	public boolean isDomainSubAdmin(){
 		return pref.getBoolean(DOMAIN_SUB_ADMIN, false);
 	}
+
+	public boolean isDomainAdminORSubAdmin(){
+		return isDomainAdmin() || isDomainSubAdmin();
+	}
+
 	public void setAsDomainSubAdmin(boolean flag){
 		editor.putBoolean(DOMAIN_SUB_ADMIN, flag);
 		editor.commit();

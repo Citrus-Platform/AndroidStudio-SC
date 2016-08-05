@@ -2784,8 +2784,11 @@ public void onComposeClick(View view){
 			 if(contactMenuLayout.isSelected()){
 				 if(iPrefManager.isDomainAdmin()){
 					 popup.getMenu().add(0,2,0,getResources().getString(R.string.create_broadcast_list));
-				 	popup.getMenu().add(0,3,0,getResources().getString(R.string.invite_member));
-			 	}else if(SharedPrefManager.getInstance().isOpenDomain()){
+					 popup.getMenu().add(0,3,0,getResources().getString(R.string.invite_member));
+				 } else if(iPrefManager.isDomainSubAdmin()){
+					 popup.getMenu().add(0,2,0,getResources().getString(R.string.create_broadcast_list));
+					 popup.getMenu().add(0,3,0,getResources().getString(R.string.invite_member));
+				 }else if(SharedPrefManager.getInstance().isOpenDomain()){
 //			 		popup.getMenu().add(0,3,0,getResources().getString(R.string.invite_member));
 			 	}
 			 }
