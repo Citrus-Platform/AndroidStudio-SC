@@ -14,10 +14,10 @@ public interface RetrofitInterface {
 
     String PREFIX_URL = "/tiger/rest/";
 
-    @POST(PREFIX_URL + "/user/makeadmin/")
+    @POST(PREFIX_URL + "/user/makesubadmin/")
     Call<UserAdminResponse> makeAdmin(@Body UserAdminRequest requestObject);
 
-    @POST(PREFIX_URL + "/user/removeadmin/")
+    @POST(PREFIX_URL + "/user/removesubadmin /")
     Call<UserAdminResponse> removeAdmin(@Body UserAdminRequest requestObject);
 
 }

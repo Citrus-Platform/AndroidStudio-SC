@@ -57,6 +57,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     
-    <dimen name="header_height">50dip</dimen> 
+    <dimen name="header_height">50dip</dimen>
 
+    <dimen name="EsiaChat_OverFlowTextSize">17dp</dimen>
+    <dimen name="EsiaChat_OverFlowTextMargin">10dp</dimen>
 </resources>

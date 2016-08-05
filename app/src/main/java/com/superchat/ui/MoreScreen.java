@@ -1,29 +1,12 @@
 package com.superchat.ui;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.net.ssl.HttpsURLConnection;
-
-import com.chat.sdk.ChatService;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.utils.Constants;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.utils.Utilities;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -33,25 +16,34 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.chat.sdk.ChatService;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.utils.Constants;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.Utilities;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class MoreScreen extends Activity implements OnClickListener {
 
@@ -99,7 +91,7 @@ public class MoreScreen extends Activity implements OnClickListener {
 		sharedPrefManager = SharedPrefManager.getInstance();
 		myNameView.setText(sharedPrefManager.getDisplayName());
 		aboutSuperGroupView.setText("About "+sharedPrefManager.getUserDomain());
-		if(sharedPrefManager.isDomainAdmin()){
+		if(sharedPrefManager.isDomainAdmin() || sharedPrefManager.isDomainSubAdmin()){
 //			memberStatsLayout = (RelativeLayout)findViewById(R.id.id_member_stats_layout);
 			advancedSettings = (RelativeLayout)findViewById(R.id.id_advanced_settings);
 			memberManageLayout = (RelativeLayout)findViewById(R.id.id_manage_members_layout);

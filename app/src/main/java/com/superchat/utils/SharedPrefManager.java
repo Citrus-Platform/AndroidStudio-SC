@@ -1,15 +1,15 @@
 package com.superchat.utils;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+
+import com.superchat.SuperChatApplication;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.superchat.SuperChatApplication;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 
 public class SharedPrefManager {
 
@@ -104,6 +104,7 @@ public class SharedPrefManager {
 	private final String ALL_RECENT_USERS = "all_recent_users";
 	private final String ALL_RECENT_DOMAINS = "all_recent_domains";
 	private final String DOMAIN_ADMIN = "domain_admin";
+	private final String DOMAIN_SUB_ADMIN = "domain_sub_admin";
 	private final String SHARED_ID_CONTACT = "shared_id_contact";
 	private final String PUBLIC_DOMAIN_ADMIN = "public_domain_admin";
 	private final String DOMAIN_JOINED_COUNTS = "domain_joined_count";
@@ -279,9 +280,18 @@ public class SharedPrefManager {
 	public boolean isOpenDomain(){
 		return pref.getBoolean(PUBLIC_DOMAIN_ADMIN, false);
 	}
+
 	public boolean isDomainAdmin(){
 		return pref.getBoolean(DOMAIN_ADMIN, false);
 	}
+	public boolean isDomainSubAdmin(){
+		return pref.getBoolean(DOMAIN_SUB_ADMIN, false);
+	}
+	public void setAsDomainSubAdmin(boolean flag){
+		editor.putBoolean(DOMAIN_SUB_ADMIN, flag);
+		editor.commit();
+	}
+
 	public boolean isContactSynched(){
 		return pref.getBoolean(CONTACT_SYNCHED, false);
 	}

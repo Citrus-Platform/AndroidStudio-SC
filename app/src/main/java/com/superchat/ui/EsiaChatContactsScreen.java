@@ -1844,7 +1844,9 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
         protected String doInBackground(String... params) {
             // TODO Auto-generated method stub
             DefaultHttpClient client1 = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(Constants.SERVER_URL + "/tiger/rest/user/directory?domainName=" + domain_name + "&type=all" + "&pg=1&limit=1000");
+
+            String URL = Constants.SERVER_URL + "/tiger/rest/user/directory?domainName=" + domain_name + "&type=all" + "&pg=1&limit=1000";
+            HttpPost httpPost = new HttpPost(URL);
 //				 HttpParams httpParameters = new BasicHttpParams();
 //				// Set the timeout in milliseconds until a connection is established.
 //				// The default value is zero, that means the timeout is not used. 
@@ -1904,6 +1906,10 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                                             contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, userDetail.name);
 
                                         contentvalues.put(DatabaseConstants.CONTACT_TYPE_FIELD, userDetail.type);
+
+                                        String activationDate = userDetail.activationDate == null ? "" : userDetail.activationDate;
+
+                                        //contentvalues.put(DatabaseConstants.USER_ACTIVATION_DATE, activationDate);
                                         contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD, Integer.valueOf(0));
                                         contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
                                         contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");

@@ -1,67 +1,6 @@
 package com.superchat.ui;
 
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.net.ssl.HttpsURLConnection;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.chat.sdk.ChatService;
-import com.chat.sdk.db.ChatDBConstants;
-import com.chat.sdk.db.ChatDBWrapper;
-import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.sinch.android.rtc.SinchError;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.data.db.DBWrapper;
-import com.superchat.data.db.DatabaseConstants;
-import com.superchat.model.ContactUpDatedModel;
-import com.superchat.model.ContactUploadModel;
-import com.superchat.model.ErrorModel;
-import com.superchat.model.LoginModel;
-import com.superchat.model.LoginResponseModel;
-import com.superchat.model.LoginResponseModel.BroadcastGroupDetail;
-import com.superchat.model.LoginResponseModel.GroupDetail;
-import com.superchat.model.LoginResponseModel.UserResponseDetail;
-import com.superchat.utils.Constants;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.widgets.MyriadRegularTextView;
-
 import android.animation.ObjectAnimator;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -105,6 +44,66 @@ import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.chat.sdk.ChatService;
+import com.chat.sdk.db.ChatDBWrapper;
+import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.sinch.android.rtc.SinchError;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.data.db.DBWrapper;
+import com.superchat.data.db.DatabaseConstants;
+import com.superchat.model.ContactUpDatedModel;
+import com.superchat.model.ContactUploadModel;
+import com.superchat.model.ErrorModel;
+import com.superchat.model.LoginModel;
+import com.superchat.model.LoginResponseModel;
+import com.superchat.model.LoginResponseModel.BroadcastGroupDetail;
+import com.superchat.model.LoginResponseModel.GroupDetail;
+import com.superchat.model.LoginResponseModel.UserResponseDetail;
+import com.superchat.utils.Constants;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.widgets.MyriadRegularTextView;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.net.ssl.HttpsURLConnection;
 
 //import com.viewpagerindicator.TabPageIndicator;
 //import com.viewpagerindicator.TitlePageIndicator;
@@ -728,7 +727,13 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 										sharedPrefManager.saveDomainJoinedCount(loginObj.joinedUserCount);
 										if(loginObj.unJoinedUserCount!=null && !loginObj.unJoinedUserCount.equals(""))
 											sharedPrefManager.saveDomainUnjoinedCount(loginObj.unJoinedUserCount);
-									}else
+									}else if(loginObj.type!=null && loginObj.type.equals("domainSubAdmin")){
+										sharedPrefManager.setAsDomainSubAdmin(true);
+										if(loginObj.joinedUserCount!=null && !loginObj.joinedUserCount.equals(""))
+											sharedPrefManager.saveDomainJoinedCount(loginObj.joinedUserCount);
+										if(loginObj.unJoinedUserCount!=null && !loginObj.unJoinedUserCount.equals(""))
+											sharedPrefManager.saveDomainUnjoinedCount(loginObj.unJoinedUserCount);
+									} else
 										sharedPrefManager.setAsDomainAdmin(false);
 									
 									if(loginObj.directoryUserSet!=null){

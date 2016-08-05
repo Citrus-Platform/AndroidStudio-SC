@@ -78,6 +78,13 @@ import retrofit2.Response;
 
 public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements interfaceInstances {
     public final static String TAG = "EsiaChatContactsAdapter";
+
+
+    private static final String KEY_SUPER_ADMIN = "domainAdmin";
+    private static final String KEY_SUPER_SUB_ADMIN = "domainSubAdmin";
+
+    SharedPrefManager prefManager = SharedPrefManager.getInstance();
+
     Activity activity;
     Context context;
     int layout;
@@ -87,6 +94,8 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
     int screenType;
     private static HashMap<String, Boolean> checkedTagMap = new HashMap<String, Boolean>();
     ArrayList<String> selectedUserList = new ArrayList<String>();
+    private HashMap<String, String> hmAdmins = new HashMap<>();
+
     public int totalChecked;
 
     /**
@@ -98,7 +107,6 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
     public EsiaChatContactsAdapter(Context context1, int i, Cursor cursor, String as[], int ai[], int j, int screenType) {
         super(context1, i, cursor, as, ai, j);
-        this.activity = activity;
         context = context1;
         this.screenType = screenType;
         layout = i;
@@ -158,7 +166,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
     public void bindView(View view, Context context1, Cursor cursor) {
         super.bindView(view, context1, cursor);
-        ViewHolder viewholder = (ViewHolder) view.getTag();
+        final ViewHolder viewholder = (ViewHolder) view.getTag();
 
         viewholder.userNames = cursor.getString(cursor.getColumnIndex(DatabaseConstants.USER_NAME_FIELD));
         String s = cursor.getString(cursor.getColumnIndex(DatabaseConstants.NAME_CONTACT_ID_FIELD));
@@ -167,10 +175,15 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
         viewholder.voipumValue = cursor.getString(cursor.getColumnIndex(DatabaseConstants.VOPIUM_FIELD));
         String s2 = cursor.getString(cursor.getColumnIndex(DatabaseConstants.IS_FAVOURITE_FIELD));
         String compositeNumber = cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_COMPOSITE_FIELD));
+        //viewholder.activationDate = cursor.getString(cursor.getColumnIndex(DatabaseConstants.USER_ACTIVATION_DATE));
         viewholder.displayNameView.setText(viewholder.displayName);
+
+        // Necessary to call because it populates HashMap which contains
+        populateHMIfSuperSubAdmin(viewholder.userNames, viewholder.contentType);
+
         if (screenType == Constants.MEMBER_DELETE) {
             viewholder.iCheckBox.setVisibility(View.GONE);
-
+            viewholder.ivOverFlowMenuMembers.setVisibility(View.VISIBLE);
             /*{
                 viewholder.removeMemberView.setVisibility(View.VISIBLE);
                 if (!SharedPrefManager.getInstance().isUserExistence(viewholder.userNames))
@@ -205,13 +218,39 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
         }
         viewholder.imageDefault.setTag(viewholder.userNames);
         setProfilePic(viewholder.image, viewholder.imageDefault, viewholder.displayName, viewholder.userNames);
-        viewholder.userStatusView.setText(SharedPrefManager.getInstance().getUserStatusMessage(viewholder.userNames));
 
+        boolean isCurrentUserAdmin = isSuperAdmin(viewholder.userNames, viewholder.contentType);
+        boolean isCurrentUserSubAdmin = isSuperSubAdmin(viewholder.userNames, viewholder.contentType);
+
+        if(isCurrentUserAdmin) {
+            viewholder.userStatusView.setText("Owner");
+        } else if(isCurrentUserSubAdmin) {
+            viewholder.userStatusView.setText("Admin");
+        } else {
+            viewholder.userStatusView.setText("");
+        }
+
+        final boolean isCurrentUserSuperOrSubAdmin = (isCurrentUserAdmin || isCurrentUserSubAdmin);
+        final boolean isUserInvited = prefManager.isUserInvited(viewholder.userNames);
+        if(isCurrentUserSuperOrSubAdmin && isUserInvited){
+            viewholder.ivOverFlowMenuMembers.setVisibility(View.GONE);
+        }
+
+        view.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isCurrentUserSuperOrSubAdmin){
+                    showProfileUserScreen(viewholder.userNames, viewholder.displayName);
+                } else {
+                    showEditUserScreen(viewholder.userNames, viewholder.displayName);
+                }
+            }
+        });
     }
 
     public View newView(Context context1, Cursor cursor, ViewGroup viewgroup) {
         View view = LayoutInflater.from(context).inflate(layout, null);
-        ViewHolder viewholder = new ViewHolder();
+        final ViewHolder viewholder = new ViewHolder();
         viewholder.ivOverFlowMenuMembers = (ImageView) view.findViewById(R.id.ivOverFlowMenuMembers);
         viewholder.image = (ImageView) view.findViewById(R.id.contact_icon);
         viewholder.imageDefault = (ImageView) view.findViewById(R.id.contact_icon_default);
@@ -236,50 +275,44 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
         //		}
         viewholder.id = cursor.getString(cursor.getColumnIndex(DatabaseConstants.NAME_CONTACT_ID_FIELD));
         view.setTag(viewholder);
+
         return view;
     }
-/*
 
-    class OnClickEvents implements OnClickListener {
-
-        private String userNames;
-        private String displayName;
-
-        public OnClickEvents(String userNames, String displayName) {
-            this.userNames = userNames;
-            this.displayName = displayName;
-        }
-
-        @Override
-        public void onClick(View v) {
-            int id = v.getId();
-            switch (id) {
-                case R.id.ivOverFlowMenuMembers: {
-                    MenuPopup(v, userNames, displayName);
-                    break;
-                }
-            }
+    private void populateHMIfSuperSubAdmin(final String userName, final String contentType){
+        if (contentType != null && contentType.trim().equalsIgnoreCase(KEY_SUPER_SUB_ADMIN)) {
+            hmAdmins.put(userName, null);
         }
     }
 
-*/
-
-    private boolean isSuperAdmin(final String contentType) {
+    private boolean isSuperSubAdmin(final String userName, final String contentType) {
         boolean isSuperAdmin = false;
-        if (contentType != null && contentType.trim().equalsIgnoreCase("domainAdmin"))
+        if((hmAdmins != null) && hmAdmins.containsKey(userName)){
             isSuperAdmin = true;
+        }
 
         return isSuperAdmin;
     }
 
+
+    private boolean isSuperAdmin(final String userName, final String contentType) {
+        boolean isSuperAdmin = false;
+        if((contentType != null) && contentType.equalsIgnoreCase(KEY_SUPER_ADMIN)){
+            isSuperAdmin = true;
+        }
+
+        return isSuperAdmin;
+    }
+
+
     private void makeRemoveSuperAdmin(String userNames, String displayName, String contentType){
-        if (isSuperAdmin(contentType))
+        if (isSuperSubAdmin(userNames, contentType))
             showDialogSuperAdmin("Remove Super Admin",
-                    "This member may be a Group Admin of one or more groups. You should appoint another Group Admin for those groups before removing this member",
+                    "Are you sure you want to remove user from Super Admin?",
                     userNames, contentType);
-        else
-            showDialogSuperAdmin("Make Super Admin", "Do you want to activate " + displayName + ".",
-                    userNames, contentType);
+        else{
+            AddRemoveSuperAdmin(userNames, contentType);
+        }
     }
 
 
@@ -308,8 +341,8 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
         bundle.putBoolean("MANAGE_MEMBER_BY_ADMIN", true);
         intent1.putExtras(bundle);
         ((EsiaChatContactsScreen) context).startActivity(intent1);
-        if (screenType == Constants.MEMBER_DELETE)
-            ((EsiaChatContactsScreen) context).finish();
+        /*if (screenType == Constants.MEMBER_DELETE)
+            ((EsiaChatContactsScreen) context).finish();*/
     }
 
     private void showChatScreen(String userNames, String displayName){
@@ -329,6 +362,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
         ImageView ivOverFlowMenuMembers;
         String userStatus;
         String userNames;
+        //String activationDate;
         String contentType;
         String displayName;
         String voipumValue;
@@ -685,6 +719,56 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
     }
 
 
+    private void AddRemoveSuperAdmin(final String userNames, final String contentType){
+        try{
+
+            final ProgressDialog progressDialog = ProgressDialog.show(context, "", "Loading. Please wait...", true);
+
+            UserAdminRequest objUserAdmin = new UserAdminRequest();
+            objUserAdmin.setUserName(userNames);
+
+            Call call = null;
+
+            final boolean isSuperAdmin = isSuperSubAdmin(userNames, contentType);
+            if(isSuperAdmin) {
+                call = objApi.getApi(context).removeAdmin(objUserAdmin);
+            }
+            else {
+                call = objApi.getApi(context).makeAdmin(objUserAdmin);
+            }
+
+            progressDialog.show();
+            call.enqueue(new RetrofitRetrofitCallback<UserAdminResponse>(context) {
+                @Override
+                protected void onResponseVoidzResponse(Call call, Response response) {
+                }
+
+                @Override
+                protected void onResponseVoidzObject(Call call, UserAdminResponse response) {
+                    if(response != null && response.getStatus() != null && response.getStatus().equalsIgnoreCase("success")){
+
+                        if(isSuperAdmin){
+                            hmAdmins.remove(userNames);
+                        } else {
+                            hmAdmins.put(userNames, null);
+                            objToast.makeToast(context, "Member has been promoted as SuperAdmin", UtilGlobal.MODE_RELEASE);
+                        }
+                    } else {
+                        String errorMessage = response.getMessage() != null ? response.getMessage() : "Please try later";
+                        showDialog(errorMessage);
+                    }
+                }
+
+                @Override
+                protected void common() {
+                    progressDialog.cancel();
+                }
+            });
+
+        } catch(Exception e){
+
+        }
+    }
 
     public void showDialogSuperAdmin(final String title, final String s, final String userNames, final String contentType) {
         final Dialog bteldialog = new Dialog(context);
@@ -697,7 +781,8 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
         ((TextView) bteldialog.findViewById(R.id.id_dialog_message)).setText(s);
 
-        if (isSuperAdmin(contentType))
+        final boolean isSuperSubAdmin = isSuperSubAdmin(userNames, contentType);
+        if (isSuperSubAdmin)
             ((TextView) bteldialog.findViewById(R.id.id_send)).setText("Remove Admin");
         else
             ((TextView) bteldialog.findViewById(R.id.id_send)).setText("Make Admin");
@@ -708,43 +793,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
             public boolean onTouch(View v, MotionEvent event) {
                 bteldialog.cancel();
 
-                final ProgressDialog progressDialog = ProgressDialog.show(context, "", "Loading. Please wait...", true);
-
-                UserAdminRequest objUserAdmin = new UserAdminRequest();
-                objUserAdmin.setUserName(userNames);
-
-                Call call = null;
-
-                if(isSuperAdmin(contentType)) {
-                    call = objApi.getApi(context).removeAdmin(objUserAdmin);
-                }
-                else {
-                    call = objApi.getApi(context).makeAdmin(objUserAdmin);
-                }
-
-                progressDialog.show();
-                call.enqueue(new RetrofitRetrofitCallback<UserAdminResponse>(context) {
-                    @Override
-                    protected void onResponseVoidzResponse(Call call, Response response) {
-                    }
-
-                    @Override
-                    protected void onResponseVoidzObject(Call call, UserAdminResponse response) {
-                        if(response != null && response.getStatus() != null && response.getStatus().equalsIgnoreCase("success")){
-                            objToast.makeToast(context, ""+response.getMessage(), UtilGlobal.MODE_DEVELOPMENT);
-                            ((EsiaChatContactsScreen) context).finish();
-                        } else {
-                            String errorMessage = response.getMessage() != null ? response.getMessage() : "Please try later";
-                            showDialog(errorMessage);
-                        }
-                    }
-
-                    @Override
-                    protected void common() {
-                        progressDialog.cancel();
-                    }
-                });
-
+                AddRemoveSuperAdmin(userNames, contentType);
                 return false;
             }
         });
@@ -769,6 +818,8 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
             if (bubbleLayout != null && popupWindow != null) {
 
+                Cursor cursor = getCursor();
+
                 int[] location = new int[2];
                 v.getLocationInWindow(location);
                 popupWindow.showAtLocation(v, Gravity.NO_GRAVITY, location[0], v.getHeight() + location[1]);
@@ -791,23 +842,60 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
                 // Check Cursor Values and show / Hide view accordingly
                 {
+                    boolean isUserInvited = prefManager.isUserInvited(userNames);
+                    boolean isDomainAdmin = prefManager.isDomainAdmin();
+                    boolean isDomainSubAdmin = prefManager.isDomainSubAdmin();
 
-                    if (isSuperAdmin(contentType)) {
-                        llMemberAction_MakeSuperAdmin.setVisibility(View.GONE);
-                        llMemberAction_RemoveSuperAdmin.setVisibility(View.VISIBLE);
-                    } else {
-                        llMemberAction_MakeSuperAdmin.setVisibility(View.VISIBLE);
-                        llMemberAction_RemoveSuperAdmin.setVisibility(View.GONE);
+                    boolean isCurrentUserAdmin = isSuperAdmin(userNames, contentType);
+                    boolean isCurrentUserSubAdmin = isSuperSubAdmin(userNames, contentType);
+
+                    {
+                        if (isCurrentUserSubAdmin) {
+                            llMemberAction_MakeSuperAdmin.setVisibility(View.GONE);
+                            llMemberAction_RemoveSuperAdmin.setVisibility(View.VISIBLE);
+                        } else {
+                            llMemberAction_MakeSuperAdmin.setVisibility(View.VISIBLE);
+                            llMemberAction_RemoveSuperAdmin.setVisibility(View.GONE);
+                        }
+
+                        if (screenType == Constants.MEMBER_DELETE) {
+                            if (!SharedPrefManager.getInstance().isUserExistence(userNames)) {
+                                llMemberAction_ReactivateUser.setVisibility(View.VISIBLE);
+                                llMemberAction_DeactivateUser.setVisibility(View.GONE);
+                            } else {
+                                llMemberAction_ReactivateUser.setVisibility(View.GONE);
+                                llMemberAction_DeactivateUser.setVisibility(View.VISIBLE);
+                            }
+                        }
                     }
 
-                    if (screenType == Constants.MEMBER_DELETE) {
-                        if (!SharedPrefManager.getInstance().isUserExistence(userNames)) {
-                            llMemberAction_ReactivateUser.setVisibility(View.VISIBLE);
-                            llMemberAction_DeactivateUser.setVisibility(View.GONE);
-                        } else {
-                            llMemberAction_ReactivateUser.setVisibility(View.GONE);
-                            llMemberAction_DeactivateUser.setVisibility(View.VISIBLE);
+
+                    if(isDomainAdmin){
+
+                        if(isUserInvited){
+                            llMemberAction_ViewProfile.setVisibility(View.GONE);
+                            llMemberAction_Message.setVisibility(View.GONE);
                         }
+                    } else if(isDomainSubAdmin){
+
+                        boolean isCurrentUserSuperOrSubAdmin = (isCurrentUserAdmin || isCurrentUserSubAdmin);
+
+                        if(isCurrentUserSuperOrSubAdmin){
+                            llMemberAction_ReactivateUser.setVisibility(View.GONE);
+                            llMemberAction_DeactivateUser.setVisibility(View.GONE);
+                            llMemberAction_MakeSuperAdmin.setVisibility(View.GONE);
+                            llMemberAction_RemoveSuperAdmin.setVisibility(View.GONE);
+                            llMemberAction_EditProfile.setVisibility(View.GONE);
+                        } else {
+
+                        }
+
+                        if(isUserInvited){
+                            llMemberAction_ViewProfile.setVisibility(View.GONE);
+                            llMemberAction_Message.setVisibility(View.GONE);
+                        }
+                    } else {
+
                     }
                 }
             }

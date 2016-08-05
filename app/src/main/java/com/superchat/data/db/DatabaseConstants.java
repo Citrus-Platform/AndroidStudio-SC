@@ -25,6 +25,7 @@ public static final byte MEDIA_FAILED = 4;
 	public static final String TABLE_NAME_CONTACT_NAMES = "contact_names_table";
 	public static final String NAME_CONTACT_ID_FIELD = "name_contact_id";
 	public static final String USER_NAME_FIELD = "user_name";
+	//public static final String USER_ACTIVATION_DATE = "user_activation_date";
 	public static final String CONTACT_NAMES_FIELD = "contact_names";
 	public static final String CONTACT_TYPE_FIELD = "contact_type";
 	public static final String CONTACT_COMPOSITE_FIELD = "contact_composite_numbers";

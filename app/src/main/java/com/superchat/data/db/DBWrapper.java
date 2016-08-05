@@ -68,6 +68,7 @@ public class DBWrapper {
 		setTransaction();
 		endTransaction();
 	}
+
 	public void deleteTable(String table) {
 		SQLiteDatabase sqlitedatabase = dbHelper.getWritableDatabase();
 		beginTransaction();
@@ -76,6 +77,17 @@ public class DBWrapper {
 		setTransaction();
 		endTransaction();
 	}
+
+	public void dropTable(String table) {
+		SQLiteDatabase sqlitedatabase = dbHelper.getWritableDatabase();
+		beginTransaction();
+		sqlitedatabase.execSQL("drop table if exists "+table);
+		int i = sqlitedatabase.delete(table, null, null);
+		Log.i(TAG, (new StringBuilder()).append("Deleted from Data::").append(i).toString());
+		setTransaction();
+		endTransaction();
+	}
+
 	public boolean isTableExists(String tableName)
 	{
 	    if (tableName == null || dbHelper.getWritableDatabase() == null || !dbHelper.getWritableDatabase().isOpen())
