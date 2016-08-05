@@ -220,6 +220,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
         viewholder.imageDefault.setTag(viewholder.userNames);
         setProfilePic(viewholder.image, viewholder.imageDefault, viewholder.displayName, viewholder.userNames);
 
+        boolean isSuperAdmin = prefManager.isDomainAdmin();
         boolean isCurrentUserAdmin = isSuperAdmin(viewholder.userNames, viewholder.contentType);
         boolean isCurrentUserSubAdmin = isSuperSubAdmin(viewholder.userNames, viewholder.contentType);
 
@@ -233,9 +234,13 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
         final boolean isCurrentUserSuperOrSubAdmin = (isCurrentUserAdmin || isCurrentUserSubAdmin);
         final boolean isUserInvited = prefManager.isUserInvited(viewholder.userNames);
-        if(isCurrentUserSubAdmin && isUserInvited){
+        if((isCurrentUserSuperOrSubAdmin && isUserInvited) && !(isSuperAdmin)){
             viewholder.ivOverFlowMenuMembers.setVisibility(View.GONE);
+        } else {
+            viewholder.ivOverFlowMenuMembers.setVisibility(View.VISIBLE);
         }
+
+
 
         view.setOnClickListener(new OnClickListener() {
             @Override
