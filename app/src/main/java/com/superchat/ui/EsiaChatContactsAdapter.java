@@ -233,7 +233,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
         final boolean isCurrentUserSuperOrSubAdmin = (isCurrentUserAdmin || isCurrentUserSubAdmin);
         final boolean isUserInvited = prefManager.isUserInvited(viewholder.userNames);
-        if(isCurrentUserSuperOrSubAdmin && isUserInvited){
+        if(isCurrentUserSubAdmin && isUserInvited){
             viewholder.ivOverFlowMenuMembers.setVisibility(View.GONE);
         }
 
