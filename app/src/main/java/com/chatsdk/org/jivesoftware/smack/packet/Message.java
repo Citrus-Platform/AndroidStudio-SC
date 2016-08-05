@@ -1102,7 +1102,15 @@ public class Message extends Packet {
 		/**
 		 * Chat message for New Shared ID Deactivated - 28
 		 */
-		atMeXmppMessageTypeSharedIDDeleted
+		atMeXmppMessageTypeSharedIDDeleted,
+		/**
+		 * Chat message for Make SG SubAdmin - 29
+		 */
+		atMeXmppMessageTypeMakeSGSubAdmin,
+		/**
+		 * Chat message for Make SG SubAdmin - 30
+		 */
+		atMeXmppMessageTypeRemoveSGSubAdmin
 		;
 
 		public static XMPPMessageType fromString(String name) {

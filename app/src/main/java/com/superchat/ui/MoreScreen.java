@@ -314,8 +314,12 @@ public class MoreScreen extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
+		case R.id.id_chat_layout:
+			Intent intent = new Intent(this, ChatBackupScreen.class);
+			startActivity(intent);
+			break;
 		case R.id.id_configure_console_pass:
-			Intent intent = new Intent(this, GenerateConsolePasswordActivity.class);
+			intent = new Intent(this, GenerateConsolePasswordActivity.class);
 			startActivity(intent);
 			break;
 		case R.id.id_privacy_layout:

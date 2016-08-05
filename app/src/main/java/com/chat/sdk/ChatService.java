@@ -1232,8 +1232,11 @@ public class ChatService extends Service{
 						String captionTag  = message.getMediaTagMessage();
 						prefManager.saveUserExistence(captionTag, true);
 						return;
-					}else
-					if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeDeactivateUser.ordinal()){
+					}else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeMakeSGSubAdmin.ordinal()){
+                        prefManager.setAsDomainSubAdmin(true);
+                    }else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeRemoveSGSubAdmin.ordinal()){
+                        prefManager.setAsDomainSubAdmin(false);
+                    }else if(xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeDeactivateUser.ordinal()){
 						Log.d(TAG, "atMeXmppMessageTypeDeactivateUser: User deactivated.");
 						String captionTag  = message.getMediaTagMessage();
 						prefManager.saveUserExistence(captionTag, false);
@@ -3686,6 +3689,22 @@ public class ChatService extends Service{
 //		sendOffLineMessages1();
 		return true;
 	}
+	public boolean sendSGSubAdminAddRemove(String userName, Message.XMPPMessageType xMPPMessageType) {
+		String to = userName + "@" + Constants.CHAT_DOMAIN;
+		Message msg = new Message(to);
+		msg.setType(Message.Type.chat);
+		msg.setXMPPMessageType(xMPPMessageType);
+		msg.setPacketID(UUID.randomUUID().toString());
+		Log.d(TAG, "sent packet: " + msg.toXML());
+		if (connection != null && connection.isConnected()
+				&& connection.isAuthenticated()) {
+			connection.sendPacket(msg);
+		} else {
+			return false;
+		}
+		return true;
+	}
+
 	public boolean sendInfoMessage(String groupName, String message,
 			Message.XMPPMessageType xMPPMessageType) {
 		boolean isGroupChat = false;
