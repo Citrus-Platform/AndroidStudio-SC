@@ -804,6 +804,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
                 @Override
                 protected void common() {
                     progressDialog.cancel();
+                    isPopshown = false;
                 }
             });
 
