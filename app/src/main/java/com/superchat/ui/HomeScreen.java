@@ -1839,12 +1839,16 @@ public void onComposeClick(View view){
 			contentvalues.put(DatabaseConstants.LAST_UPDATE_FIELD, currentTime);
 
             if(SharedPrefManager.getInstance().isBroadCast(from)) {
-                if(name.indexOf("#786#") != -1)
+                if(name.indexOf("#786#") != -1) {
                     SharedPrefManager.getInstance().saveBroadcastFirstTimeName(from, name.substring(0, name.indexOf("#786#")));
-                else
+                    contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name.substring(0, name.indexOf("#786#")));
+                }
+                else {
                     SharedPrefManager.getInstance().saveBroadcastFirstTimeName(from, name);
-            }
-			contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
+                    contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
+                }
+            }else
+			    contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
 			chatDBWrapper.insertInDB(DatabaseConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 		} catch (Exception e) {
 
