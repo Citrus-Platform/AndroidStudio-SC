@@ -1537,7 +1537,7 @@ public class ChatListAdapter extends SimpleCursorAdapter{
 				  protected void onProgressUpdate(Integer... progress) {
 //					  if(localUri!=null)
 //						  processing.put(localUri, ""+progress[0]);
-					  if(localUri!=null)
+					  if(localUri!=null && progress[1] != 0)
 						  processing.put(localUri, ""+Integer.parseInt(""+(int)((progress[0]*100)/progress[1])));
 //					  if(viewUpdateListener!=null)
 //						  viewUpdateListener.
@@ -3045,7 +3045,7 @@ public String singleCheckedKey(){
 				viewholder.receiverCheckBox.setVisibility(View.GONE);
 			}
 
-			if (isGroupChat || isSharedIDMessage) { 
+			if (isGroupChat || isSharedIDMessage) {
 				viewholder.receiverPersonName.setVisibility(View.VISIBLE);
 				String name = viewholder.groupMsgSenderName;
 				if(isSharedIDMessage && (iChatPref.isDomainAdminORSubAdmin()) || isSharedIDAdmin){
@@ -3097,7 +3097,32 @@ public String singleCheckedKey(){
 					viewholder.receiverLayout.setVisibility(View.GONE);
 				} else
 					viewholder.receiverLayout.setVisibility(View.VISIBLE);
-			} else {
+			}
+            else if(isBulletinBroadcast && iChatPref.isDomainAdminORSubAdmin()) {
+                    viewholder.receiverPersonName.setVisibility(View.VISIBLE);
+                    String name = iChatPref.getUserServerName(viewholder.userName);
+                    if(name != null && name.equalsIgnoreCase("New User"))
+                        name = iChatPref.getUserServerName(viewholder.userName);
+
+                    String colorValue = colors.get(name);
+                    if(colorValue == null){
+                        colors.put(name, colorsArray[colorIndex]);
+                        colorValue = colorsArray[colorIndex];
+                        colorIndex++;
+                        if(colorIndex>colorsArray.length-1)
+                            colorIndex = 0;
+                    }
+                    String personId = viewholder.userName;
+                    viewholder.receiverPersonName.setTextColor(Color.parseColor(colorValue));
+                    viewholder.receiverPersonName.setText(name);
+//                    if(name == null || name.equals("")){
+//                        viewholder.leftPersonPicLayout.setVisibility(View.GONE);
+//                        viewholder.leftPersonDefaultPic.setVisibility(View.GONE);
+//                        viewholder.leftPersonPic.setVisibility(View.GONE);
+//                    }
+                viewholder.receiverLayout.setVisibility(View.VISIBLE);
+            }
+            else {
 				viewholder.leftPersonPic.setVisibility(View.GONE);
 				viewholder.receiverPersonName.setVisibility(View.GONE);
 				viewholder.receiverLayout.setVisibility(View.VISIBLE);

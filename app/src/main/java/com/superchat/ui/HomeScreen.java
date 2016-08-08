@@ -1603,15 +1603,22 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 //								return;
 								shareUri = getRealPathFromURIForFile(this, imageUri);
 							}else if (imageUri.toString().startsWith("content://")){
-			    				shareUri = getRealPathFromURI(this, imageUri);
-			    			}
-			    			else
+								if (imageUri.toString().startsWith("content://gmail"))
+									shareUri = getRealPathFromURIForFile(this, imageUri);
+								else
+									shareUri = getRealPathFromURI(this, imageUri);
+			    			}else if (imageUri.toString().startsWith("file:///storage/")){
+			    				shareUri = imageUri.getPath();
+			    			}else
 			    				shareUri = imageUri.toString();
 			    		}else{
 							Toast.makeText(this, "This file sharing is not supported", Toast.LENGTH_LONG).show();
 						}
-			    		intent.setAction(null);
-			    		calledForShare = true;
+			    		if(shareUri != null){
+				    		intent.setAction(null);
+				    		calledForShare = true;
+			    		}else
+			    			return;
 		    		}else{
 					intent.setAction(null);
 					Toast.makeText(this, "This file share not supported", Toast.LENGTH_LONG).show();
@@ -1663,7 +1670,7 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 		try {
 			String mimeType = getContentResolver().getType(fileAttachUri);
             Log.i(TAG, "mimeType : " + mimeType);
-            if(mimeType.lastIndexOf("/") != -1)
+            if(mimeType != null && mimeType.lastIndexOf("/") != -1)
             	mimeType = "." + mimeType.substring(mimeType.lastIndexOf("/") + 1);
             Cursor returnCursor = getContentResolver().query(fileAttachUri, null, null, null, null);
             int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);

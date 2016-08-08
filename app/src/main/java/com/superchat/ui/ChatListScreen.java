@@ -1161,6 +1161,9 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             isSharedIDDeactivated = iChatPref.isSharedIDDeactivated(userName);
             if(userName.equalsIgnoreCase(iChatPref.getUserDomain() + "-all"))
             	isBulletinBroadcast = true;
+            else if(isBulletinBroadcast && iChatPref.isDomainAdminORSubAdmin()){
+                userName = iChatPref.getUserDomain() + "-all";
+            }
             contactNameTxt = getIntent().getExtras().getString(DatabaseConstants.CONTACT_NAMES_FIELD);
             if(isBulletinBroadcast){
             	windowNameView.setText(iChatPref.getUserDomain());
