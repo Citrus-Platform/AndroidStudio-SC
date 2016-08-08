@@ -85,7 +85,6 @@
         android:id="@+id/id_media_preview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/id_top_options"
         android:src="@drawable/audio_tag_bg"
         android:layout_gravity="center"/>
 

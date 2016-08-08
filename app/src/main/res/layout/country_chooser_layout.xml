@@ -67,7 +67,6 @@
             android:id="@+id/id_country_list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/search_layout"
             android:layout_centerInParent="true"
             android:divider="@null"
             android:focusableInTouchMode="false"

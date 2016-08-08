@@ -1,8 +1,6 @@
 package com.superchat.ui;
 
 
-import com.superchat.R;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.superchat.R;
+
 public class TourFragment extends Fragment{
 	int mCurrentPage;
 	int imageRes ;
@@ -19,6 +19,7 @@ public class TourFragment extends Fragment{
 	ImageView imageView;
 	TextView textView_header,textView_desc;
 	LinearLayout main_linearlayout;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -26,7 +27,15 @@ public class TourFragment extends Fragment{
 	//	mCurrentPage = data.getInt("current_page", 0);
 
 	}
-	TourFragment(int imageRes, String lang){
+
+
+	public static TourFragment newInstance(int imageRes, String lang) {
+		TourFragment ret = new TourFragment();
+		ret.MyConstructor_TourFragment(imageRes, lang);
+		return ret;
+	}
+
+	public void MyConstructor_TourFragment(int imageRes, String lang){
 		this.imageRes = imageRes ;
 		mlang		  = lang;
 		

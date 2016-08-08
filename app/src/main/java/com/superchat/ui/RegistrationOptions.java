@@ -242,8 +242,8 @@ public class RegistrationOptions extends FragmentActivity implements OnClickList
 		}
 
 		public void setFragments(Context c){
-			fragA = new TourFragment(0,"en");
-			fragB = new TourFragment(1,"en");
+			fragA = TourFragment.newInstance(0,"en");
+			fragB = TourFragment.newInstance(1,"en");
 		
 		}
 		@Override
