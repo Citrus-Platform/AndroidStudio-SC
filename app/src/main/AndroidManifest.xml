@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.superchat"
     android:installLocation="preferExternal"
     android:versionCode="67"
@@ -7,7 +8,8 @@
 
     <uses-sdk
         android:minSdkVersion="13"
-        android:targetSdkVersion="15" />
+        android:targetSdkVersion="15"
+        tools:overrideLibrary="com.daasuu.bl"/>
 
     <permission
         android:name="com.superchat.permission.MAPS_RECEIVE"
@@ -302,6 +304,7 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="2dd9ecbc00f90dff7152815506e742a886c447d9" />
+
     </application>
 
 </manifest>
