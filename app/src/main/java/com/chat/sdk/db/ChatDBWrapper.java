@@ -1,24 +1,29 @@
 package com.chat.sdk.db;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 
 import com.chatsdk.org.jivesoftware.smack.packet.Message;
 import com.chatsdk.org.jivesoftware.smack.packet.Message.SeenState;
 import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
 import com.google.gson.Gson;
-import com.superchat.data.db.DBWrapper;
 import com.superchat.data.db.DatabaseConstants;
-import com.superchat.model.LoginResponseModel;
+import com.superchat.utils.Compress;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.Utilities;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class ChatDBWrapper {
 	public static final String TAG = "ChatDBWrapper";
@@ -697,7 +702,6 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 				+ ChatDBConstants.FROM_USER_FIELD + ", "
 				+ ChatDBConstants.TO_USER_FIELD + ", "
 				+ ChatDBConstants.MESSAGEINFO_FIELD + ","
-				+ ChatDBConstants.FROM_GROUP_USER_FIELD + ", "
 				+ ChatDBConstants.FROM_GROUP_USER_FIELD + ", "
 				+ ChatDBConstants.MESSAGE_TYPE_FIELD + ","
 				+ ChatDBConstants.MEDIA_CAPTION_TAG + ","
@@ -1811,6 +1815,130 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			
 		}
 		return cursor;
+	}
+//	viewholder.key = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID));
+//	viewholder.groupMsgSenderName = cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_GROUP_USER_FIELD));
+//	viewholder.captionTagMsg = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG));
+//	viewholder.locationMsg = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_LOCATION));
+//	
+//	viewholder.seenState = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.SEEN_FIELD));
+//	viewholder.messageType = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD));
+//	viewholder.userName = cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_USER_FIELD));
+//	viewholder.receiverName = cursor.getString(cursor.getColumnIndex(ChatDBConstants.TO_USER_FIELD));
+//
+//	viewholder.message = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGEINFO_FIELD));
+//	viewholder.mediaUrl = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD));
+//	viewholder.audioLength = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LENGTH));
+//	String url = viewholder.mediaUrl;
+//	viewholder.mediaLocalPath = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD));
+//	viewholder.mediaThumb = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_THUMB_FIELD));
+//	viewholder.time = cursor.getLong(cursor.getColumnIndex(ChatDBConstants.LAST_UPDATE_FIELD));
+//	viewholder.isDateShow = "1".equals(cursor.getString(cursor.getColumnIndex(ChatDBConstants.IS_DATE_CHANGED_FIELD)));
+//	viewholder.totalGroupUsers=cursor.getInt(cursor.getColumnIndex(ChatDBConstants.TOTAL_USER_COUNT_FIELD));
+//	viewholder.totalGroupReadUsers=cursor.getInt(cursor.getColumnIndex(ChatDBConstants.READ_USER_COUNT_FIELD));
+	public Cursor getAllMessagesForBackup() {
+		String query = "SELECT * FROM " + ChatDBConstants.TABLE_NAME_MESSAGE_INFO + " ORDER BY " + ChatDBConstants.LAST_UPDATE_FIELD;
+		Log.d("ChatDBWrapper", "getAllMessagesForBackup query: " + query);
+		Cursor cursor = null;
+		try{
+			String backup_dir = "SCBackup";
+			String zip_file = "SCBackup.zip";
+			createDirIfNotExists(Environment.getExternalStorageDirectory().getAbsolutePath(), backup_dir);
+			String path = Environment.getExternalStorageDirectory().getAbsolutePath() +"/" + backup_dir;
+//			String filename_message = path + "/" + "message.txt";
+//			String filename_status = path + "/" + "status.txt";
+			String filename_message = "message.txt";
+			String filename_status = "status.txt";
+			if(dbHelper!=null){
+				//Read data from message table
+				cursor = dbHelper.getWritableDatabase().rawQuery(query, null);
+				Log.i("ChatDBWrapper", "record count - "+cursor.getCount());
+				if (cursor != null && cursor.moveToFirst()){
+					 JSONObject backup = new JSONObject();
+		             JSONArray message_array = new JSONArray();
+		             JSONObject message = null;
+					do{
+						 message = new JSONObject();
+			             message.put(ChatDBConstants.MESSAGE_ID, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID)));
+			             message.put(ChatDBConstants.FROM_GROUP_USER_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_GROUP_USER_FIELD)));
+			             message.put(ChatDBConstants.FROM_USER_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_USER_FIELD)));
+			             message.put(ChatDBConstants.TO_USER_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.TO_USER_FIELD)));
+			             message.put(ChatDBConstants.MESSAGEINFO_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGEINFO_FIELD)));
+			             message.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD)));
+			             message.put(ChatDBConstants.MESSAGE_MEDIA_LENGTH, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LENGTH)));
+			             message.put(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD)));
+			             message.put(ChatDBConstants.MESSAGE_THUMB_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_THUMB_FIELD)));
+			             message.put(ChatDBConstants.LAST_UPDATE_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.LAST_UPDATE_FIELD)));
+			             message.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.IS_DATE_CHANGED_FIELD)));
+			             message.put(ChatDBConstants.TOTAL_USER_COUNT_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.TOTAL_USER_COUNT_FIELD)));
+			             message.put(ChatDBConstants.READ_USER_COUNT_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.READ_USER_COUNT_FIELD)));
+			             message_array.put(message);
+					} while (cursor.moveToNext());
+					if(message_array.length() > 0)
+						backup.put("messages", message_array);
+					
+					//Write message table date to file
+					File f = new File(filename_message);
+					byte[] data = backup.toString().getBytes("utf-8");
+					if(data.length > 0)
+					{
+						f = new File(path, filename_message);
+						Utilities.writeFile(data, f, 1);
+					}
+				}
+				
+				//Read data from status table
+				query = "SELECT*FROM " + ChatDBConstants.TABLE_NAME_STATUS_INFO;
+				cursor = dbHelper.getWritableDatabase().rawQuery(query, null);
+				Log.i("ChatDBWrapper", "record count - "+cursor.getCount());
+				if (cursor != null && cursor.moveToFirst()){
+					 JSONObject backup = new JSONObject();
+		             JSONArray status_array = new JSONArray();
+		             JSONObject message = null;
+					do{
+						 message = new JSONObject();
+			             message.put(ChatDBConstants.MESSAGE_ID, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID)));
+			             message.put(ChatDBConstants.SEEN_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.SEEN_FIELD)));
+			             message.put(ChatDBConstants.DELIVER_TIME_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.DELIVER_TIME_FIELD)));
+			             message.put(ChatDBConstants.SEEN_TIME_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.SEEN_TIME_FIELD)));
+			             message.put(ChatDBConstants.FROM_USER_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_USER_FIELD)));
+			             status_array.put(message);
+					} while (cursor.moveToNext());
+					if(status_array.length() > 0)
+						backup.put("messageStatus", status_array);
+					
+					//Write status table date to file
+					File f = new File(filename_status);
+					byte[] data = backup.toString().getBytes("utf-8");
+					if(data.length > 0)
+					{
+						f = new File(path, filename_status);
+						Utilities.writeFile(data, f, 1);
+					}
+				}
+				//Create Zip for message and status files
+				String[] files = new String[]{path + "/" + filename_message, path + "/" + filename_status};
+				Compress compress = new Compress(files, path + "/" + zip_file);
+				compress.zip();
+//				System.out.println("path : "+path);
+			}
+			else
+				Log.d("ChatDBWrapper", "dbHelper is null.");
+		}catch(Exception e){
+			
+		}
+		return cursor;
+	}
+	public boolean createDirIfNotExists(String path, String folder_name) {
+	    boolean ret = true;
+	    File file = new File(path, folder_name);
+	    if (!file.exists()) {
+	        if (!file.mkdirs()) {
+	            Log.e("TravellerLog :: ", "Problem creating Image folder");
+	            ret = false;
+	        }
+	    }
+	    return ret;
 	}
 	public Cursor getUserBroadCastChatList(String broadCastName) {
 //		select * from Customers where customerId in (select max(customerId) as customerId from Customers group by country);

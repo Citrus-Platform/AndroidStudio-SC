@@ -189,7 +189,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
 
         } else
             Log.d(TAG, "Bundle is null in Oncreate of EsiaChatContactsScreen");
-        if (((isGroupInvitation || SCREEN_TYPE == Constants.GROUP_USER_CHAT_CREATE) && !SharedPrefManager.getInstance().isDomainAdmin())) {
+        if (((isGroupInvitation || SCREEN_TYPE == Constants.GROUP_USER_CHAT_CREATE) && !SharedPrefManager.getInstance().isDomainAdminORSubAdmin())) {
             isSharedIDUpdate = true;
             initOrCreateAdapter(SCREEN_TYPE);
             isSharedIDUpdate = false;
@@ -400,7 +400,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
 //			else
 //				allUsers = DBWrapper.getInstance().getAllUsers(null);
             if (isChannel || isBroadcast) {
-                if (SharedPrefManager.getInstance().isDomainAdmin())
+                if (SharedPrefManager.getInstance().isDomainAdminORSubAdmin())
                     allUsers = DBWrapper.getInstance().getAllFilteredUsersForSG(previousUsersList);
                 if ((allUsers == null || allUsers.isEmpty()))
                     allUsers = DBWrapper.getInstance().getAllUsers(previousUsersList);
@@ -672,9 +672,9 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
     }
 
     public void onBackPressed() {
-
+        if(adapter != null && adapter.cancelPopupMenu())
+            return;
         onBackClick(null);
-
     }
 
     private ArrayList<String> getSelectedUsers(int screenType) {
@@ -712,7 +712,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                 allSelectCheckBox.setChecked(!allSelectCheckBox.isChecked());
 
                 if (isGroupInvitation) {
-                    if (SharedPrefManager.getInstance().isDomainAdmin())
+                    if (SharedPrefManager.getInstance().isDomainAdminORSubAdmin())
                         allUsers = DBWrapper.getInstance().getAllFilteredUsersForSG(null);
                     if ((allUsers == null || allUsers.isEmpty()))
                         allUsers = DBWrapper.getInstance().getAllUsers(previousUsersList);
@@ -912,7 +912,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                             allSelectCheckBox.setVisibility(CheckBox.GONE);
                             SCREEN_TYPE = Constants.GROUP_USERS_ROLE_SELECTION;
                             multiOptionTitle.setVisibility(View.VISIBLE);
-                            if (!SharedPrefManager.getInstance().isDomainAdmin())
+                            if (!SharedPrefManager.getInstance().isDomainAdminORSubAdmin())
                                 ((TextView) findViewById(R.id.id_owner_title)).setVisibility(View.GONE);
                             titleView.setText(getString(R.string.select_admin_owner));
                             groupRoleCreationAdapter = new GroupRoleCreationAdapter(this, R.layout.esiachat_contact_item, allTempUsersWithRole, Constants.GROUP_USERS_ROLE_SELECTION);
@@ -1762,7 +1762,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                         String json = finalJSONbject.toString();
 //						 json = json.replace("\"", "&quot;");
                         for (String addedUser : usersList) {
-                            if (!SharedPrefManager.getInstance().isUserInvited(addedUser) || !SharedPrefManager.getInstance().isDomainAdmin())
+                            if (!SharedPrefManager.getInstance().isUserInvited(addedUser) || !SharedPrefManager.getInstance().isDomainAdminORSubAdmin())
                                 service.inviteUserInRoom(groupUUID, displayName, "", addedUser, json);
                         }
                         json = null;

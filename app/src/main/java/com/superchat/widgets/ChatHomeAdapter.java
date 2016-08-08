@@ -1,41 +1,5 @@
 package com.superchat.widgets;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TimeZone;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import com.chat.sdk.ChatCountListener;
-import com.chat.sdk.db.ChatDBConstants;
-import com.chat.sdk.db.ChatDBWrapper;
-import com.chatsdk.org.jivesoftware.smack.packet.Message.SeenState;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.data.beans.PhotoToLoad;
-import com.superchat.data.db.DBWrapper;
-import com.superchat.data.db.DatabaseConstants;
-import com.superchat.task.ImageLoaderWorker;
-import com.superchat.ui.ChatListScreen;
-import com.superchat.ui.CreateSharedIDActivity;
-import com.superchat.ui.GroupProfileScreen;
-import com.superchat.ui.HomeScreen;
-import com.superchat.ui.ProfileScreen;
-import com.superchat.ui.TextDrawable;
-import com.superchat.ui.TextDrawable.IShapeBuilder;
-import com.superchat.utils.BitmapDownloader;
-import com.superchat.utils.ColorGenerator;
-import com.superchat.utils.Constants;
-import com.superchat.utils.Log;
-import com.superchat.utils.SharedPrefManager;
-
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -67,6 +31,41 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.chat.sdk.ChatCountListener;
+import com.chat.sdk.db.ChatDBConstants;
+import com.chat.sdk.db.ChatDBWrapper;
+import com.chatsdk.org.jivesoftware.smack.packet.Message.SeenState;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.data.beans.PhotoToLoad;
+import com.superchat.data.db.DBWrapper;
+import com.superchat.data.db.DatabaseConstants;
+import com.superchat.task.ImageLoaderWorker;
+import com.superchat.ui.ChatListScreen;
+import com.superchat.ui.CreateSharedIDActivity;
+import com.superchat.ui.GroupProfileScreen;
+import com.superchat.ui.HomeScreen;
+import com.superchat.ui.ProfileScreen;
+import com.superchat.ui.TextDrawable;
+import com.superchat.utils.BitmapDownloader;
+import com.superchat.utils.ColorGenerator;
+import com.superchat.utils.Constants;
+import com.superchat.utils.Log;
+import com.superchat.utils.SharedPrefManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.TimeZone;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 // Referenced classes of package com.vopium.widget:
 //            DontPressWithParentLayout
@@ -194,7 +193,7 @@ public class ChatHomeAdapter extends SimpleCursorAdapter implements OnClickListe
 //						}
 						if(!iChatPref.isGroupChat(userName) && !iChatPref.isBroadCast(userName)){
 							if(iChatPref.isSharedIDContact(userName)){
-								if(iChatPref.isDomainAdmin() || HomeScreen.isAdminFromSharedID(userName, SharedPrefManager.getInstance().getUserName())){
+								if(iChatPref.isDomainAdminORSubAdmin() || HomeScreen.isAdminFromSharedID(userName, SharedPrefManager.getInstance().getUserName())){
 									Intent intent = new Intent(SuperChatApplication.context, CreateSharedIDActivity.class);
 									intent.putExtra("EDIT_MODE", true);
 									intent.putExtra(Constants.GROUP_UUID, userName);
@@ -397,6 +396,8 @@ public void loadDialog(){
         String toUserName = cursor.getString(cursor.getColumnIndex(DatabaseConstants.TO_USER_FIELD));
         String name = cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD));
         String caption = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG));
+        String msg = cursor.getString(cursor.getColumnIndex(DatabaseConstants.MESSAGEINFO_FIELD));
+        System.out.println("CONTACT_NAMES_FIELD -> "+name);
         String displayName = null;
         boolean isSharedID = false;
 //        Log.i("ChatHomeAdapter", "caption : "+caption);
@@ -440,7 +441,7 @@ public void loadDialog(){
 //        	isSharedID = true;
 //        }else
 //        	isSharedID = false;
-        String msg = cursor.getString(cursor.getColumnIndex(DatabaseConstants.MESSAGEINFO_FIELD));
+//        String msg = cursor.getString(cursor.getColumnIndex(DatabaseConstants.MESSAGEINFO_FIELD));
         String msg_icon = null;
         long time = cursor.getLong(cursor.getColumnIndex(DatabaseConstants.LAST_UPDATE_FIELD));
         int messageType = cursor.getInt(cursor.getColumnIndex(DatabaseConstants.MESSAGE_TYPE_FIELD));

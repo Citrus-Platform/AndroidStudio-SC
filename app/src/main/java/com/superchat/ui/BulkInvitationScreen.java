@@ -246,6 +246,8 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
 
             }
         });
+        if(SharedPrefManager.getInstance().isDomainSubAdmin())
+            cbMakeSuperAdmin.setVisibility(View.GONE);
 
         String cc = Constants.countryCode.replace("+", "");
         countryCodeEditText.setText("+" + cc);
@@ -420,8 +422,10 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
 
                 AddMemberModel requestForm1 = new AddMemberModel(members1);
                 requestForm1.domainName = SharedPrefManager.getInstance().getUserDomain();
-                if (inviteMenualDialog != null && inviteMenualDialog.isShowing())
+                if (inviteMenualDialog != null && inviteMenualDialog.isShowing()) {
+                    cbMakeSuperAdmin.setChecked(false);
                     inviteMenualDialog.cancel();
+                }
                 if (Build.VERSION.SDK_INT >= 11)
                     new BulkInviteServerTask(requestForm1, view).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 else

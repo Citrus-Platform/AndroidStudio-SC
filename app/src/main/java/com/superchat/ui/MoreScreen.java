@@ -363,7 +363,7 @@ public class MoreScreen extends Activity implements OnClickListener {
 			intent = new Intent(this, ProfileScreen.class);
 			intent.putExtra(Constants.PROFILE_UPDATE, true);
 			startActivity(intent);
-			finish();
+//			finish();
 			break;
 		case R.id.id_advanced_settings:
 			showAdvancedSettingsDialog();

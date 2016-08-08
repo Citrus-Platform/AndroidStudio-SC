@@ -1508,8 +1508,11 @@ public class ChatService extends Service{
 						if(!prefManager.isDomainAdmin() && xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSharedIDUpdated.ordinal()){
 							prefManager.saveSharedIDDisplayName(sharedIDName, sharedIDDisplayName);
 							prefManager.setSharedIDContact(sharedIDName, true);
-							if(sharedIDFileID != null)
-								prefManager.saveSharedIDFileId(sharedIDName, sharedIDFileID);
+							if(sharedIDFileID != null) {
+                                if(sharedIDFileID.startsWith("http://") && sharedIDFileID.lastIndexOf('/') != -1 && sharedIDFileID.lastIndexOf('.') != -1)
+                                    sharedIDFileID = sharedIDFileID.substring(sharedIDFileID.lastIndexOf('/') + 1, sharedIDFileID.lastIndexOf('.'));
+                                prefManager.saveSharedIDFileId(sharedIDName, sharedIDFileID);
+                            }
 							if(Build.VERSION.SDK_INT >= 11)
 								new GetSharedIDListFromServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 							else
@@ -3343,7 +3346,10 @@ public class ChatService extends Service{
 //			AtMeApplication.dayValue = date;
 			contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
 
-			contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
+            if(SharedPrefManager.getInstance().isBroadCast(to)) {
+                contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, SharedPrefManager.getInstance().getBroadcastFirstTimeName(to));
+            }else
+			    contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
 			long insertedInfo = chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 			Log.d(TAG, "insertedInfo during message save: " + insertedInfo + " , " + contentvalues.valueSet().toArray());
 			if (chatListener != null)
@@ -5122,8 +5128,12 @@ public class ChatService extends Service{
 //			ChatDBWrapper chatDBWrapper = chatDBWrapper;
 			ContentValues contentvalues = new ContentValues();
 			String myName = SharedPrefManager.getInstance().getUserName();
-			contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
-			contentvalues.put(ChatDBConstants.TO_USER_FIELD, myName);
+//			contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
+//			contentvalues.put(ChatDBConstants.TO_USER_FIELD, myName);
+
+            contentvalues.put(ChatDBConstants.FROM_USER_FIELD, myName);
+            contentvalues.put(ChatDBConstants.TO_USER_FIELD, from);
+
 			contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD,
 					new Integer(1));
 			contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, "");
@@ -5171,7 +5181,10 @@ public class ChatService extends Service{
 //			AtMeApplication.dayValue = date;
 			contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
 
-			contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
+            if(SharedPrefManager.getInstance().isBroadCast(from) && SharedPrefManager.getInstance().getBroadcastFirstTimeName(from) != null)
+                contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, SharedPrefManager.getInstance().getBroadcastFirstTimeName(from));
+            else
+			    contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
 			chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
 //			if (chatListener != null)
 //				chatListener.notifyChatRecieve(from,msg);

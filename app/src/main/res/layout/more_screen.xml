@@ -164,7 +164,34 @@
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="10.5dip"
+                android:visibility="visible"
                 android:background="@color/settings_bg_color" />
+<RelativeLayout
+                android:id="@+id/id_chat_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:background="@color/white" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dip"
+                    android:text="@string/chat"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/right_arrow"
+                    android:visibility="visible" >
+                </ImageView>
+            </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/id_manage_members_layout"

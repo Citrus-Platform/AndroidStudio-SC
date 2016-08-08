@@ -1,69 +1,5 @@
 package com.superchat.ui;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.UUID;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.chat.sdk.ChatService;
-import com.chat.sdk.ProfileUpdateListener;
-import com.chat.sdk.db.ChatDBConstants;
-import com.chat.sdk.db.ChatDBWrapper;
-import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
-import com.chatsdk.org.jivesoftware.smack.packet.Message;
-import com.chatsdk.org.jivesoftware.smack.packet.Message.SeenState;
-import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.data.db.DBWrapper;
-import com.superchat.data.db.DatabaseConstants;
-import com.superchat.model.BroadCastDetailsModel;
-import com.superchat.model.ErrorModel;
-import com.superchat.model.GroupChatServerModel;
-import com.superchat.model.GroupDetailsModel;
-import com.superchat.model.LoginModel;
-import com.superchat.utils.BitmapDownloader;
-import com.superchat.utils.ColorGenerator;
-import com.superchat.utils.Constants;
-import com.superchat.utils.GroupCreateTaskOnServer;
-import com.superchat.utils.Log;
-import com.superchat.utils.ProfilePicDownloader;
-import com.superchat.utils.RTMediaPlayer;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.utils.VoiceMediaHandler;
-import com.superchat.widgets.MyriadSemiboldTextView;
-import com.superchat.widgets.RoundedImageView;
-
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.Dialog;
@@ -102,14 +38,78 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
-import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.chat.sdk.ChatService;
+import com.chat.sdk.ProfileUpdateListener;
+import com.chat.sdk.db.ChatDBConstants;
+import com.chat.sdk.db.ChatDBWrapper;
+import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
+import com.chatsdk.org.jivesoftware.smack.packet.Message;
+import com.chatsdk.org.jivesoftware.smack.packet.Message.SeenState;
+import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.data.db.DBWrapper;
+import com.superchat.data.db.DatabaseConstants;
+import com.superchat.model.BroadCastDetailsModel;
+import com.superchat.model.ErrorModel;
+import com.superchat.model.GroupChatServerModel;
+import com.superchat.model.GroupDetailsModel;
+import com.superchat.model.LoginModel;
+import com.superchat.utils.BitmapDownloader;
+import com.superchat.utils.ColorGenerator;
+import com.superchat.utils.Constants;
+import com.superchat.utils.GroupCreateTaskOnServer;
+import com.superchat.utils.Log;
+import com.superchat.utils.ProfilePicDownloader;
+import com.superchat.utils.RTMediaPlayer;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.VoiceMediaHandler;
+import com.superchat.widgets.MyriadSemiboldTextView;
+import com.superchat.widgets.RoundedImageView;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.UUID;
 
 public class GroupProfileScreen extends Activity implements OnClickListener, ProfileUpdateListener,VoiceMediaHandler,OnMenuItemClickListener{
 	public final static String TAG = "GroupProfileScreen"; 
@@ -318,14 +318,14 @@ public class GroupProfileScreen extends Activity implements OnClickListener, Pro
 		clearGroupChatView.setOnClickListener(this);
 		activePollView.setOnClickListener(this);
 		Bundle tmpBundle = getIntent().getExtras();
-		if(!iChatPref.isDomainAdmin()){
+		if(!iChatPref.isDomainAdminORSubAdmin()){
 			deleteGroupView.setVisibility(View.GONE);
 			isDeleteItem = false;
 			}
 		if(tmpBundle!=null){
 			isBroadCast = tmpBundle.getBoolean(Constants.BROADCAST, false);
 			isOpenChannel = tmpBundle.getBoolean(Constants.OPEN_CHANNEL, false);
-			if(!iChatPref.isDomainAdmin() || isBroadCast){
+			if(!iChatPref.isDomainAdminORSubAdmin() || isBroadCast){
 				deleteGroupView.setVisibility(View.GONE);
 				isDeleteItem = true;
 			}
@@ -604,7 +604,7 @@ private class YourAsyncTask extends AsyncTask<String, Void, String> {
 						isDeleteItem = true;
 					}else
 						isDeleteItem = false;
-			 }else if(iChatPref.isDomainAdmin() && !iChatPref.isAdmin(groupUUID, iChatPref.getUserName())){
+			 }else if(iChatPref.isDomainAdminORSubAdmin() && !iChatPref.isAdmin(groupUUID, iChatPref.getUserName())){
 				 editGroupView.setVisibility(TextView.GONE);
 				 addGroupParticipantLayout.setVisibility(View.GONE);
 			 }
@@ -996,6 +996,8 @@ private void getServerGroupProfile(String groupName){
 		try{
 			bindService(new Intent(this, ChatService.class), mConnection, Context.BIND_AUTO_CREATE);
 		}catch(Exception e){}
+		if(SharedPrefManager.getInstance().isBroadCast(groupUUID) && SharedPrefManager.getInstance().getBroadCastDisplayName(groupUUID) != null)
+			title.setText(SharedPrefManager.getInstance().getBroadCastDisplayName(groupUUID));
 	}
 	protected void onPause() {
 		try{

@@ -276,6 +276,20 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 		}
 		return false;
 	}
+	public static boolean isSharedIDOwner(String shared_id, String user){
+		try{
+			for(LoginResponseModel.BroadcastGroupDetail groups : HomeScreen.sharedIDData){
+				if(groups.broadcastGroupName.equalsIgnoreCase(shared_id)){
+					if(groups.userName.equals(user)){
+						return true;
+					}
+				}
+			}
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+		return false;
+	}
 	private void syncProcessStart(boolean start){
 		if(syncAnimation==null)
 			return;
@@ -841,8 +855,10 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 										if(broadcastGroupDetail.description!=null)
 											sharedPrefManager.saveUserStatusMessage(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.description);
 										boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(broadcastGroupDetail.broadcastGroupName);
-										if(isFirstChat)
-											saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName,"Broadcast created by "+broadcastGroupDetail.userDisplayName);//saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName,"You are welcome.");
+										if(isFirstChat) {
+                                            saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName, "Broadcast created by " + broadcastGroupDetail.userDisplayName);
+                                            //saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName,"You are welcome.");
+                                        }
 										String oldFileId = sharedPrefManager.getUserFileId(broadcastGroupDetail.fileId);
 										if(broadcastGroupDetail.fileId!=null && !broadcastGroupDetail.fileId.equals("") && (oldFileId == null || !oldFileId.equals(broadcastGroupDetail.fileId)))
 										{
@@ -1601,21 +1617,21 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 					Toast.makeText(this, "This file share not supported", Toast.LENGTH_LONG).show();
 				}
 		    }
-		    
+
 //		    if (uri.toString().startsWith("content://gmail")) { // special handling for gmail
 //		        Bitmap b;
 //		        InputStream stream = activity.getContentResolver().openInputStream(uri);
 //		        b = BitmapFactory.decodeStream(stream);
 //		    }
-		    
-		    
+
+
 //		    /Get your uri
 //		    Uri mAndroidUri = Uri.parse("content://gmail-ls/messages/my_gmail_id_@_gmail.com/65/attachments/0.1/SIMPLE/false");
 //		    ImageView iv = new ImageView(context);
 //
 //		    try{
 //		        //converts android uri to java uri then from that to file
-//		        //after converting to file you should be able to manipulate it in anyway you like. 
+//		        //after converting to file you should be able to manipulate it in anyway you like.
 //		        File mFile = new File(new URI(mAndroidUri.toString()));
 //
 //		        Bitmap bmp = BitmapFactory.decodeStream(mFile);
@@ -1630,7 +1646,7 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 	}
 	public String getRealPathFromURI(Context context, Uri contentUri) {
 		  Cursor cursor = null;
-		  try { 
+		  try {
 		    String[] proj = { MediaStore.Images.Media.DATA };
 		    cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
 		    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
@@ -1644,7 +1660,7 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 		}
 	public String getRealPathFromURIForFile(Context context, Uri fileAttachUri) {
 		 String full_path = null;
-		try { 
+		try {
 			String mimeType = getContentResolver().getType(fileAttachUri);
             Log.i(TAG, "mimeType : " + mimeType);
             if(mimeType.lastIndexOf("/") != -1)
@@ -1726,7 +1742,7 @@ public void onComposeClick(View view){
 		
 		switch(v.getId()){
 		case R.id.id_more:
-			if(calledForShare && !SharedPrefManager.getInstance().isDomainAdmin()){
+			if(calledForShare && !SharedPrefManager.getInstance().isDomainAdminORSubAdmin()){
 				Toast.makeText(this, "Only owner can post messages in Bulletin!", Toast.LENGTH_LONG).show();
 				return;
 			}
@@ -1822,7 +1838,17 @@ public void onComposeClick(View view){
 //			AtMeApplication.dayValue = date;
 			contentvalues.put(DatabaseConstants.LAST_UPDATE_FIELD, currentTime);
 
-			contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
+            if(SharedPrefManager.getInstance().isBroadCast(from)) {
+                if(name.indexOf("#786#") != -1) {
+                    SharedPrefManager.getInstance().saveBroadcastFirstTimeName(from, name.substring(0, name.indexOf("#786#")));
+                    contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name.substring(0, name.indexOf("#786#")));
+                }
+                else {
+                    SharedPrefManager.getInstance().saveBroadcastFirstTimeName(from, name);
+                    contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
+                }
+            }else
+			    contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
 			chatDBWrapper.insertInDB(DatabaseConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 		} catch (Exception e) {
 

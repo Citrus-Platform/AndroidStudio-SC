@@ -1,5 +1,88 @@
 package com.superchat.ui;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
+import android.media.ThumbnailUtils;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Base64;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.chat.sdk.ChatCountListener;
+import com.chat.sdk.ChatService;
+import com.chat.sdk.db.ChatDBConstants;
+import com.chat.sdk.db.ChatDBWrapper;
+import com.chatsdk.org.jivesoftware.smack.packet.Message;
+import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.sinch.android.rtc.calling.Call;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.data.beans.PhotoToLoad;
+import com.superchat.data.db.DatabaseConstants;
+import com.superchat.emojicon.EmojiconTextView;
+import com.superchat.interfaces.OnChatEditInterFace;
+import com.superchat.model.UserProfileModel;
+import com.superchat.task.ImageLoaderWorker;
+import com.superchat.utils.AndroidMultiPartEntity;
+import com.superchat.utils.AndroidMultiPartEntity.ProgressListener;
+import com.superchat.utils.BitmapDownloader;
+import com.superchat.utils.ColorGenerator;
+import com.superchat.utils.Constants;
+import com.superchat.utils.ImageDownloader.Mode;
+import com.superchat.utils.Log;
+import com.superchat.utils.MediaEngine;
+import com.superchat.utils.MyBase64;
+import com.superchat.utils.RTMediaPlayer;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.Utilities;
+import com.superchat.utils.VoiceMediaHandler;
+import com.superchat.widgets.RoundedImageView;
+
+import org.apache.commons.fileupload.util.Streams;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -27,57 +110,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.commons.fileupload.util.Streams;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.media.ExifInterface;
-import android.media.ThumbnailUtils;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.provider.ContactsContract;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Base64;
-import android.view.ContextThemeWrapper;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.PopupMenu;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.TextView;
-import android.widget.Toast;
 import ch.boye.httpclientandroidlib.HttpEntity;
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.client.HttpClient;
@@ -86,45 +118,6 @@ import ch.boye.httpclientandroidlib.entity.mime.FormBodyPart;
 import ch.boye.httpclientandroidlib.entity.mime.content.FileBody;
 import ch.boye.httpclientandroidlib.entity.mime.content.StringBody;
 import ch.boye.httpclientandroidlib.impl.client.DefaultHttpClient;
-
-import com.chat.sdk.ChatCountListener;
-import com.chat.sdk.ChatService;
-import com.chat.sdk.db.ChatDBConstants;
-import com.chat.sdk.db.ChatDBWrapper;
-import com.chatsdk.org.jivesoftware.smack.PrivacyList;
-import com.chatsdk.org.jivesoftware.smack.PrivacyListManager;
-import com.chatsdk.org.jivesoftware.smack.XMPPException;
-import com.chatsdk.org.jivesoftware.smack.packet.Message;
-import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.sinch.android.rtc.calling.Call;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.data.beans.PhotoToLoad;
-import com.superchat.data.db.DatabaseConstants;
-import com.superchat.emojicon.EmojiconTextView;
-import com.superchat.interfaces.OnChatEditInterFace;
-import com.superchat.model.UserProfileModel;
-import com.superchat.task.ImageLoaderWorker;
-import com.superchat.utils.AndroidMultiPartEntity;
-import com.superchat.utils.BitmapDownloader;
-import com.superchat.utils.ColorGenerator;
-import com.superchat.utils.AndroidMultiPartEntity.ProgressListener;
-import com.superchat.utils.Constants;
-import com.superchat.utils.ImageDownloader.Mode;
-import com.superchat.utils.Log;
-import com.superchat.utils.MediaEngine;
-import com.superchat.utils.MyBase64;
-import com.superchat.utils.ProfilePicDownloader;
-import com.superchat.utils.RTMediaPlayer;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.utils.Utilities;
-import com.superchat.utils.VoiceMediaHandler;
-import com.superchat.widgets.RoundedImageView;
 //import com.superchat.utils.ImageDownloader;
 public class ChatListAdapter extends SimpleCursorAdapter{
 	public class ViewHolder implements VoiceMediaHandler{
@@ -1956,7 +1949,7 @@ public class ChatListAdapter extends SimpleCursorAdapter{
 		isBroadCastChat = iChatPref.isBroadCast(chatName);
 		isGroupChat = iChatPref.isGroupChat(chatName);
 		isSharedIDMessage = iChatPref.isSharedIDContact(chatName);
-		 if(!SharedPrefManager.getInstance().isDomainAdmin() && HomeScreen.isAdminFromSharedID(chatName, SharedPrefManager.getInstance().getUserName()))
+		 if(!SharedPrefManager.getInstance().isDomainAdminORSubAdmin() && HomeScreen.isAdminFromSharedID(chatName, SharedPrefManager.getInstance().getUserName()))
 			isSharedIDAdmin = true;
 		
 		colors = new HashMap<String, String>();
@@ -2185,6 +2178,7 @@ public String singleCheckedKey(){
 		viewholder.groupMsgSenderName = cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_GROUP_USER_FIELD));
 		viewholder.captionTagMsg = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG));
 		viewholder.locationMsg = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_LOCATION));
+		System.out.println("[CONTACT_NAMES_FIELD== ]"+cursor.getString(cursor.getColumnIndex(ChatDBConstants.CONTACT_NAMES_FIELD)));
 		
 		viewholder.seenState = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.SEEN_FIELD));
 		viewholder.messageType = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD));
@@ -2238,7 +2232,7 @@ public String singleCheckedKey(){
 		}
 		
 		if (viewholder.userName.equals(myUserName)) {
-			if(!iChatPref.isDomainAdmin()){
+			if(!iChatPref.isDomainAdminORSubAdmin()){
 				if(viewholder.message.startsWith("Welcome to ") && viewholder.message.endsWith("bulletin board ")){
 //					viewholder.dateLayout.setVisibility(View.VISIBLE);
 //					viewholder.dateText.setText(viewholder.message);
@@ -3054,7 +3048,7 @@ public String singleCheckedKey(){
 			if (isGroupChat || isSharedIDMessage) { 
 				viewholder.receiverPersonName.setVisibility(View.VISIBLE);
 				String name = viewholder.groupMsgSenderName;
-				if(isSharedIDMessage && (iChatPref.isDomainAdmin()) || isSharedIDAdmin){
+				if(isSharedIDMessage && (iChatPref.isDomainAdminORSubAdmin()) || isSharedIDAdmin){
 					name = iChatPref.getUserServerName(viewholder.groupMsgSenderName);
 					viewholder.replySharedID.setVisibility(View.VISIBLE);
 				}
@@ -3670,7 +3664,7 @@ public String singleCheckedKey(){
 				viewholder.receiverLayout.setOnLongClickListener(viewholder.onLongPressListener);
 			}
 			viewholder.receiverTime.setText(msgTime);
-			if(isSharedIDMessage && (iChatPref.isDomainAdmin()) || isSharedIDAdmin){
+			if(isSharedIDMessage && (iChatPref.isDomainAdminORSubAdmin()) || isSharedIDAdmin){
 //				viewholder.receiverLayout.setTag(viewholder.groupMsgSenderName);
 //				viewholder.replySharedID.setTag(viewholder.groupMsgSenderName);
 				viewholder.replySharedID.setOnClickListener(new OnClickListener() {
@@ -4493,7 +4487,7 @@ public static Bitmap rotateImage(String path, Bitmap bm) {
             	
             	@Override
             	public void onClick(View v) {
-            		if(iChatPref.isDNC(objUserModel.iUserName) && !iChatPref.isDomainAdmin()){
+            		if(iChatPref.isDNC(objUserModel.iUserName) && !iChatPref.isDomainAdminORSubAdmin()){
                 		Toast.makeText(context, context.getResources().getString(R.string.dnc_alert), Toast.LENGTH_SHORT).show();
                 		return;
                 	}

@@ -1,48 +1,4 @@
 package com.superchat.ui;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.chat.sdk.ChatService;
-import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
-import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.data.db.DBWrapper;
-import com.superchat.model.ErrorModel;
-import com.superchat.model.GroupChatServerModel;
-import com.superchat.ui.MainActivity.CheckAvailability;
-import com.superchat.utils.AppUtil;
-import com.superchat.utils.BitmapDownloader;
-import com.superchat.utils.ColorGenerator;
-import com.superchat.utils.CompressImage;
-import com.superchat.utils.Constants;
-import com.superchat.utils.Log;
-import com.superchat.utils.ProfilePicDownloader;
-import com.superchat.utils.ProfilePicUploader;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.utils.Utilities;
-import com.superchat.widgets.MyriadSemiboldTextView;
-import com.superchat.widgets.RoundedImageView;
-
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -68,8 +24,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -85,6 +39,47 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.chat.sdk.ChatService;
+import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
+import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.data.db.DBWrapper;
+import com.superchat.model.ErrorModel;
+import com.superchat.model.GroupChatServerModel;
+import com.superchat.utils.AppUtil;
+import com.superchat.utils.BitmapDownloader;
+import com.superchat.utils.ColorGenerator;
+import com.superchat.utils.CompressImage;
+import com.superchat.utils.Constants;
+import com.superchat.utils.Log;
+import com.superchat.utils.ProfilePicUploader;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.widgets.MyriadSemiboldTextView;
+import com.superchat.widgets.RoundedImageView;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 
 public class CreateSharedIDActivity extends Activity implements OnClickListener{
@@ -183,7 +178,7 @@ public class CreateSharedIDActivity extends Activity implements OnClickListener{
 			sharedID = extras.getString(Constants.GROUP_UUID, "");
 			sharedIDName = extras.getString(Constants.GROUP_NAME, "");
 			groupFileId = extras.getString(Constants.GROUP_FILE_ID, "");
-			if(!SharedPrefManager.getInstance().isDomainAdmin() && HomeScreen.isAdminFromSharedID(sharedID, SharedPrefManager.getInstance().getUserName()))
+			if(!SharedPrefManager.getInstance().isDomainAdminORSubAdmin() && HomeScreen.isAdminFromSharedID(sharedID, SharedPrefManager.getInstance().getUserName()))
 				isAdminUser = true;
 			isSharedIDDeactivated = SharedPrefManager.getInstance().isSharedIDDeactivated(sharedID);
 			if(isEditMode){
@@ -196,7 +191,8 @@ public class CreateSharedIDActivity extends Activity implements OnClickListener{
 					groupIconView.setOnClickListener(null);
 					((TextView)findViewById(R.id.id_next)).setVisibility(View.GONE);
 				}else{
-					deleteSharedID.setVisibility(View.VISIBLE);
+					if(HomeScreen.isSharedIDOwner(sharedID, SharedPrefManager.getInstance().getUserName()))
+						deleteSharedID.setVisibility(View.VISIBLE);
 					((TextView)findViewById(R.id.id_next)).setVisibility(View.VISIBLE);
 				}
 				if(groupFileId != null)
@@ -416,7 +412,7 @@ public class CreateSharedIDActivity extends Activity implements OnClickListener{
 		//Update
 		groupAdmins = HomeScreen.getAdminSetForSharedID(sharedID);
 		//Add your self
-		if(SharedPrefManager.getInstance().isDomainAdmin()){
+		if(SharedPrefManager.getInstance().isDomainAdminORSubAdmin()){
 			if(groupAdmins != null && !groupAdmins.contains(SharedPrefManager.getInstance().getUserName()))
 				groupAdmins.add(0, SharedPrefManager.getInstance().getUserName());
 		}else if(isAdminUser && groupAdmins != null && !groupAdmins.contains(HomeScreen.getSharedIDOwnerName(sharedID)))

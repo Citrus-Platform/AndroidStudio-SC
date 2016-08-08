@@ -176,7 +176,9 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
         viewholder.displayName = cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD));
         viewholder.voipumValue = cursor.getString(cursor.getColumnIndex(DatabaseConstants.VOPIUM_FIELD));
         String s2 = cursor.getString(cursor.getColumnIndex(DatabaseConstants.IS_FAVOURITE_FIELD));
-        String compositeNumber = cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_COMPOSITE_FIELD));
+        String status = cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_COMPOSITE_FIELD));
+        if (status != null)
+            System.out.println("[status - ]" + status);
         //viewholder.activationDate = cursor.getString(cursor.getColumnIndex(DatabaseConstants.USER_ACTIVATION_DATE));
         viewholder.displayNameView.setText(viewholder.displayName);
 
@@ -221,13 +223,13 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
         viewholder.imageDefault.setTag(viewholder.userNames);
         setProfilePic(viewholder.image, viewholder.imageDefault, viewholder.displayName, viewholder.userNames);
 
-        boolean isSuperAdmin = prefManager.isDomainAdmin();
+        boolean isSuperAdmin = prefManager.isDomainAdminORSubAdmin();
         boolean isCurrentUserAdmin = isSuperAdmin(viewholder.userNames, viewholder.contentType);
         boolean isCurrentUserSubAdmin = isSuperSubAdmin(viewholder.userNames, viewholder.contentType);
 
-        if(isCurrentUserAdmin) {
+        if (isCurrentUserAdmin) {
             viewholder.userStatusView.setText("Owner");
-        } else if(isCurrentUserSubAdmin) {
+        } else if (isCurrentUserSubAdmin) {
             viewholder.userStatusView.setText("Admin");
         } else {
             viewholder.userStatusView.setText("");
@@ -235,24 +237,36 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
         final boolean isCurrentUserSuperOrSubAdmin = (isCurrentUserAdmin || isCurrentUserSubAdmin);
         final boolean isUserInvited = prefManager.isUserInvited(viewholder.userNames);
-        if((isCurrentUserSuperOrSubAdmin && isUserInvited) && !(isSuperAdmin)){
-            viewholder.ivOverFlowMenuMembers.setVisibility(View.GONE);
+        if ((isCurrentUserSuperOrSubAdmin && isUserInvited) && !(isSuperAdmin)) {
+            //viewholder.ivOverFlowMenuMembers.setVisibility(View.INVISIBLE);
         } else {
-            viewholder.ivOverFlowMenuMembers.setVisibility(View.VISIBLE);
+            //viewholder.ivOverFlowMenuMembers.setVisibility(View.VISIBLE);
         }
 
-
-
-        view.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isCurrentUserSuperOrSubAdmin){
-                    showProfileUserScreen(viewholder.userNames, viewholder.displayName);
-                } else {
-                    showEditUserScreen(viewholder.userNames, viewholder.displayName);
-                }
-            }
-        });
+//        viewholder.image.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showProfileUserScreen(viewholder.userNames, viewholder.displayName);
+//            }
+//        });
+//        viewholder.imageDefault.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showProfileUserScreen(viewholder.userNames, viewholder.displayName);
+//            }
+//        });
+        view.setOnClickListener(viewholder.onCheckeClickListener);
+//        view.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                if(isCurrentUserSuperOrSubAdmin){
+////                    showProfileUserScreen(viewholder.userNames, viewholder.displayName);
+////                } else {
+////                    showEditUserScreen(viewholder.userNames, viewholder.displayName);
+////                }
+//
+//            }
+//        });
     }
 
     public View newView(Context context1, Cursor cursor, ViewGroup viewgroup) {
@@ -263,18 +277,20 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
         viewholder.imageDefault = (ImageView) view.findViewById(R.id.contact_icon_default);
         viewholder.userStatusView = (TextView) view.findViewById(R.id.id_contact_status);
         viewholder.displayNameView = (TextView) view.findViewById(R.id.id_contact_name);
-        viewholder.displayNameView = (TextView) view.findViewById(R.id.id_contact_name);
         viewholder.crossView = (ImageView) view.findViewById(R.id.id_cross);
         //viewholder.removeMemberView = (ImageView) view.findViewById(R.id.id_remove_member);
         viewholder.iCheckBox = (CheckBox) view.findViewById(R.id.contact_sel_box);
-        if (screenType == Constants.MEMBER_DELETE)
+        if (screenType == Constants.MEMBER_DELETE) {
             ((CheckBox) view.findViewById(R.id.id_owner_choose)).setVisibility(CheckBox.GONE);
+        } else {
+            viewholder.displayNameView.setOnClickListener(viewholder.onCheckeClickListener);
+        }
 
         //		if (isEditableContact){
         //viewholder.removeMemberView.setOnClickListener(viewholder.onCheckeClickListener);
         viewholder.crossView.setOnClickListener(viewholder.onCheckeClickListener);
         viewholder.image.setOnClickListener(viewholder.onCheckeClickListener);
-        viewholder.displayNameView.setOnClickListener(viewholder.onCheckeClickListener);
+
         viewholder.crossView.setOnClickListener(viewholder.onCheckeClickListener);
         viewholder.iCheckBox.setOnClickListener(viewholder.onCheckeClickListener);
         //view.setOnClickListener(viewholder.onCheckeClickListener);
@@ -286,7 +302,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
         return view;
     }
 
-    private void populateHMIfSuperSubAdmin(final String userName, final String contentType){
+    private void populateHMIfSuperSubAdmin(final String userName, final String contentType) {
         if (contentType != null && contentType.trim().equalsIgnoreCase(KEY_SUPER_SUB_ADMIN)) {
             hmAdmins.put(userName, null);
         }
@@ -294,7 +310,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
     private boolean isSuperSubAdmin(final String userName, final String contentType) {
         boolean isSuperAdmin = false;
-        if((hmAdmins != null) && hmAdmins.containsKey(userName)){
+        if ((hmAdmins != null) && hmAdmins.containsKey(userName)) {
             isSuperAdmin = true;
         }
 
@@ -304,7 +320,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
     private boolean isSuperAdmin(final String userName, final String contentType) {
         boolean isSuperAdmin = false;
-        if((contentType != null) && contentType.equalsIgnoreCase(KEY_SUPER_ADMIN)){
+        if ((contentType != null) && contentType.equalsIgnoreCase(KEY_SUPER_ADMIN)) {
             isSuperAdmin = true;
         }
 
@@ -312,25 +328,25 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
     }
 
 
-    private void makeRemoveSuperAdmin(String userNames, String displayName, String contentType){
+    private void makeRemoveSuperAdmin(String userNames, String displayName, String contentType) {
         if (isSuperSubAdmin(userNames, contentType))
             showDialogSuperAdmin("Remove Super Admin",
                     "Are you sure you want to remove user from Super Admin?",
                     userNames, contentType);
-        else{
+        else {
             AddRemoveSuperAdmin(userNames, contentType);
         }
     }
 
 
-    private void activateDeactivateUser(String userNames, String displayName){
+    private void activateDeactivateUser(String userNames, String displayName) {
         if (SharedPrefManager.getInstance().isUserExistence(userNames))
             showDialog("Deactivate Member", "This member may be a Group Admin of one or more groups. You should appoint another Group Admin for those groups before removing this member", userNames);
         else
             showDialog("Activate Member", "Do you want to activate " + displayName + ".", userNames);
     }
 
-    private void showProfileUserScreen(String userNames, String displayName){
+    private void showProfileUserScreen(String userNames, String displayName) {
         Intent intent1 = new Intent(SuperChatApplication.context, ProfileScreen.class);
         Bundle bundle = new Bundle();
         bundle.putString(Constants.CHAT_USER_NAME, userNames);
@@ -340,7 +356,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
     }
 
 
-    private void showEditUserScreen(String userNames, String displayName){
+    private void showEditUserScreen(String userNames, String displayName) {
         Intent intent1 = new Intent(SuperChatApplication.context, ProfileScreen.class);
         Bundle bundle = new Bundle();
         bundle.putString(Constants.CHAT_USER_NAME, userNames);
@@ -352,7 +368,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
             ((EsiaChatContactsScreen) context).finish();*/
     }
 
-    private void showChatScreen(String userNames, String displayName){
+    private void showChatScreen(String userNames, String displayName) {
         Intent intent = new Intent(SuperChatApplication.context, ChatListScreen.class);
         intent.putExtra(DatabaseConstants.CONTACT_NAMES_FIELD, displayName);
         intent.putExtra(DatabaseConstants.USER_NAME_FIELD, userNames);
@@ -388,14 +404,15 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
                 boolean isIdInSwitchFound = false;
                 int id = v.getId();
                 switch (id) {
+                    case R.id.contact_icon:
                     case R.id.ivOverFlowMenuMembers: {
                         isIdInSwitchFound = true;
                         MenuPopup(v, userNames, displayName, contentType);
-                        break;
+                        return;
                     }
                 }
 
-                if(!isIdInSwitchFound) {
+                if (!isIdInSwitchFound) {
                     if (screenType == Constants.MEMBER_DELETE) {
 //						if(voipumValue!=null && voipumValue.equals("2")){
 //							
@@ -404,7 +421,9 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 //							showDialog("Remove Member","Do you want to remove "+displayName+".",userNames);
                             activateDeactivateUser(userNames, displayName);
                         } else {
-                            showEditUserScreen(userNames, displayName);
+//                            showEditUserScreen(userNames, displayName);
+                            isIdInSwitchFound = true;
+                            MenuPopup(v, userNames, displayName, contentType);
                         }
                     } else if (isEditableContact) {
                         if (v.getId() == R.id.id_cross && selectedUserList != null) {
@@ -726,8 +745,8 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
     }
 
 
-    private void AddRemoveSuperAdmin(final String userNames, final String contentType){
-        try{
+    private void AddRemoveSuperAdmin(final String userNames, final String contentType) {
+        try {
             final ProgressDialog progressDialog = ProgressDialog.show(context, "", "Loading. Please wait...", true);
 
             UserAdminRequest objUserAdmin = new UserAdminRequest();
@@ -736,10 +755,9 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
             Call call = null;
 
             final boolean isSuperAdmin = isSuperSubAdmin(userNames, contentType);
-            if(isSuperAdmin) {
+            if (isSuperAdmin) {
                 call = objApi.getApi(context).removeAdmin(objUserAdmin);
-            }
-            else {
+            } else {
                 call = objApi.getApi(context).makeAdmin(objUserAdmin);
             }
 
@@ -751,26 +769,28 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
                 @Override
                 protected void onResponseVoidzObject(Call call, UserAdminResponse response) {
-                    if(response != null && response.getStatus() != null && response.getStatus().equalsIgnoreCase("success")){
+                    if (response != null && response.getStatus() != null && response.getStatus().equalsIgnoreCase("success")) {
 
-                        if(isSuperAdmin){
+                        if (isSuperAdmin) {
                             hmAdmins.remove(userNames);
+//                            DBWrapper.getInstance().updateUserAccess(userNames, "");
                             try {
                                 EsiaChatContactsScreen parentActivity = ((EsiaChatContactsScreen) activity);
                                 if (parentActivity != null && parentActivity != null) {
                                     parentActivity.addRemoveAdmin(userNames, false);
                                 }
-                            } catch(Exception e){
+                            } catch (Exception e) {
 
                             }
                         } else {
                             hmAdmins.put(userNames, null);
+//                            DBWrapper.getInstance().updateUserAccess(userNames, "Admin");
                             try {
                                 EsiaChatContactsScreen parentActivity = ((EsiaChatContactsScreen) activity);
                                 if (parentActivity != null && parentActivity != null) {
                                     parentActivity.addRemoveAdmin(userNames, true);
                                 }
-                            } catch(Exception e){
+                            } catch (Exception e) {
 
                             }
                             objToast.makeToast(context, "Member has been promoted as SuperAdmin", UtilGlobal.MODE_RELEASE);
@@ -784,10 +804,11 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
                 @Override
                 protected void common() {
                     progressDialog.cancel();
+                    isPopshown = false;
                 }
             });
 
-        } catch(Exception e){
+        } catch (Exception e) {
 
         }
     }
@@ -834,33 +855,49 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
      * This method will open up flow window for a particular users with all applicable options
      */
 
+    public boolean cancelPopupMenu() {
+        if (popupWindow != null && popupWindow.isShowing()) {
+            popupWindow.dismiss();
+            isPopshown = false;
+            return true;
+        }
+        return false;
+    }
+
+    boolean isPopshown;
+
     public void MenuPopup(View v, final String userNames, final String displayName, final String contentType) {
+        if (popupWindow != null && isPopshown) {
+            popupWindow.dismiss();
+            isPopshown = false;
+            return;
+        }
         bubbleLayout = (BubbleLayout) LayoutInflater.from(context).inflate(R.layout.inflate_members_menu_popup, null);
         popupWindow = BubblePopupHelper.create(context, bubbleLayout);
 
-            if (bubbleLayout != null && popupWindow != null) {
+        if (bubbleLayout != null && popupWindow != null) {
 
-                Cursor cursor = getCursor();
+            Cursor cursor = getCursor();
 
-                int[] location = new int[2];
-                v.getLocationInWindow(location);
+            int[] location = new int[2];
+            v.getLocationInWindow(location);
 //                popupWindow.showAtLocation(v, Gravity.CENTER_VERTICAL, location[0], v.getHeight() + location[1]);
 
-                try {
+            try {
 
-                    Display display = activity.getWindowManager().getDefaultDisplay();
-                    int width = display.getWidth();  // deprecated
-                    int height = display.getHeight();  // deprecated
+                Display display = activity.getWindowManager().getDefaultDisplay();
+                int width = display.getWidth();  // deprecated
+                int height = display.getHeight();  // deprecated
 
-                    popupWindow.setWindowLayoutMode(width, height);
-                    popupWindow.setWidth(width);
-                    popupWindow.setHeight(height);
-                } catch(Exception e){
-                    e.printStackTrace();
-                }
+                popupWindow.setWindowLayoutMode(width, height);
+                popupWindow.setWidth(width);
+                popupWindow.setHeight(height);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-                popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
-                popupWindow.setOutsideTouchable(false);
+            popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
+            popupWindow.setOutsideTouchable(false);
 
 
                 /*
@@ -869,82 +906,85 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
                 v.setBackgroundColor(context.getResources().getColor(R.color.pf_BlackOpaque));
                 popupWindow.showAtLocation(v, Gravity.NO_GRAVITY, location[0], v.getHeight() + location[1]);
                 */
-                LinearLayout llMemberAction_MakeSuperAdmin = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_MakeSuperAdmin);
-                LinearLayout llMemberAction_RemoveSuperAdmin = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_RemoveSuperAdmin);
-                LinearLayout llMemberAction_ReactivateUser = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_ReactivateUser);
-                LinearLayout llMemberAction_DeactivateUser = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_DeactivateUser);
-                LinearLayout llMemberAction_ViewProfile = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_ViewProfile);
-                LinearLayout llMemberAction_EditProfile = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_EditProfile);
-                LinearLayout llMemberAction_Message = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_Message);
+            LinearLayout llOutSideOverFlow = (LinearLayout) bubbleLayout.findViewById(R.id.llOutSideOverFlow);
+            LinearLayout llMemberAction_MakeSuperAdmin = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_MakeSuperAdmin);
+            LinearLayout llMemberAction_RemoveSuperAdmin = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_RemoveSuperAdmin);
+            LinearLayout llMemberAction_ReactivateUser = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_ReactivateUser);
+            LinearLayout llMemberAction_DeactivateUser = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_DeactivateUser);
+            LinearLayout llMemberAction_ViewProfile = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_ViewProfile);
+            LinearLayout llMemberAction_EditProfile = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_EditProfile);
+            LinearLayout llMemberAction_Message = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_Message);
 
-                llMemberAction_MakeSuperAdmin.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
-                llMemberAction_RemoveSuperAdmin.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
-                llMemberAction_ReactivateUser.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
-                llMemberAction_DeactivateUser.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
-                llMemberAction_ViewProfile.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
-                llMemberAction_EditProfile.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
-                llMemberAction_Message.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
+            llOutSideOverFlow.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
+            llMemberAction_MakeSuperAdmin.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
+            llMemberAction_RemoveSuperAdmin.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
+            llMemberAction_ReactivateUser.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
+            llMemberAction_DeactivateUser.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
+            llMemberAction_ViewProfile.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
+            llMemberAction_EditProfile.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
+            llMemberAction_Message.setOnClickListener(new MenuClickListerenr(userNames, displayName, contentType));
 
-                // Check Cursor Values and show / Hide view accordingly
+            // Check Cursor Values and show / Hide view accordingly
+            {
+                boolean isUserInvited = prefManager.isUserInvited(userNames);
+                boolean isDomainAdmin = prefManager.isDomainAdmin();
+                boolean isDomainSubAdmin = prefManager.isDomainSubAdmin();
+
+                boolean isCurrentUserAdmin = isSuperAdmin(userNames, contentType);
+                boolean isCurrentUserSubAdmin = isSuperSubAdmin(userNames, contentType);
+
                 {
-                    boolean isUserInvited = prefManager.isUserInvited(userNames);
-                    boolean isDomainAdmin = prefManager.isDomainAdmin();
-                    boolean isDomainSubAdmin = prefManager.isDomainSubAdmin();
-
-                    boolean isCurrentUserAdmin = isSuperAdmin(userNames, contentType);
-                    boolean isCurrentUserSubAdmin = isSuperSubAdmin(userNames, contentType);
-
-                    {
-                        if (isCurrentUserSubAdmin) {
-                            llMemberAction_MakeSuperAdmin.setVisibility(View.GONE);
-                            llMemberAction_RemoveSuperAdmin.setVisibility(View.VISIBLE);
-                        } else {
-                            llMemberAction_MakeSuperAdmin.setVisibility(View.VISIBLE);
-                            llMemberAction_RemoveSuperAdmin.setVisibility(View.GONE);
-                        }
-
-                        if (screenType == Constants.MEMBER_DELETE) {
-                            if (!SharedPrefManager.getInstance().isUserExistence(userNames)) {
-                                llMemberAction_ReactivateUser.setVisibility(View.VISIBLE);
-                                llMemberAction_DeactivateUser.setVisibility(View.GONE);
-                            } else {
-                                llMemberAction_ReactivateUser.setVisibility(View.GONE);
-                                llMemberAction_DeactivateUser.setVisibility(View.VISIBLE);
-                            }
-                        }
+                    if (isCurrentUserSubAdmin) {
+                        llMemberAction_MakeSuperAdmin.setVisibility(View.GONE);
+                        llMemberAction_RemoveSuperAdmin.setVisibility(View.VISIBLE);
+                    } else {
+                        llMemberAction_MakeSuperAdmin.setVisibility(View.VISIBLE);
+                        llMemberAction_RemoveSuperAdmin.setVisibility(View.GONE);
                     }
 
-
-                    if(isDomainAdmin){
-
-                        if(isUserInvited){
-                            llMemberAction_ViewProfile.setVisibility(View.GONE);
-                            llMemberAction_Message.setVisibility(View.GONE);
-                        }
-                    } else if(isDomainSubAdmin){
-
-                        llMemberAction_MakeSuperAdmin.setVisibility(View.GONE);
-                        llMemberAction_RemoveSuperAdmin.setVisibility(View.GONE);
-
-                        boolean isCurrentUserSuperOrSubAdmin = (isCurrentUserAdmin || isCurrentUserSubAdmin);
-
-                        if(isCurrentUserSuperOrSubAdmin){
-                            llMemberAction_ReactivateUser.setVisibility(View.GONE);
+                    if (screenType == Constants.MEMBER_DELETE) {
+                        if (!SharedPrefManager.getInstance().isUserExistence(userNames)) {
+                            llMemberAction_ReactivateUser.setVisibility(View.VISIBLE);
                             llMemberAction_DeactivateUser.setVisibility(View.GONE);
-                            llMemberAction_EditProfile.setVisibility(View.GONE);
                         } else {
-
+                            llMemberAction_ReactivateUser.setVisibility(View.GONE);
+                            llMemberAction_DeactivateUser.setVisibility(View.VISIBLE);
                         }
+                    }
+                }
 
-                        if(isUserInvited){
-                            llMemberAction_ViewProfile.setVisibility(View.GONE);
-                            llMemberAction_Message.setVisibility(View.GONE);
-                        }
+
+                if (isDomainAdmin) {
+
+                    if (isUserInvited) {
+                        //llMemberAction_ViewProfile.setVisibility(View.GONE);
+                        llMemberAction_Message.setVisibility(View.GONE);
+                    }
+                } else if (isDomainSubAdmin) {
+
+                    llMemberAction_MakeSuperAdmin.setVisibility(View.GONE);
+                    llMemberAction_RemoveSuperAdmin.setVisibility(View.GONE);
+
+                    boolean isCurrentUserSuperOrSubAdmin = (isCurrentUserAdmin || isCurrentUserSubAdmin);
+
+                    if (isCurrentUserSuperOrSubAdmin) {
+                        llMemberAction_ReactivateUser.setVisibility(View.GONE);
+                        llMemberAction_DeactivateUser.setVisibility(View.GONE);
+                        llMemberAction_EditProfile.setVisibility(View.GONE);
                     } else {
 
                     }
+
+                    if (isUserInvited) {
+                        //llMemberAction_ViewProfile.setVisibility(View.GONE);
+                        llMemberAction_Message.setVisibility(View.GONE);
+                    }
+                } else {
+
                 }
             }
+        }
+        isPopshown = true;
     }
 
     class MenuClickListerenr implements OnClickListener {
@@ -962,11 +1002,18 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
         @Override
         public void onClick(View v) {
 
-            if(popupWindow != null && popupWindow.isShowing()){
+            if (popupWindow != null && popupWindow.isShowing()) {
                 popupWindow.dismiss();
             }
             int id = v.getId();
             switch (id) {
+                case R.id.llOutSideOverFlow:{
+                    if (popupWindow != null && isPopshown) {
+                        popupWindow.dismiss();
+                        isPopshown = false;
+                    }
+                    break;
+                }
                 case R.id.llMemberAction_MakeSuperAdmin:
                 case R.id.llMemberAction_RemoveSuperAdmin: {
                     makeRemoveSuperAdmin(userNames, displayName, contentType);
