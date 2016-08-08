@@ -376,7 +376,7 @@ public class SharedIDScreen extends Activity implements OnClickListener{//, OnMe
 		bindService(new Intent(this, ChatService.class), mConnection,Context.BIND_AUTO_CREATE);
 		onForeground = true;
 //		refreshList();
-		if(HomeScreen.firstTimeAdmin && SharedPrefManager.getInstance().isDomainAdmin()){
+		if(HomeScreen.firstTimeAdmin && SharedPrefManager.getInstance().isDomainAdminORSubAdmin()){
 			if(!isFirstTimeDialogShowing)
 				showDialog(getResources().getString(R.string.first_time_gp_creation_alert));
 		}

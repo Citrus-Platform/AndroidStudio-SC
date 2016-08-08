@@ -1,12 +1,5 @@
 package com.superchat.ui;
 
-import java.util.List;
-
-import com.superchat.R;
-import com.superchat.utils.Constants;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.utils.Utilities;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,6 +22,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.superchat.R;
+import com.superchat.utils.Constants;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.Utilities;
+
+import java.util.List;
 
 public class RegistrationOptions extends FragmentActivity implements OnClickListener {
 
@@ -173,7 +173,7 @@ public class RegistrationOptions extends FragmentActivity implements OnClickList
 //				Device model info
 //				Country with city/state location
 //				Time zone
-				Intent mailIntent = new Intent(android.content.Intent.ACTION_SEND);
+				Intent mailIntent = new Intent(Intent.ACTION_SEND);
 				mailIntent.setType("text/plain");
 				mailIntent.putExtra(Intent.EXTRA_SUBJECT, "Support");
 				mailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "support@citrusplatform.com" });

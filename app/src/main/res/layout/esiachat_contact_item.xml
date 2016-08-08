@@ -82,7 +82,7 @@
         android:layout_gravity="center_vertical"
         android:paddingLeft="10dp"
         android:paddingRight="20dp"
-        android:layout_marginTop="30dip"
+        android:layout_marginTop="10dip"
         android:layout_marginBottom="10dip"
         android:src="@drawable/ic_action_overflow_menu"
         android:visibility="gone" />

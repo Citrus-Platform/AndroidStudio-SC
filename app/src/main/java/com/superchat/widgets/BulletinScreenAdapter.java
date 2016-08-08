@@ -458,7 +458,7 @@ public class BulletinScreenAdapter extends SimpleCursorAdapter implements OnClic
         if (msg != null) {
             viewholder.id_last_msg_sender.setVisibility(View.VISIBLE);
             if (viewholder.userName.equals(iChatPref.getUserDomain() + "-all")) {
-                if (iChatPref.isDomainAdmin())
+                if (iChatPref.isDomainAdminORSubAdmin())
                     groupMsgSenderName = "You : ";
                 else
                     groupMsgSenderName = "";

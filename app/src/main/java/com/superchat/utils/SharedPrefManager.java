@@ -118,6 +118,9 @@ public class SharedPrefManager {
 	private final String SG_LIST_DATA = "sg_list_data";
 	private final String CONTACT_SYNCHED = "contact_synched";
 	private final String GROUP_LOADED = "group_loaded";
+
+	private final String BROADCAST_FIRST_TIME_NAME = "broadcast_first_time_name";
+
 	private static SharedPrefManager sharedPrefManager;
 
 	private SharedPrefManager(Context context) {
@@ -132,6 +135,21 @@ public class SharedPrefManager {
 		}
 		return sharedPrefManager;
 	}
+
+
+
+	public void saveBroadcastFirstTimeName(String broadcast,String name) {
+		if(name != null && !name.equals("")){
+            System.out.println("[Name = ]"+name);
+			editor.putString(BROADCAST_FIRST_TIME_NAME + broadcast, name);
+			editor.commit();
+		}
+	}
+	public String getBroadcastFirstTimeName(String broadcast) {
+		String value = pref.getString(BROADCAST_FIRST_TIME_NAME + broadcast, null);
+		return value;
+	}
+
 	public void setProfileAdded(String userName,boolean flag){
 		editor.putBoolean(PROFILE_ADDED+userName, flag);
 		editor.commit();

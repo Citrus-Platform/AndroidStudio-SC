@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffe7e8e9"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/header_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/heder_height"
+        android:background="@color/header_footer_color" >
+
+        <TextView
+            android:id="@+id/about_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:capitalize="characters"
+            android:drawableLeft="@drawable/back_arrow_green"
+            android:padding="15dip"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/header_txt"
+            style="@style/style_screen_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/chat_backup" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/container_layout"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/white"
+        android:orientation="vertical" >
+        
+      <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@color/white"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/id_last_backup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:text="@string/last_backup"
+                android:textColor="@color/color_lite_blue"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/id_last_backup_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="15dp"
+                android:text="22 Oct 2016 2:30 pm"
+                android:textColor="@color/dark_gray"
+                android:textSize="13sp"
+                android:textStyle="normal" />
+        </LinearLayout>
+        <TextView
+                android:id="@+id/id_backup_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginLeft="10dp"
+                android:text="@string/back_up_message"
+                android:textColor="@color/darkest_gray"
+                android:textSize="14sp"
+                android:textStyle="normal"
+                android:visibility="visible" />
+        
+            <Button
+			    android:id="@+id/id_backup"
+			    android:layout_width="wrap_content"
+			    android:layout_height="35dip"
+			    android:layout_marginLeft="10dp"
+			    android:layout_marginTop="20dp"
+			    android:layout_gravity="left"
+			    android:background="@drawable/round_rect_blue"
+			    android:text="@string/backup"
+			    android:textColor="@color/white"
+			    android:textColorHighlight="@color/header_color"
+			    android:textSize="15sp"
+			    android:visibility="visible"
+			    android:textStyle="bold" />
+            </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/id_last_backup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/chat_backup_settings"
+                android:textColor="@color/color_lite_blue"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
+
+        <LinearLayout
+             android:id="@+id/id_backup_to_server"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@color/white"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:text="@string/backup_to_server"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="normal"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/id_backup_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="15dp"
+                android:text="Never"
+                android:textColor="@color/dark_gray"
+                android:textSize="14sp"
+                android:textStyle="normal" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/id_backup_network_server"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@color/white"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:text="@string/back_up_over"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="normal"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/id_backup_network_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="15dp"
+                android:text="WiFi"
+                android:textColor="@color/dark_gray"
+                android:textSize="14sp"
+                android:textStyle="normal" />
+        </LinearLayout>
+            </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

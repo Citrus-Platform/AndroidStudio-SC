@@ -744,6 +744,18 @@ private String convertStringArrayToString1(List<String> strList) {
 		dbwrapper.setTransaction();
 		dbwrapper.endTransaction();
 	}
+	public void updateUserAccess(String username) {
+		DBWrapper dbwrapper = DBWrapper.getInstance();
+		dbwrapper.beginTransaction();
+		ContentValues contentvalues = new ContentValues();
+		contentvalues.put(DatabaseConstants.VOPIUM_FIELD, 1);
+		dbwrapper.updateInDB(DatabaseConstants.TABLE_ALL_CONTACT_NUMBERS,
+				contentvalues,
+				DatabaseConstants.USER_NAME_FIELD + " = ?",
+				new String[] { username });
+		dbwrapper.setTransaction();
+		dbwrapper.endTransaction();
+	}
 	public void updateUserDetails(String contactNumber, UserResponseDetail userDetail) {
 		DBWrapper dbwrapper = DBWrapper.getInstance();
 		dbwrapper.beginTransaction();

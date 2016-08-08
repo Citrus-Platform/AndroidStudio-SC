@@ -60,5 +60,5 @@
     <dimen name="header_height">50dip</dimen>
 
     <dimen name="EsiaChat_OverFlowTextSize">17dp</dimen>
-    <dimen name="EsiaChat_OverFlowTextMargin">10dp</dimen>
+    <dimen name="EsiaChat_OverFlowTextMargin">12dp</dimen>
 </resources>

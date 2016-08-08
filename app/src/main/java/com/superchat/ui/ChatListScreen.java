@@ -1,89 +1,5 @@
 package com.superchat.ui;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
-import java.util.Vector;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.chat.sdk.ChatCountListener;
-import com.chat.sdk.ChatService;
-import com.chat.sdk.ConnectionStatusListener;
-import com.chat.sdk.ProfileUpdateListener;
-import com.chat.sdk.TypingListener;
-import com.chat.sdk.db.ChatDBConstants;
-import com.chat.sdk.db.ChatDBWrapper;
-import com.chatsdk.org.jivesoftware.smack.PrivacyList;
-import com.chatsdk.org.jivesoftware.smack.PrivacyListManager;
-import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
-import com.chatsdk.org.jivesoftware.smack.packet.Message;
-import com.chatsdk.org.jivesoftware.smack.packet.Message.SeenState;
-import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
-import com.chatsdk.org.jivesoftware.smack.packet.PrivacyItem;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.sinch.android.rtc.calling.Call;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.data.db.DBWrapper;
-import com.superchat.data.db.DatabaseConstants;
-import com.superchat.date.DatePickerDialog;
-import com.superchat.emojicon.EmojiconEditText;
-import com.superchat.emojicon.EmojiconGridView.OnEmojiconClickedListener;
-import com.superchat.emojicon.EmojiconsPopup;
-import com.superchat.emojicon.EmojiconsPopup.OnEmojiconBackspaceClickedListener;
-import com.superchat.emojicon.EmojiconsPopup.OnSoftKeyboardOpenCloseListener;
-import com.superchat.emojicon.emoji.Emojicon;
-import com.superchat.interfaces.OnChatEditInterFace;
-import com.superchat.model.GroupChatServerModel;
-import com.superchat.model.UserProfileModel;
-import com.superchat.time.RadialPickerLayout;
-import com.superchat.time.TimePickerDialog;
-import com.superchat.utils.AndroidBmpUtil;
-import com.superchat.utils.AppUtil;
-import com.superchat.utils.BitmapDownloader;
-import com.superchat.utils.ColorGenerator;
-import com.superchat.utils.CompressImage;
-import com.superchat.utils.Constants;
-import com.superchat.utils.Log;
-import com.superchat.utils.MediaEngine;
-import com.superchat.utils.MyBase64;
-import com.superchat.utils.ProfilePicDownloader;
-import com.superchat.utils.ProfilePicUploader;
-import com.superchat.utils.RTMediaPlayer;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.utils.VoiceMedia;
-import com.superchat.utils.VoiceMediaHandler;
-import com.superchat.widgets.RoundedImageView;
-
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
@@ -171,6 +87,91 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.chat.sdk.ChatCountListener;
+import com.chat.sdk.ChatService;
+import com.chat.sdk.ConnectionStatusListener;
+import com.chat.sdk.ProfileUpdateListener;
+import com.chat.sdk.TypingListener;
+import com.chat.sdk.db.ChatDBConstants;
+import com.chat.sdk.db.ChatDBWrapper;
+import com.chatsdk.org.jivesoftware.smack.PrivacyList;
+import com.chatsdk.org.jivesoftware.smack.PrivacyListManager;
+import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
+import com.chatsdk.org.jivesoftware.smack.packet.Message;
+import com.chatsdk.org.jivesoftware.smack.packet.Message.SeenState;
+import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
+import com.chatsdk.org.jivesoftware.smack.packet.PrivacyItem;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.sinch.android.rtc.calling.Call;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.data.db.DBWrapper;
+import com.superchat.data.db.DatabaseConstants;
+import com.superchat.date.DatePickerDialog;
+import com.superchat.emojicon.EmojiconEditText;
+import com.superchat.emojicon.EmojiconGridView.OnEmojiconClickedListener;
+import com.superchat.emojicon.EmojiconsPopup;
+import com.superchat.emojicon.EmojiconsPopup.OnEmojiconBackspaceClickedListener;
+import com.superchat.emojicon.EmojiconsPopup.OnSoftKeyboardOpenCloseListener;
+import com.superchat.emojicon.emoji.Emojicon;
+import com.superchat.interfaces.OnChatEditInterFace;
+import com.superchat.model.GroupChatServerModel;
+import com.superchat.model.UserProfileModel;
+import com.superchat.time.RadialPickerLayout;
+import com.superchat.time.TimePickerDialog;
+import com.superchat.utils.AndroidBmpUtil;
+import com.superchat.utils.AppUtil;
+import com.superchat.utils.BitmapDownloader;
+import com.superchat.utils.ColorGenerator;
+import com.superchat.utils.CompressImage;
+import com.superchat.utils.Constants;
+import com.superchat.utils.Log;
+import com.superchat.utils.MediaEngine;
+import com.superchat.utils.MyBase64;
+import com.superchat.utils.ProfilePicDownloader;
+import com.superchat.utils.ProfilePicUploader;
+import com.superchat.utils.RTMediaPlayer;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.VoiceMedia;
+import com.superchat.utils.VoiceMediaHandler;
+import com.superchat.widgets.RoundedImageView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
+import java.util.Vector;
+
 import me.leolin.shortcutbadger.ShortcutBadger;
 
 //import com.superchat.utils.SharedPrefManager;
@@ -1155,7 +1156,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             userName = extras.getString(DatabaseConstants.USER_NAME_FIELD);
             isBulletinBroadcast = extras.getBoolean("FROM_BULLETIN_NOTIFICATION");
             isSharedIDMessage = iChatPref.isSharedIDContact(userName);
-            if(!iChatPref.isDomainAdmin() && HomeScreen.isAdminFromSharedID(userName, iChatPref.getUserName()))
+            if(!iChatPref.isDomainAdminORSubAdmin() && HomeScreen.isAdminFromSharedID(userName, iChatPref.getUserName()))
 				isSharedIDAdmin = true;
             isSharedIDDeactivated = iChatPref.isSharedIDDeactivated(userName);
             if(userName.equalsIgnoreCase(iChatPref.getUserDomain() + "-all"))
@@ -1549,7 +1550,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
     }
     
     private boolean isBulletinBroadcastForAdmin(){
-    	if(iChatPref.isDomainAdmin() && isBulletinBroadcast)
+    	if(iChatPref.isDomainAdminORSubAdmin() && isBulletinBroadcast)
     		return true;
     	return false;
     }
@@ -2891,7 +2892,7 @@ Handler wheelHandler = new Handler(){
 
     public void onCallClicked() {
         if (!iChatPref.isGroupChat(userName)) {
-        	if(iChatPref.isDNC(userName) && !iChatPref.isDomainAdmin()){
+        	if(iChatPref.isDNC(userName) && !iChatPref.isDomainAdminORSubAdmin()){
         		Toast.makeText(this, getString(R.string.dnc_alert), Toast.LENGTH_SHORT).show();
         		return;
         	}
@@ -3456,7 +3457,7 @@ Handler wheelHandler = new Handler(){
 //       }
         Intent intent = null;
         if(isSharedIDMessage){
-        	if(iChatPref.isDomainAdmin() || isSharedIDAdmin){
+        	if(iChatPref.isDomainAdminORSubAdmin() || isSharedIDAdmin){
 	        	intent = new Intent(this, CreateSharedIDActivity.class);
 				intent.putExtra("EDIT_MODE", true);
 				intent.putExtra(Constants.GROUP_UUID, userName);
@@ -5459,7 +5460,7 @@ private void addNewContactEntry(String displayName, String tmpUserName,String tm
 	static Handler handler;
     @Override
     public void onClick(View v) {
-    	if(iChatPref.isDNM(userName) && !iChatPref.isDomainAdmin() && v.getId()!= R.id.id_cancel_btn){
+    	if(iChatPref.isDNM(userName) && !iChatPref.isDomainAdminORSubAdmin() && v.getId()!= R.id.id_cancel_btn){
     		Toast.makeText(this, getString(R.string.dnm_alert), Toast.LENGTH_SHORT).show();
     		return;
     	}

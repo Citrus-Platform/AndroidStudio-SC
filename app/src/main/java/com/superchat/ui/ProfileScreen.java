@@ -1,52 +1,5 @@
 package com.superchat.ui;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.chat.sdk.ChatService;
-import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
-import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.sinch.android.rtc.calling.Call;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.model.ContactUpDatedModel;
-import com.superchat.model.ErrorModel;
-import com.superchat.model.ProfileUpdateModel;
-import com.superchat.model.ProfileUpdateModelForAdmin;
-import com.superchat.model.RegMatchCodeModel;
-import com.superchat.model.UserProfileModel;
-import com.superchat.utils.AppUtil;
-import com.superchat.utils.BitmapDownloader;
-import com.superchat.utils.CompressImage;
-import com.superchat.utils.Constants;
-import com.superchat.utils.Log;
-import com.superchat.utils.ProfilePicDownloader;
-import com.superchat.utils.ProfilePicUploader;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.utils.Utilities;
-import com.superchat.widgets.RoundedImageView;
-
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -65,7 +18,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.ExifInterface;
-import android.media.ThumbnailUtils;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -101,6 +53,49 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import com.chat.sdk.ChatService;
+import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.sinch.android.rtc.calling.Call;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.model.ErrorModel;
+import com.superchat.model.ProfileUpdateModel;
+import com.superchat.model.ProfileUpdateModelForAdmin;
+import com.superchat.model.RegMatchCodeModel;
+import com.superchat.model.UserProfileModel;
+import com.superchat.utils.AppUtil;
+import com.superchat.utils.BitmapDownloader;
+import com.superchat.utils.CompressImage;
+import com.superchat.utils.Constants;
+import com.superchat.utils.Log;
+import com.superchat.utils.ProfilePicUploader;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.Utilities;
+import com.superchat.widgets.RoundedImageView;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 public class ProfileScreen extends FragmentActivity implements OnClickListener, OnItemSelectedListener {
 	public static final String TAG = "ProfileScreen";
@@ -266,7 +261,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
 		} else if (manage_by_admin) {
 			purposeType = EDIT_MEMBER_BY_SG_OWNER;
 		} else if (userName != null && userName.equals(iSharedPrefManager.getUserName())) {
-			if (iSharedPrefManager.isDomainAdmin())
+			if (iSharedPrefManager.isDomainAdminORSubAdmin())
 				purposeType = EDIT_SG_OWNER;
 			else
 				purposeType = EDIT_BY_SELF;
@@ -773,7 +768,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
 
 		if (isViewOnlyDisplayName)
 			displayNameView.setEnabled(false);
-		else if (iSharedPrefManager.isDomainAdmin())
+		else if (iSharedPrefManager.isDomainAdminORSubAdmin())
 			displayNameView.setEnabled(true);
 
 		if (displayName != null) {

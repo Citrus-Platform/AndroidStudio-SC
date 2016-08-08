@@ -1,43 +1,9 @@
 package com.superchat.ui;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import com.chatsdk.org.jivesoftware.smack.packet.Message;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.data.beans.PhotoToLoad;
-import com.superchat.data.db.DBWrapper;
-import com.superchat.data.db.DatabaseConstants;
-import com.superchat.model.ErrorModel;
-import com.superchat.task.ImageLoaderWorker;
-import com.superchat.ui.EsiaChatContactsAdapter.ViewHolder;
-import com.superchat.utils.ColorGenerator;
-import com.superchat.utils.Constants;
-import com.superchat.utils.Log;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.widgets.RoundedImageView;
-
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -50,15 +16,42 @@ import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.chatsdk.org.jivesoftware.smack.packet.Message;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.data.db.DBWrapper;
+import com.superchat.model.ErrorModel;
+import com.superchat.utils.ColorGenerator;
+import com.superchat.utils.Constants;
+import com.superchat.utils.Log;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.widgets.RoundedImageView;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class GroupRoleCreationAdapter  extends ArrayAdapter<GroupRoleCreationAdapter.UserInfo>{
 	public final static String TAG = "EsiaChatContactsAdapter"; 
@@ -128,7 +121,7 @@ public class GroupRoleCreationAdapter  extends ArrayAdapter<GroupRoleCreationAda
 			checkedTagMap.put(SharedPrefManager.getInstance().getUserName(), true);
 			}
 		
-		isOwnerSelectionAllowed = SharedPrefManager.getInstance().isDomainAdmin();
+		isOwnerSelectionAllowed = SharedPrefManager.getInstance().isDomainAdminORSubAdmin();
 		
 		mDrawableBuilder = TextDrawable.builder().beginConfig().toUpperCase().endConfig().round();
 	}
@@ -348,7 +341,7 @@ public class GroupRoleCreationAdapter  extends ArrayAdapter<GroupRoleCreationAda
 							if(v.getId() != R.id.contact_sel_box){
 								checked = checkedTagMap.get(userNames);
 								if(checked){
-									if(SharedPrefManager.getInstance().isDomainAdmin() && userNames.equals(SharedPrefManager.getInstance().getUserName())){
+									if(SharedPrefManager.getInstance().isDomainAdminORSubAdmin() && userNames.equals(SharedPrefManager.getInstance().getUserName())){
 										Toast.makeText(context, "You need to be part of this Official ID!", Toast.LENGTH_SHORT).show();
 										return;
 									}
@@ -368,7 +361,7 @@ public class GroupRoleCreationAdapter  extends ArrayAdapter<GroupRoleCreationAda
 							}else{
 								checked = checkedTagMap.get(userNames);
 								if(checked){
-									if(SharedPrefManager.getInstance().isDomainAdmin() && userNames.equals(SharedPrefManager.getInstance().getUserName())){
+									if(SharedPrefManager.getInstance().isDomainAdminORSubAdmin() && userNames.equals(SharedPrefManager.getInstance().getUserName())){
 										Toast.makeText(context, "You need to be part of this Official ID!", Toast.LENGTH_SHORT).show();
 										iCheckBox.setChecked(true);
 										return;

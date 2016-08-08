@@ -553,6 +553,14 @@
     <string name="config_console_pass">Configure console password</string>
     <string name="set_console_pass">Set console password</string>
     <string name="pass_validation_alert">Must be at least 8 characters and must have at least one letter, one number and one symbol (special character).</string>
+
+    <string name="back_up_message">Backup your message to Server. You can restore them when you reinstall SuperChat. Your messages and media will also backup to your phones internal storage.</string>
+    <string name="last_backup">Last Backup</string>
+    <string name="backup">BACKUP</string>
+    <string name="chat_backup">Chat backup</string>
+    <string name="chat_backup_settings">Chat backup settings</string>
+    <string name="backup_to_server">Backup to Server</string>
+    <string name="back_up_over">Back up over</string>
     <!--
          Content description for the hour selector in the time picker, which displays
          selectable hours of the day along the inside edge of a circle, as in an analog clock.

@@ -4,20 +4,35 @@
 
 package com.superchat.widgets;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -48,36 +63,20 @@ import com.superchat.utils.ColorGenerator;
 import com.superchat.utils.Constants;
 import com.superchat.utils.SharedPrefManager;
 
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.test.IsolatedContext;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.TextView;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 // Referenced classes of package com.vopium.widget:
 //            DontPressWithParentLayout
@@ -114,7 +113,7 @@ public class ContactsAdapter extends SimpleCursorAdapter
 			
 				if(v.getId() == R.id.contact_icon || v.getId() == R.id.contact_icon_default){
 					if(SharedPrefManager.getInstance().isSharedIDContact(userNames)){
-						if(SharedPrefManager.getInstance().isDomainAdmin() || 
+						if(SharedPrefManager.getInstance().isDomainAdminORSubAdmin() ||
 							HomeScreen.isAdminFromSharedID(userNames, SharedPrefManager.getInstance().getUserName())){
 							Intent intent = new Intent(SuperChatApplication.context, CreateSharedIDActivity.class);
 							intent.putExtra("EDIT_MODE", true);
@@ -547,8 +546,11 @@ public class ContactsAdapter extends SimpleCursorAdapter
     private TextDrawable.IBuilder mDrawableBuilder;
 	public void setProfilePic(ImageView view, ImageView view_default,  String userName,String displayName,TextView iconText, boolean sharedID){
 		String groupPicId = null;
-		if(sharedID)
+		if(sharedID) {
 			groupPicId = SharedPrefManager.getInstance().getSharedIDFileId(userName);
+            if(groupPicId != null && groupPicId.startsWith("http://") && groupPicId.lastIndexOf('/') != -1 && groupPicId.lastIndexOf('.') != -1)
+                groupPicId = groupPicId.substring(groupPicId.lastIndexOf('/') + 1, groupPicId.lastIndexOf('.'));
+		}
 		else
 			groupPicId = SharedPrefManager.getInstance().getUserFileId(userName);
 		android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(groupPicId);
