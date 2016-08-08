@@ -17,6 +17,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -843,8 +844,31 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
                 int[] location = new int[2];
                 v.getLocationInWindow(location);
-                popupWindow.showAtLocation(v, Gravity.NO_GRAVITY, location[0], v.getHeight() + location[1]);
+//                popupWindow.showAtLocation(v, Gravity.CENTER_VERTICAL, location[0], v.getHeight() + location[1]);
 
+                try {
+
+                    Display display = activity.getWindowManager().getDefaultDisplay();
+                    int width = display.getWidth();  // deprecated
+                    int height = display.getHeight();  // deprecated
+
+                    popupWindow.setWindowLayoutMode(width, height);
+                    popupWindow.setWidth(width);
+                    popupWindow.setHeight(height);
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+
+                popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
+                popupWindow.setOutsideTouchable(false);
+
+
+                /*
+                int[] location = new int[2];
+                v.getLocationInWindow(location);
+                v.setBackgroundColor(context.getResources().getColor(R.color.pf_BlackOpaque));
+                popupWindow.showAtLocation(v, Gravity.NO_GRAVITY, location[0], v.getHeight() + location[1]);
+                */
                 LinearLayout llMemberAction_MakeSuperAdmin = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_MakeSuperAdmin);
                 LinearLayout llMemberAction_RemoveSuperAdmin = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_RemoveSuperAdmin);
                 LinearLayout llMemberAction_ReactivateUser = (LinearLayout) bubbleLayout.findViewById(R.id.llMemberAction_ReactivateUser);
