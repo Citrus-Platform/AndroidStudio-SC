@@ -3,6 +3,8 @@ package com.superchat;
 
 //import com.crashlytics.android.Crashlytics;
 //import io.fabric.sdk.android.Fabric;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -56,13 +58,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.support.multidex.MultiDexApplication;
 import android.support.v4.util.LruCache;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
 
-public class SuperChatApplication extends Application {
+public class SuperChatApplication extends MultiDexApplication {
 	 protected static final String TAG = SuperChatApplication.class.getSimpleName();
 	public static Context context = null;
 	 public static LruCache mMemoryCache;
@@ -101,7 +104,7 @@ public class SuperChatApplication extends Application {
 	
 	public void onCreate() {
 		super.onCreate();
-		//Fabric.with(this, new Crashlytics());
+		Fabric.with(this, new Crashlytics());
 		context = getApplicationContext();
 		 density = context.getResources().getDisplayMetrics().density;
 		 checkDisplaySize();

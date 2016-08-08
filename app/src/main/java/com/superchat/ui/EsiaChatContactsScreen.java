@@ -377,6 +377,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
             imm.hideSoftInputFromWindow(searchBoxView.getWindowToken(), 0);
         }
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
 //    	Tracker t = ((SuperChatApplication) getApplicationContext()).getTracker(TrackerName.APP_TRACKER);
 //        t.setScreenName("Contacts Screen");
 //        t.send(new HitBuilders.AppViewBuilder().build());

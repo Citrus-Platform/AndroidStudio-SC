@@ -120,6 +120,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
                 .beginConfig().toUpperCase()
                 .endConfig()
                 .round();
+
     }
 
     public HashMap<String, Boolean> getSelectedItems() {
