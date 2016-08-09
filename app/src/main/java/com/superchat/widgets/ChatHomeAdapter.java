@@ -397,7 +397,7 @@ public void loadDialog(){
         String name = cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD));
         String caption = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG));
         String msg = cursor.getString(cursor.getColumnIndex(DatabaseConstants.MESSAGEINFO_FIELD));
-        System.out.println("CONTACT_NAMES_FIELD -> "+name);
+//        System.out.println("CONTACT_NAMES_FIELD -> "+name);
         String displayName = null;
         boolean isSharedID = false;
 //        Log.i("ChatHomeAdapter", "caption : "+caption);
