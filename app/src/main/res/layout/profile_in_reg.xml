@@ -71,7 +71,7 @@
                 android:text="@string/done"
                 android:textColor="@color/white"
                 android:textColorHighlight="@color/header_color"
-                android:visibility="gone" />
+                android:visibility="visible" />
             <ImageView
                 android:id="@+id/call_option"
                 android:layout_width="wrap_content"

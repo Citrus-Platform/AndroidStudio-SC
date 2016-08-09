@@ -355,6 +355,9 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
 			dateView = (TextView) findViewById(R.id.lbl_dob);
 			currentLocationView = (EditText) findViewById(R.id.id_location_field);
 			saveButtonView = (Button) findViewById(R.id.profile_save);
+			nextButtonView = (Button) findViewById(R.id.id_next_btn);
+			if(nextButtonView != null)
+				nextButtonView.setVisibility(View.VISIBLE);
 			break;
 		case VIEW_SG_MEMBER:
 			setContentView(R.layout.profile_screen_view);
@@ -852,6 +855,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
 				}
 			});
 
+			nextButtonView.setOnClickListener(this);
 			saveButtonView.setOnClickListener(this);
 			if (displayNameView != null)
 				displayNameView.addTextChangedListener(new TextWatcher() {

@@ -1,21 +1,6 @@
 package com.superchat.ui;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import com.chat.sdk.db.ChatDBWrapper;
-import com.sinch.android.rtc.AudioController;
-import com.sinch.android.rtc.PushPair;
-import com.sinch.android.rtc.calling.Call;
-import com.sinch.android.rtc.calling.CallEndCause;
-import com.sinch.android.rtc.calling.CallListener;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.utils.SharedPrefManager;
-
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.app.KeyguardManager.KeyguardLock;
 import android.content.ComponentName;
@@ -40,6 +25,20 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.chat.sdk.db.ChatDBWrapper;
+import com.sinch.android.rtc.AudioController;
+import com.sinch.android.rtc.PushPair;
+import com.sinch.android.rtc.calling.Call;
+import com.sinch.android.rtc.calling.CallEndCause;
+import com.sinch.android.rtc.calling.CallListener;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.utils.SharedPrefManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 public class IncomingCallScreenActivity extends Activity {
 
@@ -67,8 +66,12 @@ public class IncomingCallScreenActivity extends Activity {
 			            TextView remoteUser = (TextView) findViewById(R.id.remoteUser);
 //			            String myName =  iChatPref.getUserServerName(call.getRemoteUserId());
 			            String myName = chatDBWrapper.getUsersDisplayName(call.getRemoteUserId());
-			            if(myName != null && myName.equals(call.getRemoteUserId()))
+			            if(myName != null && myName.equals(call.getRemoteUserId())) {
+							myName = SharedPrefManager.getInstance().getUserServerName(myName);
+						}
+						if(myName != null && myName.equals(call.getRemoteUserId())) {
 							myName = "New User";
+						}
 						if(myName!=null && myName.contains("_"))
 							myName = "+"+myName.substring(0, myName.indexOf("_"));
 			            remoteUser.setText(myName);

@@ -1,8 +1,8 @@
 package com.superchat.utils;
 
-import java.util.regex.Pattern;
-
 import android.graphics.Bitmap.CompressFormat;
+
+import java.util.regex.Pattern;
 
 public class Constants {
 public static final String PROFILE_UPDATE = "profile_update";
@@ -23,6 +23,7 @@ private static final String LOCAL_IP = "52.74.195.75";
 //private static final String PRODUCTION_IP = "52.208.65.253";
 
 private static final String PRODUCTION_IP = "52.88.175.48";
+
 
 private static final String TMP_IP = "52.74.197.243";
 

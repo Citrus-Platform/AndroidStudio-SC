@@ -371,7 +371,7 @@ public class ChatListAdapter extends SimpleCursorAdapter{
 						} else {
 							View previousView = myVoicePlayer.getCurrentView();
 							if (previousView != null
-									&& playerBundle.getBoolean(previousView.getTag().toString())){
+									){
 								myVoicePlayer.reset();
 								myVoicePlayer.clear();
 								globalSeekBarValue = 0;
@@ -2257,7 +2257,7 @@ public String singleCheckedKey(){
 					+ year + tmp);
 			viewholder.isTimeLineMessage  = true;
 		} else {
-			if(isBroadCastChat && !viewholder.userName.equals(myUserName)){
+			if(isBroadCastChat && (!viewholder.userName.equals(myUserName) || viewholder.message.contains("updated broad"))){
 				viewholder.leftRightCompositeView.setVisibility(View.GONE);
 				viewholder.receiverMsgText.setVisibility(TextView.GONE);
 				viewholder.recieveTagView.setVisibility(TextView.GONE);

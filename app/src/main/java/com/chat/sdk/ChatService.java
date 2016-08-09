@@ -1,22 +1,32 @@
 package com.chat.sdk;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.TimeZone;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
-import java.util.Vector;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Binder;
+import android.os.Build;
+import android.os.Environment;
+import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat.Builder;
+import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.chat.sdk.db.ChatDBConstants;
 import com.chat.sdk.db.ChatDBWrapper;
@@ -58,13 +68,16 @@ import com.chatsdk.org.jivesoftware.smackx.packet.MessageEvent;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
 import com.superchat.data.db.DatabaseConstants;
+import com.superchat.interfaces.interfaceInstances;
 import com.superchat.model.LoginResponseModel.UserResponseDetail;
-import com.superchat.model.ProfileUpdateModel;
-import com.superchat.ui.ChatHome;
+import com.superchat.model.UserProfileModel;
+import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.ui.ChatListScreen;
 import com.superchat.ui.HomeScreen;
 import com.superchat.ui.HomeScreen.GetSharedIDListFromServer;
@@ -74,36 +87,29 @@ import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
 
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningServiceInfo;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.Service;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.media.MediaPlayer;
-import android.media.RingtoneManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Binder;
-import android.os.Build;
-import android.os.Environment;
-import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationCompat.Builder;
-import android.widget.RemoteViews;
-import android.widget.Toast;
-import me.leolin.shortcutbadger.ShortcutBadger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class ChatService extends Service{
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
+import java.util.Vector;
+
+import me.leolin.shortcutbadger.ShortcutBadger;
+import retrofit2.Call;
+import retrofit2.Response;
+
+public class ChatService extends Service implements interfaceInstances {
 	private final String TAG = "ChatService";
 	public static XMPPConnection connection;
 //	Roster roster;
@@ -407,7 +413,7 @@ public class ChatService extends Service{
 	PacketListener groupPacketListener = new PacketListener() {
 		@Override
 		public void processPacket(Packet packet) {
-//			System.out.println("Got group packet " + packet.toXML() + " -- " + packet.getPacketID());
+			System.out.println("Got group packet " + packet.toXML() + " -- " + packet.getPacketID());
 
 			if (!packet.toXML().contains("<message"))
 				return;
@@ -471,6 +477,7 @@ public class ChatService extends Service{
 						String newGroupName = message.getBody();
 						if(senderName.equals(inviter)){
 							if(inviter.contains("_"))
+                                getUserProfileAsynch(inviter);
 								inviter = "+"+inviter.substring(0, inviter.indexOf("_"));
 //							inviter = inviter.replaceFirst("m", "+");
 							}
@@ -567,11 +574,15 @@ public class ChatService extends Service{
 							
 							for(String gp:list.split(",")){
 								String tmpUser = gp;
+//                                getUserProfile(tmpUser);
+//                                getUserProfileAsynch(tmpUser);
 								if(SharedPrefManager.getInstance().isUserInvited(tmpUser)){
+                                    System.out.println("[USER IS INVITED, MESSAGE WILL NOT GO :: "+tmpUser);
 									continue;
 								}
-								boolean isNewAdded =  prefManager.saveUsersOfGroup(user, gp);
-								if(isNewAdded){
+//								boolean isNewAdded =  prefManager.saveUsersOfGroup(user, gp);
+								if(!prefManager.isGroupMemberActive(user, gp))
+                                {
 									 prefManager.saveUserGroupInfo(user,gp,SharedPrefManager.GROUP_ACTIVE_INFO,true);
 									 prefManager.saveGroupInfo(user,SharedPrefManager.GROUP_ACTIVE_INFO,true);
 									 if(!userMe.equals(gp))
@@ -592,17 +603,26 @@ public class ChatService extends Service{
 									if(!gp.equalsIgnoreCase(inviter) && !gp.equals("")){
 										Log.d(TAG,gp+" group persons added "+ SharedPrefManager.getInstance().getGroupDisplayName(user));
 										if(tmpUser.equals(gp)){
-											if(tmpUser.contains("_"))
-												tmpUser = "+"+gp.substring(0, gp.indexOf("_"));
+                                            tmpUser = SharedPrefManager.getInstance().getUserServerName(tmpUser);
+											if(tmpUser.equals(SharedPrefManager.getInstance().getUserServerName(tmpUser))) {
+//                                                tmpUser = "+" + gp.substring(0, gp.indexOf("_"));
+                                                getUserProfileAsynch(tmpUser);
+                                                tmpUser = "New User";
+                                            }
 //											tmpUser = gp.replaceFirst("m", "+");
 										}else
 											tmpUser = gp;
 										if(senderName.equals(inviter)){
+                                            getUserProfileAsynch(tmpUser);
 											if(inviter.contains("_"))
+                                                getUserProfileAsynch(inviter);
 												inviter = "+"+inviter.substring(0, inviter.indexOf("_"));
 //											inviter = inviter.replaceFirst("m", "+");
 											}
 										saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, inviter+" added \""+tmpUser+"\".",message_ID);
+                                        prefManager.saveUsersOfGroup(user, gp);
+                                        if (chatListener != null)
+                                            chatListener.notifyChatRecieve(user, "");
 									}
 								}
 							}
@@ -754,7 +774,9 @@ public class ChatService extends Service{
 									if(tmpUser.equalsIgnoreCase(user))
 										tmpUser = SharedPrefManager.getInstance().getUserServerName(tmpUser);
 									saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, fromName+" removed \""+tmpUser+"\".",message_ID);
-								}
+                                     if (chatListener != null)
+                                         chatListener.notifyChatRecieve(user, "");
+                                 }
 							}
 //							if(persons.contains(","))
 //								persons = persons.substring(0, persons.length()-1);
@@ -5128,11 +5150,13 @@ public class ChatService extends Service{
 //			ChatDBWrapper chatDBWrapper = chatDBWrapper;
 			ContentValues contentvalues = new ContentValues();
 			String myName = SharedPrefManager.getInstance().getUserName();
-//			contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
-//			contentvalues.put(ChatDBConstants.TO_USER_FIELD, myName);
-
-            contentvalues.put(ChatDBConstants.FROM_USER_FIELD, myName);
-            contentvalues.put(ChatDBConstants.TO_USER_FIELD, from);
+            if(SharedPrefManager.getInstance().isBroadCast(from)) {
+                contentvalues.put(ChatDBConstants.FROM_USER_FIELD, myName);
+                contentvalues.put(ChatDBConstants.TO_USER_FIELD, from);
+            }else{
+                contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
+			    contentvalues.put(ChatDBConstants.TO_USER_FIELD, myName);
+            }
 
 			contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD,
 					new Integer(1));
@@ -5386,4 +5410,60 @@ public class ChatService extends Service{
         }
         return false;
      }
+    //----------------------------------------------------------------------------------------------------------
+    private void getUserProfileAsynch(final String userName) {
+        AsyncHttpClient client = new AsyncHttpClient();
+        client = SuperChatApplication.addHeaderInfo(client, true);
+        client.get(Constants.SERVER_URL + "/tiger/rest/user/profile/get?userName=" + userName, null,
+                new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onStart() {
+                        System.out.println("Asynch : Start");
+                    }
+                    @Override
+                    public void onSuccess(int arg0, String arg1) {
+                        System.out.println("Asynch : Start - "+arg1);
+                        Gson gson = new GsonBuilder().create();
+                        UserProfileModel objUserModel = gson.fromJson(arg1, UserProfileModel.class);
+                        if (arg1 == null || arg1.contains("error") || objUserModel == null) {
+                            return;
+                        }
+                        if(objUserModel.iName != null)
+                            prefManager.saveUserServerName(userName, objUserModel.iName);
+                    }
+                    @Override
+                    public void onFailure(Throwable arg0, String arg1) {
+                        Log.d(TAG, "AsyncHttpClient onFailure: " + arg1);
+                        super.onFailure(arg0, arg1);
+                    }
+                });
+    }
+    //]]]]]]]]]]]]
+//    private void getUserProfile(final String userName){
+//        try{
+//            Call call = objApi.getApi(context).getUserProfile(userName);
+//            System.out.println("Retrofit : Start ");
+//            call.enqueue(new RetrofitRetrofitCallback<UserProfileModel>(context) {
+//                @Override
+//                protected void onResponseVoidzResponse(Call call, Response response) {
+//                    System.out.println("Retrofit : onResponseVoidzResponse 1 - "+response.toString());
+//
+//                }
+//
+//                @Override
+//                protected void onResponseVoidzObject(Call call, UserProfileModel response) {
+//                    System.out.println("Retrofit : onResponseVoidzObject 2 - "+response.toString());
+//
+//                }
+//
+//                @Override
+//                protected void common() {
+//
+//                }
+//            });
+//        } catch(Exception e){
+//            objExceptione.printStackTrace(e);
+//
+//        }
+//    }
 }
