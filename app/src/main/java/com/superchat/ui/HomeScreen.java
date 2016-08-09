@@ -1207,6 +1207,8 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 									contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD,Integer.valueOf(id));
 									contentvalues.put(DatabaseConstants.RAW_CONTACT_ID,Integer.valueOf(id));
 									contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, userDetail.name);
+                                        if(userDetail.type != null && userDetail.type.equalsIgnoreCase("domainSubAdmin"))
+                                            sharedPrefManager.setUserSGSubAdmin(userDetail.userName, true);
 									contentvalues.put(DatabaseConstants.CONTACT_TYPE_FIELD, userDetail.type);
 									contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD,Integer.valueOf(0));
 									contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));

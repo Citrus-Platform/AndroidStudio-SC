@@ -226,6 +226,13 @@ public class SharedPrefManager {
 		editor.putBoolean(MOBILE_REGISTERED+mobileNumber, flag);
 		editor.commit();
 	}
+    public boolean isUserSGSubAdmin(String user){
+        return pref.getBoolean(DOMAIN_SUB_ADMIN + user, false);
+    }
+    public void setUserSGSubAdmin(String user,boolean flag){
+        editor.putBoolean(DOMAIN_SUB_ADMIN + user, flag);
+        editor.commit();
+    }
 	public boolean isUpdateCheckNeeded(){
 		return pref.getBoolean(APP_UPDATE, true);
 	}

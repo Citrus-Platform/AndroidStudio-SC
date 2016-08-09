@@ -847,11 +847,16 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
 							if (saveButtonView != null) {
 								saveButtonView.setBackgroundResource(R.drawable.round_rect_blue);
 								saveButtonView.setVisibility(View.VISIBLE);
+                                nextButtonView.setTextColor(getResources().getColor(R.color.white));
 							}
-						} else
-							saveButtonView.setBackgroundResource(R.drawable.round_rect_gray);
-					} else
-						saveButtonView.setBackgroundResource(R.drawable.round_rect_gray);
+						} else {
+                            saveButtonView.setBackgroundResource(R.drawable.round_rect_gray);
+                            nextButtonView.setTextColor(getResources().getColor(R.color.gray_dark));
+                        }
+					} else {
+                        saveButtonView.setBackgroundResource(R.drawable.round_rect_gray);
+                        nextButtonView.setTextColor(getResources().getColor(R.color.gray_dark));
+                    }
 				}
 			});
 

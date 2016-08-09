@@ -69,9 +69,9 @@
                 android:layout_marginRight="5dip"
                 android:background="@null"
                 android:text="@string/done"
-                android:textColor="@color/white"
+                android:textColor="@color/gray_dark"
                 android:textColorHighlight="@color/header_color"
-                android:visibility="visible" />
+                android:visibility="gone" />
             <ImageView
                 android:id="@+id/call_option"
                 android:layout_width="wrap_content"

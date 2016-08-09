@@ -1,25 +1,6 @@
 package com.superchat.ui;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import com.chat.sdk.db.ChatDBWrapper;
-import com.sinch.android.rtc.AudioController;
-import com.sinch.android.rtc.PushPair;
-import com.sinch.android.rtc.calling.Call;
-import com.sinch.android.rtc.calling.CallEndCause;
-import com.sinch.android.rtc.calling.CallListener;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.utils.SharedPrefManager;
-
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.KeyguardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -34,15 +15,29 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.chat.sdk.db.ChatDBWrapper;
+import com.sinch.android.rtc.AudioController;
+import com.sinch.android.rtc.PushPair;
+import com.sinch.android.rtc.calling.Call;
+import com.sinch.android.rtc.calling.CallEndCause;
+import com.sinch.android.rtc.calling.CallListener;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.utils.SharedPrefManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CallScreenActivity extends Activity implements OnClickListener{
 
@@ -197,10 +192,14 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 		return null;
 	}
     private boolean setProfilePic(String userName){
-		String groupPicId = SharedPrefManager.getInstance().getUserFileId(userName); 
-		
-		String img_path = getImagePath(groupPicId);
-		android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(groupPicId);
+		String groupPicId = SharedPrefManager.getInstance().getUserFileId(userName);
+
+		String img_path = null;
+		android.graphics.Bitmap bitmap = null;
+		if(groupPicId != null) {
+			img_path = getImagePath(groupPicId);
+			bitmap = SuperChatApplication.getBitmapFromMemCache(groupPicId);
+		}
 		ImageView picView = (ImageView) findViewById(R.id.id_profile_pic);
 		if(SharedPrefManager.getInstance().getUserGender(userName).equalsIgnoreCase("female"))
 			picView.setImageResource(R.drawable.female_default);

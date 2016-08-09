@@ -774,6 +774,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
                         if (isSuperAdmin) {
                             hmAdmins.remove(userNames);
+                            prefManager.setUserSGSubAdmin(userNames, false);
 //                            DBWrapper.getInstance().updateUserAccess(userNames, "");
                             try {
                                 EsiaChatContactsScreen parentActivity = ((EsiaChatContactsScreen) activity);
@@ -785,6 +786,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
                             }
                         } else {
                             hmAdmins.put(userNames, null);
+                            prefManager.setUserSGSubAdmin(userNames, true);
 //                            DBWrapper.getInstance().updateUserAccess(userNames, "Admin");
                             try {
                                 EsiaChatContactsScreen parentActivity = ((EsiaChatContactsScreen) activity);
@@ -796,6 +798,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
                             }
                             objToast.makeToast(context, "Member has been promoted as SuperAdmin", UtilGlobal.MODE_RELEASE);
                         }
+                        notifyDataSetChanged();
                     } else {
                         String errorMessage = response.getMessage() != null ? response.getMessage() : "Please try later";
                         showDialog(errorMessage);

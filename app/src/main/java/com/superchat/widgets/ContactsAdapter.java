@@ -389,7 +389,9 @@ public class ContactsAdapter extends SimpleCursorAdapter
 		if(viewholder.userType != null && !viewholder.voipumValue.equals("0") && !isSharedIDContact){
 			viewholder.user_type.setVisibility(View.VISIBLE);
 				if(viewholder.userType.equalsIgnoreCase("domainAdmin"))
-					viewholder.user_type.setText(SuperChatApplication.context.getResources().getString(R.string.admin));
+					viewholder.user_type.setText(SuperChatApplication.context.getResources().getString(R.string.owner));
+                else if(viewholder.userType.equalsIgnoreCase("domainSubAdmin"))
+                    viewholder.user_type.setText(SuperChatApplication.context.getResources().getString(R.string.admin));
 				else if(!viewholder.nameText.contains(SuperChatApplication.context.getResources().getString(R.string.create_broadcast_list)) 
 						&& !viewholder.nameText.contains(SuperChatApplication.context.getResources().getString(R.string.create_group))
 						&& !viewholder.nameText.contains(SuperChatApplication.context.getResources().getString(R.string.invite_member)) 
