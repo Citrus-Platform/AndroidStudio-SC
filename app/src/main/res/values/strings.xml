@@ -151,7 +151,7 @@
     <string name="mute_group_chat">Mute Group Chat</string>
     <string name="owner">Owner</string>
     <string name="admin">Admin</string>
-    <string name="sub_admin">Sub Admin</string>
+    <string name="sub_admin">SuperAdmin</string>
     <string name="add_group_participants">Add participant</string>
     <string name="add_more_participants">Add More Participants</string>
     <string name="email_group_chat">Email Chat</string>

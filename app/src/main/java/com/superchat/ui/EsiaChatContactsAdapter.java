@@ -231,7 +231,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
         if (isCurrentUserAdmin) {
             viewholder.userStatusView.setText("Owner");
         } else if (isCurrentUserSubAdmin) {
-            viewholder.userStatusView.setText("Admin");
+            viewholder.userStatusView.setText(context.getResources().getString(R.string.sub_admin));
         } else {
             viewholder.userStatusView.setText("");
         }

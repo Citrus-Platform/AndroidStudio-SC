@@ -391,13 +391,14 @@ public class ContactsAdapter extends SimpleCursorAdapter
 				if(viewholder.userType.equalsIgnoreCase("domainAdmin"))
 					viewholder.user_type.setText(SuperChatApplication.context.getResources().getString(R.string.owner));
                 else if(viewholder.userType.equalsIgnoreCase("domainSubAdmin"))
-                    viewholder.user_type.setText(SuperChatApplication.context.getResources().getString(R.string.admin));
+                    viewholder.user_type.setText(SuperChatApplication.context.getResources().getString(R.string.sub_admin));
 				else if(!viewholder.nameText.contains(SuperChatApplication.context.getResources().getString(R.string.create_broadcast_list)) 
 						&& !viewholder.nameText.contains(SuperChatApplication.context.getResources().getString(R.string.create_group))
 						&& !viewholder.nameText.contains(SuperChatApplication.context.getResources().getString(R.string.invite_member)) 
 						&& !viewholder.nameText.contains(SuperChatApplication.context.getResources().getString(R.string.manage_members))
 						&& !viewholder.nameText.contains(SuperChatApplication.context.getResources().getString(R.string.create_channel))){
-					viewholder.user_type.setText(SuperChatApplication.context.getResources().getString(R.string.member));
+//					viewholder.user_type.setText(SuperChatApplication.context.getResources().getString(R.string.member));
+                    viewholder.user_type.setVisibility(View.INVISIBLE);
 				}
 		}else if(!viewholder.nameText.contains(SuperChatApplication.context.getResources().getString(R.string.create_broadcast_list)) 
 				&& !viewholder.nameText.contains(SuperChatApplication.context.getResources().getString(R.string.create_group))
@@ -406,8 +407,8 @@ public class ContactsAdapter extends SimpleCursorAdapter
 				&& !viewholder.nameText.contains(SuperChatApplication.context.getResources().getString(R.string.view_member_stats))
 			    && !viewholder.nameText.contains(SuperChatApplication.context.getResources().getString(R.string.create_channel))
 			    && !isSharedIDContact){
-			viewholder.user_type.setText(SuperChatApplication.context.getResources().getString(R.string.member));
-//			viewholder.user_type.setVisibility(View.INVISIBLE);
+//			viewholder.user_type.setText(SuperChatApplication.context.getResources().getString(R.string.member));
+			viewholder.user_type.setVisibility(View.INVISIBLE);
 		}else
 			viewholder.user_type.setVisibility(View.GONE);
 //				viewholder.contactAddedTime.setVisibility(TextView.GONE);
