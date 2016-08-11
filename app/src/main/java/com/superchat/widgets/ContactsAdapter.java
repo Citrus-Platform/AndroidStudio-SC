@@ -568,7 +568,11 @@ public class ContactsAdapter extends SimpleCursorAdapter
 			view.setTag(filename);
 //			iconText.setVisibility(View.INVISIBLE);
 		}else if(groupPicId!=null && !groupPicId.equals("")&& !groupPicId.equals("clear")){
-			String profilePicUrl = groupPicId+".jpg";//AppConstants.media_get_url+
+			String profilePicUrl = null;
+			if(groupPicId.endsWith(".jpg"))
+				profilePicUrl = groupPicId;
+			else
+				profilePicUrl = groupPicId+".jpg";
 			File file = Environment.getExternalStorageDirectory();
 			String filename = file.getPath()+ File.separator +  Constants.contentProfilePhoto +profilePicUrl;
 			view.setTag(filename);

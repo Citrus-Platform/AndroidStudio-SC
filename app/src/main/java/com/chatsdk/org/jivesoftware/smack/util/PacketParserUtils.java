@@ -20,15 +20,6 @@
 
 package com.chatsdk.org.jivesoftware.smack.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.chatsdk.org.jivesoftware.smack.Connection;
 import com.chatsdk.org.jivesoftware.smack.packet.Authentication;
 import com.chatsdk.org.jivesoftware.smack.packet.Bind;
@@ -47,10 +38,18 @@ import com.chatsdk.org.jivesoftware.smack.provider.IQProvider;
 import com.chatsdk.org.jivesoftware.smack.provider.PacketExtensionProvider;
 import com.chatsdk.org.jivesoftware.smack.provider.ProviderManager;
 import com.chatsdk.org.jivesoftware.smack.sasl.SASLMechanism.Failure;
-import com.superchat.utils.Log;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -121,6 +120,12 @@ public class PacketParserUtils {
         message.setLocationMessage(parser.getAttributeValue("", "location"));
         message.setXMPPMessageType(getXMPPMessageType(parser.getAttributeValue("", "XMPPMessageType")));
         message.setStatusMessageType(getStatusMessageType(parser.getAttributeValue("", "status_message_type")));
+
+        //Set Values for Console messages
+        message.setConsoleMessage(parser.getAttributeValue("", "isConsoleMessage"));
+        message.setCustDest(parser.getAttributeValue("", "custDest"));
+        message.setPacketId(parser.getAttributeValue("", "packetId"));
+
         String language = getLanguageAttribute(parser);
 //        for(int i=0;i<parser.getAttributeCount();i++){
 //        	Log.alltime("PacketParserUtils: ", "PacketParserUtils Attribute names: "+parser.getAttributeName(i)+": "+parser.getAttributeValue("", parser.getAttributeName(i)));

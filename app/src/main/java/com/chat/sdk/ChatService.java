@@ -77,7 +77,6 @@ import com.superchat.data.db.DatabaseConstants;
 import com.superchat.interfaces.interfaceInstances;
 import com.superchat.model.LoginResponseModel.UserResponseDetail;
 import com.superchat.model.UserProfileModel;
-import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.ui.ChatListScreen;
 import com.superchat.ui.HomeScreen;
 import com.superchat.ui.HomeScreen.GetSharedIDListFromServer;
@@ -106,8 +105,6 @@ import java.util.UUID;
 import java.util.Vector;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
-import retrofit2.Call;
-import retrofit2.Response;
 
 public class ChatService extends Service implements interfaceInstances {
 	private final String TAG = "ChatService";
@@ -3214,11 +3211,25 @@ public class ChatService extends Service implements interfaceInstances {
 		String captionTag  = message.getMediaTagMessage();
 		String fileName  = message.getMediaFileName();
 		String locationMsg  = message.getLocationMessage();
+        boolean is_sent_from_console = false;
+        if(message.isConsoleMessage() != null && message.isConsoleMessage().equalsIgnoreCase("true"))
+            is_sent_from_console = true;
 		try {
+
 			ContentValues contentvalues = new ContentValues();
 
-			contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
-			contentvalues.put(ChatDBConstants.TO_USER_FIELD, to);
+            if(is_sent_from_console){
+                contentvalues.put(ChatDBConstants.FROM_USER_FIELD, to);
+                String dest = message.getCustDest();
+                if(dest != null && dest.lastIndexOf("@") != -1)
+                    dest = dest.substring(0, dest.lastIndexOf("@"));
+                from = to;
+                to = dest;
+                contentvalues.put(ChatDBConstants.TO_USER_FIELD, dest);
+            }else {
+                contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
+                contentvalues.put(ChatDBConstants.TO_USER_FIELD, to);
+            }
 			if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal()){
 				String sharedid = message.getGroupId();
 				String sharedid_display_name = message.getGroupDisplayname();
@@ -3315,15 +3326,25 @@ public class ChatService extends Service implements interfaceInstances {
 			String oppName = "";
 			boolean isBroadCast = prefManager.isBroadCast(from);
 			if (myName.equals(from) || isBroadCast) {
-				oppName = to;
 				name = DBWrapper.getInstance(context).getChatName(to);
-				contentvalues.put(ChatDBConstants.MESSAGE_ID,
-						message.getPacketID());
-				contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD,
-						UUID.randomUUID().toString());
+                if(is_sent_from_console) {
+                    oppName = from;
+                    contentvalues.put(ChatDBConstants.MESSAGE_ID, message.getConsolePacketId());
+                }
+                else {
+                    oppName = to;
+                    contentvalues.put(ChatDBConstants.MESSAGE_ID, message.getPacketID());
+                }
+				contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID.randomUUID().toString());
 			} else {
-				oppName = from;
-				name = DBWrapper.getInstance(context).getChatName(from);
+                if(is_sent_from_console) {
+                    oppName = to;
+                    name = DBWrapper.getInstance(context).getChatName(to);
+                }
+                else {
+                    oppName = from;
+                    name = DBWrapper.getInstance(context).getChatName(from);
+                }
 				if(!name.contains("#786#")){
 					String senderDisplayName = message.getDisplayName();
 					if(senderDisplayName!=null && !senderDisplayName.equals("") ){
@@ -3337,8 +3358,10 @@ public class ChatService extends Service implements interfaceInstances {
 							prefManager.saveUserFileId(from, tFileId);
 					}
 				}
-				contentvalues.put(ChatDBConstants.MESSAGE_ID, UUID
-						.randomUUID().toString());
+                if(is_sent_from_console)
+                    contentvalues.put(ChatDBConstants.MESSAGE_ID, message.getConsolePacketId());
+                else
+				    contentvalues.put(ChatDBConstants.MESSAGE_ID, UUID.randomUUID().toString());
 				String foregin = message.getPacketID();
 				if (foregin != null && !foregin.equals(""))
 					contentvalues.put(
@@ -3370,8 +3393,10 @@ public class ChatService extends Service implements interfaceInstances {
 
             if(SharedPrefManager.getInstance().isBroadCast(to)) {
                 contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, SharedPrefManager.getInstance().getBroadcastFirstTimeName(to));
-            }else
-			    contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
+            }else if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal())
+			    contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, SharedPrefManager.getInstance().getUserDomain() + "-all");
+			else
+				contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
 			long insertedInfo = chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 			Log.d(TAG, "insertedInfo during message save: " + insertedInfo + " , " + contentvalues.valueSet().toArray());
 			if (chatListener != null)

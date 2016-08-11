@@ -1,35 +1,5 @@
 package com.superchat.ui;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import com.chatsdk.org.jivesoftware.smack.packet.Message;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.data.db.DBWrapper;
-import com.superchat.model.ErrorModel;
-import com.superchat.model.LoginResponseModel;
-import com.superchat.utils.BitmapDownloader;
-import com.superchat.utils.ColorGenerator;
-import com.superchat.utils.Constants;
-import com.superchat.utils.Log;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.widgets.MyriadRegularTextView;
-import com.superchat.widgets.RoundedImageView;
-
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -53,6 +23,36 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.chatsdk.org.jivesoftware.smack.packet.Message;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.data.db.DBWrapper;
+import com.superchat.model.ErrorModel;
+import com.superchat.model.LoginResponseModel;
+import com.superchat.utils.BitmapDownloader;
+import com.superchat.utils.ColorGenerator;
+import com.superchat.utils.Constants;
+import com.superchat.utils.Log;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.widgets.MyriadRegularTextView;
+import com.superchat.widgets.RoundedImageView;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SharedIDAdapter  extends ArrayAdapter<LoginResponseModel.BroadcastGroupDetail>{
 	public final static String TAG = "SharedIDAdapter"; 
@@ -307,7 +307,11 @@ public class SharedIDAdapter  extends ArrayAdapter<LoginResponseModel.BroadcastG
 			RoundedImageView img = (RoundedImageView) view;
 			img.setImageBitmap(bitmap);
 		}else if(groupPicId!=null && !groupPicId.equals("")){
-			String profilePicUrl = groupPicId+".jpg";//AppConstants.media_get_url+
+			String profilePicUrl = null;
+			if(groupPicId.endsWith(".jpg"))
+				profilePicUrl = groupPicId;
+			else
+				profilePicUrl = groupPicId+".jpg";
 			File file = Environment.getExternalStorageDirectory();
 			String filename = file.getPath()+ File.separator + Constants.contentProfilePhoto +profilePicUrl;
 			File file1 = new File(filename);

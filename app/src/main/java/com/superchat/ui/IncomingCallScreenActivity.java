@@ -13,6 +13,8 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -34,7 +36,9 @@ import com.sinch.android.rtc.calling.CallEndCause;
 import com.sinch.android.rtc.calling.CallListener;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
+import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.widgets.RoundedImageView;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,8 +68,9 @@ public class IncomingCallScreenActivity extends Activity {
 			        	
 			            call.addCallListener(new SinchCallListener());
 			            TextView remoteUser = (TextView) findViewById(R.id.remoteUser);
-//			            String myName =  iChatPref.getUserServerName(call.getRemoteUserId());
-			            String myName = chatDBWrapper.getUsersDisplayName(call.getRemoteUserId());
+			            String myName =  iChatPref.getUserServerName(call.getRemoteUserId());
+						if(myName != null && myName.equalsIgnoreCase(call.getRemoteUserId()))
+							myName = chatDBWrapper.getUsersDisplayName(call.getRemoteUserId());
 			            if(myName != null && myName.equals(call.getRemoteUserId())) {
 							myName = SharedPrefManager.getInstance().getUserServerName(myName);
 						}
@@ -140,21 +145,22 @@ public class IncomingCallScreenActivity extends Activity {
     }
     private String getImagePath(String groupPicId)
 	{
-		if(groupPicId == null)
-		 groupPicId = SharedPrefManager.getInstance().getUserFileId(SharedPrefManager.getInstance().getUserName()); // 1_1_7_G_I_I3_e1zihzwn02
+		if(groupPicId == null) {
+//			groupPicId = SharedPrefManager.getInstance().getUserFileId(SharedPrefManager.getInstance().getUserName());
+			return null;
+		}
 		if(groupPicId!=null){
 			String profilePicUrl = groupPicId+".jpg";//AppConstants.media_get_url+
 			File file = Environment.getExternalStorageDirectory();
 //			if(groupPicId != null && groupPicId.length() > 0 && groupPicId.lastIndexOf('/')!=-1)
 //				profilePicUrl += groupPicId.substring(groupPicId.lastIndexOf('/'));
-			
+
 			return new StringBuffer(file.getPath()).append(File.separator).append("SuperChat/").append(profilePicUrl).toString();
 		}
 		return null;
 	}
     private boolean setProfilePic(String userName){
 		String groupPicId = SharedPrefManager.getInstance().getUserFileId(userName); 
-		
 		String img_path = getImagePath(groupPicId);
 		android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(groupPicId);
 		ImageView picView = (ImageView) findViewById(R.id.id_profile_pic);
@@ -171,15 +177,21 @@ public class IncomingCallScreenActivity extends Activity {
 			return true;
 		}else if(img_path != null){
 			File file1 = new File(img_path);
-//			Log.d(TAG, "PicAvailibilty: "+ Uri.parse(filename)+" , "+filename+" , "+file1.exists());
 			if(file1.exists()){
 				picView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//				((ImageView) findViewById(R.id.id_profile_pic)).setImageURI(Uri.parse(img_path));
 				setThumb((ImageView) picView,img_path,groupPicId);
 				return true;
+			}else{
+				if (Build.VERSION.SDK_INT >= 11)
+					new BitmapDownloader((RoundedImageView) picView, picView).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, groupPicId, BitmapDownloader.THUMB_REQUEST);
+				else
+					new BitmapDownloader((RoundedImageView) picView, picView).execute(groupPicId, BitmapDownloader.THUMB_REQUEST);
 			}
 		}else{
-			
+			if (Build.VERSION.SDK_INT >= 11)
+				new BitmapDownloader((RoundedImageView) picView, picView).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, groupPicId, BitmapDownloader.THUMB_REQUEST);
+			else
+				new BitmapDownloader((RoundedImageView) picView, picView).execute(groupPicId, BitmapDownloader.THUMB_REQUEST);
 		}
 		if(groupPicId!=null && groupPicId.equals("clear"))
 			return true;	

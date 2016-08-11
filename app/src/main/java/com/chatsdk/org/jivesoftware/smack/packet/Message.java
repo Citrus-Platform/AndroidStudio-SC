@@ -121,6 +121,10 @@ public class Message extends Packet {
 	private String groupId;
 	private String groupPicId;
 	private String memberCount;
+
+	private String isConsoleMessage;
+	private String custDest;
+	private String packetId;
 	/**
 	 * Creates a new, "normal" message.
 	 */
@@ -234,6 +238,17 @@ public class Message extends Packet {
 		}
 		this.seenState = seenState;
 	}
+
+	public void setCustDest(String custDest) {
+		this.custDest = custDest;
+	}
+	public void setPacketId(String packetId) {
+		this.packetId = packetId;
+	}
+	public void setConsoleMessage(String isConsoleMessage) {
+		this.isConsoleMessage = isConsoleMessage;
+	}
+
 	public void setDisplayName(String displayName) {
 //		if (displayName == null) {
 //			throw new IllegalArgumentException("Type cannot be null.");
@@ -300,6 +315,16 @@ public class Message extends Packet {
 	}
 	public String getGroupMemberCount() {
 		return memberCount;
+	}
+
+	public String isConsoleMessage() {
+		return isConsoleMessage;
+	}
+	public String getCustDest() {
+		return custDest;
+	}
+	public String getConsolePacketId() {
+		return packetId;
 	}
 	
 	/**
@@ -651,6 +676,7 @@ public class Message extends Packet {
 			buf.append(" to=\"").append(StringUtils.escapeForXML(getTo()))
 					.append("\"");
 		}
+
 		if (getFrom() != null) {
 			buf.append(" from=\"").append(StringUtils.escapeForXML(getFrom()))
 					.append("\"");
@@ -687,6 +713,15 @@ public class Message extends Packet {
 		}		
 		if (locationMessage != null) {
 			buf.append(" location=\"").append(StringUtils.escapeForXML(locationMessage)).append("\"");
+		}
+		if (custDest != null) {
+			buf.append(" custDest=\"").append(StringUtils.escapeForXML(custDest)).append("\"");
+		}
+		if (packetId != null) {
+			buf.append(" packetId=\"").append(StringUtils.escapeForXML(packetId)).append("\"");
+		}
+		if (isConsoleMessage != null) {
+			buf.append(" isConsoleMessage=\"").append(StringUtils.escapeForXML(isConsoleMessage)).append("\"");
 		}
 		if (xMPPMessageType != null) {
 			buf.append(" XMPPMessageType=\"").append(xMPPMessageType.ordinal())

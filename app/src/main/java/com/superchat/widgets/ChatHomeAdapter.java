@@ -397,7 +397,11 @@ public void loadDialog(){
         String name = cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD));
         String caption = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG));
         String msg = cursor.getString(cursor.getColumnIndex(DatabaseConstants.MESSAGEINFO_FIELD));
-//        System.out.println("CONTACT_NAMES_FIELD -> "+name);
+
+        System.out.println("CONTACT_NAMES_FIELD -> "+name);
+		System.out.println("[TO == ]" + toUserName);
+		System.out.println("[FROM == ]" + fromName);
+
         String displayName = null;
         boolean isSharedID = false;
 //        Log.i("ChatHomeAdapter", "caption : "+caption);
@@ -950,7 +954,11 @@ public void loadDialog(){
 			String filename = file.getPath()+ File.separator + Constants.contentProfilePhoto+profilePicUrl;
 			view.setTag(filename);
 		}else if(groupPicId!=null && !groupPicId.equals("") && !groupPicId.equals("clear")){
-			String profilePicUrl = groupPicId+".jpg";//AppConstants.media_get_url+
+			String profilePicUrl = null;
+			if(groupPicId.endsWith(".jpg"))
+				profilePicUrl = groupPicId;
+			else
+				profilePicUrl = groupPicId+".jpg";
 			File file = Environment.getExternalStorageDirectory();
 			String filename = file.getPath()+ File.separator + Constants.contentProfilePhoto+profilePicUrl;
 			view.setTag(filename);
