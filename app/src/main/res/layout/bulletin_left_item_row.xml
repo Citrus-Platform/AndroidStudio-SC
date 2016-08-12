@@ -35,6 +35,7 @@
                 android:id="@+id/left_image_view"
                 android:layout_width="200dp"
                 android:layout_height="210dip"
+                android:layout_below="@+id/reciever_name_text"
                 android:layout_weight="0"
                 android:background="@color/white"
                 android:gravity="center"
@@ -45,6 +46,7 @@
                 android:id="@+id/contact_layout_r"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/reciever_name_text"
                 android:orientation="horizontal"
                 android:visibility="gone" >
 
@@ -71,6 +73,7 @@
                 android:id="@+id/poll_layout_r"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/reciever_name_text"
                 android:gravity="top"
                 android:orientation="vertical"
                 android:visibility="gone" >
@@ -133,7 +136,7 @@
                         android:textSize="13sp" />
                 </LinearLayout>
             </RelativeLayout>
-<!--
+
             <com.superchat.emojicon.EmojiconTextView
                 android:id="@+id/left_image_tag"
                 android:layout_width="wrap_content"
@@ -150,7 +153,7 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="normal"
-                android:visibility="gone" />-->
+                android:visibility="gone" />
             <ProgressBar
                 android:id="@+id/progress_image_loader"
                 style="@android:style/Widget.ProgressBar.Horizontal"
@@ -225,6 +228,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/left_image_view"
                 android:layout_alignRight="@+id/left_image_view"
+                android:layout_below="@id/reciever_name_text"
                 android:gravity="right|bottom"
                 android:orientation="vertical"
                 android:visibility="visible" >
@@ -353,6 +357,7 @@
                             style="@android:style/Widget.ProgressBar.Horizontal"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
+                            android:layout_below="@+id/loading_voice_percent"
                             android:layout_centerInParent="true"
                             android:indeterminate="false"
                             android:layout_marginTop="5dp"
