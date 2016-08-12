@@ -2790,7 +2790,52 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 						processing.put(viewholder.mediaLocalPath, "0");
 						viewholder.uploadMedia(viewholder.mediaLocalPath,viewholder.messageType);//XMPPMessageType.atMeXmppMessageTypeImage);//viewholder.mediaLocalPath, viewholder.key,viewholder.mediaThumb,XMPPMessageType.atMeXmppMessageTypeImage);
 					}
-				}else{
+				}else if(viewholder.mediaUrl.startsWith("http") && viewholder.mediaLocalPath == null){
+                    if (viewholder.getProcessingForURL(viewholder.mediaUrl) == null && viewholder.mediaLocalPath == null) {
+                        Object[] params = new Object[] { this, viewholder.key, cursor,
+                                viewholder.rightImgProgressPercent, viewholder.mediaUrl};
+                        viewholder.download(viewholder.mediaUrl,viewholder.messageType,
+                                viewholder.sendImgView,
+                                viewholder.rightImgProgressBar, params);
+                    }
+                    android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(viewholder.mediaUrl);
+                    if (bitmap != null) {
+                        viewholder.sendImgView.setImageBitmap(bitmap);
+                    }else{
+                        if(viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal()){
+                            viewholder.sendImgView.setImageResource(R.drawable.xls);
+                        }
+                        else if(viewholder.messageType == XMPPMessageType.atMeXmppMessageTypePPT.ordinal()){
+                            viewholder.sendImgView.setImageResource(R.drawable.ppt);
+                        }
+                        else if(viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal()){
+                            viewholder.sendImgView.setImageResource(R.drawable.docs);
+                        }
+                        else if(viewholder.messageType == XMPPMessageType.atMeXmppMessageTypePdf.ordinal()){
+                            viewholder.sendImgView.setImageResource(R.drawable.pdf);
+                        }
+                        else{
+                            if(viewholder.mediaThumb != null){
+                                Bitmap tmpBitMap = createVideoThumbFromByteArray(viewholder.mediaThumb);
+                                viewholder.sendImgView.setImageBitmap(tmpBitMap);
+                                SuperChatApplication.addBitmapToMemoryCache(url,tmpBitMap);
+                            }
+                        }
+                    }
+//                    viewholder.rightImgProgressPercent.setVisibility(View.VISIBLE);
+//                    viewholder.rightImgProgressBar.setVisibility(View.VISIBLE);
+                    if(progressValue > 1 &&progressValue < 100){
+                        viewholder.rightImgProgressBar.setVisibility(View.VISIBLE);
+                        viewholder.rightImgProgressPercent.setVisibility(View.VISIBLE);
+                        viewholder.rightImgProgressIndeterminate.setVisibility(View.GONE);
+                        viewholder.rightImgProgressBar.setProgress(progressValue);
+                        viewholder.rightImgProgressPercent.setText(String.valueOf(progress) + "%");
+                    }else{
+                        viewholder.rightImgProgressBar.setVisibility(View.GONE);
+                        viewholder.rightImgProgressPercent.setVisibility(View.GONE);
+                        viewholder.rightImgProgressIndeterminate.setVisibility(View.VISIBLE);
+                    }
+                }else{
 					viewholder.rightImgProgressIndeterminate.setVisibility(View.GONE);
 					viewholder.rightImgProgressBar.setVisibility(View.GONE);
 					viewholder.rightImgProgressBar.setVisibility(View.GONE);
