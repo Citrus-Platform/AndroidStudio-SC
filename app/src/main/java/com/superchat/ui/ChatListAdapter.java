@@ -2192,24 +2192,19 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 //    		cancel();
 //    }
 //}
-    @Override
-    public void bindView(View view, Context context1, Cursor cursor) {
-        final ViewHolder viewholder = (ViewHolder) view.getTag();
-        viewholder.parentView = view;
-        viewholder.key = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID));
-        viewholder.groupMsgSenderName = cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_GROUP_USER_FIELD));
-        viewholder.captionTagMsg = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG));
-        viewholder.locationMsg = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_LOCATION));
-
-        viewholder.seenState = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.SEEN_FIELD));
-        viewholder.messageType = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD));
-        viewholder.userName = cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_USER_FIELD));
-        viewholder.receiverName = cursor.getString(cursor.getColumnIndex(ChatDBConstants.TO_USER_FIELD));
-
-
-        System.out.println("[CONTACT_NAMES_FIELD== ]" + cursor.getString(cursor.getColumnIndex(ChatDBConstants.CONTACT_NAMES_FIELD)));
-        System.out.println("[TO == ]" + viewholder.receiverName);
-        System.out.println("[FROM == ]" + viewholder.userName);
+	@Override
+	public void bindView(View view, Context context1, Cursor cursor) {
+		final ViewHolder viewholder = (ViewHolder) view.getTag();
+		viewholder.parentView = view;
+		viewholder.key = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID));
+		viewholder.groupMsgSenderName = cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_GROUP_USER_FIELD));
+		viewholder.captionTagMsg = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG));
+		viewholder.locationMsg = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_LOCATION));
+		
+		viewholder.seenState = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.SEEN_FIELD));
+		viewholder.messageType = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD));
+		viewholder.userName = cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_USER_FIELD));
+		viewholder.receiverName = cursor.getString(cursor.getColumnIndex(ChatDBConstants.TO_USER_FIELD));
 
         viewholder.message = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGEINFO_FIELD));
         viewholder.mediaUrl = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD));
@@ -2774,75 +2769,54 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 viewholder.sDateLayout.setBackgroundResource(R.drawable.chat_time_gradient);
 //				viewholder.senderTime.setTextColor(context1.getResources().getColor(R.color.white));
 //				Log.d("ChatListAdapter", "Url during post image data: "+viewholder.mediaUrl);
-                if (viewholder.mediaUrl == null || viewholder.mediaUrl.equals("")) {
-                    if (!viewholder.mediaUrl.startsWith("http")) {
-                        if (progressValue > 1 && progressValue < 100) {
-                            viewholder.rightImgProgressBar.setVisibility(View.VISIBLE);
-                            viewholder.rightImgProgressPercent.setVisibility(View.VISIBLE);
-                            viewholder.rightImgProgressIndeterminate.setVisibility(View.GONE);
-                            viewholder.rightImgProgressBar.setProgress(progressValue);
-                            viewholder.rightImgProgressPercent.setText(String.valueOf(progress) + "%");
-                        } else {
-                            viewholder.rightImgProgressBar.setVisibility(View.GONE);
-                            viewholder.rightImgProgressPercent.setVisibility(View.GONE);
-                            viewholder.rightImgProgressIndeterminate.setVisibility(View.VISIBLE);
-                        }
-                        if (viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null) {
-                            processing.put(viewholder.mediaLocalPath, "0");
-                            viewholder.uploadMedia(viewholder.mediaLocalPath, viewholder.messageType);//XMPPMessageType.atMeXmppMessageTypeImage);//viewholder.mediaLocalPath, viewholder.key,viewholder.mediaThumb,XMPPMessageType.atMeXmppMessageTypeImage);
-                        }
-                    }
-                }
-//                else if(viewholder.mediaUrl.startsWith("http")){
-//                        if (viewholder.getProcessingForURL(viewholder.mediaUrl) == null && viewholder.mediaLocalPath == null) {
-//                            Object[] params = new Object[] { this, viewholder.key, cursor,
-//                                    viewholder.rightImgProgressPercent, viewholder.mediaUrl};
-//                            viewholder.download(viewholder.mediaUrl,viewholder.messageType,
-//                                    viewholder.sendImgView,
-//                                    viewholder.rightImgProgressBar, params);
-//                        }
-//                        android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(viewholder.mediaUrl);
-//                        if (bitmap != null) {
-//                            viewholder.sendImgView.setImageBitmap(bitmap);
-//                        }else{
-//                            if(viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal()){
-//                                viewholder.sendImgView.setImageResource(R.drawable.xls);
-//                            }
-//                            else if(viewholder.messageType == XMPPMessageType.atMeXmppMessageTypePPT.ordinal()){
-//                                viewholder.sendImgView.setImageResource(R.drawable.ppt);
-//                            }
-//                            else{
-//                                if(viewholder.mediaThumb != null){
-//                                    Bitmap tmpBitMap = createVideoThumbFromByteArray(viewholder.mediaThumb);
-//                                    viewholder.sendImgView.setImageBitmap(tmpBitMap);
-//                                    SuperChatApplication.addBitmapToMemoryCache(url,tmpBitMap);
-//                                }
-//                            }
-//                        }
-//                        viewholder.rightImgProgressPercent.setVisibility(View.VISIBLE);
-//                        viewholder.rightImgProgressBar.setVisibility(View.VISIBLE);
-//                }
-                else {
-                    viewholder.rightImgProgressIndeterminate.setVisibility(View.GONE);
-                    viewholder.rightImgProgressBar.setVisibility(View.GONE);
-                    viewholder.rightImgProgressBar.setVisibility(View.GONE);
-                    viewholder.rightImgProgressPercent.setVisibility(View.GONE);
-                }
-            } else {
-                viewholder.sendImgView.setBackgroundResource(0);
-                viewholder.sendImgView.setVisibility(View.GONE);
-                viewholder.rightFileLayout.setVisibility(View.GONE);
-                viewholder.sDateLayout.setVisibility(View.VISIBLE);
-                viewholder.senderMsgText.setVisibility(View.VISIBLE);
-                viewholder.rightImgProgressBar.setVisibility(View.GONE);
-                if (viewholder.rightImgProgressIndeterminate != null)
-                    viewholder.rightImgProgressIndeterminate.setVisibility(View.GONE);
-                viewholder.senderMsgText.setText(viewholder.message);
-                viewholder.senderLayout.setTag("Y");
-                viewholder.senderLayout.setOnLongClickListener(viewholder.onLongPressListener);
-
-                viewholder.sVideoPlayImageView.setVisibility(View.GONE);
-                viewholder.rVideoPlayImageView.setVisibility(View.GONE);
+				if(viewholder.mediaUrl == null || viewholder.mediaUrl.equals("")|| !viewholder.mediaUrl.startsWith("http")){
+					
+					if(progressValue>1 &&progressValue<100){
+						viewholder.rightImgProgressBar.setVisibility(View.VISIBLE);
+						viewholder.rightImgProgressPercent.setVisibility(View.VISIBLE);
+						viewholder.rightImgProgressIndeterminate.setVisibility(View.GONE);
+						viewholder.rightImgProgressBar.setProgress(progressValue);
+						viewholder.rightImgProgressPercent.setText(String.valueOf(progress) + "%");
+					}else{
+						viewholder.rightImgProgressBar.setVisibility(View.GONE);
+						viewholder.rightImgProgressPercent.setVisibility(View.GONE);
+						viewholder.rightImgProgressIndeterminate.setVisibility(View.VISIBLE);
+					}
+//					viewholder.rightImgProgressBar.set
+//					viewholder.rightImgProgressBar.setProgress(0);
+//					viewholder.rightImgProgressBar.setMax(100);
+//					viewholder.rightImgProgressPercent.setVisibility(View.VISIBLE);
+					if (viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null){
+						processing.put(viewholder.mediaLocalPath, "0");
+						viewholder.uploadMedia(viewholder.mediaLocalPath,viewholder.messageType);//XMPPMessageType.atMeXmppMessageTypeImage);//viewholder.mediaLocalPath, viewholder.key,viewholder.mediaThumb,XMPPMessageType.atMeXmppMessageTypeImage);
+					}
+				}else{
+					viewholder.rightImgProgressIndeterminate.setVisibility(View.GONE);
+					viewholder.rightImgProgressBar.setVisibility(View.GONE);
+					viewholder.rightImgProgressBar.setVisibility(View.GONE);
+					viewholder.rightImgProgressPercent.setVisibility(View.GONE);
+				}
+//				if(progressValue>0 &&progressValue<100 && viewholder.seenState == Message.SeenState.pic_wait.ordinal()){
+//					viewholder.rightImgProgressBar.setVisibility(ProgressBar.VISIBLE);
+//					viewholder.rightImgProgressBar.setProgress(progressValue);
+//				}else
+//					viewholder.rightImgProgressBar.setVisibility(ProgressBar.INVISIBLE);
+					
+			} else {
+				viewholder.sendImgView.setBackgroundResource(0);
+				viewholder.sendImgView.setVisibility(View.GONE);
+				viewholder.rightFileLayout.setVisibility(View.GONE);
+				viewholder.sDateLayout.setVisibility(View.VISIBLE);
+				viewholder.senderMsgText.setVisibility(View.VISIBLE);
+				viewholder.rightImgProgressBar.setVisibility(View.GONE);
+				if(viewholder.rightImgProgressIndeterminate != null)
+					viewholder.rightImgProgressIndeterminate.setVisibility(View.GONE);
+				viewholder.senderMsgText.setText(viewholder.message);
+				viewholder.senderLayout.setTag("Y");
+				viewholder.senderLayout.setOnLongClickListener(viewholder.onLongPressListener);
+				
+				viewholder.sVideoPlayImageView.setVisibility(View.GONE);
+				viewholder.rVideoPlayImageView.setVisibility(View.GONE);
 //				viewholder.senderTime.setTextColor(context1.getResources().getColor(R.color.greytext_on_white_light));
                 viewholder.sDateLayout.setBackgroundResource(0);
             }
@@ -2854,32 +2828,37 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 if (viewholder.totalGroupUsers != 0 && viewholder.totalGroupReadUsers != 0
                         && (viewholder.totalGroupUsers - 1) <= viewholder.totalGroupReadUsers) {
 //					viewholder.messageStatusView.setText(R.string.read);
-                    viewholder.messageStatusView.setBackgroundResource(R.drawable.read_tick);
-                    viewholder.senderTime.setTextColor(context1.getResources().getColor(R.color.color_lite_blue));
-                    viewholder.senderTime.setText(msgTime);
-                } else if (viewholder.seenState == Message.SeenState.wait.ordinal()
-                        || viewholder.seenState == Message.SeenState.pic_wait.ordinal()) {
+					viewholder.messageStatusView.setBackgroundResource(R.drawable.read_tick);
+					viewholder.senderTime.setTextColor(context1.getResources().getColor(R.color.color_lite_blue));
+					viewholder.senderTime.setText(msgTime);
+				}
+				else if (viewholder.seenState == Message.SeenState.wait.ordinal()
+						||viewholder.seenState == Message.SeenState.pic_wait.ordinal()){
 //					viewholder.messageStatusView.setText(R.string.wait);
-                    viewholder.messageStatusView.setBackgroundResource(R.drawable.time_clock);
-                } else {
+					viewholder.messageStatusView.setBackgroundResource(R.drawable.time_clock);
+				}
+				else{
 //					viewholder.messageStatusView.setText(R.string.sent);
-                    viewholder.messageStatusView.setBackgroundResource(R.drawable.sent_tick);
-                }
-            } else if (viewholder.seenState == Message.SeenState.seen.ordinal()) {
-                if (!isBroadCastChat) {
+					viewholder.messageStatusView.setBackgroundResource(R.drawable.sent_tick);
+				}
+			}else
+			if (viewholder.seenState == Message.SeenState.seen.ordinal()){
+				if(!isBroadCastChat){
 //					viewholder.messageStatusView.setText(R.string.read);
-                    viewholder.messageStatusView.setBackgroundResource(R.drawable.read_tick);
-                    viewholder.senderTime.setTextColor(context1.getResources().getColor(R.color.color_lite_blue));
-                    viewholder.senderTime.setText(msgTime);
-                } else {
+					viewholder.messageStatusView.setBackgroundResource(R.drawable.read_tick);
+					viewholder.senderTime.setTextColor(context1.getResources().getColor(R.color.color_lite_blue));
+					viewholder.senderTime.setText(msgTime);
+				}
+				else{
 //					viewholder.messageStatusView.setText(R.string.sent);
-                    viewholder.messageStatusView.setBackgroundResource(R.drawable.sent_tick);
-                }
-            } else if (viewholder.seenState == Message.SeenState.recieved.ordinal()) {
-                if (!isBroadCastChat) {
+					viewholder.messageStatusView.setBackgroundResource(R.drawable.sent_tick);
+				}
+			}else if (viewholder.seenState == Message.SeenState.recieved.ordinal()){
+				if(!isBroadCastChat){
 //					viewholder.messageStatusView.setText(R.string.recieved);
-                    viewholder.messageStatusView.setBackgroundResource(R.drawable.delivered_tick);
-                } else {
+					viewholder.messageStatusView.setBackgroundResource(R.drawable.delivered_tick);
+				}
+				else{
 //					viewholder.messageStatusView.setText(R.string.sent);
                     viewholder.messageStatusView.setBackgroundResource(R.drawable.sent_tick);
                 }
@@ -2907,32 +2886,33 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 //				viewholder.rightImgProgressBar.setProgress(progressValue);
 //			}else
 //				viewholder.rightImgProgressBar.setVisibility(ProgressBar.GONE);
-            viewholder.leftPersonPic.setVisibility(View.GONE);
-            viewholder.leftPersonDefaultPic.setVisibility(View.GONE);
-
-        } else if (!isBroadCastChat) {
-            String progress = viewholder.getProcessingForURL(url);
-            if (progress != null && !progress.equals("")) {
-                try {
-                    progressValue = Integer.parseInt(progress);
-                } catch (NumberFormatException ex) {
-
-                }
-//
-            }
-            viewholder.leftPersonPicLayout.setVisibility(View.GONE);
-            viewholder.rightFileLayout.setVisibility(View.GONE);
-            viewholder.rightFileTypeView.setVisibility(View.GONE);
-            if (viewholder.captionTagMsg == null || viewholder.captionTagMsg.equals("")) {
-
-                viewholder.recieveTagView.setVisibility(TextView.GONE);
-            } else {
-                if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeContact.ordinal()) {
-                    viewholder.receiverMsgText.setVisibility(TextView.GONE);
-                    viewholder.recieveTagView.setVisibility(TextView.GONE);
-                    viewholder.contactLayoutReceiver.setVisibility(TextView.VISIBLE);
-                    viewholder.contactLayoutReceiver.setOnClickListener(viewholder.onContactClickListener);
-                    viewholder.contactLayoutReceiver.setOnLongClickListener(viewholder.onLongPressListener);
+			viewholder.leftPersonPic.setVisibility(View.GONE);
+			viewholder.leftPersonDefaultPic.setVisibility(View.GONE);
+			
+		} else if(!isBroadCastChat){
+			String progress = viewholder.getProcessingForURL(url);
+			if(progress!=null && !progress.equals("")){
+				try{
+					progressValue = Integer.parseInt(progress);
+				}catch(NumberFormatException ex){
+					
+				}
+//				
+			}
+			viewholder.leftPersonPicLayout.setVisibility(View.GONE);
+			viewholder.rightFileLayout.setVisibility(View.GONE);
+			viewholder.rightFileTypeView.setVisibility(View.GONE);
+			if(viewholder.captionTagMsg == null || viewholder.captionTagMsg.equals("")){
+				
+				viewholder.recieveTagView.setVisibility(TextView.GONE);
+			}else
+			{
+				if(viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeContact.ordinal()){
+					viewholder.receiverMsgText.setVisibility(TextView.GONE);
+					viewholder.recieveTagView.setVisibility(TextView.GONE);
+					viewholder.contactLayoutReceiver.setVisibility(TextView.VISIBLE);
+					viewholder.contactLayoutReceiver.setOnClickListener(viewholder.onContactClickListener);
+					viewholder.contactLayoutReceiver.setOnLongClickListener(viewholder.onLongPressListener);
 //					RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)viewholder.rDateLayout.getLayoutParams();
 //					params.addRule(RelativeLayout.RIGHT_OF, R.id.contact_layout_r);
 //					params.addRule(RelativeLayout.BELOW, R.id.contact_layout_r);
@@ -3002,36 +2982,37 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                     viewholder.locationData = viewholder.locationMsg;
                     viewholder.receiverMsgText.setVisibility(View.GONE);
 //					viewholder.mapviewSender.setVisibility(View.GONE);
-                    viewholder.contactLayout.setVisibility(View.GONE);
-                    viewholder.pollLayout.setVisibility(TextView.GONE);
-                    viewholder.recieveTagView.setVisibility(View.GONE);
-                    viewholder.locationLayoutReceiver.setVisibility(View.VISIBLE);
-                    viewholder.locationLayoutReceiver.setOnClickListener(viewholder.onLocationClickListener);
-                    viewholder.locationLayoutReceiver.setOnLongClickListener(viewholder.onLongPressListener);
-                    if (viewholder.captionTagMsg != null && viewholder.captionTagMsg.length() > 0) {
-                        if (viewholder.captionTagMsg.indexOf("\n") != -1) {
-                            viewholder.locationNameReceiver.setText(viewholder.captionTagMsg.substring(0, viewholder.captionTagMsg.indexOf("\n")));
-                            viewholder.locationNameAddressReceiver.setText(viewholder.captionTagMsg.substring(viewholder.captionTagMsg.indexOf("\n") + 1));
-                        } else
-                            viewholder.locationNameReceiver.setText(viewholder.captionTagMsg);
-                    }
-                    //Show map here
-                    String[] loc = viewholder.locationData.split(",");
-                    double lat = Double.parseDouble(loc[0]);
-                    double lon = Double.parseDouble(loc[1]);
-
-
-                    String mapurl = viewholder.MAP_URL.replace("$lat", "" + lat);
-                    mapurl = mapurl.replace("$lon", "" + lon);
-                    android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(mapurl);
-                    if (bitmap != null) {
-                        viewholder.mapviewReceiver.setImageBitmap(bitmap);
-                    } else {
-                        if (processingMap.get(mapurl) == null) {
-                            processingMap.put(mapurl, mapurl);
-                            new ImageLoadTask(mapurl, viewholder.mapviewReceiver).execute();
-                        }
-                    }
+					viewholder.contactLayout.setVisibility(View.GONE);
+					viewholder.pollLayout.setVisibility(TextView.GONE);
+					viewholder.recieveTagView.setVisibility(View.GONE);
+					viewholder.locationLayoutReceiver.setVisibility(View.VISIBLE);
+					viewholder.locationLayoutReceiver.setOnClickListener(viewholder.onLocationClickListener);
+					viewholder.locationLayoutReceiver.setOnLongClickListener(viewholder.onLongPressListener);
+					if(viewholder.captionTagMsg != null && viewholder.captionTagMsg.length() > 0){
+						if(viewholder.captionTagMsg.indexOf("\n") != -1){
+							viewholder.locationNameReceiver.setText(viewholder.captionTagMsg.substring(0, viewholder.captionTagMsg.indexOf("\n")));
+							viewholder.locationNameAddressReceiver.setText(viewholder.captionTagMsg.substring(viewholder.captionTagMsg.indexOf("\n") + 1));
+						}
+						else
+							viewholder.locationNameReceiver.setText(viewholder.captionTagMsg);
+					}
+					//Show map here
+					String[] loc = viewholder.locationData.split(",");
+					double lat = Double.parseDouble(loc[0]);
+					double lon = Double.parseDouble(loc[1]);
+					
+					
+					String mapurl = viewholder.MAP_URL.replace("$lat", ""+lat);
+					mapurl = mapurl.replace("$lon", ""+lon);
+					android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(mapurl);
+					if (bitmap != null) {
+						viewholder.mapviewReceiver.setImageBitmap(bitmap);
+					}else{
+						if(processingMap.get(mapurl)==null){
+				        	processingMap.put(mapurl, mapurl);
+				        	new ImageLoadTask(mapurl, viewholder.mapviewReceiver).execute();
+						}
+					}
 //					String head = "Location";
 //					head =  ((ChatListScreen) context).getAddress(lat, lon);
 //					viewholder.contactNameReceiver.setText(head);
