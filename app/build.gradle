@@ -32,6 +32,9 @@ android {
             multiDexEnabled true
         }
     }
+    lintOptions {
+        abortOnError false
+    }
     productFlavors {
     }
 
