@@ -23,7 +23,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -1843,6 +1846,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 		Log.d("ChatDBWrapper", "getAllMessagesForBackup query: " + query);
 		Cursor cursor = null;
 		String compressed_file_path = null;
+        SharedPrefManager pref = SharedPrefManager.getInstance();
 		try{
 			String backup_dir = "SCBackup";
 			String zip_file = "SCBackup.zip";
@@ -1852,6 +1856,9 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 //			String filename_status = path + "/" + "status.txt";
 			String filename_message = "message.txt";
 			String filename_status = "status.txt";
+            String from = null;
+            String to = null;
+            String sent_time = null;
 			if(dbHelper!=null){
 				//Read data from message table
 				cursor = dbHelper.getWritableDatabase().rawQuery(query, null);
@@ -1893,11 +1900,14 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 //						4.	dateTime
 //						5.	status
 //						6.	deliveryTime
+
 						 message = new JSONObject();
-						 message.put("fromUserName", cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_USER_FIELD)));
+                         from = cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_USER_FIELD));
+                         to = cursor.getString(cursor.getColumnIndex(ChatDBConstants.TO_USER_FIELD));
+						 message.put("fromUserName", from);
 			             message.put("fromGroupUserName", cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_GROUP_USER_FIELD)));
 			             message.put("messageID", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID)));
-			             message.put("toUserName", cursor.getString(cursor.getColumnIndex(ChatDBConstants.TO_USER_FIELD)));
+			             message.put("toUserName", to);
 			             message.put("textMessage", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGEINFO_FIELD)));
 			             message.put("caption", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG)));
 			             message.put("broadcastMessageID", cursor.getString(cursor.getColumnIndex(ChatDBConstants.BROADCAST_MESSAGE_ID)));
@@ -1918,12 +1928,33 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			             message.put("audioMessageLength", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LENGTH)));
 			             message.put("mediaLocalPath", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD)));
 			             message.put("thumbData", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_THUMB_FIELD)));
-			             
-			             message.put("readTime", cursor.getLong(cursor.getColumnIndex(ChatDBConstants.READ_TIME_FIELD)));
-			             message.put("lastUpdateField", cursor.getLong(cursor.getColumnIndex(ChatDBConstants.LAST_UPDATE_FIELD)));
-			             
-						 
-						 
+
+
+                        sent_time = convertToDate(cursor.getLong(cursor.getColumnIndex(ChatDBConstants.LAST_UPDATE_FIELD)));
+                        message.put("readTime", cursor.getLong(cursor.getColumnIndex(ChatDBConstants.READ_TIME_FIELD)));
+                        message.put("lastUpdateField", cursor.getLong(cursor.getColumnIndex(ChatDBConstants.LAST_UPDATE_FIELD)));
+
+						//Some additional values for IOS
+                        if(sent_time != null)
+                            message.put("dateTime", sent_time);
+                         if(pref.isGroupChat(from) || pref.isGroupChat(to)) {
+                             message.put("chatType", 2);
+                             if(pref.isGroupChat(from))
+                                message.put("roomID", from);
+                             else if(pref.isGroupChat(to))
+                                 message.put("roomID", to);
+                         }
+                        else if(pref.isBroadCast(from) || pref.isBroadCast(to)) {
+                             message.put("chatType", 4);
+                             if(pref.isBroadCast(from))
+                                 message.put("roomID", from);
+                             else if(pref.isBroadCast(to))
+                                 message.put("roomID", to);
+                         }
+
+                        from = to = sent_time = null;
+
+
 //			             message.put(ChatDBConstants.MESSAGE_ID, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID)));
 //			             message.put(ChatDBConstants.FROM_GROUP_USER_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_GROUP_USER_FIELD)));
 //			             message.put(ChatDBConstants.FROM_USER_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_USER_FIELD)));
@@ -1998,6 +2029,20 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 		}
 		return compressed_file_path;
 	}
+    public String convertToDate(long millis){
+        String date_converted = null;
+        if(millis == 0)
+            return null;
+        try {
+            Date date = new Date(millis);
+//        DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
+            DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss a");
+            date_converted = formatter.format(date);
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        return date_converted;
+    }
 	public boolean createDirIfNotExists(String path, String folder_name) {
 	    boolean ret = true;
 	    File file = new File(path, folder_name);
@@ -2102,12 +2147,13 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 				+ "' ORDER BY " + ChatDBConstants.LAST_UPDATE_FIELD;
 		Log.d("ChatDBWrapper", "getRecentChatList query: " + sql);
 		Cursor cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
+        SharedPrefManager pref = SharedPrefManager.getInstance();
 		try{
 			if (cursor != null && cursor.moveToFirst()) {
 				do {
 					String name = "";
 					
-					if(SharedPrefManager.getInstance().isGroupChat(userName)){
+					if(pref.isGroupChat(userName)){
 						name = cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_GROUP_USER_FIELD));
 						if(name!=null && name.contains("#786#")){
 				        	name = name.replace("#786#m", "@+");
@@ -2116,19 +2162,19 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 					 }
 						if(name==null || name.equals("")){
 //			        		name = SharedPrefManager.getInstance().getDisplayName()+"@"+SharedPrefManager.getInstance().getUserName().replaceFirst("m","+");
-			        		name = SharedPrefManager.getInstance().getDisplayName();
+			        		name = pref.getDisplayName();
 			        	}
 					}else{
 						name = cursor.getString(cursor.getColumnIndex(ChatDBConstants.CONTACT_NAMES_FIELD));
 						 String fromName = cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_USER_FIELD));
 						 String tmpUserName = fromName;
 //						 String tmpUserName = SharedPrefManager.getInstance().getUserServerName(fromName);
-						 boolean isMe = SharedPrefManager.getInstance().getUserName().equals(fromName)?true:false;
+						 boolean isMe = pref.getUserName().equals(fromName)?true:false;
 //						 if(fromName!=null)
 //							 fromName = fromName.replaceFirst("m", "+");
 						 if(isMe){
 //							 name = SharedPrefManager.getInstance().getDisplayName()+"@"+fromName;
-							 name = SharedPrefManager.getInstance().getDisplayName();
+							 name = pref.getDisplayName();
 						 }
 						 if(name!=null && name.contains("#786#")){
 //					        	name = name.replace("#786#m", "@+");	

@@ -1,32 +1,5 @@
 package com.superchat.ui;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Vector;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.chat.sdk.db.ChatDBWrapper;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.ui.ChatBackupScreen.UploadDataBackup;
-import com.superchat.utils.Constants;
-import com.superchat.utils.FileDownloadResponseHandler;
-import com.superchat.utils.FileUploaderDownloader;
-import com.superchat.utils.ZipManager;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -41,6 +14,23 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.chat.sdk.db.ChatDBWrapper;
+import com.superchat.R;
+import com.superchat.utils.Constants;
+import com.superchat.utils.FileDownloadResponseHandler;
+import com.superchat.utils.FileUploaderDownloader;
+import com.superchat.utils.ZipManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.Vector;
+
 public class ChatBackupRestoreScreen extends Activity implements OnClickListener, FileDownloadResponseHandler{
 
     Button restore;
@@ -51,7 +41,7 @@ public class ChatBackupRestoreScreen extends Activity implements OnClickListener
 	String lastBackupDate = null;
 	
 	String backup_dir = "SCBackup";
-	String zip_file = "SCBackup.zip";
+	String zip_file = "SCBackup.scb";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

@@ -1,42 +1,6 @@
 package com.superchat.ui;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.chat.sdk.db.ChatDBWrapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.model.ErrorModel;
-import com.superchat.utils.Constants;
-import com.superchat.utils.FileDownloadResponseHandler;
-import com.superchat.utils.FileUploaderDownloader;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.utils.ZipManager;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -56,6 +20,43 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.chat.sdk.db.ChatDBWrapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.model.ErrorModel;
+import com.superchat.utils.Constants;
+import com.superchat.utils.FileDownloadResponseHandler;
+import com.superchat.utils.FileUploaderDownloader;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.ZipManager;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
 import ch.boye.httpclientandroidlib.entity.mime.content.FileBody;
 
 
@@ -398,7 +399,7 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 	public void onFileDownloadResposne(View view, int type, byte[] data) {
 		// TODO Auto-generated method stub
 		String backup_dir = "SCBackup";
-		String zip_file = "SCBackup.zip";
+		String zip_file = "SCBackup.scb";
 		createDirIfNotExists(Environment.getExternalStorageDirectory().getAbsolutePath(), backup_dir);
 		String path = Environment.getExternalStorageDirectory().getAbsolutePath() +"/" + backup_dir +"/";
 		String full_path = Environment.getExternalStorageDirectory().getAbsolutePath() +"/" + backup_dir + "/" + zip_file;

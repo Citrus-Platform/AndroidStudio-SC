@@ -112,7 +112,7 @@ public class FileUploaderDownloader extends AsyncTask<String, Integer, String>{
 				 try {
 					  String filePath = urls[0];
 					  String fileId = urls[1];
-	                  String getUrl = Constants.media_get_url + fileId + ".zip";
+	                  String getUrl = Constants.media_get_url + fileId + ".scb";
 	                  URL url = new URL(getUrl);
 	                  URLConnection conection = url.openConnection();
 	                  conection.connect();
@@ -167,7 +167,7 @@ public class FileUploaderDownloader extends AsyncTask<String, Integer, String>{
 			       }
 			      });
 		  FormBodyPart dataBodyPart = new FormBodyPart("data", data);
-		  reqEntity.addPart(new FormBodyPart("ext", new StringBody("zip")));
+		  reqEntity.addPart(new FormBodyPart("ext", new StringBody("scb")));
 		  reqEntity.addPart(dataBodyPart);
 		  httppost.setEntity(reqEntity);
 		  HttpResponse response = httpclient.execute(httppost);

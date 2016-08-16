@@ -8,6 +8,7 @@ public class MessageDataModel {
 		super();
 	}
 	//======= [Android Values] =========
+
 //	1.	recipientCount
 //	2.	fromUserName
 //	3.	fromGroupUserName
@@ -19,11 +20,11 @@ public class MessageDataModel {
 //	9.	mediaURL
 //	10. mediaLocalPath
 //	11. thumbData
-//	12. lastUpdateField
-//	13. readUserCount
-//	14. dataChanged
-//	15. locationMessage
-//	16. broadcastMessageID
+//	12. lastUpdateField ==>
+//	13. readUserCount  - how many users have read the message
+//	14. dataChanged -
+//	15. locationMessage -
+//	16. broadcastMessageID -
 //	17. foreignMessageID
 //	18. contactName
 //	19. unreadCount
@@ -31,13 +32,31 @@ public class MessageDataModel {
 //	21. mediaStatus
 //	22.	readTime
 //	23.	messageType
-//	24. messageTypeID
-	
+//	24. messageTypeID - image, audio, pdf etc.
+
 	//======= [IOS Values] =========
-//=====================================================	
+	//	Some values are must, that is not in Android - dateTime, chatType, roomID
+
+//	25. roomID - group name, broadcast name, shared ID name, Bulletin Name
+//	26. recipentCount - Member count of group when message is sent
+//	27. userID
+//	28. chatType - 2 - group meaage, 4 - broadcast
+//	29. dateTime - when this message was sent.
+//	30. status - wait = 0, sent - 1, delivered - 2, read - 3, error - 5
+//	31. readTime - when message was read - P2P and Group(when all users have read the message)
+//	32. location - comma seperated lat-lon
+//	33. originalFileName - original file name
+//	34. deliveryTime - when this message was delivered.
+
+
+//=====================================================
 	//String values
 	@SerializedName(value = "fromUserName")
 	public String fromUserName;
+
+
+	@SerializedName(value = "roomID")
+	public String roomID;
 	
 	@SerializedName(value = "fromGroupUserName")
 	public String fromGroupUserName = null;
