@@ -5,6 +5,10 @@ import android.graphics.Bitmap.CompressFormat;
 import java.util.regex.Pattern;
 
 public class Constants {
+	
+	public static final String BACKUP_FILEID = "backup_fileid";
+	public static final String LAST_BACKUP_DATE = "last_backup_date";
+	
 public static final String PROFILE_UPDATE = "profile_update";
 public static final String MOBILE_NUMBER_TXT = "mobile_number";
 public static final String COUNTRY_CODE_TXT = "country_code";

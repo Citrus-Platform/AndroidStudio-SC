@@ -17,6 +17,8 @@
     
     <uses-feature android:name="android.hardware.camera" />
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -188,6 +190,12 @@
             android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.superchat.ui.GenerateConsolePasswordActivity"
+            android:screenOrientation="portrait"></activity>
+         <activity
+            android:name="com.superchat.ui.ChatBackupScreen"
+            android:screenOrientation="portrait"></activity>
+         <activity
+            android:name="com.superchat.ui.ChatBackupRestoreScreen"
             android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.superchat.ui.BulletinScreen"

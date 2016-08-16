@@ -71,9 +71,11 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -824,9 +826,9 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 											sharedPrefManager.saveUserStatusMessage(groupDetail.groupName, groupDetail.description);
 										if(groupDetail.numberOfMembers!=null)
 											sharedPrefManager.saveGroupMemberCount(groupDetail.groupName, groupDetail.numberOfMembers);
-										boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(groupDetail.groupName);
-										if(isFirstChat)
-											saveMessage(groupDetail.displayName, groupDetail.groupName,"Group created by "+groupDetail.userDisplayName);//saveMessage(groupDetail.displayName, groupDetail.groupName,"You are welcome.");
+//										boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(groupDetail.groupName);
+//										if(isFirstChat)
+//											saveMessage(groupDetail.displayName, groupDetail.groupName,"Group created by "+groupDetail.userDisplayName);//saveMessage(groupDetail.displayName, groupDetail.groupName,"You are welcome.");
 										String oldFileId = sharedPrefManager.getUserFileId(groupDetail.fileId);
 										if(groupDetail.fileId!=null && !groupDetail.fileId.equals("") && (oldFileId == null || !oldFileId.equals(groupDetail.fileId)))
 										{
@@ -855,10 +857,8 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 										if(broadcastGroupDetail.description!=null)
 											sharedPrefManager.saveUserStatusMessage(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.description);
 										boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(broadcastGroupDetail.broadcastGroupName);
-										if(isFirstChat) {
-                                            saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName, "Broadcast created by " + broadcastGroupDetail.userDisplayName);
-                                            //saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName,"You are welcome.");
-                                        }
+										if(isFirstChat)
+											saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName,"Broadcast created by "+broadcastGroupDetail.userDisplayName);//saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName,"You are welcome.");
 										String oldFileId = sharedPrefManager.getUserFileId(broadcastGroupDetail.fileId);
 										if(broadcastGroupDetail.fileId!=null && !broadcastGroupDetail.fileId.equals("") && (oldFileId == null || !oldFileId.equals(broadcastGroupDetail.fileId)))
 										{
@@ -1036,6 +1036,14 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 				new GetSharedIDListFromServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			else
 				new GetSharedIDListFromServer().execute();
+			
+//			if(iPrefManager.isFirstTime() && iPrefManager.getAppMode().equals("VirginMode"))
+			{
+				 if(Build.VERSION.SDK_INT >= 11)
+						new CheckDataBackup().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					else
+						new CheckDataBackup().execute();
+			 }
 			
 			if(new_user && messageService != null){
 				String json = finalJSONbject.toString();
@@ -1558,6 +1566,74 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 //				alertDialog.show();
 //			}
 	}
+		class CheckDataBackup extends AsyncTask<String, String, String> {
+		
+		public CheckDataBackup(){
+		}
+		@Override
+		protected void onPreExecute() {
+		    super.onPreExecute();
+		}
+
+		@Override
+		protected String doInBackground(String... urls) {
+			 String data = null;
+		    try {
+//		    	String url = Constants.SERVER_URL + "/tiger/rest/admin/domain/check?domainName="+URLEncoder.encode(domain_name, "UTF-8");
+		    	String url = "http://superchat3c.com/tiger/rest/user/profile/getbackup";
+		    	Log.i(TAG, "CheckAvailability :: doInBackground : URL - "+url);
+		        HttpPost httppost = new HttpPost(url);
+		        httppost = SuperChatApplication.addHeaderInfo(httppost,true);
+		        HttpClient httpclient = new DefaultHttpClient();
+		        HttpResponse response = httpclient.execute(httppost);
+		        // StatusLine stat = response.getStatusLine();
+		        int status = response.getStatusLine().getStatusCode();
+		        if (status == 200) {
+		            HttpEntity entity = response.getEntity();
+		            data = EntityUtils.toString(entity);
+//		            return data;
+		        }
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    } catch (Exception e) {
+
+		        e.printStackTrace();
+		    }
+		    String fileid = null;
+		    String lastdate = null;
+		    if(data != null){
+		    	System.out.println("Response======>"+data);
+		    	try {
+					JSONObject jsonobj = new JSONObject(data);
+					if (jsonobj != null && jsonobj.getString("status") != null 
+							&& jsonobj.getString("status").equalsIgnoreCase("success")){
+						if(jsonobj.has("backupFileId"))
+							fileid = jsonobj.getString("backupFileId");
+						if(jsonobj.has("backupDate"))
+							lastdate = jsonobj.getString("backupDate");
+						 Intent intent = new Intent(HomeScreen.this, ChatBackupRestoreScreen.class);
+						 if(fileid != null)
+						    intent.putExtra(Constants.BACKUP_FILEID, fileid);
+						 if(lastdate != null)
+						   	intent.putExtra(Constants.LAST_BACKUP_DATE, lastdate);
+					    startActivity(intent);
+					}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		   }
+		   return data;
+		}
+		@Override
+		protected void onPostExecute(String data) {
+			if(data != null){
+				
+			}
+		}
+	}
+	
+	
 	@Override
 	public void onBackPressed() {
 	    int count = getFragmentManager().getBackStackEntryCount();

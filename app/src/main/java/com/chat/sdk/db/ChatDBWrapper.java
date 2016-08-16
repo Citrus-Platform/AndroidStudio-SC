@@ -11,11 +11,13 @@ import com.chatsdk.org.jivesoftware.smack.packet.Message;
 import com.chatsdk.org.jivesoftware.smack.packet.Message.SeenState;
 import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.superchat.data.db.DatabaseConstants;
-import com.superchat.utils.Compress;
+import com.superchat.model.MessageDataModel;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.utils.Utilities;
+import com.superchat.utils.ZipManager;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -1836,10 +1838,11 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 //	viewholder.isDateShow = "1".equals(cursor.getString(cursor.getColumnIndex(ChatDBConstants.IS_DATE_CHANGED_FIELD)));
 //	viewholder.totalGroupUsers=cursor.getInt(cursor.getColumnIndex(ChatDBConstants.TOTAL_USER_COUNT_FIELD));
 //	viewholder.totalGroupReadUsers=cursor.getInt(cursor.getColumnIndex(ChatDBConstants.READ_USER_COUNT_FIELD));
-	public Cursor getAllMessagesForBackup() {
+	public String getAllMessagesForBackup() {
 		String query = "SELECT * FROM " + ChatDBConstants.TABLE_NAME_MESSAGE_INFO + " ORDER BY " + ChatDBConstants.LAST_UPDATE_FIELD;
 		Log.d("ChatDBWrapper", "getAllMessagesForBackup query: " + query);
 		Cursor cursor = null;
+		String compressed_file_path = null;
 		try{
 			String backup_dir = "SCBackup";
 			String zip_file = "SCBackup.zip";
@@ -1857,22 +1860,85 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 					 JSONObject backup = new JSONObject();
 		             JSONArray message_array = new JSONArray();
 		             JSONObject message = null;
+		             int i = 1;
 					do{
+//						1.	recipientCount
+//						2.	fromUserName
+//						3.	fromGroupUserName
+//						4.	messageID
+//						5.	textMessage
+//						6.	toUserName
+//						7.	audioMessageLength
+//						8.	caption
+//						9.	mediaURL
+//						10. mediaLocalPath
+//						11. thumbData
+//						12. lastUpdateField
+//						13. readUserCount
+//						14. dataChanged
+//						15. locationMessage
+//						16. broadcastMessageID
+//						17. foreignMessageID
+//						18. contactName
+//						19. unreadCount
+//						20. seen
+//						21. mediaStatus
+//						22.	readTime
+//						23.	messageType
+//						24. messageTypeID
+				//========================= FOR IOS ====		
+//						1.	chatType
+//						2.	userID
+//						3.	date
+//						4.	dateTime
+//						5.	status
+//						6.	deliveryTime
 						 message = new JSONObject();
-			             message.put(ChatDBConstants.MESSAGE_ID, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID)));
-			             message.put(ChatDBConstants.FROM_GROUP_USER_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_GROUP_USER_FIELD)));
-			             message.put(ChatDBConstants.FROM_USER_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_USER_FIELD)));
-			             message.put(ChatDBConstants.TO_USER_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.TO_USER_FIELD)));
-			             message.put(ChatDBConstants.MESSAGEINFO_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGEINFO_FIELD)));
-			             message.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD)));
-			             message.put(ChatDBConstants.MESSAGE_MEDIA_LENGTH, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LENGTH)));
-			             message.put(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD)));
-			             message.put(ChatDBConstants.MESSAGE_THUMB_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_THUMB_FIELD)));
-			             message.put(ChatDBConstants.LAST_UPDATE_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.LAST_UPDATE_FIELD)));
-			             message.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.IS_DATE_CHANGED_FIELD)));
-			             message.put(ChatDBConstants.TOTAL_USER_COUNT_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.TOTAL_USER_COUNT_FIELD)));
-			             message.put(ChatDBConstants.READ_USER_COUNT_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.READ_USER_COUNT_FIELD)));
+						 message.put("fromUserName", cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_USER_FIELD)));
+			             message.put("fromGroupUserName", cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_GROUP_USER_FIELD)));
+			             message.put("messageID", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID)));
+			             message.put("toUserName", cursor.getString(cursor.getColumnIndex(ChatDBConstants.TO_USER_FIELD)));
+			             message.put("textMessage", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGEINFO_FIELD)));
+			             message.put("caption", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG)));
+			             message.put("broadcastMessageID", cursor.getString(cursor.getColumnIndex(ChatDBConstants.BROADCAST_MESSAGE_ID)));
+			             message.put("foreignMessageID", cursor.getString(cursor.getColumnIndex(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD)));
+			             message.put("contactName", cursor.getString(cursor.getColumnIndex(ChatDBConstants.CONTACT_NAMES_FIELD)));
+			             message.put("locationMessage", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_LOCATION)));
+			             
+			             message.put("unreadCount", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.UNREAD_COUNT_FIELD)));
+			             message.put("seen", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.SEEN_FIELD)));
+			             message.put("mediaStatus", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MEDIA_STATUS)));
+			             message.put("messageType", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE)));
+			             message.put("messageTypeID", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD)));
+			             message.put("dataChanged", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.IS_DATE_CHANGED_FIELD)));
+			             message.put("recipientCount", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.TOTAL_USER_COUNT_FIELD)));
+			             message.put("readUserCount", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.READ_USER_COUNT_FIELD)));
+			             
+			             message.put("mediaURL", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD)));
+			             message.put("audioMessageLength", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LENGTH)));
+			             message.put("mediaLocalPath", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD)));
+			             message.put("thumbData", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_THUMB_FIELD)));
+			             
+			             message.put("readTime", cursor.getLong(cursor.getColumnIndex(ChatDBConstants.READ_TIME_FIELD)));
+			             message.put("lastUpdateField", cursor.getLong(cursor.getColumnIndex(ChatDBConstants.LAST_UPDATE_FIELD)));
+			             
+						 
+						 
+//			             message.put(ChatDBConstants.MESSAGE_ID, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID)));
+//			             message.put(ChatDBConstants.FROM_GROUP_USER_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_GROUP_USER_FIELD)));
+//			             message.put(ChatDBConstants.FROM_USER_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_USER_FIELD)));
+//			             message.put(ChatDBConstants.TO_USER_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.TO_USER_FIELD)));
+//			             message.put(ChatDBConstants.MESSAGEINFO_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGEINFO_FIELD)));
+//			             message.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD)));
+//			             message.put(ChatDBConstants.MESSAGE_MEDIA_LENGTH, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LENGTH)));
+//			             message.put(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD)));
+//			             message.put(ChatDBConstants.MESSAGE_THUMB_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_THUMB_FIELD)));
+//			             message.put(ChatDBConstants.LAST_UPDATE_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.LAST_UPDATE_FIELD)));
+//			             message.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.IS_DATE_CHANGED_FIELD)));
+//			             message.put(ChatDBConstants.TOTAL_USER_COUNT_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.TOTAL_USER_COUNT_FIELD)));
+//			             message.put(ChatDBConstants.READ_USER_COUNT_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.READ_USER_COUNT_FIELD)));
 			             message_array.put(message);
+			             System.out.println("==> "+(i++) + ":: "+message.toString());
 					} while (cursor.moveToNext());
 					if(message_array.length() > 0)
 						backup.put("messages", message_array);
@@ -1917,8 +1983,11 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 					}
 				}
 				//Create Zip for message and status files
-				String[] files = new String[]{path + "/" + filename_message, path + "/" + filename_status};
-				Compress compress = new Compress(files, path + "/" + zip_file);
+				compressed_file_path = path + "/" + zip_file;
+				String[] files = new String[]{path + "/" + filename_message};
+				if(new File(path + "/" + filename_status).exists())
+					files = new String[]{path + "/" + filename_message, path + "/" + filename_status};
+				ZipManager compress = new ZipManager(files, compressed_file_path);
 				compress.zip();
 //				System.out.println("path : "+path);
 			}
@@ -1927,7 +1996,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 		}catch(Exception e){
 			
 		}
-		return cursor;
+		return compressed_file_path;
 	}
 	public boolean createDirIfNotExists(String path, String folder_name) {
 	    boolean ret = true;
@@ -1940,6 +2009,59 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 	    }
 	    return ret;
 	}
+//======================================================
+	public int insertBackUpInDB(JSONArray data) {
+		int success = 0;
+		try{
+			 Gson gson = new GsonBuilder().create();
+//			 Iterator full_data = data.iterator();
+			 for (int i = 0; i < data.length(); i++){
+//		        JSONObject message = (JSONObject) full_data.next();
+		        JSONObject message = data.getJSONObject(i);
+		        System.out.println("==> "+(i+1)+":: "+message.toString());
+				MessageDataModel message_data = gson.fromJson(message.toString(), MessageDataModel.class);
+				
+				ContentValues contentvalues = new ContentValues();
+				if(message_data.fromUserName != null)
+					contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message_data.fromUserName);
+				if(message_data.toUserName != null)
+					contentvalues.put(ChatDBConstants.TO_USER_FIELD, message_data.toUserName);
+				if(message_data.fromGroupUserName != null)
+					contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, message_data.fromGroupUserName);
+				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message_data.messageType);
+				if(message_data.caption != null)
+					contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, message_data.caption);
+				if(message_data.locationMessage != null)
+					contentvalues.put(ChatDBConstants.MESSAGE_TYPE_LOCATION, message_data.locationMessage);
+				contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message_data.messageTypeID);
+				contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD, message_data.unreadCount);
+				contentvalues.put(ChatDBConstants.SEEN_FIELD, message_data.seen);
+				if(message_data.mediaURL != null)
+					contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, message_data.mediaURL);
+				if(message_data.thumbData != null)
+					contentvalues.put(ChatDBConstants.MESSAGE_THUMB_FIELD, message_data.thumbData);
+				if(message_data.audioMessageLength != null)
+					contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_LENGTH, message_data.audioMessageLength);
+				if(message_data.textMessage != null)
+					contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, message_data.textMessage);
+				if(message_data.messageID != null)
+					contentvalues.put(ChatDBConstants.MESSAGE_ID, message_data.messageID);
+				if(message_data.foreignMessageID != null)
+				contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, message_data.foreignMessageID);
+				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, message_data.dataChanged);
+				contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, message_data.lastUpdateField);
+				if(message_data.contactName != null)
+					contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, message_data.contactName);
+				//insert in DB
+				insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
+		     }
+			 success = 1;
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+		return success;
+	}
+//====================================================================
 	public Cursor getUserBroadCastChatList(String broadCastName) {
 //		select * from Customers where customerId in (select max(customerId) as customerId from Customers group by country);
 		String sql = "SELECT * FROM "+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO +" WHERE "+ChatDBConstants.FROM_USER_FIELD+"='"+broadCastName+"' AND "+ ChatDBConstants._ID + " IN (SELECT MAX("

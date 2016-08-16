@@ -120,6 +120,7 @@ public class SharedPrefManager {
 	private final String GROUP_LOADED = "group_loaded";
 
 	private final String BROADCAST_FIRST_TIME_NAME = "broadcast_first_time_name";
+	private final String BACKUP_FILE_ID = "backup_file_id";
 
 	private static SharedPrefManager sharedPrefManager;
 
@@ -516,6 +517,16 @@ public boolean isContactModified(){
 			editor.putString(USER_FILE_ID+userName, fileId);
 			editor.commit();
 		}
+	}
+	public void saveBackupFileId(String fileId) {
+		if(fileId != null && !fileId.equals("")){
+			editor.putString(BACKUP_FILE_ID + getUserName(), fileId);
+			editor.commit();
+		}
+	}
+	public String getBackupFileId() {
+		String value = pref.getString(BACKUP_FILE_ID + getUserName(), null);
+		return value;
 	}
 	public void saveSharedIDFileId(String sharedid, String fileId) {
 		if(fileId != null && !fileId.equals("")){
