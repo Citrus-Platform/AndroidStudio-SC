@@ -14,7 +14,7 @@ import java.util.Set;
 public class SharedPrefManager {
 
 	private SharedPreferences pref;
-	// editor for shared refrence
+	// editor for shared preference
 	Editor editor;
 	Context mContext;
 	int PRIVATE_MODE = 0;

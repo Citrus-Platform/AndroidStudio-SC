@@ -1927,7 +1927,9 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			             message.put("mediaURL", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD)));
 			             message.put("audioMessageLength", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LENGTH)));
 			             message.put("mediaLocalPath", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD)));
-			             message.put("thumbData", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_THUMB_FIELD)));
+
+                        //Do not add thumb data, thumbData wil be fetched from server
+//			             message.put("thumbData", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_THUMB_FIELD)));
 
 
                         sent_time = convertToDate(cursor.getLong(cursor.getColumnIndex(ChatDBConstants.LAST_UPDATE_FIELD)));

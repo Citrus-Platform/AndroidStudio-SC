@@ -1228,48 +1228,11 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 }
                 if (filePath != null)
                     ((ChatListScreen) context).sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(filePath))));
-//		            addBitmapToCache(url, filePath);
-
-
-//		            if (imageViewReference != null) {
-//		                ImageView imageView = imageViewReference.get();
-////		                BitmapDownloaderTask bitmapDownloaderTask = getBitmapDownloaderTask(imageView);
-//		                // Change bitmap only if this process is still associated with it
-//		                // Or if we don't use any bitmap to task association (NO_DOWNLOADED_DRAWABLE mode)
-////		                if ((this == bitmapDownloaderTask) || (mode != Mode.CORRECT))
-//		                {
-//		                	if(imageView != null && filePath != null)
-//		                	{
-//		                		imageView.setImageURI(Uri.parse(filePath));
-//		                		imageView.setBackgroundDrawable(null);
-//		                	}
-////		                    if(progressbar != null)
-////		                    {
-//////		                    	ProgressBar pBar = progressbar.get();
-//////		                    	if(pBar != null)
-//////		                    		pBar.setVisibility(View.GONE);
-////		                    	TextView tv = (TextView)objParams[3];
-////		                    	tv.setVisibility(View.GONE);
-////		                    }
-////		                    addBitmapToCache(url, filePath);
-////		                    processing.remove(url);
-////		                    System.out.println("<<   view updated - >> "+url);
-////		                    if(params != null && params.length == 3)
-//		                    if(adaptor != null && objParams != null)
-//		                    {
-//		                    	adaptor.updateDataWithCursor(filePath, (String)objParams[1], imageView);
-//		                    }
-//		                }
-//		            }else{
-//		            	 if(adaptor != null && objParams != null)
                 if (objParams != null && filePath != null) {
-//		                 	adaptor.
                     updateDataWithCursor(filePath, (String) objParams[1], null);
                 }
-//		            }
-
                 if (url != null)
-                    processing.remove(url);//put(url, null);
+                    processing.remove(url);
             }
         }
         //--------------- Mahesh - My Code ---------
@@ -2265,7 +2228,8 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 		/* Its for displaying middle text message for date change */
         if (viewholder.isDateShow) {
             String tmp = "";
-            if (viewholder.message != null && (viewholder.message.contains("added") || viewholder.message.contains("group created.") || viewholder.message.contains("created by ")))
+            if (viewholder.message != null && (viewholder.message.contains("added")
+                    || viewholder.message.contains("group created.") || viewholder.message.contains("created by ")))
                 tmp = " \n " + viewholder.message;
             viewholder.leftRightCompositeView.setVisibility(View.VISIBLE);
             viewholder.dateLayout.setVisibility(View.VISIBLE);
@@ -2334,7 +2298,10 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 viewholder.rightImgProgressBar.setVisibility(View.GONE);
                 viewholder.rightImgProgressIndeterminate.setVisibility(View.GONE);
 //				viewholder.sendTagView.setText(actualFileName);
-                ((TextView) viewholder.rightFileLayout.findViewById(R.id.id_file_name)).setText(actualFileName);
+                if(viewholder.captionTagMsg != null)
+                    ((TextView) viewholder.rightFileLayout.findViewById(R.id.id_file_name)).setText(viewholder.captionTagMsg);
+                else
+                    ((TextView) viewholder.rightFileLayout.findViewById(R.id.id_file_name)).setText(actualFileName);
                 if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypePdf.ordinal())
                     viewholder.rightFileTypeView.setText(R.string.pdf);
                 else if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal())
@@ -2403,6 +2370,102 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                     }
                 }
             }
+            //Add here code for adding downlaod to the sender media.
+            if (viewholder.mediaLocalPath == null && url != null && url.startsWith("http://")){
+                if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypePdf.ordinal()) {
+                viewholder.sendImgView.setBackgroundResource(R.drawable.pdf);
+                    if(viewholder.captionTagMsg != null)
+                        ((TextView) viewholder.rightFileLayout.findViewById(R.id.id_file_name)).setText(viewholder.captionTagMsg);
+                if (viewholder.getProcessingForURL(url) == null) {
+                    Log.d("ChatListAdapter", "<<   started for - " + url);
+                    Object[] params = new Object[]{this, viewholder.key, cursor, viewholder.progressPercent, url};
+                    viewholder.download(url, viewholder.messageType, viewholder.sendImgView, viewholder.progressbar, params);
+                }
+            } else if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal()) {
+                viewholder.sendImgView.setBackgroundResource(R.drawable.docs);
+                    if(viewholder.captionTagMsg != null)
+                        ((TextView) viewholder.rightFileLayout.findViewById(R.id.id_file_name)).setText(viewholder.captionTagMsg);
+                if (viewholder.getProcessingForURL(url) == null) {
+                    Log.d("ChatListAdapter", "<<   started for - " + url);
+                    Object[] params = new Object[]{this, viewholder.key, cursor, viewholder.progressPercent, url};
+                    viewholder.download(url, viewholder.messageType, viewholder.sendImgView, viewholder.progressbar, params);
+                }
+            } else if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal()) {
+                viewholder.sendImgView.setBackgroundResource(R.drawable.xls);
+                    if(viewholder.captionTagMsg != null)
+                        ((TextView) viewholder.rightFileLayout.findViewById(R.id.id_file_name)).setText(viewholder.captionTagMsg);
+                if (viewholder.getProcessingForURL(url) == null) {
+                    Log.d("ChatListAdapter", "<<   started for - " + url);
+                    Object[] params = new Object[]{this, viewholder.key, cursor, viewholder.progressPercent, url};
+                    viewholder.download(url, viewholder.messageType, viewholder.sendImgView, viewholder.progressbar, params);
+                }
+            } else if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypePPT.ordinal()) {
+                viewholder.sendImgView.setBackgroundResource(R.drawable.ppt);
+                    if(viewholder.captionTagMsg != null)
+                        ((TextView) viewholder.rightFileLayout.findViewById(R.id.id_file_name)).setText(viewholder.captionTagMsg);
+                if (viewholder.getProcessingForURL(url) == null) {
+                    Log.d("ChatListAdapter", "<<   started for - " + url);
+                    Object[] params = new Object[]{this, viewholder.key, cursor, viewholder.progressPercent, url};
+                    viewholder.download(url, viewholder.messageType, viewholder.sendImgView, viewholder.progressbar, params);
+                }
+            } else if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()) {
+                viewholder.sendImgView.setVisibility(View.GONE);
+                if (viewholder.getProcessingForURL(url) == null) {
+                    Log.d("ChatListAdapter", "media url found for download " + url);
+                    Object[] params = new Object[]{this,
+                            viewholder.key, cursor,
+                            viewholder.voiceLoadingPercent, url};
+                    viewholder.download(url, viewholder.messageType,
+                            viewholder.playSenderView,
+                            viewholder.voiceDownloadingBar, params);
+                }
+                    ((ProgressBar) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_bar_indeterminate)).setVisibility(View.VISIBLE);
+                    if (viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null) {
+                        processing.put(viewholder.mediaLocalPath, "0");
+                        viewholder.uploadMedia(viewholder.mediaLocalPath, viewholder.messageType);//XMPPMessageType.atMeXmppMessageTypeImage);//viewholder.mediaLocalPath, viewholder.key,viewholder.mediaThumb,XMPPMessageType.atMeXmppMessageTypeImage);
+                    }
+
+            } else if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()) {
+                if (viewholder.getProcessingForURL(url) == null) {
+                    Object[] params = new Object[]{this,
+                            viewholder.key, cursor,
+                            viewholder.progressPercent, url};
+                    viewholder.download(url, viewholder.messageType,
+                            viewholder.sendImgView,
+                            viewholder.progressbar, params);
+                }
+                android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(url);
+                if (bitmap != null) {
+                    viewholder.sendImgView.setImageBitmap(bitmap);
+                } else {
+                    Bitmap tmpBitMap = createVideoThumbFromByteArray(viewholder.mediaThumb);
+                    viewholder.sendImgView.setImageBitmap(tmpBitMap);
+                    SuperChatApplication.addBitmapToMemoryCache(url, tmpBitMap);
+                }
+                if (bitmap != null) {
+                    viewholder.sendImgView.setImageBitmap(bitmap);
+                } else {
+                    Bitmap tmpBitMap = createVideoThumbFromByteArray(viewholder.mediaThumb);
+                    viewholder.sendImgView.setImageBitmap(tmpBitMap);
+                    SuperChatApplication.addBitmapToMemoryCache(url, tmpBitMap);
+                }
+                viewholder.rightImgProgressIndeterminate.setVisibility(View.VISIBLE);
+            }
+                //Show progress loading and % loading
+                if (progressValue > 1 && progressValue < 100) {
+                    ((ProgressBar) viewholder.rightFileLayout.findViewById(R.id.id_file_loader_indeterminate)).setVisibility(View.GONE);
+                    ((ProgressBar) viewholder.rightFileLayout.findViewById(R.id.id_file_loader)).setVisibility(View.VISIBLE);
+                    ((TextView) viewholder.rightFileLayout.findViewById(R.id.file_loading_percent)).setVisibility(View.VISIBLE);
+                    ((ProgressBar) viewholder.rightFileLayout.findViewById(R.id.id_file_loader)).setProgress(progressValue);
+                    ((TextView) viewholder.rightFileLayout.findViewById(R.id.file_loading_percent)).setText(String.valueOf(progress) + "%");
+                } else {
+                    ((ProgressBar) viewholder.rightFileLayout.findViewById(R.id.id_file_loader_indeterminate)).setVisibility(View.VISIBLE);
+                    ((TextView) viewholder.rightFileLayout.findViewById(R.id.file_loading_percent)).setVisibility(View.GONE);
+                    ((ProgressBar) viewholder.rightFileLayout.findViewById(R.id.id_file_loader)).setVisibility(View.INVISIBLE);
+                }
+        }
+
+
 //			view.setPadding(convertPixelToDip(25), convertPixelToDip(0),
 //					convertPixelToDip(5), 0);
 
@@ -2477,11 +2540,12 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                         processing.put(viewholder.mediaLocalPath, "0");
                         viewholder.uploadMedia(viewholder.mediaLocalPath, viewholder.messageType);//XMPPMessageType.atMeXmppMessageTypeImage);//viewholder.mediaLocalPath, viewholder.key,viewholder.mediaThumb,XMPPMessageType.atMeXmppMessageTypeImage);
                     }
-                } else {
+                } else if(viewholder.mediaLocalPath != null){
                     ((TextView) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_percent)).setVisibility(View.GONE);
                     ((ProgressBar) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_bar_indeterminate)).setVisibility(View.GONE);
                     ((ProgressBar) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_bar)).setVisibility(View.GONE);
-                }
+                }else
+                    ((ProgressBar) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_bar_indeterminate)).setVisibility(View.VISIBLE);
 //				viewholder.playSenderView.setTag(url);
                 viewholder.playSenderView.setTag(viewholder.key);
                 viewholder.sVideoPlayImageView.setVisibility(View.GONE);
@@ -2562,7 +2626,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                             processing.put(viewholder.mediaLocalPath, "0");
                             viewholder.uploadMedia(viewholder.mediaLocalPath, viewholder.messageType);//XMPPMessageType.atMeXmppMessageTypeImage);//viewholder.mediaLocalPath, viewholder.key,viewholder.mediaThumb,XMPPMessageType.atMeXmppMessageTypeImage);
                         }
-                    } else {
+                    } else if(viewholder.mediaLocalPath != null){
                         viewholder.rightImgProgressPercent.setVisibility(View.GONE);
                         viewholder.rightImgProgressIndeterminate.setVisibility(View.GONE);
                         viewholder.rightImgProgressBar.setVisibility(View.GONE);
@@ -2602,10 +2666,11 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                     if (viewholder.mediaLocalPath != null && viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null)
                         processing.put(viewholder.mediaLocalPath, "0");
                         viewholder.uploadMedia(viewholder.mediaLocalPath, viewholder.messageType);
-                    }else{
-                        Object[] params = new Object[]{this, viewholder.key, cursor, viewholder.progressPercent, viewholder.mediaUrl};
-                        viewholder.download(viewholder.mediaUrl, viewholder.messageType, viewholder.sendImgView, viewholder.progressbar, params);
                     }
+//                else{
+//                        Object[] params = new Object[]{this, viewholder.key, cursor, viewholder.progressPercent, viewholder.mediaUrl};
+//                        viewholder.download(viewholder.mediaUrl, viewholder.messageType, viewholder.sendImgView, viewholder.progressbar, params);
+//                    }
                 viewholder.sendImgView.setOnLongClickListener(viewholder.onLongPressListener);
             } else if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal()) {
                 viewholder.sendImgView.setVisibility(View.GONE);
