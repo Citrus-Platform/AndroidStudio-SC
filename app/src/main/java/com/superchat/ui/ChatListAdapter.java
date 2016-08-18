@@ -2453,16 +2453,21 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 viewholder.rightImgProgressIndeterminate.setVisibility(View.VISIBLE);
             }
                 //Show progress loading and % loading
-                if (progressValue > 1 && progressValue < 100) {
-                    ((ProgressBar) viewholder.rightFileLayout.findViewById(R.id.id_file_loader_indeterminate)).setVisibility(View.GONE);
-                    ((ProgressBar) viewholder.rightFileLayout.findViewById(R.id.id_file_loader)).setVisibility(View.VISIBLE);
-                    ((TextView) viewholder.rightFileLayout.findViewById(R.id.file_loading_percent)).setVisibility(View.VISIBLE);
-                    ((ProgressBar) viewholder.rightFileLayout.findViewById(R.id.id_file_loader)).setProgress(progressValue);
-                    ((TextView) viewholder.rightFileLayout.findViewById(R.id.file_loading_percent)).setText(String.valueOf(progress) + "%");
-                } else {
-                    ((ProgressBar) viewholder.rightFileLayout.findViewById(R.id.id_file_loader_indeterminate)).setVisibility(View.VISIBLE);
-                    ((TextView) viewholder.rightFileLayout.findViewById(R.id.file_loading_percent)).setVisibility(View.GONE);
-                    ((ProgressBar) viewholder.rightFileLayout.findViewById(R.id.id_file_loader)).setVisibility(View.INVISIBLE);
+                if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypePdf.ordinal()
+                        || viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal()
+                        || viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal()
+                        || viewholder.messageType == XMPPMessageType.atMeXmppMessageTypePPT.ordinal()) {
+                    if (progressValue > 1 && progressValue < 100) {
+                        ((ProgressBar) viewholder.rightFileLayout.findViewById(R.id.id_file_loader_indeterminate)).setVisibility(View.GONE);
+                        ((ProgressBar) viewholder.rightFileLayout.findViewById(R.id.id_file_loader)).setVisibility(View.VISIBLE);
+                        ((TextView) viewholder.rightFileLayout.findViewById(R.id.file_loading_percent)).setVisibility(View.VISIBLE);
+                        ((ProgressBar) viewholder.rightFileLayout.findViewById(R.id.id_file_loader)).setProgress(progressValue);
+                        ((TextView) viewholder.rightFileLayout.findViewById(R.id.file_loading_percent)).setText(String.valueOf(progress) + "%");
+                    } else {
+                        ((ProgressBar) viewholder.rightFileLayout.findViewById(R.id.id_file_loader_indeterminate)).setVisibility(View.VISIBLE);
+                        ((TextView) viewholder.rightFileLayout.findViewById(R.id.file_loading_percent)).setVisibility(View.GONE);
+                        ((ProgressBar) viewholder.rightFileLayout.findViewById(R.id.id_file_loader)).setVisibility(View.INVISIBLE);
+                    }
                 }
         }
 

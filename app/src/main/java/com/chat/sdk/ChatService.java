@@ -849,12 +849,12 @@ public class ChatService extends Service implements interfaceInstances {
 						}
 						return;
 					}
-//					if (senderName.equals(userMe)
-//							|| !prefManager.isGroupChat(
-//									user) || !prefManager.isGroupMemberActive(user, userMe)) {
-//						Log.d(TAG, "Self messaging is not allowed.");
-//						return;
-//					}
+					if (senderName.equals(userMe)
+							|| !prefManager.isGroupChat(
+									user) || !prefManager.isGroupMemberActive(user, userMe)) {
+						Log.d(TAG, "Self messaging is not allowed.");
+						return;
+					}
 
 					// if (message.getMessageSeenState() ==
 					// Message.SeenState.recieved
