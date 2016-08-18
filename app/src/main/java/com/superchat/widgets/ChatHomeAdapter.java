@@ -398,9 +398,9 @@ public void loadDialog(){
         String caption = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG));
         String msg = cursor.getString(cursor.getColumnIndex(DatabaseConstants.MESSAGEINFO_FIELD));
 
-        System.out.println("CONTACT_NAMES_FIELD -> "+name);
-		System.out.println("[TO == ]" + toUserName);
-		System.out.println("[FROM == ]" + fromName);
+//        System.out.println("CONTACT_NAMES_FIELD -> "+name);
+//		System.out.println("[TO == ]" + toUserName);
+//		System.out.println("[FROM == ]" + fromName);
 
         String displayName = null;
         boolean isSharedID = false;

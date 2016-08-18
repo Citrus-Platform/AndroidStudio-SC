@@ -826,21 +826,12 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 											sharedPrefManager.saveUserStatusMessage(groupDetail.groupName, groupDetail.description);
 										if(groupDetail.numberOfMembers!=null)
 											sharedPrefManager.saveGroupMemberCount(groupDetail.groupName, groupDetail.numberOfMembers);
-//										boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(groupDetail.groupName);
-//										if(isFirstChat)
-//											saveMessage(groupDetail.displayName, groupDetail.groupName,"Group created by "+groupDetail.userDisplayName);//saveMessage(groupDetail.displayName, groupDetail.groupName,"You are welcome.");
+										boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(groupDetail.groupName);
+										if(isFirstChat)
+											saveMessage(groupDetail.displayName, groupDetail.groupName,"Group created by "+groupDetail.userDisplayName);//saveMessage(groupDetail.displayName, groupDetail.groupName,"You are welcome.");
 										String oldFileId = sharedPrefManager.getUserFileId(groupDetail.fileId);
-										if(groupDetail.fileId!=null && !groupDetail.fileId.equals("") && (oldFileId == null || !oldFileId.equals(groupDetail.fileId)))
-										{
-//											if(Build.VERSION.SDK_INT >= 11)
-//											new BitmapDownloader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,groupDetail.fileId);
-//										else
-//											new BitmapDownloader().execute(groupDetail.fileId);
-										}
 										sharedPrefManager.saveUserFileId(groupDetail.groupName, groupDetail.fileId);
-//										sharedPrefManager.saveUserGroupInfo(groupDetail.groupName,groupDetail.displayName,SharedPrefManager.GROUP_ACTIVE_INFO,true);
 									}
-									
 									for (BroadcastGroupDetail broadcastGroupDetail : loginObj.directoryBroadcastGroupSet) {
 										sharedPrefManager.saveBroadCastName(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.displayName);
 										sharedPrefManager.saveBroadCastDisplayName(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.displayName);
@@ -862,21 +853,14 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 										String oldFileId = sharedPrefManager.getUserFileId(broadcastGroupDetail.fileId);
 										if(broadcastGroupDetail.fileId!=null && !broadcastGroupDetail.fileId.equals("") && (oldFileId == null || !oldFileId.equals(broadcastGroupDetail.fileId)))
 										{
-//											if(Build.VERSION.SDK_INT >= 11)
-//											new BitmapDownloader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,broadcastGroupDetail.fileId);
-//										else
-//											new BitmapDownloader().execute(broadcastGroupDetail.fileId);
 											Message msg = new Message();
 											Bundle data = new Bundle();
 											data.putString("TaskMessage",broadcastGroupDetail.fileId);
 											msg.setData(data);
 											mainTask.sendMessage(msg);
 										}
-										
 										sharedPrefManager.saveUserFileId(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.fileId);
-									
 									}
-									
 									if(loginObj.loggedInDirectoryUser!=null){
 										if(loginObj.loggedInDirectoryUser.name!=null)
 											sharedPrefManager.saveDisplayName(loginObj.loggedInDirectoryUser.name);
@@ -1038,12 +1022,12 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 				new GetSharedIDListFromServer().execute();
 			
 //			if(iPrefManager.isFirstTime() && iPrefManager.getAppMode().equals("VirginMode"))
-			{
-				 if(Build.VERSION.SDK_INT >= 11)
-						new CheckDataBackup().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-					else
-						new CheckDataBackup().execute();
-			 }
+//			{
+//				 if(Build.VERSION.SDK_INT >= 11)
+//						new CheckDataBackup().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//					else
+//						new CheckDataBackup().execute();
+//			 }
 			
 			if(new_user && messageService != null){
 				String json = finalJSONbject.toString();

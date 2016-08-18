@@ -410,14 +410,16 @@ public class ChatService extends Service implements interfaceInstances {
 	PacketListener groupPacketListener = new PacketListener() {
 		@Override
 		public void processPacket(Packet packet) {
-			System.out.println("Got group packet " + packet.toXML() + " -- " + packet.getPacketID());
+//			System.out.println("Got group packet " + packet.toXML() + " -- " + packet.getPacketID());
 
 			if (!packet.toXML().contains("<message"))
 				return;
 			try {
 				final Message message = (Message) packet;
+				boolean console_msg = false;
 				int xMPPMessageType = message.getXMPPMessageType().ordinal();
-				
+				if(message.isConsoleMessage() != null && message.isConsoleMessage().equalsIgnoreCase("true"))
+					console_msg = true;
 				Log.d(TAG,
 						"Message Seen State processPacket: "
 								+ message.getMessageSeenState()+" ,, "+xMPPMessageType);
@@ -847,12 +849,13 @@ public class ChatService extends Service implements interfaceInstances {
 						}
 						return;
 					}
-					if (senderName.equals(userMe)
-							|| !prefManager.isGroupChat(
-									user) || !prefManager.isGroupMemberActive(user, userMe)) {
-						Log.d(TAG, "Self messaging is not allowed.");
-						return;
-					}
+//					if (senderName.equals(userMe)
+//							|| !prefManager.isGroupChat(
+//									user) || !prefManager.isGroupMemberActive(user, userMe)) {
+//						Log.d(TAG, "Self messaging is not allowed.");
+//						return;
+//					}
+
 					// if (message.getMessageSeenState() ==
 					// Message.SeenState.recieved
 					// || message.getMessageSeenState() ==
@@ -866,15 +869,14 @@ public class ChatService extends Service implements interfaceInstances {
 					// chatListener.notifyChatRecieve();
 					// return;
 					// }
-					if (message.getBody() != null
-							&& !message.getBody().equals("")) {
-						prefManager.saveChatCounter(prefManager
-								.getChatCounter() + 1);
-						int messageCount = prefManager.getChatCounter();
-//	                    ShortcutBadger.setBadge(getApplicationContext(), badgeCount);
-	                ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
-						prefManager.saveChatCountOfUser(user,
-								prefManager.getChatCountOfUser(user) + 1);
+					if (message.getBody() != null && !message.getBody().equals("")) {
+						if(!console_msg) {
+							prefManager.saveChatCounter(prefManager.getChatCounter() + 1);
+							int messageCount = prefManager.getChatCounter();
+							ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
+							prefManager.saveChatCountOfUser(user, prefManager.getChatCountOfUser(user) + 1);
+						}
+
 						if(prefManager.getUserFileId(senderName) == null && message.getPicId() != null)
 							prefManager.saveUserFileId(senderName, message.getPicId());
 						message.setMessageSeenState(Message.SeenState.recieved);
@@ -1814,18 +1816,22 @@ public class ChatService extends Service implements interfaceInstances {
 					}
 					if (message.getBody() != null && !message.getBody().equals("")) {
 						if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal()){
-							prefManager.saveBulletinChatCounter(prefManager.getBulletinChatCounter() + 1);
-							int messageCount = prefManager.getBulletinChatCounter();
-							ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
+							if(message.isConsoleMessage() == null) {
+								prefManager.saveBulletinChatCounter(prefManager.getBulletinChatCounter() + 1);
+								int messageCount = prefManager.getBulletinChatCounter();
+								ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
+							}
 						}else if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal()){
 //							prefManager.saveBulletinChatCounter(prefManager.getBulletinChatCounter() + 1);
 //							int messageCount = prefManager.getBulletinChatCounter();
 //							ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
 						}else{
-							prefManager.saveChatCounter(prefManager.getChatCounter() + 1);
-							int messageCount = prefManager.getChatCounter();
-							ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
-							prefManager.saveChatCountOfUser(user, prefManager.getChatCountOfUser(user) + 1);
+							if(message.isConsoleMessage() == null) {
+								prefManager.saveChatCounter(prefManager.getChatCounter() + 1);
+								int messageCount = prefManager.getChatCounter();
+								ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
+								prefManager.saveChatCountOfUser(user, prefManager.getChatCountOfUser(user) + 1);
+							}
 						}
 						message.setMessageSeenState(Message.SeenState.recieved);
 //						showNotificationForMessage(user, fromName, message.getBody(), message,(byte)0);
@@ -1877,7 +1883,10 @@ public class ChatService extends Service implements interfaceInstances {
 
 	public void showNotificationForMessage(String senderName, String from,
 			String displayName, String msg, Message message) {
-		
+
+		boolean console_msg = false;
+		if(message.isConsoleMessage() != null && message.isConsoleMessage().equalsIgnoreCase("true"))
+			console_msg = true;
 		 if(senderName!=null && senderName.contains("#786#"))
 			 senderName = senderName.substring(0, senderName.indexOf("#786#"));
 		CharSequence tickerText = msg;// buildTickerMessage(context,
@@ -2041,7 +2050,7 @@ public class ChatService extends Service implements interfaceInstances {
 		if (id < -1)
 			id = -(id);
 		Log.d(TAG, "showNotificationForMessage1: "+from+" , "+currentUser+" , "+onForeground);
-		if(prefManager.isSnoozeExpired() && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
+		if(!console_msg && prefManager.isSnoozeExpired() && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
 										.equals(from) && !ChatListScreen.currentUser.endsWith("-all")) || !ChatListScreen.onForeground))
 		notificationManager.notify(id, notification);
 
@@ -2190,7 +2199,9 @@ public class ChatService extends Service implements interfaceInstances {
 	boolean isSameUser = false;
 	public void showNotificationForMessage(String from, String displayName,
 			String msg, Message message,byte messageType) {
-		
+		boolean console_msg = false;
+		if(message.isConsoleMessage() != null && message.isConsoleMessage().equalsIgnoreCase("true"))
+			console_msg = true;
 		 if(displayName!=null && displayName.contains("#786#"))
 			 displayName = displayName.substring(0, displayName.indexOf("#786#"));
 		CharSequence tickerText = msg;// buildTickerMessage(context,
@@ -2338,7 +2349,7 @@ public class ChatService extends Service implements interfaceInstances {
 			id = -(id);
 		Log.d(TAG, "showNotificationForMessage: "+from+" , "+currentUser+" , "+onForeground);
 		
-		if(prefManager.isSnoozeExpired() && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
+		if(!console_msg && prefManager.isSnoozeExpired() && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
 				.equals(from) && !ChatListScreen.currentUser.endsWith("-all")) || !ChatListScreen.onForeground))
 			notificationManager.notify(id, notification);
 		previousUser = from;

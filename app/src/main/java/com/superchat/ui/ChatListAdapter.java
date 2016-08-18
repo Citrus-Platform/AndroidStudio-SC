@@ -2419,11 +2419,12 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                             viewholder.playSenderView,
                             viewholder.voiceDownloadingBar, params);
                 }
+                    ((ProgressBar) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_bar)).setVisibility(View.GONE);
                     ((ProgressBar) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_bar_indeterminate)).setVisibility(View.VISIBLE);
-                    if (viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null) {
-                        processing.put(viewholder.mediaLocalPath, "0");
-                        viewholder.uploadMedia(viewholder.mediaLocalPath, viewholder.messageType);//XMPPMessageType.atMeXmppMessageTypeImage);//viewholder.mediaLocalPath, viewholder.key,viewholder.mediaThumb,XMPPMessageType.atMeXmppMessageTypeImage);
-                    }
+//                    if (viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null) {
+//                        processing.put(viewholder.mediaLocalPath, "0");
+//                        viewholder.uploadMedia(viewholder.mediaLocalPath, viewholder.messageType);//XMPPMessageType.atMeXmppMessageTypeImage);//viewholder.mediaLocalPath, viewholder.key,viewholder.mediaThumb,XMPPMessageType.atMeXmppMessageTypeImage);
+//                    }
 
             } else if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()) {
                 if (viewholder.getProcessingForURL(url) == null) {
