@@ -1234,7 +1234,7 @@ public class ChatService extends Service implements interfaceInstances {
 			if (!packet.toXML().contains("<message"))
 				return;
 			try {
-				Log.i(TAG, "Got packet " + packet.toXML() + " -- "+ packet.getPacketID());
+//				System.out.println("Got packet " + packet.toXML() + " -- "+ packet.getPacketID());
 				// Collection<PacketExtension> col = packet.getExtensions();
 				// PacketExtension extens = (PacketExtension)col.toArray()[0];
 				//

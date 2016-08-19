@@ -758,9 +758,9 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 					+ ChatDBConstants.UNREAD_COUNT_FIELD + ","
 					+ ChatDBConstants.LAST_UPDATE_FIELD + ", MAX("
 					+ ChatDBConstants.LAST_UPDATE_FIELD + ") FROM "
-					+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO +" WHERE "+ChatDBConstants.TO_USER_FIELD + "='" + bulletin_name + "'" + " GROUP BY "
-					+ ChatDBConstants.CONTACT_NAMES_FIELD + " ORDER BY "
-					+ ChatDBConstants.LAST_UPDATE_FIELD + " DESC";
+					+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO +" WHERE "+ChatDBConstants.MESSAGE_TYPE + "=" + 3 + " GROUP BY "
+					+ ChatDBConstants.MESSAGE_TYPE + " ORDER BY "
+					+ ChatDBConstants.LAST_UPDATE_FIELD + " DESC";//
 		}
 		else
 			sql = "SELECT " + "DISTINCT("

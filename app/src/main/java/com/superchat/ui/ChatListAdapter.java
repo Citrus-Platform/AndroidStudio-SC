@@ -2180,6 +2180,12 @@ public class ChatListAdapter extends SimpleCursorAdapter {
         viewholder.totalGroupUsers = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.TOTAL_USER_COUNT_FIELD));
         viewholder.totalGroupReadUsers = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.READ_USER_COUNT_FIELD));
         viewholder.isTimeLineMessage = false;
+
+
+//        System.out.println("CONTACT_NAMES_FIELD -> "+cursor.getString(cursor.getColumnIndex(ChatDBConstants.CONTACT_NAMES_FIELD)));
+//        System.out.println("[TO == ]" + viewholder.receiverName);
+//        System.out.println("[FROM == ]" + viewholder.userName);
+
         if (viewholder.totalGroupUsers == 0) {
             String memebers = SharedPrefManager.getInstance().getGroupMemberCount(chatName);
             if (memebers != null && !memebers.equals("")) {
@@ -2418,9 +2424,9 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                     viewholder.download(url, viewholder.messageType,
                             viewholder.playSenderView,
                             viewholder.voiceDownloadingBar, params);
+//                    ((ProgressBar) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_bar_indeterminate)).setVisibility(View.VISIBLE);
                 }
                     ((ProgressBar) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_bar)).setVisibility(View.GONE);
-                    ((ProgressBar) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_bar_indeterminate)).setVisibility(View.VISIBLE);
 //                    if (viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null) {
 //                        processing.put(viewholder.mediaLocalPath, "0");
 //                        viewholder.uploadMedia(viewholder.mediaLocalPath, viewholder.messageType);//XMPPMessageType.atMeXmppMessageTypeImage);//viewholder.mediaLocalPath, viewholder.key,viewholder.mediaThumb,XMPPMessageType.atMeXmppMessageTypeImage);
@@ -2550,7 +2556,8 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                     ((TextView) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_percent)).setVisibility(View.GONE);
                     ((ProgressBar) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_bar_indeterminate)).setVisibility(View.GONE);
                     ((ProgressBar) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_bar)).setVisibility(View.GONE);
-                }else
+                }
+                else if (viewholder.getProcessingForURL(url) == null)
                     ((ProgressBar) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_bar_indeterminate)).setVisibility(View.VISIBLE);
 //				viewholder.playSenderView.setTag(url);
                 viewholder.playSenderView.setTag(viewholder.key);
