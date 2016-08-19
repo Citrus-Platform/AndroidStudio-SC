@@ -2943,8 +2943,10 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 if (viewholder.totalGroupUsers != 0 && viewholder.totalGroupReadUsers != 0
                         && (viewholder.totalGroupUsers - 1) <= viewholder.totalGroupReadUsers) {
 //					viewholder.messageStatusView.setText(R.string.read);
-					viewholder.messageStatusView.setBackgroundResource(R.drawable.read_tick);
-					viewholder.senderTime.setTextColor(context1.getResources().getColor(R.color.color_lite_blue));
+                    if (!isBulletinBroadcast) {
+                        viewholder.messageStatusView.setBackgroundResource(R.drawable.read_tick);
+                        viewholder.senderTime.setTextColor(context1.getResources().getColor(R.color.color_lite_blue));
+                    }
 					viewholder.senderTime.setText(msgTime);
 				}
 				else if (viewholder.seenState == Message.SeenState.wait.ordinal()
@@ -2958,7 +2960,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 				}
 			}else
 			if (viewholder.seenState == Message.SeenState.seen.ordinal()){
-				if(!isBroadCastChat){
+				if(!isBroadCastChat && !isBulletinBroadcast){
 //					viewholder.messageStatusView.setText(R.string.read);
 					viewholder.messageStatusView.setBackgroundResource(R.drawable.read_tick);
 					viewholder.senderTime.setTextColor(context1.getResources().getColor(R.color.color_lite_blue));
@@ -2969,7 +2971,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 					viewholder.messageStatusView.setBackgroundResource(R.drawable.sent_tick);
 				}
 			}else if (viewholder.seenState == Message.SeenState.recieved.ordinal()){
-				if(!isBroadCastChat){
+				if(!isBroadCastChat && !isBulletinBroadcast){
 //					viewholder.messageStatusView.setText(R.string.recieved);
 					viewholder.messageStatusView.setBackgroundResource(R.drawable.delivered_tick);
 				}
