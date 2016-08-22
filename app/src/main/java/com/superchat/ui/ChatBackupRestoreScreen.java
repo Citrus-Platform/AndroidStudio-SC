@@ -162,6 +162,7 @@ public class ChatBackupRestoreScreen extends Activity implements OnClickListener
 				String full_path = Environment.getExternalStorageDirectory().getAbsolutePath() +"/" + backup_dir + "/" + zip_file;
 				ZipManager zipManager = new ZipManager(null, null);
 				Vector<String> files = zipManager.unzip(full_path, path);
+				String os_type = null;
 				if(files != null){
 //					Gson gson = new GsonBuilder().create();
 					for(int i = 0; i < files.size(); i++){
@@ -170,9 +171,11 @@ public class ChatBackupRestoreScreen extends Activity implements OnClickListener
 						JSONObject jsonobj;
 						try {
 							jsonobj = new JSONObject(filedata);
+							if(jsonobj.has("osType"))
+								os_type = (String) jsonobj.get("osType");
 							JSONArray messages = (JSONArray) jsonobj.get("messages");
 //							MessageDataModel message_data = gson.fromJson(filedata, MessageDataModel.class);
-							int success = ChatDBWrapper.getInstance().insertBackUpInDB(messages);
+							int success = ChatDBWrapper.getInstance().insertBackUpInDB(messages, os_type);
 							if(success == 1){
 								data = ""+success;
 							}

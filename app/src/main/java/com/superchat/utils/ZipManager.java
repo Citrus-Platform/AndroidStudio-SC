@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Vector;
+import java.util.zip.Adler32;
+import java.util.zip.CheckedInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -52,7 +54,7 @@ public class ZipManager {
     } 
   } 
  //============================================
-  public Vector<String> unzip(String _zipFile, String _targetLocation) {
+  public Vector<String> unzip1(String _zipFile, String _targetLocation) {
 		//create target location folder if not exist
 	  Vector<String> files = new Vector<String>();
 	  createDirIfNotExists(_targetLocation, _zipFile);
@@ -81,7 +83,44 @@ public class ZipManager {
 		}
 		return files;
   	}
-  public boolean createDirIfNotExists(String path, String folder_name) {
+	public Vector<String> unzip(String _zipFile, String _targetLocation) {
+		Vector<String> files = new Vector<String>();
+		createDirIfNotExists(_targetLocation, _zipFile);
+			try {
+				final int BUFFER = 2048;
+				BufferedOutputStream dest = null;
+				FileInputStream fis = new FileInputStream(_zipFile);
+				CheckedInputStream checksum = new CheckedInputStream(fis, new Adler32());
+				ZipInputStream zis = new ZipInputStream(new BufferedInputStream(checksum));
+				ZipEntry entry;
+				while((entry = zis.getNextEntry()) != null) {
+					System.out.println("Extracting: " +entry);
+					int count;
+					byte data[] = new byte[BUFFER];
+					// write the files to the disk
+					//create dir if required while unzipping
+					if (entry.isDirectory()) {
+//					dirChecker(ze.getName());
+						createDirIfNotExists(_targetLocation, _zipFile);
+					} else {
+						files.add(entry.getName());
+						FileOutputStream fos = new FileOutputStream(_targetLocation + entry.getName());
+						dest = new BufferedOutputStream(fos, BUFFER);
+						while ((count = zis.read(data, 0, BUFFER)) != -1) {
+							dest.write(data, 0, count);
+						}
+					}
+					dest.flush();
+					dest.close();
+				}
+				zis.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		return files;
+	}
+
+	public boolean createDirIfNotExists(String path, String folder_name) {
 	    boolean ret = true;
 	    File file = new File(path, folder_name);
 	    if (!file.exists()) {

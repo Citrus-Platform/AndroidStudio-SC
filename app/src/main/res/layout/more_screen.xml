@@ -170,7 +170,7 @@
                 android:id="@+id/id_chat_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                 android:visibility="gone"
+                 android:visibility="visible"
                 android:background="@color/white" >
 
                 <TextView

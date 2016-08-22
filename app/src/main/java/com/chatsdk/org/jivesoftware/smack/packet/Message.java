@@ -1145,7 +1145,11 @@ public class Message extends Packet {
 		/**
 		 * Chat message for Make SG SubAdmin - 30
 		 */
-		atMeXmppMessageTypeRemoveSGSubAdmin
+		atMeXmppMessageTypeRemoveSGSubAdmin,
+		/**
+		 * Chat message type to be shown in center like group update, create etc. - 31
+		 */
+		atMeXmppMessageTypeSpecialMessage
 		;
 
 		public static XMPPMessageType fromString(String name) {
