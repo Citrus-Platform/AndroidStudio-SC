@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.superchat.data.db.DatabaseConstants;
 import com.superchat.model.MessageDataModel;
+import com.superchat.model.MessageStatusModel;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.utils.Utilities;
@@ -1020,6 +1021,44 @@ public boolean isBroadCastMessage(String idArrays){
 			}
 		}
 	}
+	public void updateGroupOrBroadCastSeenStatus(String userName, String idArrays,
+												 int state, long statusTime) {
+		Log.d("ChatDBWrapper", "updateGroupOrBroadCastSeenStatus idArrays " + idArrays);
+		Cursor cursor = null;
+		try {
+			String sql = null;
+			if(state == 2){
+				sql = "UPDATE " + ChatDBConstants.TABLE_NAME_STATUS_INFO
+						+ " SET " + ChatDBConstants.SEEN_FIELD + "='"+ state+"',"
+						+ ChatDBConstants.DELIVER_TIME_FIELD + "='"+ statusTime + "' WHERE "
+						+ ChatDBConstants.MESSAGE_ID + " IN " + idArrays
+						+ " AND " + ChatDBConstants.SEEN_FIELD + " != '"+ Message.SeenState.seen + "'"
+						+ " AND " + ChatDBConstants.FROM_USER_FIELD + " != '"+ userName + "'";
+			}else
+				sql = "UPDATE " + ChatDBConstants.TABLE_NAME_STATUS_INFO
+						+ " SET " + ChatDBConstants.SEEN_FIELD + "='"+ state +"',"
+						+ ChatDBConstants.SEEN_TIME_FIELD + "='"+ statusTime + "' WHERE "
+						+ ChatDBConstants.MESSAGE_ID + " IN " + idArrays
+						+ " AND " + ChatDBConstants.SEEN_FIELD + " != '"+ Message.SeenState.seen + "'"
+						+ " AND " + ChatDBConstants.FROM_USER_FIELD + " != '"+ userName + "'";
+
+			cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
+			if (cursor != null) {
+				Log.d("ChatDBWrapper",
+						"updateSeenStatus idArrays " + cursor.getCount());
+
+			}
+		} catch (Exception e) {
+			Log.e("ChatDBWrapper",
+					"Exception in updateSeenStatus method " + e.toString());
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+				cursor = null;
+			}
+		}
+	}
+
 	public void updateFrndsSeenStatus(String userName, String idArrays,
 			Message.SeenState state) {
 		Log.d("ChatDBWrapper", "updateSeenStatus idArrays " + idArrays);
@@ -2095,7 +2134,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 							 contentvalues.put(ChatDBConstants.TO_USER_FIELD, message_data.toUserName);
 					 } else
 						 contentvalues.put(ChatDBConstants.TO_USER_FIELD, pref.getUserName());
-					 if (message_data.fromGroupUserName != null)
+					 if (message_data.fromGroupUserName == null)
 						 message_data.fromGroupUserName = "";
 					 contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, message_data.fromGroupUserName);
 					 contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message_data.messageType);
@@ -2146,7 +2185,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 					 if (message_data.fromUserName != null)
 						 contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message_data.fromUserName);
 
-					 if (message_data.fromGroupUserName != null)
+					 if (message_data.fromGroupUserName == null)
 						 message_data.fromGroupUserName = "";
 					 contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, message_data.fromGroupUserName);
 					 contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message_data.messageType);
@@ -2172,8 +2211,8 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 					 else
 						 contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID.randomUUID().toString());
 					 contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, message_data.dataChanged);
-					 if(message_data.readTime != null)
-					 	contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, convertTomilliseconds(message_data.readTime));
+					 if(message_data.dateTime != null)
+					 	contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, convertTomilliseconds(message_data.dateTime));
 					 //Create contact name and store in db
 					if (message_data.roomID != null) {
 						contentvalues.put(ChatDBConstants.TO_USER_FIELD, message_data.roomID);
@@ -2183,9 +2222,8 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 							 contact_name = pref.getGroupDisplayName(message_data.roomID) + "#786#" + message_data.roomID;
 						 else if (message_data.roomID.equalsIgnoreCase(pref.getUserDomain() + "-all"))
 							 contact_name =  message_data.roomID;
-						 else// P2P case
-							 contact_name = pref.getUserServerName(message_data.roomID) + "#786#" + message_data.roomID;
 					 }else{
+						contact_name = pref.getUserServerName(message_data.fromUserName) + "#786#" + message_data.roomID;
 						contentvalues.put(ChatDBConstants.TO_USER_FIELD, message_data.toUserName);
 					}
 					 if (contact_name != null)
@@ -2201,6 +2239,44 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			ex.printStackTrace();
 		}
 		return success;
+	}
+	public int insertMessageStatusInDB(JSONArray data, String os_type) {
+		int success = 0;
+		try {
+			Gson gson = new GsonBuilder().create();
+			SharedPrefManager pref = SharedPrefManager.getInstance();
+			for (int i = 0; i < data.length(); i++) {
+				JSONObject status = data.getJSONObject(i);
+				System.out.println("Status ==> "+(i+1)+":: "+status.toString());
+				MessageStatusModel message_data = gson.fromJson(status.toString(), MessageStatusModel.class);
+				saveGroupOrBroadcastStatus(message_data.foruserName, message_data.messageID, message_data.currentStatus);
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return success;
+	}
+
+	public void saveGroupOrBroadcastStatus(String from, String message_id, int state) {
+		try{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
+			contentvalues.put(ChatDBConstants.MESSAGE_ID, message_id);
+			long currentTime = System.currentTimeMillis();
+//			calender.setTimeInMillis(currentTime);
+			if(state == 2)
+				contentvalues.put(ChatDBConstants.DELIVER_TIME_FIELD, currentTime);
+			if(state == 3)
+				contentvalues.put(ChatDBConstants.SEEN_TIME_FIELD, currentTime);
+			contentvalues.put(ChatDBConstants.SEEN_FIELD, state);
+			long insertId = insertInDB(ChatDBConstants.TABLE_NAME_STATUS_INFO,contentvalues);
+			if(insertId == -1){
+				updateGroupOrBroadCastSeenStatus(from,"(\"" + message_id + "\")", state,currentTime);
+			}
+			if(state == 3)
+				updateUserReadCount(message_id, getTotalMessageReadCount(message_id) + 1);
+		}catch(Exception e){}
 	}
 //====================================================================
 	public Cursor getUserBroadCastChatList(String broadCastName) {

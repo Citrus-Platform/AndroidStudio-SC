@@ -2978,17 +2978,8 @@ public class ChatService extends Service implements interfaceInstances {
 			connection = null;
 		}
 	}
-	public void saveGroupOrBroadcastStatus(String from,String packetId,Message.SeenState state) {
+	public void saveGroupOrBroadcastStatus(String from, String packetId, Message.SeenState state) {
 		try{
-//		+ ChatDBConstants.TABLE_NAME_STATUS_INFO+ "("
-//				+ ChatDBConstants._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-//				+ ChatDBConstants.MESSAGE_ID+ " TEXT NOT NULL,"
-//				+ChatDBConstants.SEEN_FIELD+ " INTEGER NOT NULL,"
-//				+ ChatDBConstants.DELIVER_TIME_FIELD+ " LONG NOT NULL,"
-//				+ ChatDBConstants.SEEN_TIME_FIELD+ " LONG NOT NULL,"
-//				+ ChatDBConstants.FROM_USER_FIELD+ " TEXT NOT NULL,"
-//				+ ChatDBConstants.GROUP_UUID_FIELD+ " TEXT,"
-//				+ " LONG NOT NULL"+");";
 		ContentValues contentvalues = new ContentValues();
 		contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
 		if(packetId.contains("("))
