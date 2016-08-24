@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Base64;
 import android.view.Gravity;
@@ -2623,9 +2624,6 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                         // MediaStore.Video.Thumbnails.MINI_KIND
                         // ));
                     }
-
-//					if(viewholder.mediaLocalPath!=null && !viewholder.mediaLocalPath.equals(""))
-//						mediaUploadProgressBar.put(viewholder.mediaLocalPath, viewholder.rightImgProgressBar);
                     if (viewholder.mediaUrl == null || viewholder.mediaUrl.equals("") || !viewholder.mediaUrl.startsWith("http")) {
 
                         viewholder.sVideoPlayImageView.setVisibility(View.INVISIBLE);
@@ -2650,19 +2648,16 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                         viewholder.rightImgProgressBar.setVisibility(View.GONE);
                         viewholder.sVideoPlayImageView.setVisibility(View.VISIBLE);
                     }
-//						if(progressValue>0 &&progressValue<100 && viewholder.seenState == Message.SeenState.pic_wait.ordinal()){
-//							viewholder.rightImgProgressBar.setVisibility(ProgressBar.VISIBLE);
-//							viewholder.rightImgProgressBar.setProgress(progressValue);
-//						}else
-//							viewholder.rightImgProgressBar.setVisibility(ProgressBar.INVISIBLE);
 
-//					viewholder.sVideoPlayImageView.setVisibility(View.VISIBLE);
                     viewholder.rVideoPlayImageView.setVisibility(View.GONE);
                     viewholder.sDateLayout.setBackgroundResource(R.drawable.chat_time_gradient);
-//					viewholder.senderTime.setTextColor(context1.getResources().getColor(R.color.white));
                     viewholder.sVideoPlayImageView.setTag("N");
                     viewholder.sVideoPlayImageView.setOnLongClickListener(viewholder.onLongPressListener);
                     viewholder.voiceSenderLayout.setVisibility(View.GONE);
+                }else{
+                    if(viewholder.mediaLocalPath != null)
+                        viewholder.sendImgView.setImageBitmap(ThumbnailUtils.createVideoThumbnail(viewholder.mediaLocalPath, MediaStore.Video.Thumbnails.MINI_KIND));
+                    viewholder.sVideoPlayImageView.setVisibility(View.VISIBLE);
                 }
 
             } else if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypePdf.ordinal()) {
@@ -3453,20 +3448,16 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                             android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(url);
                             if (bitmap != null) {
                                 viewholder.receiveImgView.setImageBitmap(bitmap);
-                            } else {
+                            } else if(viewholder.mediaThumb != null){
                                 Bitmap tmpBitMap = createVideoThumbFromByteArray(viewholder.mediaThumb);
                                 viewholder.receiveImgView.setImageBitmap(tmpBitMap);
                                 SuperChatApplication.addBitmapToMemoryCache(url, tmpBitMap);
-                                //						viewholder.receiveImgView
-                                //						.setImageBitmap(createVideoThumbFromByteArray(viewholder.mediaThumb));// ThumbnailUtils.createVideoThumbnail(
-                                // mediaUrl,
-                                // MediaStore.Video.Thumbnails.MINI_KIND
-                                // ));
+                            }else if(viewholder.mediaLocalPath != null){
+                                viewholder.receiveImgView.setImageBitmap(ThumbnailUtils.createVideoThumbnail(url,MediaStore.Video.Thumbnails.MINI_KIND));
                             }
                         }
                         viewholder.sVideoPlayImageView.setVisibility(View.GONE);
-                        viewholder.rVideoPlayImageView
-                                .setVisibility(View.VISIBLE);
+                        viewholder.rVideoPlayImageView.setVisibility(View.VISIBLE);
 //						viewholder.receiverTime.setTextColor(context1.getResources().getColor(R.color.white));
 //						viewholder.receiverTime.setBackgroundResource(R.drawable.chat_time_gradient);
 //						viewholder.receiverTime.setPadding(10, 5, 10, 5);
@@ -4504,6 +4495,8 @@ public class ChatListAdapter extends SimpleCursorAdapter {
     }
 
     private Bitmap createVideoThumbFromByteArray(String baseData) {
+        if(baseData ==  null)
+            return null;
         Bitmap bmp = null;
         byte[] data = Base64.decode(baseData, Base64.DEFAULT);
         if (data != null)

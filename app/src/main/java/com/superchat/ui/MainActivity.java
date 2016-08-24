@@ -1827,8 +1827,10 @@ public class MainActivity extends FragmentActivity implements
 						showDialog(errorModel.message);
 				} else
 					showDialog("Please try again later.");
-			}else
-				showDialog("Error connecting to server, please try again later.");
+			}else {
+//				showDialog("Please try again later.");
+//				Toast.makeText(MainActivity.this, "Error connecting to server, please try again later.", Toast.LENGTH_LONG).show();
+			}
 			super.onPostExecute(str);
 		}
 	}

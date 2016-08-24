@@ -100,6 +100,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -158,6 +159,9 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 	public static boolean refreshContactList;
 	
 	boolean isRWA = false;
+
+	public Set<GroupDetail> directoryGroupSet = null;
+	public Set<BroadcastGroupDetail> directoryBroadcastGroupSet;
 	
 	public static HashMap<String, String> textDataRetain = new HashMap<String, String>();
 	public static ArrayList<LoginResponseModel.GroupDetail> groupsData = new ArrayList<LoginResponseModel.GroupDetail>();
@@ -802,6 +806,7 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 										}
 									}
 								}
+									directoryGroupSet = loginObj.directoryGroupSet;
 									for (GroupDetail groupDetail : loginObj.directoryGroupSet) {
 //										Log.d(TAG, "counter check  Login response : "+groupDetail.type+""+groupDetail.displayName+" , "+groupDetail.numberOfMembers);
 //										writeLogsToFile(groupDetail.groupName+" - "+groupDetail.displayName);
@@ -833,6 +838,7 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 										String oldFileId = sharedPrefManager.getUserFileId(groupDetail.fileId);
 										sharedPrefManager.saveUserFileId(groupDetail.groupName, groupDetail.fileId);
 									}
+									directoryBroadcastGroupSet = loginObj.directoryBroadcastGroupSet;
 									for (BroadcastGroupDetail broadcastGroupDetail : loginObj.directoryBroadcastGroupSet) {
 										sharedPrefManager.saveBroadCastName(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.displayName);
 										sharedPrefManager.saveBroadCastDisplayName(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.displayName);
@@ -1601,7 +1607,8 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 						    intent.putExtra(Constants.BACKUP_FILEID, fileid);
 						 if(lastdate != null)
 						   	intent.putExtra(Constants.LAST_BACKUP_DATE, lastdate);
-					    startActivity(intent);
+//					    startActivity(intent);
+						startActivityForResult(intent, 111);
 					}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -1770,6 +1777,28 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == RESULT_OK)
+			switch (requestCode) {
+				case 111:
+					if(directoryGroupSet !=null && !directoryGroupSet.isEmpty()) {
+						for (GroupDetail groupDetail : directoryGroupSet) {
+							boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(groupDetail.groupName);
+							if (isFirstChat)
+								saveMessage(groupDetail.displayName, groupDetail.groupName, "Group created by " + groupDetail.userDisplayName);
+						}
+						directoryGroupSet = null;
+					}
+
+					if(directoryBroadcastGroupSet !=null && !directoryBroadcastGroupSet.isEmpty()) {
+						for (BroadcastGroupDetail broadcastGroupDetail : directoryBroadcastGroupSet) {
+							boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(broadcastGroupDetail.broadcastGroupName);
+							if (isFirstChat)
+								saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName, "Broadcast created by " + broadcastGroupDetail.userDisplayName);
+						}
+						directoryBroadcastGroupSet = null;
+					}
+					break;
+			}
 		}
 	protected void onPause() {
 //		chatClient.stopClient();

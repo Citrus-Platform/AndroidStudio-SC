@@ -360,7 +360,7 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 					String dir_path = zip_file_path.substring(0, zip_file_path.lastIndexOf('/'));
 					deleteDirectoryWithContets(new File(dir_path));
 				}
-				Toast.makeText(ChatBackupScreen.this, "Data backup successfully!!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(ChatBackupScreen.this, "Data backed up successfully.", Toast.LENGTH_SHORT).show();
 			    finish();
 			}
 		}

@@ -2005,8 +2005,10 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			             message_array.put(message);
 			             System.out.println("==> "+(i++) + ":: "+message.toString());
 					} while (cursor.moveToNext());
-					if(message_array.length() > 0)
+					if(message_array.length() > 0) {
+						backup.put("osType", "Android");
 						backup.put("messages", message_array);
+					}
 					
 					//Write message table date to file
 					File f = new File(filename_message);
@@ -2165,7 +2167,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						 contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, message_data.contactName);
 					 else {
 						 //Create contact name and store in db
-						 if (message_data.messageType == 3) {//Bulletin Message
+						 if (message_data.messageType == 3) {
 							 contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, pref.getUserDomain() + "-all");
 						 } else if (message_data.fromUserName != null) {
 							 if (pref.isBroadCast(message_data.fromUserName))

@@ -4277,6 +4277,7 @@ public class ChatService extends Service implements interfaceInstances {
 		boolean shared_id_message = false;
 		String groupDisplayName = null;
 		String groupFileID = null;
+		String file_name = null;
 		if(prefManager.isSharedIDContact(userName)){
 			shared_id_message = true;
 			groupDisplayName = prefManager.getSharedIDDisplayName(userName);
@@ -4352,6 +4353,15 @@ public class ChatService extends Service implements interfaceInstances {
 				msg.setBody("Sent you a voice note : "+len_msg);
 			else
 				msg.setBody("Sent you a voice note");
+		}
+		if (mediaType == XMPPMessageType.atMeXmppMessageTypePdf
+				|| mediaType == XMPPMessageType.atMeXmppMessageTypeDoc
+				|| mediaType == XMPPMessageType.atMeXmppMessageTypeXLS
+				|| mediaType == XMPPMessageType.atMeXmppMessageTypePPT) {
+			if(url != null && url.lastIndexOf('/') != -1 && url.lastIndexOf('.') != -1)
+				msg.setMediaFileName(url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.')));
+			else if(url != null && url.lastIndexOf('/') != -1)
+				msg.setMediaFileName(url.substring(url.lastIndexOf('/') + 1));
 		}
 		if (isGroupChat)
 			msg.setType(Message.Type.groupchat);

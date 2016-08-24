@@ -207,10 +207,11 @@ public class ChatBackupRestoreScreen extends Activity implements OnClickListener
 			}
 			if(data != null){
 				if(data.equals("1")){
-					Toast.makeText(ChatBackupRestoreScreen.this, "Data restored successfully!!", Toast.LENGTH_SHORT).show();
+					Toast.makeText(ChatBackupRestoreScreen.this, "Data restored successfully", Toast.LENGTH_SHORT).show();
 				}else{
-					Toast.makeText(ChatBackupRestoreScreen.this, "Unable to restore data!", Toast.LENGTH_SHORT).show();
+					Toast.makeText(ChatBackupRestoreScreen.this, "Unable to restore data", Toast.LENGTH_SHORT).show();
 				}
+				setResult(Activity.RESULT_OK);
 				finish();
 			}else{
 				Toast.makeText(ChatBackupRestoreScreen.this, "Unable to restore data!", Toast.LENGTH_SHORT).show();
