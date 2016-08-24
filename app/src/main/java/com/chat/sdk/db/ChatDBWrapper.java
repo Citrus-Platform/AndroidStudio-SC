@@ -1965,6 +1965,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			             
 			             message.put("unreadCount", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.UNREAD_COUNT_FIELD)));
 			             message.put("seen", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.SEEN_FIELD)));
+						message.put("status", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.SEEN_FIELD)));
 			             message.put("mediaStatus", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MEDIA_STATUS)));
 						 if("1".equals(cursor.getString(cursor.getColumnIndex(ChatDBConstants.IS_DATE_CHANGED_FIELD))))
 			             	message.put("messageType", XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
@@ -2015,7 +2016,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						 }
                         from = to = sent_time = null;
 			             message_array.put(message);
-			             System.out.println("==> "+(i++) + ":: "+message.toString());
+			             System.out.println("Back up Message ==> "+(i++) + ":: "+message.toString());
 					} while (cursor.moveToNext());
 					if(message_array.length() > 0) {
 						backup.put("osType", "Android");
@@ -2202,14 +2203,19 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 					 if (message_data.fromGroupUserName == null)
 						 message_data.fromGroupUserName = "";
 					 contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, message_data.fromGroupUserName);
-					 contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message_data.messageType);
+//					 contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message_data.messageType);
 					 if (message_data.caption != null)
 						 contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, message_data.caption);
+					 else if (message_data.originalFileName != null)
+						 contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, message_data.originalFileName);
 					 if (message_data.locationMessage != null)
 						 contentvalues.put(ChatDBConstants.MESSAGE_TYPE_LOCATION, message_data.locationMessage);
 					 contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message_data.messageTypeID);
 					 contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD, message_data.unreadCount);
-					 contentvalues.put(ChatDBConstants.SEEN_FIELD, message_data.seen);
+					 if(message_data.status > 0)
+					 	contentvalues.put(ChatDBConstants.SEEN_FIELD, ""+message_data.status);
+					 else
+						 contentvalues.put(ChatDBConstants.SEEN_FIELD, "1");
 					 if (message_data.mediaURL != null)
 						 contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, message_data.mediaURL);
 					 if (message_data.thumbData != null)
@@ -2230,15 +2236,22 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 					 //Create contact name and store in db
 					if (message_data.roomID != null) {
 						contentvalues.put(ChatDBConstants.TO_USER_FIELD, message_data.roomID);
-						 if (pref.isBroadCast(message_data.roomID))
+						 if (pref.isBroadCast(message_data.roomID)) {
 							 contact_name = pref.getBroadCastDisplayName(message_data.roomID) + "#786#" + message_data.roomID;
-						 else if (pref.isGroupChat(message_data.roomID))
+							 contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message_data.messageType);
+						 }
+						 else if (pref.isGroupChat(message_data.roomID)) {
 							 contact_name = pref.getGroupDisplayName(message_data.roomID) + "#786#" + message_data.roomID;
-						 else if (message_data.roomID.equalsIgnoreCase(pref.getUserDomain() + "-all"))
-							 contact_name =  message_data.roomID;
+							 contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message_data.messageType);
+						 }
+						 else if (message_data.roomID.equalsIgnoreCase(pref.getUserDomain() + "-all")) {
+							 contact_name = message_data.roomID;
+							 contentvalues.put(ChatDBConstants.MESSAGE_TYPE, 3);
+						 }
 					 }else{
 						contact_name = pref.getUserServerName(message_data.fromUserName) + "#786#" + message_data.roomID;
 						contentvalues.put(ChatDBConstants.TO_USER_FIELD, message_data.toUserName);
+						contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message_data.messageType);
 					}
 					 if (contact_name != null)
 						 contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, contact_name);

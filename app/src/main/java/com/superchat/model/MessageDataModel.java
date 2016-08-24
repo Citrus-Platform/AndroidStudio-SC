@@ -68,8 +68,8 @@ public class MessageDataModel {
 	@SerializedName(value = "messageID")
 	public String messageID = null;
 
-	@SerializedName(value = "OriginalFileName")
-	public String OriginalFileName = null;
+	@SerializedName(value = "originalFileName")
+	public String originalFileName = null;
 
 	@SerializedName(value = "textMessage")
 	public String textMessage = null;
@@ -95,9 +95,6 @@ public class MessageDataModel {
 	@SerializedName(value = "mediaURL")
 	public String mediaURL = null;
 	
-	@SerializedName(value = "status")
-	public String status = null;
-
 	@SerializedName(value = "deliveryTime")
 	public String deliveryTime = null;
 	
@@ -146,6 +143,9 @@ public class MessageDataModel {
 	
 	@SerializedName(value = "readUserCount")
 	public int readUserCount;
+
+	@SerializedName(value = "status")
+	public int status;
 	
 	//long values
 	@SerializedName(value = "lastUpdateField")
