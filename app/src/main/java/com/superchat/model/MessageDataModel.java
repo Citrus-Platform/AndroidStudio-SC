@@ -47,6 +47,7 @@ public class MessageDataModel {
 //	32. location - comma seperated lat-lon
 //	33. originalFileName - original file name
 //	34. deliveryTime - when this message was delivered.
+//	35. OriginalFileName
 
 
 //=====================================================
@@ -66,6 +67,9 @@ public class MessageDataModel {
 	
 	@SerializedName(value = "messageID")
 	public String messageID = null;
+
+	@SerializedName(value = "OriginalFileName")
+	public String OriginalFileName = null;
 
 	@SerializedName(value = "textMessage")
 	public String textMessage = null;

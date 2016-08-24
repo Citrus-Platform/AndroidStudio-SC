@@ -2439,6 +2439,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 //                    }
 
             } else if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()) {
+                    viewholder.playSenderView.setVisibility(View.GONE);
                 if (viewholder.getProcessingForURL(url) == null) {
                     Object[] params = new Object[]{this,
                             viewholder.key, cursor,
@@ -2610,6 +2611,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 
                 viewholder.senderMsgText.setVisibility(View.GONE);
                 viewholder.sendImgView.setVisibility(View.VISIBLE);
+                viewholder.playSenderView.setVisibility(View.GONE);
                 viewholder.sendImgView.setTag(url);
                 if (viewholder.mediaThumb != null) {
                     android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(url);
@@ -2904,6 +2906,10 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                                 Bitmap tmpBitMap = createVideoThumbFromByteArray(viewholder.mediaThumb);
                                 viewholder.sendImgView.setImageBitmap(tmpBitMap);
                                 SuperChatApplication.addBitmapToMemoryCache(url,tmpBitMap);
+                            }else{
+                                String img_url = viewholder.mediaUrl.replace("get", "convertget") + "?height=50&width=50";
+                                viewholder.sendImgView.setImageURI(Uri.parse(img_url));
+                                img_url = null;
                             }
                         }
                     }
@@ -3586,6 +3592,10 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                                     Bitmap tmpBitMap = createVideoThumbFromByteArray(viewholder.mediaThumb);
                                     viewholder.receiveImgView.setImageBitmap(tmpBitMap);
                                     SuperChatApplication.addBitmapToMemoryCache(url, tmpBitMap);
+                                }else{
+                                    String img_url = viewholder.mediaUrl.replace("get", "convertget") + "?height=50&width=50";
+                                    viewholder.receiveImgView.setImageURI(Uri.parse(img_url));
+                                    img_url = null;
                                 }
                             }
                         }

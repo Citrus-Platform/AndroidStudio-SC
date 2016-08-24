@@ -1900,6 +1900,8 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
             String to = null;
             String sent_time = null;
 			String fromGroupUserName = null;
+			String org_filename = null;
+//			String bulletin_name = pref.getUserDomain() + "-all";
 			if(dbHelper!=null){
 				//Read data from message table
 				cursor = dbHelper.getWritableDatabase().rawQuery(query, null);
@@ -1941,6 +1943,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 //						4.	dateTime
 //						5.	status
 //						6.	deliveryTime
+//						7.	OriginalFileName
 
 						 message = new JSONObject();
 						fromGroupUserName = null;
@@ -1953,6 +1956,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			             message.put("messageID", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID)));
 			             message.put("toUserName", to);
 			             message.put("textMessage", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGEINFO_FIELD)));
+
 			             message.put("caption", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG)));
 			             message.put("broadcastMessageID", cursor.getString(cursor.getColumnIndex(ChatDBConstants.BROADCAST_MESSAGE_ID)));
 			             message.put("foreignMessageID", cursor.getString(cursor.getColumnIndex(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD)));
@@ -1985,6 +1989,10 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
                         message.put("lastUpdateField", cursor.getLong(cursor.getColumnIndex(ChatDBConstants.LAST_UPDATE_FIELD)));
 
 						//Some additional values for IOS
+						//Get Filename from media tag
+						org_filename = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG));
+						if(org_filename != null)
+							message.put("OriginalFileName", org_filename);
                         if(sent_time != null)
                             message.put("dateTime", sent_time);
                          if(pref.isGroupChat(from) || pref.isGroupChat(to)) {
@@ -2000,7 +2008,11 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
                                  message.put("roomID", from);
                              else if(pref.isBroadCast(to))
                                  message.put("roomID", to);
-                         }
+                         }else if(to.equalsIgnoreCase(pref.getUserDomain() + "-all")){
+							 message.put("roomID", to);
+						 }else if(from.equalsIgnoreCase(pref.getUserDomain() + "-all")){
+							 message.put("roomID", from);
+						 }
                         from = to = sent_time = null;
 			             message_array.put(message);
 			             System.out.println("==> "+(i++) + ":: "+message.toString());

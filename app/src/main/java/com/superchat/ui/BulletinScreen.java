@@ -394,6 +394,7 @@ public class BulletinScreen extends ListFragment  implements ChatCountListener,C
 			contentvalues.put(DatabaseConstants.FROM_GROUP_USER_FIELD, "");
 			contentvalues.put(DatabaseConstants.SEEN_FIELD, SeenState.sent.ordinal());
 			contentvalues.put(DatabaseConstants.MESSAGE_TYPE, 3);
+			contentvalues.put(DatabaseConstants.MESSAGE_TYPE_FIELD, 31);
 
 			contentvalues.put(DatabaseConstants.MESSAGEINFO_FIELD, msg);
 			// String name =

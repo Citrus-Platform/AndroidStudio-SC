@@ -1583,6 +1583,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                             final SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
                             iPrefManager.saveBroadCastName(groupUUID, displayName);
                             iPrefManager.saveBroadCastDisplayName(groupUUID, displayName);
+                            iPrefManager.saveBroadcastFirstTimeName(groupUUID, displayName);
                             for (String addedUser : usersList)
                                 service.inviteUserInRoom(groupUUID, displayName, groupDiscription, addedUser, null);
                         }
