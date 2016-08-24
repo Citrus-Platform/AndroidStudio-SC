@@ -1571,9 +1571,11 @@ private void getServerGroupProfile(String groupName){
 //				if(tmp!=null && !tmp.equals(""))
 //				tmpList.add(tmp.split(":")[0]);
 //			}
-			for(String tmp: addMemberFilterList){
-				if(tmp!=null && !tmp.equals(""))
-					tmpList.add(tmp.split(":")[0]);
+			if(addMemberFilterList != null) {
+				for (String tmp : addMemberFilterList) {
+					if (tmp != null && !tmp.equals(""))
+						tmpList.add(tmp.split(":")[0]);
+				}
 			}
 			intent.putStringArrayListExtra(Constants.GROUP_USERS, new ArrayList<String>(tmpList));
 			startActivityForResult(intent, 200);

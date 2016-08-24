@@ -162,19 +162,29 @@ public class ChatBackupRestoreScreen extends Activity implements OnClickListener
 				String full_path = Environment.getExternalStorageDirectory().getAbsolutePath() +"/" + backup_dir + "/" + zip_file;
 				ZipManager zipManager = new ZipManager(null, null);
 				Vector<String> files = zipManager.unzip(full_path, path);
+				String os_type = null;
+				JSONArray messages = null;
 				if(files != null){
-//					Gson gson = new GsonBuilder().create();
 					for(int i = 0; i < files.size(); i++){
 						String filedata = getStringFromFile(path + files.elementAt(i));
-//						System.out.println(filedata);
 						JSONObject jsonobj;
 						try {
 							jsonobj = new JSONObject(filedata);
-							JSONArray messages = (JSONArray) jsonobj.get("messages");
-//							MessageDataModel message_data = gson.fromJson(filedata, MessageDataModel.class);
-							int success = ChatDBWrapper.getInstance().insertBackUpInDB(messages);
-							if(success == 1){
-								data = ""+success;
+							if(jsonobj.has("osType"))
+								os_type = (String) jsonobj.get("osType");
+							if(i == 0) {
+								messages = (JSONArray) jsonobj.get("messages");
+								int success = ChatDBWrapper.getInstance().insertBackUpInDB(messages, os_type);
+								if(success == 1){
+									data = ""+success;
+								}
+							}
+							else {
+								messages = (JSONArray) jsonobj.get("messageStatus");
+								int success = ChatDBWrapper.getInstance().insertMessageStatusInDB(messages, os_type);
+								if (success == 1) {
+									data = "" + success;
+								}
 							}
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block

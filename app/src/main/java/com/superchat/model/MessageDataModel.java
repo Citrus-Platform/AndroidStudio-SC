@@ -114,6 +114,9 @@ public class MessageDataModel {
 	
 	@SerializedName(value = "contactName")
 	public String contactName = null;
+
+	@SerializedName(value = "readTime")
+	public String readTime;
 	
 	//int values
 	@SerializedName(value = "unreadCount")
@@ -141,9 +144,6 @@ public class MessageDataModel {
 	public int readUserCount;
 	
 	//long values
-	@SerializedName(value = "readTime")
-	public long readTime;
-	
 	@SerializedName(value = "lastUpdateField")
 	public long lastUpdateField;
 

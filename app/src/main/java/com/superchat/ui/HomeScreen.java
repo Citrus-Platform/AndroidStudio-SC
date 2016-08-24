@@ -46,6 +46,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chat.sdk.ChatService;
+import com.chat.sdk.db.ChatDBConstants;
 import com.chat.sdk.db.ChatDBWrapper;
 import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
 import com.google.gson.Gson;
@@ -826,9 +827,9 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 											sharedPrefManager.saveUserStatusMessage(groupDetail.groupName, groupDetail.description);
 										if(groupDetail.numberOfMembers!=null)
 											sharedPrefManager.saveGroupMemberCount(groupDetail.groupName, groupDetail.numberOfMembers);
-										boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(groupDetail.groupName);
-										if(isFirstChat)
-											saveMessage(groupDetail.displayName, groupDetail.groupName,"Group created by "+groupDetail.userDisplayName);//saveMessage(groupDetail.displayName, groupDetail.groupName,"You are welcome.");
+//										boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(groupDetail.groupName);
+//										if(isFirstChat)
+//											saveMessage(groupDetail.displayName, groupDetail.groupName,"Group created by "+groupDetail.userDisplayName);//saveMessage(groupDetail.displayName, groupDetail.groupName,"You are welcome.");
 										String oldFileId = sharedPrefManager.getUserFileId(groupDetail.fileId);
 										sharedPrefManager.saveUserFileId(groupDetail.groupName, groupDetail.fileId);
 									}
@@ -847,9 +848,9 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 										}
 										if(broadcastGroupDetail.description!=null)
 											sharedPrefManager.saveUserStatusMessage(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.description);
-										boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(broadcastGroupDetail.broadcastGroupName);
-										if(isFirstChat)
-											saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName,"Broadcast created by "+broadcastGroupDetail.userDisplayName);//saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName,"You are welcome.");
+//										boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(broadcastGroupDetail.broadcastGroupName);
+//										if(isFirstChat)
+//											saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName,"Broadcast created by "+broadcastGroupDetail.userDisplayName);//saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName,"You are welcome.");
 										String oldFileId = sharedPrefManager.getUserFileId(broadcastGroupDetail.fileId);
 										if(broadcastGroupDetail.fileId!=null && !broadcastGroupDetail.fileId.equals("") && (oldFileId == null || !oldFileId.equals(broadcastGroupDetail.fileId)))
 										{
@@ -1022,12 +1023,12 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 				new GetSharedIDListFromServer().execute();
 			
 //			if(iPrefManager.isFirstTime() && iPrefManager.getAppMode().equals("VirginMode"))
-//			{
-//				 if(Build.VERSION.SDK_INT >= 11)
-//						new CheckDataBackup().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-//					else
-//						new CheckDataBackup().execute();
-//			 }
+			{
+				 if(Build.VERSION.SDK_INT >= 11)
+						new CheckDataBackup().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					else
+						new CheckDataBackup().execute();
+			 }
 			
 			if(new_user && messageService != null){
 				String json = finalJSONbject.toString();
@@ -1901,6 +1902,7 @@ public void onComposeClick(View view){
 			if ((oldDate != date)
 					|| ChatDBWrapper.getInstance().isFirstChat(oppName)) {
 				contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "1");
+				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 			} else {
 				contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "0");
 			}
@@ -1918,6 +1920,7 @@ public void onComposeClick(View view){
                 }
             }else
 			    contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
+			System.out.println("[Message - ] "+contentvalues.toString());
 			chatDBWrapper.insertInDB(DatabaseConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 		} catch (Exception e) {
 

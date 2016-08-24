@@ -1827,7 +1827,8 @@ public class MainActivity extends FragmentActivity implements
 						showDialog(errorModel.message);
 				} else
 					showDialog("Please try again later.");
-			}
+			}else
+				showDialog("Error connecting to server, please try again later.");
 			super.onPostExecute(str);
 		}
 	}

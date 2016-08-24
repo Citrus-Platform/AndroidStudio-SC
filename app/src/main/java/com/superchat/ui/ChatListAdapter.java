@@ -2161,6 +2161,8 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 		viewholder.parentView = view;
 		viewholder.key = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID));
 		viewholder.groupMsgSenderName = cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_GROUP_USER_FIELD));
+        if(viewholder.groupMsgSenderName == null)
+            viewholder.groupMsgSenderName = "";
 		viewholder.captionTagMsg = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG));
 		viewholder.locationMsg = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_LOCATION));
 		
@@ -2180,6 +2182,9 @@ public class ChatListAdapter extends SimpleCursorAdapter {
         viewholder.totalGroupUsers = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.TOTAL_USER_COUNT_FIELD));
         viewholder.totalGroupReadUsers = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.READ_USER_COUNT_FIELD));
         viewholder.isTimeLineMessage = false;
+
+        if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal())// i.e. 31
+            viewholder.isDateShow = true;
 
 
 //        System.out.println("CONTACT_NAMES_FIELD -> "+cursor.getString(cursor.getColumnIndex(ChatDBConstants.CONTACT_NAMES_FIELD)));
@@ -3220,7 +3225,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 }
                 if (name != null && name.contains("_"))
                     name = "+" + name.substring(0, name.indexOf("_"));
-                if (name.startsWith("+"))
+                if (name != null && name.startsWith("+"))
                     name = "New User";
                 viewholder.receiverPersonName.setText(name); // Set the name
                 if (name == null || name.equals("")) {

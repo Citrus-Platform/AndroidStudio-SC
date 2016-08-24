@@ -2978,17 +2978,8 @@ public class ChatService extends Service implements interfaceInstances {
 			connection = null;
 		}
 	}
-	public void saveGroupOrBroadcastStatus(String from,String packetId,Message.SeenState state) {
+	public void saveGroupOrBroadcastStatus(String from, String packetId, Message.SeenState state) {
 		try{
-//		+ ChatDBConstants.TABLE_NAME_STATUS_INFO+ "("
-//				+ ChatDBConstants._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-//				+ ChatDBConstants.MESSAGE_ID+ " TEXT NOT NULL,"
-//				+ChatDBConstants.SEEN_FIELD+ " INTEGER NOT NULL,"
-//				+ ChatDBConstants.DELIVER_TIME_FIELD+ " LONG NOT NULL,"
-//				+ ChatDBConstants.SEEN_TIME_FIELD+ " LONG NOT NULL,"
-//				+ ChatDBConstants.FROM_USER_FIELD+ " TEXT NOT NULL,"
-//				+ ChatDBConstants.GROUP_UUID_FIELD+ " TEXT,"
-//				+ " LONG NOT NULL"+");";
 		ContentValues contentvalues = new ContentValues();
 		contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
 		if(packetId.contains("("))
@@ -3201,6 +3192,7 @@ public class ChatService extends Service implements interfaceInstances {
 			if ((oldDate != date)
 					|| chatDBWrapper.isFirstChat(oppName)) {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
+				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 			} else {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
 			}
@@ -3396,6 +3388,7 @@ public class ChatService extends Service implements interfaceInstances {
 			if ((oldDate != date)
 					|| chatDBWrapper.isFirstChat(oppName)) {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
+				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 			} else {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
 			}
@@ -5232,9 +5225,9 @@ public class ChatService extends Service implements interfaceInstances {
 				calender.setTimeInMillis(milis);
 				oldDate = calender.get(Calendar.DATE);
 			}
-			if ((oldDate != date)
-					|| chatDBWrapper.isFirstChat(oppName)) {
+			if ((oldDate != date) || chatDBWrapper.isFirstChat(oppName)) {//XMPPMessageType.atMeXmppMessageTypeGroupName.ordinal()
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
+				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 			} else {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
 			}
@@ -5299,6 +5292,7 @@ public class ChatService extends Service implements interfaceInstances {
 			if ((oldDate != date)
 					|| chatDBWrapper.isFirstChat(oppName)) {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
+				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 			} else {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
 			}
@@ -5420,6 +5414,7 @@ public class ChatService extends Service implements interfaceInstances {
 			if ((oldDate != date)
 					|| ChatDBWrapper.getInstance().isFirstChat(oppName)) {
 				contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "1");
+				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 			} else {
 				contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "0");
 			}
