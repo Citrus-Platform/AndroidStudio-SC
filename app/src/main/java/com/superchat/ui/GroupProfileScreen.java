@@ -2773,6 +2773,8 @@ private void getServerGroupProfile(String groupName){
 		}
 	}
 	private Bitmap createVideoThumbFromByteArray(String baseData) {
+		if(baseData == null)
+			return null;
 		Bitmap bmp = null;
 		byte[] data = Base64.decode(baseData, Base64.DEFAULT);
 		if (data != null)
