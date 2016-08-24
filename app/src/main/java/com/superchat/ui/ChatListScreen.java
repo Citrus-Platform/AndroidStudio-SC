@@ -1936,6 +1936,7 @@ public boolean onContextItemSelected(MenuItem item){
                 return handled;
             }
         });
+        LinearLayout llMainLayoutEmoji = (LinearLayout) screenDialog.findViewById(R.id.llMainLayoutEmoji);
         TextView cancelBtn = (TextView) screenDialog.findViewById(R.id.id_cancel_btn);
         TextView sendBtn = (TextView) screenDialog.findViewById(R.id.id_send_btn);
         ImageView backImg = (ImageView) screenDialog.findViewById(R.id.id_back_arrow);
@@ -1958,6 +1959,66 @@ public boolean onContextItemSelected(MenuItem item){
         wlp.gravity = Gravity.CENTER;// BOTTOM;
         wlp.flags &= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(wlp);
+
+        // Munish Code
+        {
+            ImageView id_attach_emoticon_caption = (ImageView) screenDialog.findViewById(R.id.id_attach_emoticon_caption);
+
+            final EmojiconsPopup popUpcaption = new EmojiconsPopup(llMainLayoutEmoji, this);
+            popUpcaption.setSizeForSoftKeyboard();
+            popUpcaption.setOnEmojiconClickedListener(new OnEmojiconClickedListener() {
+                @Override
+                public void onEmojiconClicked(Emojicon emojicon) {
+                    captionField.append(emojicon.getEmoji());
+                }
+            });
+            captionField.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    if (popUpcaption.isShowing()) {
+                        popUpcaption.dismiss();
+                    }
+
+                }
+            });
+
+            popUpcaption.setOnEmojiconBackspaceClickedListener(new OnEmojiconBackspaceClickedListener() {
+                @Override
+                public void onEmojiconBackspaceClicked(View v) {
+                    KeyEvent event = new KeyEvent(0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
+                    captionField.dispatchKeyEvent(event);
+                }
+            });
+
+            popUpcaption.setOnSoftKeyboardOpenCloseListener(new OnSoftKeyboardOpenCloseListener() {
+                @Override
+                public void onKeyboardOpen(int keyBoardHeight) {
+                }
+
+                @Override
+                public void onKeyboardClose() {
+                    if (popUpcaption.isShowing()) {
+                        popUpcaption.dismiss();
+                    }
+                }
+            });
+
+            id_attach_emoticon_caption.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (!popUpcaption.isShowing()) {
+                        captionField.requestFocus();
+                        popUpcaption.showAtBottomPending();
+                        // the keyboard is visible
+                        inputManager.showSoftInput(captionField, InputMethodManager.SHOW_IMPLICIT);
+                    } else if (popUpcaption.isShowing()) {
+                        popUpcaption.dismiss(); // hide popUp with emojicons
+                    }
+                }
+            });
+        }
         return screenDialog;
     }
     private int getAudioFileDuration(String file_path){

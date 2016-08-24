@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.superchat"
     android:installLocation="preferExternal"
-    android:versionCode="82"
-    android:versionName="3.8.2">
+    android:versionCode="83"
+    android:versionName="3.8.3">
 
     <uses-sdk
         android:minSdkVersion="13"
@@ -124,36 +124,35 @@
             android:name="com.superchat.ui.MobileVerificationScreen"
             android:configChanges="keyboardHidden|orientation"
    			android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.superchat.ui.ProfileScreen"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name="com.superchat.ui.ContactViewScreen"
-            android:screenOrientation="portrait"></activity>
-        <activity
-            android:name="com.superchat.ui.HelpScreen"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
+        <activity android:name="com.superchat.ui.HelpScreen"
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.superchat.ui.AboutScreen"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.superchat.ui.ContactUsScreen"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.superchat.ui.SmsRegistrationScreen"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.superchat.ui.LoginChangeScreen"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.superchat.ui.BlockListScreen"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.superchat.ui.SuperGroupProfileActivity"
             android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.superchat.ui.ShareScreen"
             android:screenOrientation="portrait">
