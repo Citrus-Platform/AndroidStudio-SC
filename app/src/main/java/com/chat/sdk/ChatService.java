@@ -3273,8 +3273,10 @@ public class ChatService extends Service implements interfaceInstances {
 						contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getXMPPMessageType().ordinal());
 					
 					String urlImage = media.getUrl();
-					if(urlImage != null && !(urlImage.endsWith(".mp4") || urlImage.endsWith(".3gp")) || urlImage.endsWith(".3gpp"))
-						urlImage = urlImage.substring(0, urlImage.lastIndexOf('.')) + ".mp4";
+					if(message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeVideo) {
+						if (urlImage != null && !(urlImage.endsWith(".mp4") || urlImage.endsWith(".3gp")) || urlImage.endsWith(".3gpp"))
+							urlImage = urlImage.substring(0, urlImage.lastIndexOf('.')) + ".mp4";
+					}
 					if(urlImage!=null)
 						contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, urlImage);
 					

@@ -1901,6 +1901,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
             String sent_time = null;
 			String fromGroupUserName = null;
 			String org_filename = null;
+			int message_type = 0;
 //			String bulletin_name = pref.getUserDomain() + "-all";
 			if(dbHelper!=null){
 				//Read data from message table
@@ -1971,7 +1972,8 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			             	message.put("messageTypeID", XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 						else
 							 message.put("messageTypeID", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD)));
-						message.put("messageType", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE)));
+						message_type = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE));
+						message.put("messageType", message_type);
 			             message.put("dataChanged", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.IS_DATE_CHANGED_FIELD)));
 			             message.put("recipientCount", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.TOTAL_USER_COUNT_FIELD)));
 			             message.put("readUserCount", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.READ_USER_COUNT_FIELD)));
@@ -1992,8 +1994,11 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						//Some additional values for IOS
 						//Get Filename from media tag
 						org_filename = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG));
-						if(org_filename != null)
-							message.put("OriginalFileName", org_filename);
+						if(org_filename != null) {
+							if(message_type != XMPPMessageType.atMeXmppMessageTypeAudio.ordinal() && message_type != XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()
+									&& message_type != XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
+								message.put("originalFileName", org_filename);
+						}
                         if(sent_time != null)
                             message.put("dateTime", sent_time);
                          if(pref.isGroupChat(from) || pref.isGroupChat(to)) {
@@ -2261,7 +2266,8 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						 contentvalues.put(ChatDBConstants.MESSAGE_THUMB_FIELD, message_data.thumbData);
 					 if (message_data.audioMessageLength != null)
 						 contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_LENGTH, message_data.audioMessageLength);
-					 if (message_data.textMessage != null)
+					 if (message_data.textMessage == null)
+						 message_data.textMessage = "";
 						 contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, message_data.textMessage);
 					 if (message_data.messageID != null)
 						 contentvalues.put(ChatDBConstants.MESSAGE_ID, message_data.messageID);
