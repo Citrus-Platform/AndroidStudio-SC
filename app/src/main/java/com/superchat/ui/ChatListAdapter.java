@@ -238,6 +238,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
         public String groupMsgSenderName;
         public int seenState;
         public int messageType;
+        public int messageTypeID;
         public String userName;
         public String captionTagMsg;
         public String locationMsg;
@@ -3279,7 +3280,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
             }
 
             //Received media
-            if (url != null) {
+            if (url != null && url.trim().length() > 0) {
                 viewholder.contactLayoutReceiver.setVisibility(View.GONE);
                 viewholder.pollLayoutReceiver.setVisibility(TextView.GONE);
                 viewholder.locationLayoutReceiver.setVisibility(View.GONE);

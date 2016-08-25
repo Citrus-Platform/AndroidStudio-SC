@@ -2200,32 +2200,32 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 
 					 if (message_data.roomID != null) {
 						 //Sent from IOS
+						 if(message_data.messageTypeID != XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal())
+						 	contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, pref.getUserServerName(message_data.fromUserName) + "#786#" + message_data.fromUserName);
 						 if(message_data.fromUserName.equals(pref.getUserName())){
-							 contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, pref.getUserServerName(message_data.fromUserName) + "#786#" + message_data.fromUserName);
 							 contentvalues.put(ChatDBConstants.TO_USER_FIELD, message_data.toUserName);
 							 contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message_data.fromUserName);
 						 }else{
 							 //Received in IOS
-							 contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, pref.getUserServerName(message_data.fromUserName) + "#786#" + message_data.fromUserName);
 							 contentvalues.put(ChatDBConstants.TO_USER_FIELD, pref.getUserName());
 							 contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message_data.roomID);
 						 }
 						 if (pref.isBroadCast(message_data.roomID)) {
 							 contact_name = pref.getBroadCastDisplayName(message_data.roomID) + "#786#" + message_data.roomID;
 							 contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message_data.messageType);
-							 if(message_data.messageType == XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal())
+							 if(message_data.messageTypeID == XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal())
 							 	contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
 						 }
 						 else if (pref.isGroupChat(message_data.roomID)) {
 							 contact_name = pref.getGroupDisplayName(message_data.roomID) + "#786#" + message_data.roomID;
 							 contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message_data.messageType);
-							 if(message_data.messageType == XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal())
+							 if(message_data.messageTypeID == XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal())
 								 contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
 						 }
 						 else if (message_data.roomID.equalsIgnoreCase(pref.getUserDomain() + "-all")) {
 							 contact_name = message_data.roomID;
 							 contentvalues.put(ChatDBConstants.MESSAGE_TYPE, 3);
-							 if(message_data.messageType == XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal())
+							 if(message_data.messageTypeID == XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal())
 								 contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
 						 }
 					 }else{

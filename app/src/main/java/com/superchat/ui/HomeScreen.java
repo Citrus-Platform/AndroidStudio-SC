@@ -1939,7 +1939,7 @@ public void onComposeClick(View view){
 			if ((oldDate != date)
 					|| ChatDBWrapper.getInstance().isFirstChat(oppName)) {
 				contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "1");
-				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
+				contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 			} else {
 				contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "0");
 			}
