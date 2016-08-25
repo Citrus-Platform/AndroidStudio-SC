@@ -2188,9 +2188,10 @@ public class ChatListAdapter extends SimpleCursorAdapter {
             viewholder.isDateShow = true;
 
 
-//        System.out.println("CONTACT_NAMES_FIELD -> "+cursor.getString(cursor.getColumnIndex(ChatDBConstants.CONTACT_NAMES_FIELD)));
-//        System.out.println("[TO == ]" + viewholder.receiverName);
-//        System.out.println("[FROM == ]" + viewholder.userName);
+//        System.out.println("[CONTACT_NAMES_FIELD] == "+cursor.getString(cursor.getColumnIndex(ChatDBConstants.CONTACT_NAMES_FIELD)));
+//        System.out.println("[TO] == " + viewholder.receiverName);
+//        System.out.println("[FROM] == " + viewholder.userName);
+//        System.out.println("[groupMsgSenderName] == " + viewholder.groupMsgSenderName);
 
         if (viewholder.totalGroupUsers == 0) {
             String memebers = SharedPrefManager.getInstance().getGroupMemberCount(chatName);
@@ -2568,6 +2569,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                     ((ProgressBar) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_bar_indeterminate)).setVisibility(View.VISIBLE);
 //				viewholder.playSenderView.setTag(url);
                 viewholder.playSenderView.setTag(viewholder.key);
+                viewholder.playSenderView.setVisibility(View.VISIBLE);
                 viewholder.sVideoPlayImageView.setVisibility(View.GONE);
                 viewholder.rVideoPlayImageView.setVisibility(View.GONE);
                 viewholder.sDateLayout.setBackgroundResource(0);

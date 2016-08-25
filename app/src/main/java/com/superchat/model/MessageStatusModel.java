@@ -10,18 +10,21 @@ public class MessageStatusModel {
         super();
     }
 
-    @SerializedName(value = "foruserName")
-    public String foruserName;
+    @SerializedName(value = "from_user")
+    public String from_user;
 
-    @SerializedName(value = "messageID")
-    public String messageID;
+    @SerializedName(value = "message_id")
+    public String message_id;
 
-    @SerializedName(value = "messageDeliveryTime")
-    public String messageDeliveryTime;
+    @SerializedName(value = "deliver_time")
+    public String deliver_time;
+
+    @SerializedName(value = "seen_time")
+    public String seen_time;
 
     @SerializedName(value = "currentStatus")
     public int currentStatus;
 
-    @SerializedName(value = "messageDeliveryStatus")
-    public int messageDeliveryStatus;
+    @SerializedName(value = "seen")
+    public int seen;
 }

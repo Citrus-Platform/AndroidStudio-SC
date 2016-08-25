@@ -410,7 +410,7 @@ public class ChatService extends Service implements interfaceInstances {
 	PacketListener groupPacketListener = new PacketListener() {
 		@Override
 		public void processPacket(Packet packet) {
-//			System.out.println("Got group packet " + packet.toXML() + " -- " + packet.getPacketID());
+			System.out.println("Got group packet " + packet.toXML() + " -- " + packet.getPacketID());
 
 			if (!packet.toXML().contains("<message"))
 				return;
@@ -3273,8 +3273,8 @@ public class ChatService extends Service implements interfaceInstances {
 						contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getXMPPMessageType().ordinal());
 					
 					String urlImage = media.getUrl();
-					if(urlImage != null && urlImage.endsWith(".mov"))
-						urlImage = urlImage.substring(0, urlImage.indexOf(".mov")) + ".mp4";
+					if(urlImage != null && !(urlImage.endsWith(".mp4") || urlImage.endsWith(".3gp")) || urlImage.endsWith(".3gpp"))
+						urlImage = urlImage.substring(0, urlImage.lastIndexOf('.')) + ".mp4";
 					if(urlImage!=null)
 						contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, urlImage);
 					
@@ -3385,8 +3385,7 @@ public class ChatService extends Service implements interfaceInstances {
 				calender.setTimeInMillis(milis);
 				oldDate = calender.get(Calendar.DATE);
 			}
-			if ((oldDate != date)
-					|| chatDBWrapper.isFirstChat(oppName)) {
+			if ((oldDate != date) || chatDBWrapper.isFirstChat(oppName)) {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
 				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 			} else {
