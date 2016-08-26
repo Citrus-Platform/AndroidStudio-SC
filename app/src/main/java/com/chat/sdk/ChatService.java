@@ -3387,7 +3387,7 @@ public class ChatService extends Service implements interfaceInstances {
 				calender.setTimeInMillis(milis);
 				oldDate = calender.get(Calendar.DATE);
 			}
-			if ((oldDate != date) || chatDBWrapper.isFirstChat(oppName)) {
+			if (((oldDate != date) || chatDBWrapper.isFirstChat(oppName)) && message.getStatusMessageType().ordinal() != Message.StatusMessageType.broadcasttoall.ordinal()) {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
 				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 			} else {
@@ -3397,7 +3397,12 @@ public class ChatService extends Service implements interfaceInstances {
 			contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
 
             if(SharedPrefManager.getInstance().isBroadCast(to)) {
-                contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, SharedPrefManager.getInstance().getBroadcastFirstTimeName(to));
+				if(SharedPrefManager.getInstance().getBroadcastFirstTimeName(to) != null)
+                	contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, SharedPrefManager.getInstance().getBroadcastFirstTimeName(to));
+				else {
+					SharedPrefManager.getInstance().saveBroadcastFirstTimeName(to, name);
+					contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
+				}
             }else if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal())
 			    contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, SharedPrefManager.getInstance().getUserDomain() + "-all");
 			else
