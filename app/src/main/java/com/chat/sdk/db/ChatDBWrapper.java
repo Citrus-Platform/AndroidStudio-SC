@@ -2257,7 +2257,11 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 								 contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
 						 }
 					 }else{
-						 contact_name = pref.getUserServerName(message_data.fromUserName) + "#786#" + message_data.roomID;
+						 //First check here message is received or sent
+						 if(message_data.fromUserName.equals(pref.getUserName()))
+						 	contact_name = pref.getUserServerName(message_data.toUserName) + "#786#" + message_data.toUserName;
+						 else
+							 contact_name = pref.getUserServerName(message_data.fromUserName) + "#786#" + message_data.fromUserName;
 						 contentvalues.put(ChatDBConstants.TO_USER_FIELD, message_data.toUserName);
 						 contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message_data.fromUserName);
 						 contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message_data.messageType);
