@@ -1771,6 +1771,12 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                     HttpEntity resEntity = response.getEntity();
                     responseData = Streams.asString(resEntity.getContent());
                     Log.d(TAG, "ResponseData: " + responseData);
+                    if(responseData != null && responseData.contains("success") && (fileToUpload.endsWith(".jpg") || fileToUpload.endsWith(".jpeg"))){
+                        File file = new File(fileToUpload);
+                        boolean deleted = file.delete();
+                        if(deleted)
+                            System.out.println("[File deleted after sending]");
+                    }
                 } catch (Exception e) {
 //						e.printStackTrace();
                     processing.remove(url);
@@ -2442,7 +2448,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 //                    }
 
             } else if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()) {
-                    viewholder.playSenderView.setVisibility(View.GONE);
+                    viewholder.voiceSenderLayout.setVisibility(View.GONE);
                 if (viewholder.getProcessingForURL(url) == null) {
                     Object[] params = new Object[]{this,
                             viewholder.key, cursor,
@@ -2615,7 +2621,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 
                 viewholder.senderMsgText.setVisibility(View.GONE);
                 viewholder.sendImgView.setVisibility(View.VISIBLE);
-                viewholder.playSenderView.setVisibility(View.GONE);
+                viewholder.voiceSenderLayout.setVisibility(View.GONE);
                 viewholder.sendImgView.setTag(url);
                 if (viewholder.mediaThumb != null) {
                     android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(url);

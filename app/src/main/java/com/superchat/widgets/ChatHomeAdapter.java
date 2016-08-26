@@ -403,10 +403,10 @@ public void loadDialog(){
 //        Log.i("ChatHomeAdapter", "caption : "+caption);
         String groupMsgSenderName = cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_GROUP_USER_FIELD));
 
-		System.out.println("CONTACT_NAMES_FIELD -> "+name);
-		System.out.println("TO -> " + toUserName);
-		System.out.println("FROM -> " + fromName);
-		System.out.println("groupMsgSenderName -> " + groupMsgSenderName);
+//		System.out.println("CONTACT_NAMES_FIELD -> "+name);
+//		System.out.println("TO -> " + toUserName);
+//		System.out.println("FROM -> " + fromName);
+//		System.out.println("groupMsgSenderName -> " + groupMsgSenderName);
 
         viewholder.isBroadCast = SharedPrefManager.getInstance().isBroadCast(toUserName);
         Log.d("ChatHomeAdapter", "name in bind view of ChatHomeAdapter class : "+name);
@@ -486,8 +486,11 @@ public void loadDialog(){
         else if(isSharedID){
         	if(iChatPref.isSharedIDContact(name))
         		viewholder.nameText = iChatPref.getUserServerName(groupMsgSenderName) + "@"+ iChatPref.getSharedIDDisplayName(name);
-        	else
-        		viewholder.nameText = iChatPref.getUserServerName(groupMsgSenderName) + "@"+ name;
+        	else {
+				if(groupMsgSenderName.contains("#786#"))
+					viewholder.nameText = groupMsgSenderName.substring(0, groupMsgSenderName.indexOf("#786#")) + "@" + name;
+				else viewholder.nameText = iChatPref.getUserServerName(groupMsgSenderName) + "@" + name;
+			}
         }
         else{
         	if(toUserName != null && toUserName.equals(name)){

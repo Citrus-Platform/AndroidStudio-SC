@@ -67,6 +67,7 @@ public class ChatBackupRestoreScreen extends Activity implements OnClickListener
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.id_no_thanks:
+			setResult(Activity.RESULT_OK);
 			finish();
 			break;
 		case R.id.id_restore:

@@ -12,6 +12,7 @@ import com.chatsdk.org.jivesoftware.smack.packet.Message.SeenState;
 import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.superchat.R;
 import com.superchat.data.db.DatabaseConstants;
 import com.superchat.model.MessageDataModel;
 import com.superchat.model.MessageStatusModel;
@@ -1902,6 +1903,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			String fromGroupUserName = null;
 			String org_filename = null;
 			int message_type = 0;
+			String txt_message = null;
 //			String bulletin_name = pref.getUserDomain() + "-all";
 			if(dbHelper!=null){
 				//Read data from message table
@@ -1953,10 +1955,14 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						 message.put("fromUserName", from);
 						fromGroupUserName = cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_GROUP_USER_FIELD));
 //						if(fromGroupUserName != null)
-						 message.put("fromGroupUserName", fromGroupUserName);
+						if(pref.isSharedIDContact(to)) {
+							message.put("fromGroupUserName", pref.getUserServerName(from)  + "#786#" + from);
+						}else
+							message.put("fromGroupUserName", fromGroupUserName);
 			             message.put("messageID", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID)));
 			             message.put("toUserName", to);
-			             message.put("textMessage", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGEINFO_FIELD)));
+						 txt_message = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGEINFO_FIELD));
+			             message.put("textMessage", txt_message);
 
 			             message.put("caption", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG)));
 			             message.put("broadcastMessageID", cursor.getString(cursor.getColumnIndex(ChatDBConstants.BROADCAST_MESSAGE_ID)));
@@ -1969,9 +1975,16 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						message.put("status", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.SEEN_FIELD)));
 			             message.put("mediaStatus", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MEDIA_STATUS)));
 						 if("1".equals(cursor.getString(cursor.getColumnIndex(ChatDBConstants.IS_DATE_CHANGED_FIELD))))
-			             	message.put("messageTypeID", XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
-						else
-							 message.put("messageTypeID", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD)));
+							 if(pref.isSharedIDContact(to))
+								 message.put("messageTypeID", 0);
+							else
+			             		message.put("messageTypeID", XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
+						else {
+							 if(pref.isSharedIDContact(to))
+							 	message.put("messageTypeID", 0);
+							 else
+								 message.put("messageTypeID", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD)));
+						 }
 						message_type = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE));
 						message.put("messageType", message_type);
 			             message.put("dataChanged", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.IS_DATE_CHANGED_FIELD)));
@@ -2014,9 +2027,19 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
                                  message.put("roomID", from);
                              else if(pref.isBroadCast(to))
                                  message.put("roomID", to);
-                         }else if(to.equalsIgnoreCase(pref.getUserDomain() + "-all")){
+                         }else if(pref.isSharedIDContact(from) || pref.isSharedIDContact(to)) {
+							message.put("chatType", 2);
+							if(pref.isSharedIDContact(from))
+								message.put("roomID", from);
+							else if(pref.isSharedIDContact(to))
+								message.put("roomID", to);
+						}else if(to.equalsIgnoreCase(pref.getUserDomain() + "-all")){
+							 if(txt_message != null && txt_message.startsWith(context.getString(R.string.bulleting_welcome1)))
+								 continue;
 							 message.put("roomID", to);
 						 }else if(from.equalsIgnoreCase(pref.getUserDomain() + "-all")){
+							 if(txt_message != null && txt_message.startsWith(context.getString(R.string.bulleting_welcome1)))
+								 continue;
 							 message.put("roomID", from);
 						 }
                         from = to = sent_time = null;
@@ -2140,7 +2163,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			 for (int i = 0; i < data.length(); i++){
 //		        JSONObject message = (JSONObject) full_data.next();
 		        JSONObject message = data.getJSONObject(i);
-		        System.out.println("Message ==> "+(i+1)+":: "+message.toString());
+//		        System.out.println("Message ==> "+(i+1)+":: "+message.toString());
 				 MessageDataModel message_data = gson.fromJson(message.toString(), MessageDataModel.class);
 
 				ContentValues contentvalues = new ContentValues();
@@ -2282,6 +2305,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						 contentvalues.put(ChatDBConstants.READ_TIME_FIELD, convertTomilliseconds(message_data.readTime));
 				 }
 				//insert in DB
+				 System.out.println("Message ==> "+(i+1)+":: "+contentvalues.toString());
 				insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 		     }
 			 success = 1;

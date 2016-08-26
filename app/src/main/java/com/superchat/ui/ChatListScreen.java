@@ -4861,7 +4861,7 @@ Handler wheelHandler = new Handler(){
 							 if (fileAttachUri != null ) {
 		                            String fileName = "";
 		                            String tmpUri = fileAttachUri.toString();
-		                            if (tmpUri != null && (tmpUri.startsWith("content://com.google.android.apps"))) {// ||
+                                 if (tmpUri != null && (tmpUri.startsWith("content://com.google.android.apps"))) {// ||
 		                                // tmpUri.startsWith("content://com.android.providers.downloads.documents"))){
 		                                String mimeType = getContentResolver().getType(fileAttachUri);
 		                                Log.i(TAG, "mimeType : " + mimeType);
