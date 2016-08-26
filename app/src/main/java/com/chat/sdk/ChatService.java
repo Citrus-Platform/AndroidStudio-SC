@@ -5241,12 +5241,13 @@ public class ChatService extends Service implements interfaceInstances {
 				calender.setTimeInMillis(milis);
 				oldDate = calender.get(Calendar.DATE);
 			}
-			if ((oldDate != date) || chatDBWrapper.isFirstChat(oppName)) {//XMPPMessageType.atMeXmppMessageTypeGroupName.ordinal()
+			if ((oldDate != date) || chatDBWrapper.isFirstChat(oppName)) {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
-				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 			} else {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
+				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, 0);
 			}
+			contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 //			AtMeApplication.dayValue = date;
 			contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
 
