@@ -1910,6 +1910,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			int message_type = 0;
 			String txt_message = null;
 			String local_path = null;
+			String contact_name = null;
 //			String bulletin_name = pref.getUserDomain() + "-all";
 			if(dbHelper!=null){
 				//Read data from message table
@@ -1973,7 +1974,8 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			             message.put("caption", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG)));
 			             message.put("broadcastMessageID", cursor.getString(cursor.getColumnIndex(ChatDBConstants.BROADCAST_MESSAGE_ID)));
 			             message.put("foreignMessageID", cursor.getString(cursor.getColumnIndex(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD)));
-			             message.put("contactName", cursor.getString(cursor.getColumnIndex(ChatDBConstants.CONTACT_NAMES_FIELD)));
+						contact_name = cursor.getString(cursor.getColumnIndex(ChatDBConstants.CONTACT_NAMES_FIELD));
+			             message.put("contactName", contact_name);
 			             message.put("locationMessage", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_LOCATION)));
 			             
 			             message.put("unreadCount", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.UNREAD_COUNT_FIELD)));
@@ -1981,18 +1983,18 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						message.put("status", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.SEEN_FIELD)));
 			             message.put("mediaStatus", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MEDIA_STATUS)));
 						 if("1".equals(cursor.getString(cursor.getColumnIndex(ChatDBConstants.IS_DATE_CHANGED_FIELD))))
-							 if(pref.isSharedIDContact(to))
+							 if(pref.isSharedIDContact(to) || pref.isSharedIDContact(from))
 								 message.put("messageTypeID", 0);
 							else
 			             		message.put("messageTypeID", XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 						else {
-							 if(pref.isSharedIDContact(to))
+							 if(pref.isSharedIDContact(to) || pref.isSharedIDContact(from))
 							 	message.put("messageTypeID", 0);
 							 else
 								 message.put("messageTypeID", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD)));
 						 }
-						message_type = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE));
-						message.put("messageType", message_type);
+						message_type = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD));
+						message.put("messageType", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE)));
 			             message.put("dataChanged", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.IS_DATE_CHANGED_FIELD)));
 			             message.put("recipientCount", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.TOTAL_USER_COUNT_FIELD)));
 			             message.put("readUserCount", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.READ_USER_COUNT_FIELD)));
@@ -2015,22 +2017,18 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						//Some additional values for IOS
 						//Get Filename from media tag
 						org_filename = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG));
-						if(org_filename != null) {
-//							if(message_type != XMPPMessageType.atMeXmppMessageTypeAudio.ordinal() && message_type != XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()
-//									&& message_type != XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
-							if(message_type == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal() || message_type == XMPPMessageType.atMeXmppMessageTypePdf.ordinal()
-									|| message_type == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal() || message_type == XMPPMessageType.atMeXmppMessageTypePPT.ordinal())
+						if(org_filename != null && org_filename.trim().length() > 0) {
+							if(message_type != XMPPMessageType.atMeXmppMessageTypeAudio.ordinal() && message_type != XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()
+									&& message_type != XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
 								message.put("originalFileName", org_filename);
-						}else if (local_path != null && local_path.lastIndexOf('/') != -1){
+						}else if (local_path != null){
 							if(local_path.lastIndexOf('.') != -1)
 								org_filename = local_path.substring(local_path.lastIndexOf('/') + 1, local_path.lastIndexOf('.'));
 							else
 								org_filename = local_path.substring(local_path.lastIndexOf('/') + 1);
-//							if(message_type != XMPPMessageType.atMeXmppMessageTypeAudio.ordinal() && message_type != XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()
-//									&& message_type != XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
-								if(message_type == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal() || message_type == XMPPMessageType.atMeXmppMessageTypePdf.ordinal()
-										|| message_type == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal() || message_type == XMPPMessageType.atMeXmppMessageTypePPT.ordinal())
-									message.put("originalFileName", org_filename);
+							if(message_type != XMPPMessageType.atMeXmppMessageTypeAudio.ordinal() && message_type != XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()
+									&& message_type != XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
+								message.put("originalFileName", org_filename);
 						}
                         if(sent_time != null)
                             message.put("dateTime", sent_time);
@@ -2056,13 +2054,22 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						}else if(to.equalsIgnoreCase(pref.getUserDomain() + "-all")){
 							 if(txt_message != null && txt_message.startsWith(context.getString(R.string.bulleting_welcome1)))
 								 continue;
+							 message.put("chatType", 2);
 							 message.put("roomID", to);
 						 }else if(from.equalsIgnoreCase(pref.getUserDomain() + "-all")){
 							 if(txt_message != null && txt_message.startsWith(context.getString(R.string.bulleting_welcome1)))
 								 continue;
+							 message.put("chatType", 2);
 							 message.put("roomID", from);
+						 }else if(contact_name.equalsIgnoreCase(pref.getUserDomain() + "-all")){
+							 if(txt_message != null && txt_message.startsWith(context.getString(R.string.bulleting_welcome1)))
+								 continue;
+							 message.put("chatType", 2);
+							 message.put("roomID", contact_name);
+						 }else{
+							 message.put("messageTypeID", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD)));
 						 }
-                        from = to = sent_time = null;
+                        from = to = sent_time = contact_name = org_filename = local_path = null;
 			             message_array.put(message);
 			             System.out.println("Back up Message ==> "+(i++) + ":: "+message.toString());
 					} while (cursor.moveToNext());
@@ -2207,11 +2214,15 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						 contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, message_data.originalFileName);
 					 if (message_data.locationMessage != null)
 						 contentvalues.put(ChatDBConstants.MESSAGE_TYPE_LOCATION, message_data.locationMessage);
+					 if(message_data.messageTypeID == XMPPMessageType.atMeXmppMessageTypePoll.ordinal())
+						 continue;
 					 contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message_data.messageTypeID);
 					 contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD, message_data.unreadCount);
 					 contentvalues.put(ChatDBConstants.SEEN_FIELD, message_data.seen);
 					 if (message_data.mediaURL != null)
 						 contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, message_data.mediaURL);
+					 if (message_data.mediaLocalPath != null)
+						 contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD, message_data.mediaLocalPath);
 					 if (message_data.thumbData != null)
 						 contentvalues.put(ChatDBConstants.MESSAGE_THUMB_FIELD, message_data.thumbData);
 					 if (message_data.audioMessageLength != null)
@@ -2312,6 +2323,8 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						 contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, message_data.originalFileName);
 					 if (message_data.locationMessage != null)
 						 contentvalues.put(ChatDBConstants.MESSAGE_TYPE_LOCATION, message_data.locationMessage);
+					 if(message_data.messageTypeID == XMPPMessageType.atMeXmppMessageTypePoll.ordinal())
+						 continue;
 					 contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message_data.messageTypeID);
 					 contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD, message_data.unreadCount);
 					 if(message_data.status > 0)

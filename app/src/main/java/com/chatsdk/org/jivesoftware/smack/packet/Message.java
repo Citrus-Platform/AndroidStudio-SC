@@ -1094,7 +1094,7 @@ public class Message extends Packet {
 		 */
 		atMeXmppMessageTypePoll,
 		/**
-		 * Chat message for getting getting Poll sharing - 18
+		 * Chat message for getting getting DeactivateUser - 18
 		 */
 		atMeXmppMessageTypeDeactivateUser,
 		/**

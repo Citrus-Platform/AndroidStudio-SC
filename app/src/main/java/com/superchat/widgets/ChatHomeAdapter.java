@@ -486,6 +486,9 @@ public void loadDialog(){
         else if(isSharedID){
         	if(iChatPref.isSharedIDContact(name))
         		viewholder.nameText = iChatPref.getUserServerName(groupMsgSenderName) + "@"+ iChatPref.getSharedIDDisplayName(name);
+			else if(iChatPref.isSharedIDContact(toUserName)){
+				viewholder.nameText = name;
+			}
         	else {
 				if(groupMsgSenderName.contains("#786#"))
 					viewholder.nameText = groupMsgSenderName.substring(0, groupMsgSenderName.indexOf("#786#")) + "@" + name;
