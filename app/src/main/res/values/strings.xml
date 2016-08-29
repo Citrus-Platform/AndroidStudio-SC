@@ -559,7 +559,7 @@
     <string name="back_up_restore_message">Would you like to restore your message history from backup?</string>
     <string name="last_backup">Last Backup</string>
     <string name="last_backup_found">Message backup found!</string>
-    <string name="backup">BACKUP</string>
+    <string name="backup">BACKUP NOW</string>
     <string name="chat_backup">Chat backup</string>
      <string name="chat_backup_restore">Chat restore</string>
     <string name="chat_backup_settings">Chat backup settings</string>

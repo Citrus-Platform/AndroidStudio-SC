@@ -2917,6 +2917,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                                 viewholder.sendImgView.setImageBitmap(tmpBitMap);
                                 SuperChatApplication.addBitmapToMemoryCache(url,tmpBitMap);
                             }else{
+                                viewholder.sendImgView.setImageResource(R.drawable.default_bg_img);
 //                                String img_url = viewholder.mediaUrl.replace("get", "convertget") + "?height=50&width=50";
 //                                viewholder.sendImgView.setImageURI(Uri.parse(img_url));
 //                                img_url = null;
@@ -3603,6 +3604,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                                     viewholder.receiveImgView.setImageBitmap(tmpBitMap);
                                     SuperChatApplication.addBitmapToMemoryCache(url, tmpBitMap);
                                 }else{
+                                    viewholder.receiveImgView.setImageResource(R.drawable.default_bg_img);
 //                                    String img_url = viewholder.mediaUrl.replace("get", "convertget") + "?height=50&width=50";
 //                                    viewholder.receiveImgView.setImageURI(Uri.parse(img_url));
 //                                    img_url = null;

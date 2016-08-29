@@ -76,6 +76,8 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
     byte selectionType = BACK_UP_SETTING;
 	private static final String TAG = "ChatBackupScreen";
 	String backedUpFileID = null;
+	boolean isWifi = false;
+	int backupOn;
 	@Override
 	protected void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
@@ -228,8 +230,22 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 			if(radioSelectionDialog != null)
 				radioSelectionDialog.dismiss();
 			break;
+			case R.id.id_done:
+				if(radioSelectionDialog != null)
+					radioSelectionDialog.dismiss();
+				if(selectionType == BACK_UP_SETTING) {
+					SharedPrefManager.getInstance().setBackupSchedule(backupOn);
+				}else{
+					if(isWifi)
+						SharedPrefManager.getInstance().setWifiBackup(true);
+					else
+						SharedPrefManager.getInstance().setWifiBackup(false);
+				}
+				break;
+
 		case R.id.id_backup_to_server:
 			// custom dialog
+			backupOn = SharedPrefManager.getInstance().getBackupSchedule();
 			String[] options = new String[]{"Never", "Only when I tap \"Back up\"", "Daily", "Weekly", "Monthly"};
 			radioSelectionDialog = new Dialog(this);
 			radioSelectionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -243,14 +259,18 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 	            for(int i=0;i<stringList.size();i++){
 	                RadioButton rb = new RadioButton(this); // dynamically creating RadioButton and adding to RadioGroup.
 	                rb.setText(stringList.get(i));
+					if(i == backupOn)
+						rb.setChecked(true);
 	                radioGroup.addView(rb);
 	            }
 	        radioGroup.setOnCheckedChangeListener(this);
 	        ((TextView) radioSelectionDialog.findViewById(R.id.id_cancel)).setOnClickListener(this);
+			((TextView) radioSelectionDialog.findViewById(R.id.id_done)).setOnClickListener(this);
 	        selectionType = BACK_UP_SETTING;
 	        radioSelectionDialog.show();
 			break;
 		case R.id.id_backup_network_server:
+			isWifi = SharedPrefManager.getInstance().isWifiBackup();
 			options = new String[]{"WiFi", "Wi-Fi or Cellular"};
 			radioSelectionDialog = new Dialog(this);
 			radioSelectionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -264,11 +284,16 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 
 	            for(int i=0;i<stringList.size();i++){
 	                RadioButton rb = new RadioButton(this); // dynamically creating RadioButton and adding to RadioGroup.
-	                rb.setText(stringList.get(i));
 	                radioGroup.addView(rb);
-	            }
+					if(isWifi && i == 0)
+						rb.setChecked(true);
+					else
+						rb.setChecked(true);
+					rb.setText(stringList.get(i));
+				}
 	        radioGroup.setOnCheckedChangeListener(this);
 	        ((TextView) radioSelectionDialog.findViewById(R.id.id_cancel)).setOnClickListener(this);
+	        ((TextView) radioSelectionDialog.findViewById(R.id.id_done)).setOnClickListener(this);
 	        selectionType = BACK_UP_NETWORK_SETTING;
 	        radioSelectionDialog.show();
 			break;
@@ -282,11 +307,18 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
            RadioButton btn = (RadioButton) group.getChildAt(x);
            if (btn.getId() == checkedId) {
         	   System.out.println("selected RadioButton->"+btn.getText().toString());
-        	   if(selectionType == BACK_UP_SETTING)
-        		   backupSettingTxt.setText(btn.getText().toString());
-        	   else if(selectionType == BACK_UP_NETWORK_SETTING)
-        		   backupNetworkSettingTxt.setText(btn.getText().toString());
-        	   radioSelectionDialog.dismiss();
+        	   if(selectionType == BACK_UP_SETTING) {
+				   backupSettingTxt.setText(btn.getText().toString());
+				   backupOn = checkedId;
+			   }
+        	   else if(selectionType == BACK_UP_NETWORK_SETTING) {
+				   backupNetworkSettingTxt.setText(btn.getText().toString());
+				   if(checkedId == 0)
+					   isWifi = true;
+				   else
+					   isWifi = false;
+			   }
+//        	   radioSelectionDialog.dismiss();
            }
         }
 	}

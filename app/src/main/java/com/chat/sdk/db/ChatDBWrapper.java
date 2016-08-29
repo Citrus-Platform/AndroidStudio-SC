@@ -1498,7 +1498,12 @@ public ArrayList<ContentValues> getAllPersonDocs(String userName){
 	ArrayList<ContentValues> mediaList = new ArrayList<ContentValues>();
 	String sql = "SELECT "+ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD+","+ChatDBConstants.MESSAGE_TYPE_FIELD+","+ChatDBConstants.MEDIA_CAPTION_TAG+" FROM "
 			+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO + " WHERE ("
-			+ ChatDBConstants.FROM_USER_FIELD + " = '" + userName + "' OR "+ ChatDBConstants.TO_USER_FIELD + " = '" + userName + "') AND ("+ChatDBConstants.MESSAGE_TYPE_FIELD+"='"+XMPPMessageType.atMeXmppMessageTypeDoc.ordinal()+"' OR "+ChatDBConstants.MESSAGE_TYPE_FIELD+"='"+XMPPMessageType.atMeXmppMessageTypeXLS.ordinal()+"' OR "+ChatDBConstants.MESSAGE_TYPE_FIELD+"='"+XMPPMessageType.atMeXmppMessageTypePdf.ordinal()+"' OR "+ChatDBConstants.MESSAGE_TYPE_FIELD+"='"+XMPPMessageType.atMeXmppMessageTypePPT.ordinal()+"')"+ " ORDER BY " + ChatDBConstants.LAST_UPDATE_FIELD+" DESC";
+			+ ChatDBConstants.FROM_USER_FIELD + " = '" + userName + "' OR "+ ChatDBConstants.TO_USER_FIELD + " = '" + userName
+			+ "') AND ("+ChatDBConstants.MESSAGE_TYPE_FIELD+"='"+XMPPMessageType.atMeXmppMessageTypeDoc.ordinal()
+			+"' OR "+ChatDBConstants.MESSAGE_TYPE_FIELD+"='"+XMPPMessageType.atMeXmppMessageTypeXLS.ordinal()
+			+"' OR "+ChatDBConstants.MESSAGE_TYPE_FIELD+"='"+XMPPMessageType.atMeXmppMessageTypePdf.ordinal()
+			+"' OR "+ChatDBConstants.MESSAGE_TYPE_FIELD+"='"+XMPPMessageType.atMeXmppMessageTypePPT.ordinal()
+			+"')"+ " ORDER BY " + ChatDBConstants.LAST_UPDATE_FIELD+" DESC";
 	Cursor cursor = null;
 	try {
 		cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
@@ -1904,6 +1909,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			String org_filename = null;
 			int message_type = 0;
 			String txt_message = null;
+			String local_path = null;
 //			String bulletin_name = pref.getUserDomain() + "-all";
 			if(dbHelper!=null){
 				//Read data from message table
@@ -1993,7 +1999,9 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			             
 			             message.put("mediaURL", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD)));
 			             message.put("audioMessageLength", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LENGTH)));
-			             message.put("mediaLocalPath", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD)));
+						local_path = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD));
+						 if(local_path != null)
+							 message.put("mediaLocalPath", local_path);
 
 						message.put("readTime", convertToDate(cursor.getLong(cursor.getColumnIndex(ChatDBConstants.READ_TIME_FIELD))));
 
@@ -2008,9 +2016,21 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						//Get Filename from media tag
 						org_filename = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG));
 						if(org_filename != null) {
-							if(message_type != XMPPMessageType.atMeXmppMessageTypeAudio.ordinal() && message_type != XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()
-									&& message_type != XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
+//							if(message_type != XMPPMessageType.atMeXmppMessageTypeAudio.ordinal() && message_type != XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()
+//									&& message_type != XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
+							if(message_type == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal() || message_type == XMPPMessageType.atMeXmppMessageTypePdf.ordinal()
+									|| message_type == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal() || message_type == XMPPMessageType.atMeXmppMessageTypePPT.ordinal())
 								message.put("originalFileName", org_filename);
+						}else if (local_path != null && local_path.lastIndexOf('/') != -1){
+							if(local_path.lastIndexOf('.') != -1)
+								org_filename = local_path.substring(local_path.lastIndexOf('/') + 1, local_path.lastIndexOf('.'));
+							else
+								org_filename = local_path.substring(local_path.lastIndexOf('/') + 1);
+//							if(message_type != XMPPMessageType.atMeXmppMessageTypeAudio.ordinal() && message_type != XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()
+//									&& message_type != XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
+								if(message_type == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal() || message_type == XMPPMessageType.atMeXmppMessageTypePdf.ordinal()
+										|| message_type == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal() || message_type == XMPPMessageType.atMeXmppMessageTypePPT.ordinal())
+									message.put("originalFileName", org_filename);
 						}
                         if(sent_time != null)
                             message.put("dateTime", sent_time);
@@ -2163,7 +2183,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			 for (int i = 0; i < data.length(); i++){
 //		        JSONObject message = (JSONObject) full_data.next();
 		        JSONObject message = data.getJSONObject(i);
-//		        System.out.println("Message ==> "+(i+1)+":: "+message.toString());
+		        System.out.println("Message ==> "+(i+1)+":: "+message.toString());
 				 MessageDataModel message_data = gson.fromJson(message.toString(), MessageDataModel.class);
 
 				ContentValues contentvalues = new ContentValues();
@@ -2183,6 +2203,8 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 					 contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message_data.messageType);
 					 if (message_data.caption != null)
 						 contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, message_data.caption);
+					 else if (message_data.originalFileName != null)
+						 contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, message_data.originalFileName);
 					 if (message_data.locationMessage != null)
 						 contentvalues.put(ChatDBConstants.MESSAGE_TYPE_LOCATION, message_data.locationMessage);
 					 contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message_data.messageTypeID);
@@ -2231,12 +2253,18 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						 if(message_data.messageTypeID != XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal())
 						 	contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, pref.getUserServerName(message_data.fromUserName) + "#786#" + message_data.fromUserName);
 						 if(message_data.fromUserName.equals(pref.getUserName())){
-							 contentvalues.put(ChatDBConstants.TO_USER_FIELD, message_data.toUserName);
+							 if(message_data.roomID.equalsIgnoreCase(pref.getUserDomain() + "-all"))
+							 	contentvalues.put(ChatDBConstants.TO_USER_FIELD, pref.getUserDomain() + "-all");
+							 else
+								 contentvalues.put(ChatDBConstants.TO_USER_FIELD, message_data.toUserName);
 							 contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message_data.fromUserName);
 						 }else{
 							 //Received in IOS
 							 contentvalues.put(ChatDBConstants.TO_USER_FIELD, pref.getUserName());
-							 contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message_data.roomID);
+							 if(message_data.roomID.equalsIgnoreCase(pref.getUserDomain() + "-all"))
+							 	contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message_data.fromUserName);
+							 else
+							 	contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message_data.roomID);
 						 }
 						 if (pref.isBroadCast(message_data.roomID)) {
 							 contact_name = pref.getBroadCastDisplayName(message_data.roomID) + "#786#" + message_data.roomID;
@@ -2255,6 +2283,9 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 							 contentvalues.put(ChatDBConstants.MESSAGE_TYPE, 3);
 							 if(message_data.messageTypeID == XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal())
 								 contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
+						 }else if (pref.isSharedIDContact(message_data.roomID)) {
+							 contact_name = pref.getSharedIDDisplayName(message_data.roomID) + "#786#" + message_data.roomID;
+							 contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message_data.messageType);
 						 }
 					 }else{
 						 //First check here message is received or sent
@@ -2296,7 +2327,8 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 					 if (message_data.textMessage == null)
 						 message_data.textMessage = "";
 						 contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, message_data.textMessage);
-					 if (message_data.messageID != null)
+					 if (message_data.messageID == null)
+						 message_data.messageID = UUID.randomUUID().toString();
 						 contentvalues.put(ChatDBConstants.MESSAGE_ID, message_data.messageID);
 					 if (message_data.foreignMessageID != null)
 						 contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, message_data.foreignMessageID);
@@ -2309,7 +2341,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						 contentvalues.put(ChatDBConstants.READ_TIME_FIELD, convertTomilliseconds(message_data.readTime));
 				 }
 				//insert in DB
-				 System.out.println("Message ==> "+(i+1)+":: "+contentvalues.toString());
+//				 System.out.println("Message ==> "+(i+1)+":: "+contentvalues.toString());
 				insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 		     }
 			 success = 1;

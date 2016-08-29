@@ -121,6 +121,8 @@ public class SharedPrefManager {
 
 	private final String BROADCAST_FIRST_TIME_NAME = "broadcast_first_time_name";
 	private final String BACKUP_FILE_ID = "backup_file_id";
+	private final String BACKUP_OVER_WIFI = "backup_over_wifi";
+	private final String BACKUP_SCHEDULE = "backup_schedule";
 
 	private static SharedPrefManager sharedPrefManager;
 
@@ -369,6 +371,22 @@ public boolean isUserExistence(String userName){
 	boolean value = pref.getBoolean(ME_ACTIVATED+userName, true);
 	return value;
 }
+public boolean isWifiBackup(){
+	boolean value = pref.getBoolean(BACKUP_OVER_WIFI, true);
+	return value;
+}
+	public void setWifiBackup(boolean value){
+		editor.putBoolean(BACKUP_OVER_WIFI, value);
+		editor.commit();
+	}
+	public int getBackupSchedule() {
+		int value = pref.getInt(BACKUP_SCHEDULE, 0);
+		return value;
+	}
+	public void setBackupSchedule(int newOrder) {
+		editor.putInt(BACKUP_SCHEDULE, newOrder);
+		editor.commit();
+	}
 public void saveUserExistence(String userName , boolean isFirstTime){
 	editor.putBoolean(ME_ACTIVATED+userName, isFirstTime);
 	editor.commit();

@@ -2268,6 +2268,7 @@ public void onComposeClick(View view){
 						sharedIDData.clear();
 						for (BroadcastGroupDetail shared_id_detail : loginObj.directoryBroadcastGroupSet) {
 							if(sharedPrefManager.getSharedIDDisplayName(shared_id_detail.broadcastGroupName) == null){
+								System.out.println(""+shared_id_detail.displayName+" : "+shared_id_detail.broadcastGroupName);
 								sharedPrefManager.saveSharedIDDisplayName(shared_id_detail.broadcastGroupName, shared_id_detail.displayName);
 								sharedPrefManager.setSharedIDContact(shared_id_detail.broadcastGroupName, true);
 								if(shared_id_detail.fileId != null)
