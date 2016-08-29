@@ -3390,8 +3390,8 @@ public class ChatService extends Service implements interfaceInstances {
 			if (((oldDate != date) || chatDBWrapper.isFirstChat(oppName))
 					&& message.getStatusMessageType().ordinal() != Message.StatusMessageType.broadcasttoall.ordinal()
 					&& !prefManager.isSharedIDContact(to)) {
-				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
-				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
+//				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
+//				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 			} else {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
 			}
@@ -5311,10 +5311,11 @@ public class ChatService extends Service implements interfaceInstances {
 			if ((oldDate != date)
 					|| chatDBWrapper.isFirstChat(oppName)) {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
-				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
+//				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 			} else {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
 			}
+			contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 //			AtMeApplication.dayValue = date;
 			contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
 

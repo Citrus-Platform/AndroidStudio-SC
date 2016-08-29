@@ -2088,6 +2088,7 @@ private void getServerGroupProfile(String groupName){
 //				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
 //			} else {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
+			contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 //			}
 //			AtMeApplication.dayValue = date;
 			contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
