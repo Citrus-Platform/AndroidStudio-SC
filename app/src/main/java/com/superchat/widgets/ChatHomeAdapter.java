@@ -403,10 +403,10 @@ public void loadDialog(){
 //        Log.i("ChatHomeAdapter", "caption : "+caption);
         String groupMsgSenderName = cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_GROUP_USER_FIELD));
 
-		System.out.println("CONTACT_NAMES_FIELD -> "+name);
-		System.out.println("TO -> " + toUserName);
-		System.out.println("FROM -> " + fromName);
-		System.out.println("groupMsgSenderName -> " + groupMsgSenderName);
+//		System.out.println("CONTACT_NAMES_FIELD -> "+name);
+//		System.out.println("TO -> " + toUserName);
+//		System.out.println("FROM -> " + fromName);
+//		System.out.println("groupMsgSenderName -> " + groupMsgSenderName);
 
         viewholder.isBroadCast = SharedPrefManager.getInstance().isBroadCast(toUserName);
         Log.d("ChatHomeAdapter", "name in bind view of ChatHomeAdapter class : "+name);

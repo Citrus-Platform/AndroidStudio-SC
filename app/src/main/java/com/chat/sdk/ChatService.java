@@ -3387,7 +3387,9 @@ public class ChatService extends Service implements interfaceInstances {
 				calender.setTimeInMillis(milis);
 				oldDate = calender.get(Calendar.DATE);
 			}
-			if (((oldDate != date) || chatDBWrapper.isFirstChat(oppName)) && message.getStatusMessageType().ordinal() != Message.StatusMessageType.broadcasttoall.ordinal()) {
+			if (((oldDate != date) || chatDBWrapper.isFirstChat(oppName))
+					&& message.getStatusMessageType().ordinal() != Message.StatusMessageType.broadcasttoall.ordinal()
+					&& !prefManager.isSharedIDContact(to)) {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
 				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 			} else {

@@ -1911,6 +1911,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			String txt_message = null;
 			String local_path = null;
 			String contact_name = null;
+			String caption_txt = null;
 //			String bulletin_name = pref.getUserDomain() + "-all";
 			if(dbHelper!=null){
 				//Read data from message table
@@ -1971,7 +1972,8 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						 txt_message = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGEINFO_FIELD));
 			             message.put("textMessage", txt_message);
 
-			             message.put("caption", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG)));
+						 caption_txt = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG));
+			             message.put("caption", caption_txt);
 			             message.put("broadcastMessageID", cursor.getString(cursor.getColumnIndex(ChatDBConstants.BROADCAST_MESSAGE_ID)));
 			             message.put("foreignMessageID", cursor.getString(cursor.getColumnIndex(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD)));
 						contact_name = cursor.getString(cursor.getColumnIndex(ChatDBConstants.CONTACT_NAMES_FIELD));
@@ -1984,12 +1986,12 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			             message.put("mediaStatus", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MEDIA_STATUS)));
 						 if("1".equals(cursor.getString(cursor.getColumnIndex(ChatDBConstants.IS_DATE_CHANGED_FIELD))))
 							 if(pref.isSharedIDContact(to) || pref.isSharedIDContact(from))
-								 message.put("messageTypeID", 0);
+								 message.put("messageTypeID", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD)));
 							else
 			             		message.put("messageTypeID", XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 						else {
 							 if(pref.isSharedIDContact(to) || pref.isSharedIDContact(from))
-							 	message.put("messageTypeID", 0);
+							 	message.put("messageTypeID", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD)));
 							 else
 								 message.put("messageTypeID", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD)));
 						 }
@@ -2045,6 +2047,8 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
                                  message.put("roomID", from);
                              else if(pref.isBroadCast(to))
                                  message.put("roomID", to);
+							 if(caption_txt != null)
+							 	message.put("textMessage", caption_txt);
                          }else if(pref.isSharedIDContact(from) || pref.isSharedIDContact(to)) {
 							message.put("chatType", 2);
 							if(pref.isSharedIDContact(from))

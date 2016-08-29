@@ -1771,12 +1771,12 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                     HttpEntity resEntity = response.getEntity();
                     responseData = Streams.asString(resEntity.getContent());
                     Log.d(TAG, "ResponseData: " + responseData);
-                    if(responseData != null && responseData.contains("success") && (fileToUpload.endsWith(".jpg") || fileToUpload.endsWith(".jpeg"))){
-                        File file = new File(fileToUpload);
-                        boolean deleted = file.delete();
-                        if(deleted)
-                            System.out.println("[File deleted after sending]");
-                    }
+//                    if(responseData != null && responseData.contains("success") && (fileToUpload.endsWith(".jpg") || fileToUpload.endsWith(".jpeg"))){
+//                        File file = new File(fileToUpload);
+//                        boolean deleted = file.delete();
+//                        if(deleted)
+//                            System.out.println("[File deleted after sending]");
+//                    }
                 } catch (Exception e) {
 //						e.printStackTrace();
                     processing.remove(url);
@@ -3263,6 +3263,9 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 String name = iChatPref.getUserServerName(viewholder.userName);
                 if (name != null && name.equalsIgnoreCase("New User"))
                     name = iChatPref.getUserServerName(viewholder.userName);
+
+                if(name.equals(iChatPref.getUserName()))
+                    name = "";
 
                 String colorValue = colors.get(name);
                 if (colorValue == null) {

@@ -78,6 +78,8 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 	String backedUpFileID = null;
 	boolean isWifi = false;
 	int backupOn;
+	String[] wifiOptions = new String[]{"WiFi", "Wi-Fi or Cellular"};
+	String[] backupOptions = new String[]{"Never", "Only when I tap \"Back up\"", "Daily", "Weekly", "Monthly"};
 	@Override
 	protected void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
@@ -98,6 +100,12 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 		backup.setOnClickListener(this);
 		backupSettings.setOnClickListener(this);
 		backupNetworkSettings.setOnClickListener(this);
+
+		if(SharedPrefManager.getInstance().isWifiBackup())
+			backupSettingTxt.setText(wifiOptions[0]);
+		else
+			backupSettingTxt.setText(wifiOptions[1]);
+		backupSettingTxt.setText(backupOptions[SharedPrefManager.getInstance().getBackupSchedule()]);
 //		
 //		submit.setOnClickListener(new OnClickListener() {
 //
@@ -245,25 +253,31 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 
 		case R.id.id_backup_to_server:
 			// custom dialog
+
 			backupOn = SharedPrefManager.getInstance().getBackupSchedule();
-			String[] options = new String[]{"Never", "Only when I tap \"Back up\"", "Daily", "Weekly", "Monthly"};
 			radioSelectionDialog = new Dialog(this);
 			radioSelectionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 			radioSelectionDialog.setContentView(R.layout.radiobutton_dialog);
 	        List<String> stringList=new ArrayList<>();  // here is list 
-	        for(int i = 0; i < options.length; i++) {
-	            stringList.add(options[i]);
+	        for(int i = 0; i < backupOptions.length; i++) {
+	            stringList.add(backupOptions[i]);
 	        }
 	        radioGroup = (RadioGroup) radioSelectionDialog.findViewById(R.id.radio_group);
 
 	            for(int i=0;i<stringList.size();i++){
 	                RadioButton rb = new RadioButton(this); // dynamically creating RadioButton and adding to RadioGroup.
 	                rb.setText(stringList.get(i));
-					if(i == backupOn)
-						rb.setChecked(true);
+//					if(i == backupOn)
+//						rb.setChecked(true);
 	                radioGroup.addView(rb);
 	            }
 	        radioGroup.setOnCheckedChangeListener(this);
+//			radioGroup.setOnClickListener(new OnClickListener() {
+//				@Override
+//				public void onClick(View v) {
+//					radioGroup.clearCheck();
+//				}
+//			});
 	        ((TextView) radioSelectionDialog.findViewById(R.id.id_cancel)).setOnClickListener(this);
 			((TextView) radioSelectionDialog.findViewById(R.id.id_done)).setOnClickListener(this);
 	        selectionType = BACK_UP_SETTING;
@@ -271,25 +285,24 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 			break;
 		case R.id.id_backup_network_server:
 			isWifi = SharedPrefManager.getInstance().isWifiBackup();
-			options = new String[]{"WiFi", "Wi-Fi or Cellular"};
 			radioSelectionDialog = new Dialog(this);
 			radioSelectionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 			radioSelectionDialog.setContentView(R.layout.radiobutton_dialog);
 			((TextView) radioSelectionDialog.findViewById(R.id.id_title)).setText("Back up over");
 	        stringList=new ArrayList<>();  // here is list 
-	        for(int i = 0; i < options.length; i++) {
-	            stringList.add(options[i]);
+	        for(int i = 0; i < wifiOptions.length; i++) {
+	            stringList.add(wifiOptions[i]);
 	        }
 	        radioGroup = (RadioGroup) radioSelectionDialog.findViewById(R.id.radio_group);
 
 	            for(int i=0;i<stringList.size();i++){
 	                RadioButton rb = new RadioButton(this); // dynamically creating RadioButton and adding to RadioGroup.
-	                radioGroup.addView(rb);
-					if(isWifi && i == 0)
-						rb.setChecked(true);
-					else
-						rb.setChecked(true);
 					rb.setText(stringList.get(i));
+//					if(isWifi && i == 0)
+//						rb.setChecked(true);
+//					else
+//						rb.setChecked(true);
+					radioGroup.addView(rb);
 				}
 	        radioGroup.setOnCheckedChangeListener(this);
 	        ((TextView) radioSelectionDialog.findViewById(R.id.id_cancel)).setOnClickListener(this);
@@ -309,11 +322,21 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
         	   System.out.println("selected RadioButton->"+btn.getText().toString());
         	   if(selectionType == BACK_UP_SETTING) {
 				   backupSettingTxt.setText(btn.getText().toString());
-				   backupOn = checkedId;
+				   //{"Never", "Only when I tap \"Back up\"", "Daily", "Weekly", "Monthly"};
+				   if(btn.getText().toString().equalsIgnoreCase(backupOptions[0]))
+				  	 backupOn = 0;
+				   else if(btn.getText().toString().equalsIgnoreCase(backupOptions[1]))
+					   backupOn = 1;
+				   else if(btn.getText().toString().equalsIgnoreCase(backupOptions[2]))
+					   backupOn = 2;
+				   else if(btn.getText().toString().equalsIgnoreCase(backupOptions[3]))
+					   backupOn = 3;
+				   else if(btn.getText().toString().equalsIgnoreCase(backupOptions[4]))
+					   backupOn = 4;
 			   }
         	   else if(selectionType == BACK_UP_NETWORK_SETTING) {
 				   backupNetworkSettingTxt.setText(btn.getText().toString());
-				   if(checkedId == 0)
+				   if(btn.getText().toString().equalsIgnoreCase(wifiOptions[0]))
 					   isWifi = true;
 				   else
 					   isWifi = false;
