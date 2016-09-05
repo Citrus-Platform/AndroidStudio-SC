@@ -90,6 +90,10 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
 	boolean regAsAdmin;
 	boolean tempVerify;
 	String displayName;
+	ArrayList<String> ownerDomainDisplayNameSet = new ArrayList<String>();
+	ArrayList<String> invitedDomainDisplayNameSet = new ArrayList<String>();
+	ArrayList<String> joinedDomainDisplayNameSet = new ArrayList<String>();
+
 	ArrayList<String> ownerDomainNameSet = new ArrayList<String>();
 	ArrayList<String> invitedDomainNameSet = new ArrayList<String>();
 	ArrayList<String> joinedDomainNameSet = new ArrayList<String>();
@@ -517,7 +521,7 @@ public void onDestroy(){
 
 			@Override
 			public void onSuccess(int arg0, String arg1) {
-				Log.i(TAG, "verifyCode :: onSuccess : onSuccess Data : " + arg1);
+				System.out.println("verifyCode :: onSuccess : onSuccess Data : " + arg1);
 				Gson gson = new GsonBuilder().create();
 				final RegMatchCodeModel objUserModel = gson.fromJson(arg1, RegMatchCodeModel.class);
 				if (objUserModel.iStatus != null

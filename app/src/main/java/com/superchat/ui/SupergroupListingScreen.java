@@ -1,51 +1,6 @@
 
 package com.superchat.ui;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.chat.sdk.db.ChatDBWrapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.data.db.DBWrapper;
-import com.superchat.model.ErrorModel;
-import com.superchat.model.RegMatchCodeModel;
-import com.superchat.model.RegistrationForm;
-import com.superchat.ui.BulkInvitationAdapter.AppContact;
-import com.superchat.utils.AppUtil;
-import com.superchat.utils.BitmapDownloader;
-import com.superchat.utils.Constants;
-import com.superchat.utils.ProfilePicUploader;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.utils.Utilities;
-import com.superchat.widgets.RoundedImageView;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -58,7 +13,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.media.ExifInterface;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -95,6 +49,50 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.data.db.DBWrapper;
+import com.superchat.model.ErrorModel;
+import com.superchat.model.RegMatchCodeModel;
+import com.superchat.model.RegistrationForm;
+import com.superchat.ui.BulkInvitationAdapter.AppContact;
+import com.superchat.utils.AppUtil;
+import com.superchat.utils.BitmapDownloader;
+import com.superchat.utils.Constants;
+import com.superchat.utils.ProfilePicUploader;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.Utilities;
+import com.superchat.widgets.RoundedImageView;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
 public class SupergroupListingScreen extends Activity implements OnClickListener, OnItemClickListener{
 	private static final String TAG = "SupergroupListingScreen";
 	 HashMap<String ,AppContact> allContacts = new HashMap<String,AppContact>();
@@ -108,10 +106,15 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 	 Button joinAsMember, createSG;
 	 String superGroupName = "";
 	 String displayName = null;
+	String selectedSGDisplayName = null;
 	 ExpandableListView expandableListView;
 	    ExpandableListAdapter expandableListAdapter;
 	    List<String> expandableListTitle;
 	    HashMap<String, List<String>> expandableListDetail;
+	    ArrayList<String> ownerDomainDisplayNameSet = null;
+		ArrayList<String> invitedDomainDisplayNameSet = null;
+		ArrayList<String> joinedDomainDisplayNameSet = null;
+
 	    ArrayList<String> ownerDomainNameSet = null;
 		ArrayList<String> invitedDomainNameSet = null;
 		ArrayList<String> joinedDomainNameSet = null;
@@ -162,49 +165,6 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 					e.printStackTrace();
 				}
 			 }
-//			 if(!newUser && size == 1){
-//				 //Directly go for registration to that supergroup
-//				 setContentView(R.layout.sg_new_user);
-//				 if(ownerDomainNameSet != null && ownerDomainNameSet.size() == 1)
-//					 superGroupName = ownerDomainNameSet.get(0);
-//				 else if(joinedDomainNameSet != null && joinedDomainNameSet.size() == 1)
-//					 superGroupName = joinedDomainNameSet.get(0);
-//				 else if(invitedDomainNameSet != null && invitedDomainNameSet.size() == 1)
-//					 superGroupName = invitedDomainNameSet.get(0);
-//				 singleEntry = true;
-////				 ((EditText)findViewById(R.id.id_sg_name_field)).setText(superGroupName);
-////				 registerUserOnServer(superGroupName, listView);
-//				 
-//				 	String sg_name = superGroupName;
-//	                String inviter = null;
-//	                String file_id = null;
-//	                try {
-//	    				JSONObject json = new JSONObject(superGroupName);
-//	    				if(json != null && json.has("domainName")){
-//	    					sg_name = json.getString("domainName");
-//	    					superGroupName = sg_name;
-//	    				}
-//	    				else
-//	    					sg_name = superGroupName;
-//	    				if(json != null && json.has("adminName"))
-//	    					inviter = json.getString("adminName");
-//	    				else
-//	    					inviter = null;
-//	    				if(json != null && json.has("logoFileId"))
-//	    					file_id = json.getString("logoFileId");
-//	    				else
-//	    					file_id = null;
-//	    			} catch (JSONException e) {
-//	    				// TODO Auto-generated catch block
-//	    				e.printStackTrace();
-//	    			}
-//	             ((EditText)findViewById(R.id.id_sg_name_field)).setText(sg_name);
-//	             if(ownerDomainNameSet != null && ownerDomainNameSet.size() == 1)
-//	            	 showWelcomeScreen(sg_name, inviter, file_id, 2);
-//	             else
-//	            	 showWelcomeScreen(sg_name, inviter, file_id, 3);
-//				 
-//			 }else 
 			 if(size > 0){
 					 if(ownerDomainNameSet != null && ownerDomainNameSet.size() >= 1){
 						 if(joinedDomainNameSet != null && joinedDomainNameSet.contains(ownerDomainNameSet.get(0).toString()))
@@ -252,7 +212,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
  		        		return false;
  		        	}
  		        	String text = domaine_name.getText().toString();
- 		        	registerUserOnServer(text, view);
+ 		        	registerUserOnServer(text, selectedSGDisplayName, view);
  		            return true;
  		        }
  		        return false;
@@ -276,6 +236,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 						newUser = true;
 					
 					JSONObject json;
+					String sg_display_name;
 					String sg_name;
 					String inviter = null;
 		            String file_id = null;
@@ -294,6 +255,10 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 					    					inviter = json.getString("adminName");
 					    				else
 					    					inviter = null;
+										if(json != null && json.has("displayName"))
+											sg_display_name = json.getString("displayName");
+										else
+											sg_display_name = sg_name;
 					    				if(json != null && json.has("logoFileId"))
 					    					file_id = json.getString("logoFileId");
 					    				else
@@ -307,7 +272,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 					    				else
 					    					domainType = null;
 					    				sg_found = true;
-										showWelcomeScreen(superGroupName, inviter, org_name, file_id, 1,domainType);
+										showWelcomeScreen(superGroupName,sg_display_name, inviter, org_name, file_id, 1,domainType);
 										break;
 									}
 								}
@@ -333,6 +298,10 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 					    					inviter = json.getString("adminName");
 					    				else
 					    					inviter = null;
+										if(json != null && json.has("displayName"))
+											sg_display_name = json.getString("displayName");
+										else
+											sg_display_name = sg_name;
 					    				if(json != null && json.has("logoFileId"))
 					    					file_id = json.getString("logoFileId");
 					    				else
@@ -346,7 +315,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 					    				else
 					    					domainType = null;
 					    				sg_found = true;
-										showWelcomeScreen(superGroupName, inviter, org_name, file_id, 2,domainType);
+										showWelcomeScreen(superGroupName, sg_display_name, inviter, org_name, file_id, 2,domainType);
 										break;
 									}
 								}
@@ -372,6 +341,10 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 					    					inviter = json.getString("adminName");
 					    				else
 					    					inviter = null;
+										if(json != null && json.has("displayName"))
+											sg_display_name = json.getString("displayName");
+										else
+											sg_display_name = sg_name;
 					    				if(json != null && json.has("logoFileId"))
 					    					file_id = json.getString("logoFileId");
 					    				else
@@ -385,7 +358,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 					    				else
 					    					domainType = null;
 					    				sg_found = true;
-										showWelcomeScreen(superGroupName, inviter, org_name, file_id, 3,domainType);
+										showWelcomeScreen(superGroupName, sg_display_name, inviter, org_name, file_id, 3,domainType);
 										break;
 									}
 								}
@@ -406,7 +379,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 			        		return;
 			        	}
 			        	String text = domaine_name.getText().toString();
-			        	registerUserOnServer(text, view);
+			        	registerUserOnServer(text, selectedSGDisplayName, view);
 					}
 			}
 		});
@@ -445,9 +418,6 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 	
 		            @Override
 		            public void onGroupExpand(int groupPosition) {
-//		                Toast.makeText(getApplicationContext(),
-//		                        expandableListTitle.get(groupPosition) + " List Expanded.",
-//		                        Toast.LENGTH_SHORT).show();
 		            	String title_name = expandableListTitle.get(groupPosition);
 		            	if(title_name.startsWith("Invited SuperGroups")){
 		            		expandableListAdapter.setExpandedType(ExpandableListAdapter.INVITED_SUPERGROUPS);
@@ -480,6 +450,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 //		                ).show();
 		                superGroupName = expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition);
 		                String sg_name = superGroupName;
+		                String sg_display_name = superGroupName;
 		                String title_name = expandableListTitle.get(groupPosition);
 		                String inviter = null;
 		                String file_id = null;
@@ -493,6 +464,8 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 		    				}
 		    				else
 		    					sg_name = superGroupName;
+							if(json != null && json.has("displayName"))
+								sg_display_name = json.getString("displayName");
 		    				if(json != null && json.has("adminName"))
 		    					inviter = json.getString("adminName");
 		    				else
@@ -516,12 +489,12 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 //		                registerUserOnServer(superGroupName, v);
 		                if(title_name.startsWith("Invited SuperGroups")){
 		                	newUser = true;
-		                	showWelcomeScreen(sg_name, inviter, org_name, file_id, 1,domainType);
+		                	showWelcomeScreen(sg_name, sg_display_name, inviter, org_name, file_id, 1,domainType);
 		                }
 		                else if(title_name.startsWith("Owned SuperGroups"))
-		                	showWelcomeScreen(sg_name, inviter, org_name, file_id, 2,domainType);
+		                	showWelcomeScreen(sg_name, sg_display_name, inviter, org_name, file_id, 2,domainType);
 		                else
-		                	showWelcomeScreen(sg_name, inviter, org_name, file_id, 3,domainType);
+		                	showWelcomeScreen(sg_name,sg_display_name, inviter, org_name, file_id, 3,domainType);
 		                return false;
 		            }
 		        });   
@@ -551,7 +524,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 		bteldialog.show();
 	}
 	Dialog welcomeDialog = null;
-    public void showWelcomeScreen(final String supergroup_name, final String inviter_name, final String org_name, final String file_id, final int type, final String domainType) {
+    public void showWelcomeScreen(final String supergroup_name, final String sg_display_name, final String inviter_name, final String org_name, final String file_id, final int type, final String domainType) {
     	SharedPrefManager.getInstance().setDomainType(domainType);
     	welcomeDialog = new Dialog(this,android.R.style.Theme_Black_NoTitleBar);
     	welcomeDialog.setCanceledOnTouchOutside(false);
@@ -566,7 +539,8 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 		picChooserDialog.findViewById(R.id.id_remove).setVisibility(View.GONE);
 		picChooserDialog.findViewById(R.id.id_camera).setOnClickListener(this);
 		picChooserDialog.findViewById(R.id.id_gallery).setOnClickListener(this);
-		((TextView)welcomeDialog.findViewById(R.id.id_domain_name)).setText(supergroup_name);
+//		((TextView)welcomeDialog.findViewById(R.id.id_domain_name)).setText(supergroup_name);
+		((TextView)welcomeDialog.findViewById(R.id.id_domain_name)).setText(sg_display_name);
 		if(type == 1)
 			((TextView)welcomeDialog.findViewById(R.id.id_inviters_name)).setText(""+inviter_name);
 		else if(type == 2){
@@ -595,9 +569,9 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				if(type != 2 && type != 3)
-					showNameDialog();
+					showNameDialog(sg_display_name);
 				else
-				registerUserOnServer(supergroup_name, v);
+					registerUserOnServer(supergroup_name, sg_display_name, v);
 			}
 		});
 		((TextView)welcomeDialog.findViewById(R.id.id_back)).setOnClickListener(new OnClickListener() {
@@ -857,7 +831,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 		bteldialog.show();
 	}
 
-private void registerUserOnServer(String super_group, View view){
+private void registerUserOnServer(String super_group,String sg_display_name, View view){
 	String imei = SuperChatApplication.getDeviceId();
 	String imsi = SuperChatApplication.getNetworkOperator();
 	String version = "";
@@ -871,6 +845,7 @@ private void registerUserOnServer(String super_group, View view){
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
+	selectedSGDisplayName = sg_display_name;
 	String clientVersion = "Android_"+version;
 	RegistrationForm registrationForm = new RegistrationForm(mobileNumber, "normal",imei, imsi, clientVersion);
 	registrationForm.setToken(imei);
@@ -1131,6 +1106,8 @@ class SuperGroupListingAdapter extends BaseAdapter {
 											}
 											Log.i(TAG, "SignupTaskOnServer :: password, mobileNumber: " + regObj.getPassword()+" , "+regObj.iMobileNumber);
 											iPrefManager.saveUserDomain(superGroupName);
+											if(selectedSGDisplayName != null)
+												iPrefManager.saveCurrentSGDisplayName(selectedSGDisplayName);
 											iPrefManager.saveAuthStatus(regObj.iStatus);
 											if(regObj.token != null)
 												iPrefManager.saveDeviceToken(regObj.token);
@@ -1178,6 +1155,7 @@ class SuperGroupListingAdapter extends BaseAdapter {
 						if(citrusError!=null && citrusError.code.equals("20019") ){
 							SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
 							iPrefManager.saveUserDomain(superGroupName);
+							iPrefManager.saveCurrentSGDisplayName(superGroupName);
 							iPrefManager.saveUserId(errorModel.userId);
 							//below code should be only, in case of brand new user - "First time SC user"
 							iPrefManager.setAppMode("SecondMode");
@@ -1259,7 +1237,7 @@ class SuperGroupListingAdapter extends BaseAdapter {
 		});
 		bteldialog.show();
 	}
-	public void showNameDialog() {
+	public void showNameDialog(final String sg_display_name) {
 		final Dialog bteldialog = new Dialog(this);
 		bteldialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		bteldialog.setCanceledOnTouchOutside(false);
@@ -1275,7 +1253,7 @@ class SuperGroupListingAdapter extends BaseAdapter {
 					return false;
 				}
 				bteldialog.cancel();
-				registerUserOnServer(superGroupName, v);
+				registerUserOnServer(superGroupName, sg_display_name, v);
 				return false;
 			}
 		});
@@ -1479,6 +1457,7 @@ class SuperGroupListingAdapter extends BaseAdapter {
 	        String expandedListText = (String) getChild(listPosition, expandedListPosition);
 	        String title_name = (String) getGroup(listPosition);
 	        String sg_name = expandedListText;
+	        String sg_display_name = null;
 	        String inviter = null;;
 	        String logoFileId = null;;
 	        try {
@@ -1487,6 +1466,10 @@ class SuperGroupListingAdapter extends BaseAdapter {
 					sg_name = json.getString("domainName");
 				else
 					sg_name = expandedListText;
+				if(json != null && json.has("displayName"))
+					sg_display_name = json.getString("displayName");
+				else
+					sg_display_name = sg_name;
 				if(json != null && json.has("adminName"))
 					inviter = json.getString("adminName");
 				else
@@ -1507,7 +1490,8 @@ class SuperGroupListingAdapter extends BaseAdapter {
 	        TextView expandedListTextView = (TextView) convertView .findViewById(R.id.expandedListItem);
 	        TextView invited_by = (TextView) convertView .findViewById(R.id.invited_by);
 	        ImageView groupView = (ImageView) convertView .findViewById(R.id.contact_icon);
-	        expandedListTextView.setText(sg_name);
+//	        expandedListTextView.setText(sg_name);
+	        expandedListTextView.setText(sg_display_name);
 	        if(inviter != null && title_name != null){
 		        if(title_name.startsWith("Invited SuperGroups")){
 		        	invited_by.setText("Invited by "+inviter);
@@ -1626,6 +1610,7 @@ class SuperGroupListingAdapter extends BaseAdapter {
 			if(data != null){
 				Log.i(TAG, "GetSuperGroupProfile :: onPostExecute : response data - "+data);
 				 if(data.contains("success")){
+					 	String sg_display_name = null;
 					 	String sg_name = null;
 		                String inviter = null;
 		                String file_id = null;
@@ -1640,6 +1625,10 @@ class SuperGroupListingAdapter extends BaseAdapter {
 		    				}
 		    				else
 		    					sg_name = null;
+							if(json != null && json.has("displayName"))
+								sg_display_name = json.getString("displayName");
+							else
+								sg_display_name =sg_name;
 		    				if(json != null && json.has("adminName"))
 		    					inviter = json.getString("adminName");
 		    				else
@@ -1669,7 +1658,7 @@ class SuperGroupListingAdapter extends BaseAdapter {
 		                if(privacy_type != null && privacy_type.equalsIgnoreCase("closed"))
 		                	showDialog("For this SuperGroup to join, you need an invitation. Else you can't join this SuperGroup.");
 		                else
-		                	showWelcomeScreen(superGroupName, inviter, org_name, file_id, 0,domainType);
+		                	showWelcomeScreen(superGroupName,sg_display_name, inviter, org_name, file_id, 0,domainType);
 	            }else if(data.contains("error")){
 	            	Gson gson = new GsonBuilder().create();
 					ErrorModel errorModel = gson.fromJson(data, ErrorModel.class);

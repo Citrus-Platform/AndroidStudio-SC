@@ -435,7 +435,7 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener{/
 				showDialog(getResources().getString(R.string.first_time_gp_creation_alert));
 		}
 		if(superGroupName != null)
-			superGroupName.setText(SharedPrefManager.getInstance().getUserDomain());
+			superGroupName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
 		if(superGroupIcon != null)
 			setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
 	}

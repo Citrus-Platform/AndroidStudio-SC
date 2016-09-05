@@ -1749,6 +1749,7 @@ public class MainActivity extends FragmentActivity implements
 											iPrefManager.saveUserId(regObj.iUserId);
 											if(!tempVerify){
 												iPrefManager.saveUserDomain(domainNameView.getText().toString());
+												iPrefManager.saveCurrentSGDisplayName(domainNameView.getText().toString());
 	//											iPrefManager.saveUserName("m"+regObj.iMobileNumber.replace("-", ""));
 	//											iPrefManager.saveSipServerAddress(iPrefManager.getDisplayName()+"@"+Constants.CHAT_SERVER_URL+":5060");
 												iPrefManager.saveAuthStatus(regObj.iStatus);
@@ -1812,6 +1813,7 @@ public class MainActivity extends FragmentActivity implements
 							iPrefManager.saveUserId(errorModel.userId);
 							if(!tempVerify){
 								iPrefManager.saveUserDomain(domainNameView.getText().toString());
+								iPrefManager.saveCurrentSGDisplayName(domainNameView.getText().toString());
 								//below code should be only, in case of brand new user - "First time SC user"
 								iPrefManager.setAppMode("SecondMode");
 	//							iPrefManager.saveUserPhone(regObj.iMobileNumber);
@@ -1916,6 +1918,7 @@ public class MainActivity extends FragmentActivity implements
 								iPrefManager.saveUserId(regObj.iUserId);
 								if(!tempVerify){
 									iPrefManager.saveUserDomain(domainNameView.getText().toString());
+									iPrefManager.saveCurrentSGDisplayName(domainNameView.getText().toString());
 									iPrefManager.saveUserEmail(adminEmail.getText().toString());
 									if(regAsAdmin && disp_name != null)
 										iPrefManager.saveDisplayName(disp_name);

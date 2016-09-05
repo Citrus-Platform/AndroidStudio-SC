@@ -12,7 +12,7 @@
         android:background="@color/header_footer_color" >
 
         <TextView
-            android:id="@+id/about_back"
+            android:id="@+id/back_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"

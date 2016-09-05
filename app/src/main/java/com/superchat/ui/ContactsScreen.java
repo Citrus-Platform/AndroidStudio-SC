@@ -1,14 +1,40 @@
 package com.superchat.ui;
 
-import java.io.File;
-import java.io.IOException;
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.IBinder;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.ListFragment;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.chat.sdk.ChatService;
 import com.chat.sdk.ConnectionStatusListener;
 import com.chat.sdk.ProfileUpdateListener;
 import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
 import com.superchat.R;
-import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
 import com.superchat.data.db.DatabaseConstants;
 import com.superchat.utils.BitmapDownloader;
@@ -18,38 +44,10 @@ import com.superchat.utils.SharedPrefManager;
 import com.superchat.widgets.ContactsAdapter;
 import com.superchat.widgets.RoundedImageView;
 
-import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
+import java.io.File;
+import java.io.IOException;
+
 //import android.app.ListFragment;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
-import android.media.ThumbnailUtils;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.IBinder;
-import android.provider.ContactsContract;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.ListFragment;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 
 public class ContactsScreen extends ListFragment implements ConnectionStatusListener, ProfileUpdateListener, OnClickListener{
 	public static final String TAG = "ContactsFragment";
@@ -292,7 +290,7 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
 			HomeScreen.refreshContactList = false;
 		}
 		if(superGroupName != null)
-			superGroupName.setText(SharedPrefManager.getInstance().getUserDomain());
+			superGroupName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
 		if(superGroupIcon != null)
 			setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
 //		showAllContacts();

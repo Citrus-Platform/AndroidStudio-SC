@@ -1,27 +1,5 @@
 package com.superchat.ui;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import com.chat.sdk.ChatCountListener;
-import com.chat.sdk.ChatService;
-import com.chat.sdk.ConnectionStatusListener;
-import com.chat.sdk.ProfileUpdateListener;
-import com.chat.sdk.db.ChatDBConstants;
-import com.chat.sdk.db.ChatDBWrapper;
-import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.data.db.DatabaseConstants;
-import com.superchat.utils.BitmapDownloader;
-import com.superchat.utils.Constants;
-import com.superchat.utils.Log;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.widgets.ChatHomeAdapter;
-import com.superchat.widgets.RoundedImageView;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -33,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -57,6 +34,28 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.chat.sdk.ChatCountListener;
+import com.chat.sdk.ChatService;
+import com.chat.sdk.ConnectionStatusListener;
+import com.chat.sdk.ProfileUpdateListener;
+import com.chat.sdk.db.ChatDBConstants;
+import com.chat.sdk.db.ChatDBWrapper;
+import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.data.db.DatabaseConstants;
+import com.superchat.utils.BitmapDownloader;
+import com.superchat.utils.Constants;
+import com.superchat.utils.Log;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.widgets.ChatHomeAdapter;
+import com.superchat.widgets.RoundedImageView;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ChatHome extends ListFragment  implements ChatCountListener,ConnectionStatusListener, ProfileUpdateListener, OnClickListener{//,TypingListener {
 	public static final String TAG = "ChatFragment";
@@ -483,7 +482,7 @@ public class ChatHome extends ListFragment  implements ChatCountListener,Connect
 //			service.setTypingListener(this);
 		setProfileListener();
 		if(superGroupName != null)
-			superGroupName.setText(SharedPrefManager.getInstance().getUserDomain());
+			superGroupName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
 		if(superGroupIcon != null)
 			setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
 		super.onResume();

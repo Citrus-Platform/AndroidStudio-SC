@@ -1544,6 +1544,7 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 			else
 				new GetVersionCode().execute();
 		}
+
 //			if(firstTimeAdmin){
 //				firstTimeAdmin = false;
 //				AlertDialog alertDialog =  new AlertDialog.Builder(HomeScreen.this).create();
@@ -1571,7 +1572,7 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 			 String data = null;
 		    try {
 //		    	String url = Constants.SERVER_URL + "/tiger/rest/admin/domain/check?domainName="+URLEncoder.encode(domain_name, "UTF-8");
-		    	String url = "http://superchat3c.com/tiger/rest/user/profile/getbackup";
+		    	String url = Constants.SERVER_URL + "/tiger/rest/user/profile/getbackup";
 		    	Log.i(TAG, "CheckAvailability :: doInBackground : URL - "+url);
 		        HttpPost httppost = new HttpPost(url);
 		        httppost = SuperChatApplication.addHeaderInfo(httppost,true);

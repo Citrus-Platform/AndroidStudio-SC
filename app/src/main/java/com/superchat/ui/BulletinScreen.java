@@ -507,7 +507,7 @@ public class BulletinScreen extends ListFragment  implements ChatCountListener,C
 //			service.setTypingListener(this);
 		setProfileListener();
 		if(superGroupName != null)
-			superGroupName.setText(SharedPrefManager.getInstance().getUserDomain());
+			superGroupName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
 		if(superGroupIcon != null)
 			setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
 		super.onResume();

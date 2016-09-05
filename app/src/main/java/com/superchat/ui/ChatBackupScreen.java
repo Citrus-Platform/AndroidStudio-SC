@@ -134,6 +134,15 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 //				return false;
 //			}
 //		});
+
+		(findViewById(R.id.back_id)).setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				finish();
+			}
+		});
 	}
 //=========================================================
 	public class GeneratePasswordTask extends AsyncTask<String, String, String> {
@@ -382,7 +391,9 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 			 String data = null;
 		    try {
 //		    	String url = Constants.SERVER_URL + "/tiger/rest/admin/domain/check?domainName="+URLEncoder.encode(domain_name, "UTF-8");
-		    	String url = "http://superchat3c.com/tiger/rest/user/profile/update";
+				//String url = Constants.SERVER_URL+ "/tiger/rest/user/genconsolepwd";
+//		    	String url = "http://superchat3c.com/tiger/rest/user/profile/update";
+		    	String url = Constants.SERVER_URL + "/tiger/rest/user/profile/update";
 		    	Log.i(TAG, "UploadDataBackup :: doInBackground : URL - "+url);
 		    	JSONObject jsonobj = new JSONObject();
 		    	jsonobj.put("backupFileId", backedUpFileID);

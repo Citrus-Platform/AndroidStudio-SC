@@ -1,57 +1,25 @@
 package com.superchat.ui;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.model.AdminRegistrationForm;
-import com.superchat.model.ErrorModel;
-import com.superchat.utils.AppUtil;
-import com.superchat.utils.BitmapDownloader;
-import com.superchat.utils.Constants;
-import com.superchat.utils.ProfilePicUploader;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.widgets.RoundedImageView;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -68,6 +36,43 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.chat.sdk.ChatService;
+import com.chatsdk.org.jivesoftware.smack.packet.Message;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.model.AdminRegistrationForm;
+import com.superchat.model.ErrorModel;
+import com.superchat.utils.AppUtil;
+import com.superchat.utils.BitmapDownloader;
+import com.superchat.utils.Constants;
+import com.superchat.utils.ProfilePicUploader;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.widgets.RoundedImageView;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SuperGroupProfileActivity extends Activity implements OnClickListener{
 	TextView superGroupName;
@@ -90,7 +95,8 @@ public class SuperGroupProfileActivity extends Activity implements OnClickListen
 	boolean isEditModeOn;
 	
 	//Edit Mode
-	TextView diaplayNameBox;
+	TextView sgRealNameBox;
+	TextView sgDisplayNameBox;
 	EditText orgNameBox;
 	EditText orgURLBox;
 	EditText sgDescriptionBox;
@@ -98,9 +104,10 @@ public class SuperGroupProfileActivity extends Activity implements OnClickListen
 	private RadioButton radioGroupType;
 	String privacyType = "closed";
 	int selectedId = 0;
-	
+
+	String sg_display_name = null;
 	//Values from profile
-	String sg_name = null;
+	String sg_real_name = null;
  	String org_name = null;
  	String org_URL = null;
  	String org_desc = null;
@@ -108,6 +115,22 @@ public class SuperGroupProfileActivity extends Activity implements OnClickListen
  	Dialog editProfile;
  	
  	final Pattern DOMAIN_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9][a-zA-z0-9_.]{1,50}$");
+
+	private ChatService messageService;
+	// private XMPPConnection xmppConnection;
+	private ServiceConnection mMessageConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder binder) {
+			messageService = ((ChatService.MyBinder) binder).getService();
+			com.superchat.utils.Log.d("Service", "Connected");
+			// xmppConnection = messageService.getconnection();
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			// xmppConnection = null;
+			messageService = null;
+		}
+	};
 	
 private static final String TAG = "SuperGroupProfileActivity";
 	@Override
@@ -127,36 +150,13 @@ private static final String TAG = "SuperGroupProfileActivity";
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				//View Image
 				fileID = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
-				String file_path = getImagePath(fileID);//AppUtil.capturedPath1;
-//				if(file_path == null || (file_path != null && file_path.trim().length() == 0))
-//					file_path = getImagePath(null);
-//				
-//				if(file_path != null)
-//				{
-//					Intent intent = new Intent();
-//					intent.setAction(Intent.ACTION_VIEW);
-//					if(file_path.startsWith("http://"))
-//						intent.setDataAndType(Uri.parse(file_path), "image/*");
-//					else
-//						intent.setDataAndType(Uri.parse("file://" + file_path), "image/*");
-//					startActivity(intent);
-//				}
+				String file_path = getImagePath(fileID);
 				 if(fileID!=null && !fileID.equals(""))
 						SuperChatApplication.removeBitmapFromMemCache(fileID);
 				if(file_path != null && !file_path.equals("") && !file_path.contains("clear"))
 				{
-//					Intent intent = new Intent();
-//					intent.setAction(Intent.ACTION_VIEW);
-//					if(file_path.startsWith("http://"))
-//						intent.setDataAndType(Uri.parse(file_path), "image/*");
-//					else
-//						intent.setDataAndType(Uri.parse("file://" + file_path), "image/*");
-//					((HomeScreen) context).startActivity(intent);
-					
 					if(fileID!=null && !fileID.equals("")){
-//						SuperChatApplication.removeBitmapFromMemCache(fileId);
 					if (Build.VERSION.SDK_INT >= 11)
 						new BitmapDownloader(SuperGroupProfileActivity.this,(ImageView)v).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,fileID,BitmapDownloader.PIC_VIEW_REQUEST);
 		             else
@@ -200,13 +200,23 @@ private static final String TAG = "SuperGroupProfileActivity";
 					finish();
 			}
 		});
-		superGroupDisplayName.setText(SharedPrefManager.getInstance().getUserDomain());
+		superGroupDisplayName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
 		String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
 		if(file_id != null && file_id.trim().length() > 0){
 			setProfilePic(superGroupIconView, file_id);
 		}
 //		setProfilePic(ownerImageView, SharedPrefManager.getInstance().getUserFileId(SharedPrefManager.getInstance().getUserName()));
 		new GetSuperGroupProfile(SharedPrefManager.getInstance().getUserDomain()).execute();
+	}
+
+	public void onResume() {
+		super.onResume();
+		bindService(new Intent(this, ChatService.class), mMessageConnection, Context.BIND_AUTO_CREATE);
+	}
+
+	public void onPause() {
+		super.onPause();
+		unbindService(mMessageConnection);
 	}
 	
 	@Override
@@ -223,8 +233,10 @@ private static final String TAG = "SuperGroupProfileActivity";
 		}
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		isEditModeOn = false;
-		if(sg_name != null)
-			superGroupName.setText(sg_name);
+//		if(sg_real_name != null)
+//			superGroupName.setText(sg_real_name);
+		if(superGroupName != null)
+			superGroupName.setText(sg_display_name);
 		if(org_desc != null && !org_desc.equals("")){
 			aboutLabelView.setVisibility(View.VISIBLE);
 			sgDescriptionLayout.setVisibility(View.VISIBLE);
@@ -249,8 +261,9 @@ private static final String TAG = "SuperGroupProfileActivity";
 			editProfile = new Dialog(this,android.R.style.Theme_Black_NoTitleBar);
 			editProfile.setCanceledOnTouchOutside(false);
 			editProfile.setContentView(R.layout.supergroup_profile_edit);
-			
-			diaplayNameBox = (TextView)editProfile.findViewById(R.id.id_sg_display_name_box);
+
+			sgDisplayNameBox = (EditText)editProfile.findViewById(R.id.id_sg_display_name);
+			sgRealNameBox = (TextView)editProfile.findViewById(R.id.id_sg_real_name_box);
 			sgDescriptionBox = (EditText)editProfile.findViewById(R.id.id_desc_message);
 			orgNameBox = (EditText)editProfile.findViewById(R.id.id_org_name);
 			orgURLBox = (EditText)editProfile.findViewById(R.id.id_org_url);
@@ -280,8 +293,46 @@ private static final String TAG = "SuperGroupProfileActivity";
     		if(file_id != null && file_id.trim().length() > 0){
     			setProfilePic(superGroupIconView, file_id);
     		}
-			if(sg_name != null)
-				diaplayNameBox.setText(sg_name);
+
+//			if(superGroupDisplayName != null)
+//				superGroupDisplayName.addTextChangedListener(new TextWatcher() {
+//
+//					@Override
+//					public void onTextChanged(CharSequence s, int start, int before, int count) {
+//						// TODO Auto-generated method stub
+//
+//					}
+//
+//					@Override
+//					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//						// TODO Auto-generated method stub
+////						domainNameBefore = s.toString();
+//					}
+//
+//					@Override
+//					public void afterTextChanged(Editable s) {
+//						// TODO Auto-generated method stub
+////						if(validateInputForRegistration(false)){
+////							if(nextButton != null)
+////								nextButton.setVisibility(View.VISIBLE);
+////							else
+////								nextButton.setVisibility(View.GONE);
+////						}
+//						//Check here for available supergroup name
+//						String address = superGroupDisplayName.getText().toString();
+//						if(address.contains(" "))
+//							address = address.replace(" ", "");
+//						if(checkName(address))
+//							superGroupDisplayName.setText(address);
+//						else
+//							superGroupDisplayName.setText(superGroupDisplayName);
+//					}
+//				});
+
+			if(sg_display_name != null)
+				sgDisplayNameBox.setText(sg_display_name);
+			if(sg_real_name != null)
+				sgRealNameBox.setText(sg_real_name);
 			if(org_URL != null)
 				orgURLBox.setText(org_URL);
 			if(org_name != null)
@@ -370,13 +421,22 @@ private static final String TAG = "SuperGroupProfileActivity";
 		                String member_count = null;
 		                try {
 		    				JSONObject json = new JSONObject(data);
+							if(json != null && json.has("displayName")){
+								sg_display_name = json.getString("displayName");
+								superGroupDisplayName.setText(sg_display_name);
+//								superGroupName.setText("Permanent Name : "+sg_display_name);
+							}
+							else
+								sg_display_name = null;
+
 		    				if(json != null && json.has("domainName")){
-		    					sg_name = json.getString("domainName");
-		    					superGroupDisplayName.setText(sg_name);
-		    					superGroupName.setText("Permanent Name : "+sg_name);
+								sg_real_name = json.getString("domainName");
+//		    					superGroupDisplayName.setText(sg_real_name);
+		    					superGroupName.setText("Permanent Name : "+sg_real_name);
 		    				}
 		    				else
-		    					sg_name = null;
+								sg_real_name = null;
+
 		    				if(json != null && json.has("adminName"))
 		    					inviter = json.getString("adminName");
 		    				else
@@ -719,15 +779,27 @@ private static final String TAG = "SuperGroupProfileActivity";
 		switch(v.getId()){
 		case R.id.id_done_btn:
 		case R.id.id_done_btn_bottom:
-			if(!checkUserDomainName(diaplayNameBox.getText().toString())){
+			if(sgDisplayNameBox != null && sgDisplayNameBox.getText().toString().trim().length() < 3){
+				showDialog(getString(R.string.domain_display_name_validation_alert));
+				return;
+			}
+			if(sgDisplayNameBox != null && sgDisplayNameBox.getText().toString().trim().length() > 2 && !Character.isLetter(sgDisplayNameBox.getText().toString().trim().charAt(0))){
+				showDialog(getString(R.string.domain_display_name_validation_alert));
+				return;
+			}
+			if(!checkUserDomainName(sgRealNameBox.getText().toString())){
 				showDialog(getString(R.string.domain_validation_alert));
 				return;
 			}
 			String fileid = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
 			JSONObject finalJSONbject = new JSONObject();
 			try{
-				if(diaplayNameBox != null && diaplayNameBox.getText().toString().trim().length() > 0)
-					finalJSONbject.put("domainName", diaplayNameBox.getText().toString().trim());
+				if(sgDisplayNameBox != null && sgDisplayNameBox.getText().toString().trim().length() > 0) {
+					sg_display_name = sgDisplayNameBox.getText().toString().trim();
+					finalJSONbject.put("displayName", sg_display_name);
+				}
+				if(sgRealNameBox != null && sgRealNameBox.getText().toString().trim().length() > 0)
+					finalJSONbject.put("domainName", sgRealNameBox.getText().toString().trim());
 				if(sgDescriptionBox != null)// && sgDescriptionBox.getText().toString().trim().length() > 0)
 					finalJSONbject.put("description", sgDescriptionBox.getText().toString().trim());
 				if(orgNameBox != null)// && orgNameBox.getText().toString().trim().length() > 0)
@@ -791,6 +863,7 @@ private static final String TAG = "SuperGroupProfileActivity";
 			String url = Constants.SERVER_URL+ "/tiger/rest/admin/domain/update";
 			HttpPost httpPost = new HttpPost(url);
 			Log.i(TAG, "SignupTaskForAdmin :: doInBackground:  url:"+url);
+			System.out.println("Request :: "+requestJSON.toString());
 			 httpPost = SuperChatApplication.addHeaderInfo(httpPost, true);
 			HttpResponse response = null;
 			try {
@@ -834,6 +907,7 @@ private static final String TAG = "SuperGroupProfileActivity";
 				progressDialog.dismiss();
 				progressDialog = null;
 			}
+			System.out.println("Onpost str :: "+str);
 			if (str!=null && str.contains("error")){
 				Gson gson = new GsonBuilder().create();
 				ErrorModel errorModel = gson.fromJson(str,ErrorModel.class);
@@ -854,15 +928,38 @@ private static final String TAG = "SuperGroupProfileActivity";
 				} else
 					showDialog("Please try again later.");
 			}else{
-				sg_name = diaplayNameBox.getText().toString().trim();
+//				sg_display_name = superGroupDisplayName.getText().toString().trim();
+				//Save SG display name
+				SharedPrefManager prefManager = SharedPrefManager.getInstance();
+				prefManager.saveCurrentSGDisplayName(sg_display_name);
+				if(superGroupDisplayName != null)
+					superGroupDisplayName.setText(sg_display_name);
+				sg_real_name = sgRealNameBox.getText().toString().trim();
 			 	org_name = orgNameBox.getText().toString().trim();
 			 	org_URL = orgURLBox.getText().toString().trim();
 			 	org_desc = sgDescriptionBox.getText().toString().trim();
 			 	backToProfileView();
+				//Braodcast message to all
+				JSONObject finalJSONbject = new JSONObject();
+				if (superGroupDisplayName != null)
+					try {
+						if(superGroupDisplayName != null )
+							finalJSONbject.put("domainDisplayName", sg_display_name);
+						if (prefManager.getSGFileId("SG_FILE_ID") != null)
+							finalJSONbject.put("domainPicID", prefManager.getSGFileId("SG_FILE_ID"));
+						String json_txt = finalJSONbject.toString();
+						System.out.println("Final JSON :  " + json_txt);
+						messageService.sendSpecialMessageToAllDomainMembers(
+								prefManager.getUserDomain() + "-system", json_txt,
+								Message.XMPPMessageType.atMeXmppMessageTypeSGUpdate);
+						json_txt = null;
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+
 	    		//Show toast
-	    		JSONObject json;
 				try {
-					json = new JSONObject(str);
+					JSONObject json = new JSONObject(str);
 					if(json != null && json.has("message")){
 						Toast.makeText(getApplicationContext(), json.getString("message"), Toast.LENGTH_SHORT).show();
 					}

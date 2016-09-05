@@ -117,9 +117,37 @@
         android:gravity="center"
         android:orientation="vertical"
         android:padding="5dip" >
+
+		 <AutoCompleteTextView
+			 android:id="@+id/id_sg_display_name"
+			 android:layout_width="fill_parent"
+			 android:layout_height="wrap_content"
+			 android:layout_marginTop="3dp"
+			 android:background="@null"
+			 android:ems="10"
+			 android:hint="@string/creation_name_sg"
+			 android:imeOptions="actionDone"
+			 android:inputType="textCapWords"
+			 android:maxLength="100"
+			 android:padding="5dp"
+			 android:singleLine="true"
+			 android:textColor="@color/black"
+			 android:textSize="16sp"
+			 android:visibility="visible"
+			 android:textStyle="normal" >
+			 <requestFocus />
+		 </AutoCompleteTextView>
+		 <View
+			 android:id="@+id/view_sg_display_name"
+			 android:layout_width="fill_parent"
+			 android:layout_height="2dip"
+			 android:layout_below="@id/id_domain_name"
+			 android:layout_marginBottom="5dp"
+			 android:visibility="visible"
+			 android:background="@color/color_lite_blue" />
         
         <com.superchat.widgets.MyriadRegularTextView
-                android:id="@+id/id_sg_display_name_box"
+                android:id="@+id/id_sg_real_name_box"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"

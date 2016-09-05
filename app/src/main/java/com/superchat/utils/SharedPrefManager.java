@@ -47,6 +47,7 @@ public class SharedPrefManager {
 	private final String FIRST_TIME_APP = "mode"; // For Frash User
 	private final String USER_ID = "user_id";
 	private final String USER_DOMAIN = "user_domain";
+	private final String USER_DOMAIN_DISPLAY_NAME = "use_domain_display_name";
 	private final String USER_GENDER = "user_gender";
 	private final String USER_ORG_NAME = "org_name";
 	private final String SIP_SERVER = "sip_address";
@@ -1016,6 +1017,16 @@ public boolean isContactModified(){
 
 	public String getUserDomain() {
 		String value = pref.getString(USER_DOMAIN, "");
+		return value;
+	}
+
+	public void saveCurrentSGDisplayName(String domain) {
+		editor.putString(USER_DOMAIN_DISPLAY_NAME, domain);
+		editor.commit();
+	}
+
+	public String getCurrentSGDisplayName() {
+		String value = pref.getString(USER_DOMAIN_DISPLAY_NAME, "");
 		return value;
 	}
 	public void saveUserGender(String userName, String gender) {

@@ -326,6 +326,7 @@
     <string name="save_contact">Save Contact</string>
     <string name="save">Save</string>
     <string name="domain_validation_alert">Please enter valid SuperGroup name between 2 to 50 characters. Special characters and space not allowed.</string>
+    <string name="domain_display_name_validation_alert">Please enter valid SuperGroup display name between 2 to 50 characters. Domain name must start with a letter.</string>
     <string name="password_reason">(This password will be used to login on the web console.)</string>
     <string name="create_poll">Create Poll</string>
     <string name="option_1">1) </string>

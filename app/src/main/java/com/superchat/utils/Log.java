@@ -1,24 +1,3 @@
-/**
-
-
- *
-
-
-
-
-
-
-
- *
-
- 
-
-
- *
- 
-
- */
-
 package com.superchat.utils;
 
 public class Log {

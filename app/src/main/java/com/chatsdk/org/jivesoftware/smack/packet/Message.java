@@ -1149,7 +1149,11 @@ public class Message extends Packet {
 		/**
 		 * Chat message type to be shown in center like group update, create etc. - 31
 		 */
-		atMeXmppMessageTypeSpecialMessage
+		atMeXmppMessageTypeSpecialMessage,
+		/**
+		 * Chat message type to be sent for SG profile update - 32
+		 */
+		atMeXmppMessageTypeSGUpdate
 		;
 
 		public static XMPPMessageType fromString(String name) {

@@ -1259,7 +1259,27 @@ public class ChatService extends Service implements interfaceInstances {
                     }else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeRemoveSGSubAdmin.ordinal()){
                         prefManager.setAsDomainSubAdmin(false);
 						return;
-                    }else if(xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeDeactivateUser.ordinal()){
+                    }else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSGUpdate.ordinal()){
+						String captionTag  = message.getMediaTagMessage();
+						System.out.println("atMeXmppMessageTypeSGUpdate received : "+captionTag);
+						if(captionTag.contains("&quot;"))
+							captionTag = captionTag.replace("&quot;", "\"");
+						try {
+							JSONObject jsonobj = new JSONObject(captionTag);
+							if(jsonobj.has("domainDisplayName") && jsonobj.getString("domainDisplayName").toString().trim().length() > 0) {
+//								displayname = jsonobj.getString("domainDisplayName").toString();
+								prefManager.saveCurrentSGDisplayName(jsonobj.getString("domainDisplayName").toString());
+							}
+							if(jsonobj.has("domainPicID") && jsonobj.getString("domainPicID").toString().trim().length() > 0) {
+//								fileId = jsonobj.getString("domainPicID").toString();
+								prefManager.saveSGFileId("SG_FILE_ID", jsonobj.getString("domainPicID").toString());
+							}
+							jsonobj = null;
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						return;
+					}else if(xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeDeactivateUser.ordinal()){
 						Log.d(TAG, "atMeXmppMessageTypeDeactivateUser: User deactivated.");
 						String captionTag  = message.getMediaTagMessage();
 						prefManager.saveUserExistence(captionTag, false);
@@ -3994,7 +4014,7 @@ public class ChatService extends Service implements interfaceInstances {
 		msg.setStatusMessageType(Message.StatusMessageType.broadcast);
 		msg.setPacketID(UUID.randomUUID().toString());
 		msg.setBody("");
-		Log.i(TAG, "sendSpecialMessageToAllDomainMembers : Sent XML Packet: " + msg.toXML());
+		System.out.println("sendSpecialMessageToAllDomainMembers : Sent XML Packet: " + msg.toXML());
 		if (connection != null && connection.isConnected()
 				&& connection.isAuthenticated()) {
 			connection.sendPacket(msg);
