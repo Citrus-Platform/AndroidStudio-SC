@@ -450,7 +450,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 //		                ).show();
 		                superGroupName = expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition);
 		                String sg_name = superGroupName;
-		                String sg_display_name = superGroupName;
+		                String sg_display_name = null;
 		                String title_name = expandableListTitle.get(groupPosition);
 		                String inviter = null;
 		                String file_id = null;
@@ -466,6 +466,8 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 		    					sg_name = superGroupName;
 							if(json != null && json.has("displayName"))
 								sg_display_name = json.getString("displayName");
+							else
+								sg_display_name = sg_name;
 		    				if(json != null && json.has("adminName"))
 		    					inviter = json.getString("adminName");
 		    				else
@@ -1155,7 +1157,7 @@ class SuperGroupListingAdapter extends BaseAdapter {
 						if(citrusError!=null && citrusError.code.equals("20019") ){
 							SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
 							iPrefManager.saveUserDomain(superGroupName);
-							iPrefManager.saveCurrentSGDisplayName(superGroupName);
+							iPrefManager.saveCurrentSGDisplayName(selectedSGDisplayName);
 							iPrefManager.saveUserId(errorModel.userId);
 							//below code should be only, in case of brand new user - "First time SC user"
 							iPrefManager.setAppMode("SecondMode");
@@ -1490,8 +1492,10 @@ class SuperGroupListingAdapter extends BaseAdapter {
 	        TextView expandedListTextView = (TextView) convertView .findViewById(R.id.expandedListItem);
 	        TextView invited_by = (TextView) convertView .findViewById(R.id.invited_by);
 	        ImageView groupView = (ImageView) convertView .findViewById(R.id.contact_icon);
-//	        expandedListTextView.setText(sg_name);
-	        expandedListTextView.setText(sg_display_name);
+			if(sg_display_name != null && sg_display_name.trim().length() > 0)
+				expandedListTextView.setText(sg_display_name);
+			else
+	        	expandedListTextView.setText(sg_name);
 	        if(inviter != null && title_name != null){
 		        if(title_name.startsWith("Invited SuperGroups")){
 		        	invited_by.setText("Invited by "+inviter);
