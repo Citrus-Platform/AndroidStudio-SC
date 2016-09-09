@@ -343,6 +343,8 @@ public class BulletinScreen extends ListFragment  implements ChatCountListener,C
 	    	 }
 	    	 else{
 	    		 cursor = wraper.getBulletinList();
+				 if(cursor!=null && cursor.getCount() == 0)
+				 	cursor = wraper.getBulletinList(BULLETIN_ADMIN);
 	    		 if(cursor!=null && cursor.getCount() == 0){
 	    			 saveMessage(bulletinDomainName, bulletinDomainName, getString(R.string.bulleting_welcome1) + SharedPrefManager.getInstance().getUserDomain() + "'s" + getString(R.string.bulleting_welcome2));
 	    			 cursor = wraper.getBulletinList(BULLETIN_MEMBER);
@@ -388,14 +390,13 @@ public class BulletinScreen extends ListFragment  implements ChatCountListener,C
 			ChatDBWrapper dbwrapper = ChatDBWrapper.getInstance();
 			ContentValues contentvalues = new ContentValues();
 			String myName = SharedPrefManager.getInstance().getUserName();
-			contentvalues.put(DatabaseConstants.FROM_USER_FIELD, myName);
-			contentvalues.put(DatabaseConstants.TO_USER_FIELD, from);
+			contentvalues.put(DatabaseConstants.FROM_USER_FIELD, from);
+			contentvalues.put(DatabaseConstants.TO_USER_FIELD, myName);
 			contentvalues.put(DatabaseConstants.UNREAD_COUNT_FIELD, new Integer(1));
 			contentvalues.put(DatabaseConstants.FROM_GROUP_USER_FIELD, "");
 			contentvalues.put(DatabaseConstants.SEEN_FIELD, SeenState.sent.ordinal());
 			contentvalues.put(DatabaseConstants.MESSAGE_TYPE, 3);
 			contentvalues.put(DatabaseConstants.MESSAGE_TYPE_FIELD, 31);
-
 			contentvalues.put(DatabaseConstants.MESSAGEINFO_FIELD, msg);
 			// String name =
 			// cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD));
@@ -421,18 +422,17 @@ public class BulletinScreen extends ListFragment  implements ChatCountListener,C
 				calender.setTimeInMillis(milis);
 				oldDate = calender.get(Calendar.DATE);
 			}
-			if ((oldDate != date)
-					|| DBWrapper.getInstance().isFirstChat(oppName)) {
-				contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "1");
-			} else {
-				contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "0");
-			}
+//			if ((oldDate != date) || DBWrapper.getInstance().isFirstChat(oppName)) {
+//				contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "1");
+//			} else {
+//				contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "0");
+//			}
+			contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "1");
 //			AtMeApplication.dayValue = date;
 			contentvalues.put(DatabaseConstants.LAST_UPDATE_FIELD, currentTime);
 
 			contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
-			dbwrapper.insertInDB(DatabaseConstants.TABLE_NAME_MESSAGE_INFO,
-					contentvalues);
+			dbwrapper.insertInDB(DatabaseConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
 		} catch (Exception e) {
 
 		}

@@ -28,6 +28,7 @@ private static final String LOCAL_IP = "52.74.195.75";
 
 private static final String PRODUCTION_IP = "52.88.175.48";
 
+	public static final String 	LIVE_DOMAIN = "http://superchat3c.com";
 
 private static final String TMP_IP = "52.74.197.243";
 

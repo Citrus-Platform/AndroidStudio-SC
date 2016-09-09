@@ -754,7 +754,6 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
             objUserAdmin.setUserName(userNames);
 
             Call call = null;
-
             final boolean isSuperAdmin = isSuperSubAdmin(userNames, contentType);
             if (isSuperAdmin) {
                 call = objApi.getApi(context).removeAdmin(objUserAdmin);

@@ -101,6 +101,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -2163,6 +2164,12 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 //    		cancel();
 //    }
 //}
+
+    public void showDate(long yourmilliseconds){
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+        Date resultdate = new Date(yourmilliseconds);
+        System.out.println("Date => "+sdf.format(resultdate));
+    }
 	@Override
 	public void bindView(View view, Context context1, Cursor cursor) {
 		final ViewHolder viewholder = (ViewHolder) view.getTag();
@@ -2219,13 +2226,15 @@ public class ChatListAdapter extends SimpleCursorAdapter {
             url = viewholder.mediaLocalPath;
         }
         calander.setTimeInMillis(viewholder.time);
+//        System.out.println("[Time ] "+viewholder.time);
+//        showDate(viewholder.time);
         SimpleDateFormat format = new SimpleDateFormat("hh:mm aa");
         String msgTime = format.format(calander.getTime());
 
         final int date = calander.get(Calendar.DAY_OF_MONTH);
         final int month = calander.get(Calendar.MONTH);
         final int year = calander.get(Calendar.YEAR);
-        boolean bulletin_welcome = false;
+//        boolean bulletin_welcome = false;
 
 		/* For checking it is voice note or other message. */
         if (viewholder.messageType != XMPPMessageType.atMeXmppMessageTypePdf.ordinal()
@@ -2240,7 +2249,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 if (viewholder.message.startsWith("Welcome to ") && viewholder.message.endsWith("bulletin board ")) {
 //					viewholder.dateLayout.setVisibility(View.VISIBLE);
 //					viewholder.dateText.setText(viewholder.message);
-                    bulletin_welcome = true;
+//                    bulletin_welcome = true;
                 }
             }
         }
@@ -2249,7 +2258,9 @@ public class ChatListAdapter extends SimpleCursorAdapter {
         if (viewholder.isDateShow) {
             String tmp = "";
             if (viewholder.message != null && (viewholder.message.contains("added")
-                    || viewholder.message.contains("group created.") || viewholder.message.contains("created by ")))
+                    || viewholder.message.contains("group created.")
+                    || viewholder.message.contains("created by ")
+                    || viewholder.message.endsWith("bulletin board ")))
                 tmp = " \n " + viewholder.message;
             viewholder.leftRightCompositeView.setVisibility(View.VISIBLE);
             viewholder.dateLayout.setVisibility(View.VISIBLE);
@@ -2288,7 +2299,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
         int progressValue = 0;
 
         // My sent messages
-        if (viewholder.userName.equals(myUserName) && !bulletin_welcome) {
+        if (viewholder.userName.equals(myUserName)) {
             viewholder.leftFileLayout.setVisibility(View.GONE);
             viewholder.leftFileTypeView.setVisibility(View.GONE);
             viewholder.leftPersonPicLayout.setVisibility(View.GONE);
@@ -3204,7 +3215,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 viewholder.receiverCheckBox.setVisibility(View.GONE);
             }
 
-            if (isGroupChat || isSharedIDMessage) {
+            if (isGroupChat || isSharedIDMessage || isBulletinBroadcast) {
                 viewholder.receiverPersonName.setVisibility(View.VISIBLE);
                 String name = viewholder.groupMsgSenderName;
                 if (isSharedIDMessage && (iChatPref.isDomainAdminORSubAdmin()) || isSharedIDAdmin) {
@@ -4943,6 +4954,14 @@ public class ChatListAdapter extends SimpleCursorAdapter {
             } else {
                 Toast.makeText(context, "Please try after some time.", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+    //--------------------------------
+    public void updateList(){
+        if (isBulletinBroadcast) {
+            System.out.println("[updateList called..]");
+            swapCursor(ChatDBWrapper.getInstance().getUserChatList(chatName, CHAT_LIST_BULLETIN));
+            notifyDataSetChanged();
         }
     }
 }

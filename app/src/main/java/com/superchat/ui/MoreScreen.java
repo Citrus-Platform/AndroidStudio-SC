@@ -292,6 +292,8 @@ public class MoreScreen extends Activity implements OnClickListener {
 		super.onResume();
 //		setProfilePic();
 		setProfilePic(sharedPrefManager.getUserName());
+		if(aboutSuperGroupView != null)
+			aboutSuperGroupView.setText("About "+sharedPrefManager.getCurrentSGDisplayName());
 	}
 //	public void onActivityCreated(Bundle bundle) {
 //		super.onActivityCreated(bundle);

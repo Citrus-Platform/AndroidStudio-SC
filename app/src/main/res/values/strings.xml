@@ -326,7 +326,7 @@
     <string name="save_contact">Save Contact</string>
     <string name="save">Save</string>
     <string name="domain_validation_alert">Please enter valid SuperGroup name between 2 to 50 characters. Special characters and space not allowed.</string>
-    <string name="domain_display_name_validation_alert">Please enter valid SuperGroup display name between 2 to 50 characters. Domain name must start with a letter.</string>
+    <string name="domain_display_name_validation_alert">Please enter valid SuperGroup display name between 2 to 50 characters. SuperGroup must start with a letter.</string>
     <string name="password_reason">(This password will be used to login on the web console.)</string>
     <string name="create_poll">Create Poll</string>
     <string name="option_1">1) </string>
@@ -532,7 +532,7 @@
     <string name="open_sg">"Open SuperGroup"</string>
     <string name="shared_id">"Common official ID"</string>
     <string name="re_invite_confirmation">"Do you want to re-invite "</string>
-    <string name="reactivate_alert">"Your account has been deactivated on this phone, please reactivate your account or contact your domain Admin."</string>
+    <string name="reactivate_alert">"Your account has been deactivated on this phone, please reactivate your account or contact your SuperGroup Admin."</string>
     <string name="support_txt">"If you are having problems with the app or signing up, please contact us.\nIf you are a large organization, team or group contact us and we will help with set up."
 	</string>
     <string name="shared_is_popup">"What is this? \n\nIf you want more than one users to manage messages sent to a single entity like ‘Customer service’ or ‘Accounts’, use a Common official ID.\n\nNOTE: The Common official ID gets added to all members’ contact list.\n\nCreate a Common official ID?"
@@ -568,6 +568,7 @@
     <string name="back_up_over">Back up over</string>
      <string name="restore">Restore</string>
       <string name="no_thanks">No thanks</string>
+    <string name="old_messages">Load more</string>
     <!--
          Content description for the hour selector in the time picker, which displays
          selectable hours of the day along the inside edge of a circle, as in an analog clock.

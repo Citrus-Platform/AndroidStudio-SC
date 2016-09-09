@@ -426,8 +426,9 @@ public class BulletinScreenAdapter extends SimpleCursorAdapter implements OnClic
 //        if(name!=null && name.startsWith("m"))
 //        	name = name.substring(1);
 //        name = SharedPrefManager.getInstance().getUserDomain();
-        if (viewholder.isBroadCast)
+        if (viewholder.isBroadCast) {
             viewholder.nameText = SharedPrefManager.getInstance().getBroadCastDisplayName(toUserName);
+        }
         else
             viewholder.nameText = name;
 
@@ -443,7 +444,7 @@ public class BulletinScreenAdapter extends SimpleCursorAdapter implements OnClic
         } else {
             viewholder.unseenMessages.setVisibility(TextView.GONE);
         }
-        viewholder.chatPerson.setText(SharedPrefManager.getInstance().getUserDomain());
+        viewholder.chatPerson.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
 //         if (name!=null){
 //        	String tmpName = name.trim();
 //        	if(tmpName.equals(fromName)|| tmpName.equals(toUserName)){
@@ -495,9 +496,11 @@ public class BulletinScreenAdapter extends SimpleCursorAdapter implements OnClic
                     msg_icon = "🎤";
                     //msg_icon = 0;
                     try {
-                        int total = Integer.parseInt(audio_len);
-                        minutes = (byte) (total / 60);
-                        seconds = (byte) (total % 60);
+                        if(audio_len != null) {
+                            int total = Integer.parseInt(audio_len);
+                            minutes = (byte) (total / 60);
+                            seconds = (byte) (total % 60);
+                        }
                     } catch (NumberFormatException nex) {
                         nex.printStackTrace();
                     }

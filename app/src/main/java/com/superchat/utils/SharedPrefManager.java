@@ -125,6 +125,8 @@ public class SharedPrefManager {
 	private final String BACKUP_OVER_WIFI = "backup_over_wifi";
 	private final String BACKUP_SCHEDULE = "backup_schedule";
 
+	private final String BULLETIN_NEXT_URL = "bulletin_next_url";
+
 	private static SharedPrefManager sharedPrefManager;
 
 	private SharedPrefManager(Context context) {
@@ -547,6 +549,18 @@ public boolean isContactModified(){
 		String value = pref.getString(BACKUP_FILE_ID + getUserName(), null);
 		return value;
 	}
+
+	public void saveBulletinNextURL(String url) {
+		if(url != null && !url.equals("")){
+			editor.putString(BULLETIN_NEXT_URL, url);
+			editor.commit();
+		}
+	}
+	public String getBulletinNextURL() {
+		String value = pref.getString(BULLETIN_NEXT_URL, null);
+		return value;
+	}
+
 	public void saveSharedIDFileId(String sharedid, String fileId) {
 		if(fileId != null && !fileId.equals("")){
 			editor.putString(SHARED_ID_FILE_ID+sharedid, fileId);

@@ -56,6 +56,8 @@ import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
 import com.superchat.data.db.DatabaseConstants;
+import com.superchat.interfaces.interfaceInstances;
+import com.superchat.model.BulletinGetMessageDataModel;
 import com.superchat.model.ContactUpDatedModel;
 import com.superchat.model.ContactUploadModel;
 import com.superchat.model.ErrorModel;
@@ -64,6 +66,7 @@ import com.superchat.model.LoginResponseModel;
 import com.superchat.model.LoginResponseModel.BroadcastGroupDetail;
 import com.superchat.model.LoginResponseModel.GroupDetail;
 import com.superchat.model.LoginResponseModel.UserResponseDetail;
+import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.utils.Constants;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.widgets.MyriadRegularTextView;
@@ -94,13 +97,17 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -109,10 +116,12 @@ import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import retrofit2.Response;
+
 //import com.viewpagerindicator.TabPageIndicator;
 //import com.viewpagerindicator.TitlePageIndicator;
 
-public class HomeScreen extends FragmentActivity implements ServiceConnection, SinchService.StartFailedListener, OnClickListener, OnMenuItemClickListener{
+public class HomeScreen extends FragmentActivity implements ServiceConnection, SinchService.StartFailedListener, OnClickListener, OnMenuItemClickListener, interfaceInstances {
 	private static final String TAG = "HomeScreen";
 	CustomViewPager mViewPager = null;
 	private HomePagerAdapter mAdapter;
@@ -1016,6 +1025,8 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 							else
 								new DomainsUserTaskOnServer().execute();
 						}
+						//call Once
+						getBulletinMessages();
 					}
 				}
 			}
@@ -2970,4 +2981,188 @@ public void onComposeClick(View view){
 		        }
 		        return false;
 		     }
+	//-----------------------------------------------
+	private void getBulletinMessages() {
+		try {
+			retrofit2.Call call = null;
+			final SharedPrefManager pref = SharedPrefManager.getInstance();
+//			if(url != null && url.trim().length() > 0) {
+//				System.out.println("[Hitting next url]");
+//				call = objApi.getApi(this).getMoreMessages(url);
+//			}
+//			else {
+//				System.out.println("[Hitting first time]");
+//				call = objApi.getApi(this).getMessages("" + 10);
+//			}
+			call = objApi.getApi(this).getMessages("" + 10);
+
+			call.enqueue(new RetrofitRetrofitCallback<BulletinGetMessageDataModel>(this) {
+				@Override
+				protected void onResponseVoidzResponse(retrofit2.Call call, Response response) {
+					System.out.println("[Here.....]");
+				}
+
+				@Override
+				protected void onResponseVoidzObject(retrofit2.Call call, BulletinGetMessageDataModel response) {
+					if (response != null && response.getStatus() != null && response.getStatus().equalsIgnoreCase("success")) {
+						Set<BulletinGetMessageDataModel.MessageData> messages = response.getBulletinMessageAPIList();
+						String next_url = null;
+						String json_body = null;
+						String media_url = null;
+						int type = 0;
+						String caption = null;
+						next_url = response.getNextUrl();
+						if (!messages.isEmpty()) {
+							for (BulletinGetMessageDataModel.MessageData message : messages) {
+								json_body = message.getJsonBody();
+								ContentValues contentvalues = new ContentValues();
+								contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message.getSender());
+								contentvalues.put(ChatDBConstants.TO_USER_FIELD, pref.getUserDomain() + "-all");
+								contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, message.getSenderName() + "#786#" + message.getSender());
+								contentvalues.put(ChatDBConstants.MESSAGE_TYPE, 3);//3 - For all Bulletin Messages
+								contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, pref.getUserDomain() + "-all");
+								contentvalues.put(ChatDBConstants.SEEN_FIELD, "1");
+								contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, (message.getText() != null) ? message.getText() : "");
+								contentvalues.put(ChatDBConstants.MESSAGE_ID, message.getPacketId());
+								contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID.randomUUID().toString());
+								System.out.println("[Creaton Date ] "+message.getCreatedDate());
+
+
+								long currentTime = System.currentTimeMillis();
+								Calendar calender = Calendar.getInstance();
+								calender.setTimeInMillis(currentTime);
+								int date = calender.get(Calendar.DATE);
+								int oldDate = date;
+								String oppName = message.getSender();
+								long milis = ChatDBWrapper.getInstance().lastMessageInDB(oppName);
+								if(milis!=-1){
+									calender.setTimeInMillis(milis);
+									oldDate = calender.get(Calendar.DATE);
+								}
+								if ((oldDate != date) || ChatDBWrapper.getInstance().isFirstChat(oppName)) {
+									contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "1");
+								} else {
+									contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "0");
+								}
+
+								contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, convertTomilliseconds(message.getCreatedDate()));
+								if(message.getType() != null){
+									try {
+										type = Integer.parseInt(message.getType());
+									}catch(NumberFormatException nex){
+										nex.printStackTrace();
+										type = 0;
+									}
+								}
+								contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getType());
+								contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD, new Integer(1));
+								media_url = message.getFileId();
+								if(media_url != null && media_url.length() > 0)
+									media_url = Constants.LIVE_DOMAIN + "/rtMediaServer/get/" + media_url;
+								if (json_body != null) {
+									System.out.println("json_body = " + json_body);
+									JSONObject jsonobj = null;
+									try {
+										jsonobj = new JSONObject(json_body);
+										if(jsonobj.has("caption") && jsonobj.getString("caption").toString().trim().length() > 0)
+											caption = jsonobj.getString("caption").toString();
+//                                        if((type == XMPPMessageType.atMeXmppMessageTypeImage.ordinal()
+//                                                || type == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()
+//                                                || type == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()) && caption != null)
+										contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, caption);
+
+										if(jsonobj.has("fileName") && jsonobj.getString("fileName").toString().trim().length() > 0)
+											contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, jsonobj.getString("fileName").toString());
+										if(jsonobj.has("ext") && jsonobj.getString("ext").toString().trim().length() > 0)
+											media_url = media_url + "." + jsonobj.getString("ext").toString().trim();
+
+										if(jsonobj.has("location") && jsonobj.getString("location").toString().trim().length() > 0)
+											contentvalues.put(ChatDBConstants.MESSAGE_TYPE_LOCATION, jsonobj.getString("location").toString());
+									} catch (JSONException e) {
+										e.printStackTrace();
+									}
+								}
+								contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, media_url);
+								ChatDBWrapper.getInstance().insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
+								media_url = caption = null;
+								json_body = null;
+								type = 0;
+							}
+						}
+						if(next_url != null) {
+							//Save this url is shared preferences for next hit
+							pref.saveBulletinNextURL(next_url);
+							next_url = null;
+						}else{
+							pref.saveBulletinNextURL("0");
+						}
+
+					} else {
+//						String errorMessage = response.getMessage() != null ? response.getMessage() : "Please try later";
+//						showDialog(errorMessage);
+					}
+				}
+
+				@Override
+				protected void common() {
+//                    progressDialog.cancel();
+				}
+
+				@Override
+				public void onFailure(retrofit2.Call call, Throwable t) {
+					super.onFailure(call, t);
+				}
+			});
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	//--------------------------------
+	public long convertTomilliseconds(Date date){
+		long time_millis = 0;
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"),
+				Locale.getDefault());
+		Date currentLocalTime = calendar.getTime();
+//            System.out.println("GMT offset is "+currentLocalTime.getTime());
+		DateFormat datef = new SimpleDateFormat("Z");
+		String localTime = datef.format(currentLocalTime);
+		System.out.println("GMT offset is "+localTime);
+
+		time_millis = date.getTime();
+		return time_millis;
+	}
+
+	public long convertTomilliseconds(String date)
+	{
+		long timeInMilliseconds = 0;
+		SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+		try
+		{
+			Date mDate = sdf.parse(date);
+			timeInMilliseconds = mDate.getTime();
+			System.out.println("Before : Date in millis => " + timeInMilliseconds);
+
+//			SimpleDateFormat sd = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+			Date resultdate = new Date(timeInMilliseconds);
+			System.out.println("Before : Date => "+sdf.format(resultdate));
+
+			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
+			Date currentLocalTime = calendar.getTime();
+
+			System.out.println("After GTM : Date in millis => " + (timeInMilliseconds + currentLocalTime.getTime()));
+
+			resultdate = new Date(timeInMilliseconds + currentLocalTime.getTime());
+			System.out.println("After GMT : Date => "+sdf.format(resultdate));
+
+			return timeInMilliseconds;
+		}
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return timeInMilliseconds;
+	}
 }

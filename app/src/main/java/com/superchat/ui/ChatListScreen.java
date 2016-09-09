@@ -120,8 +120,11 @@ import com.superchat.emojicon.EmojiconsPopup.OnEmojiconBackspaceClickedListener;
 import com.superchat.emojicon.EmojiconsPopup.OnSoftKeyboardOpenCloseListener;
 import com.superchat.emojicon.emoji.Emojicon;
 import com.superchat.interfaces.OnChatEditInterFace;
+import com.superchat.interfaces.interfaceInstances;
+import com.superchat.model.BulletinGetMessageDataModel;
 import com.superchat.model.GroupChatServerModel;
 import com.superchat.model.UserProfileModel;
+import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.time.RadialPickerLayout;
 import com.superchat.time.TimePickerDialog;
 import com.superchat.utils.AndroidBmpUtil;
@@ -161,22 +164,26 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
+import retrofit2.Response;
 
 //import com.superchat.utils.SharedPrefManager;
 public class ChatListScreen extends FragmentActivity implements MultiChoiceModeListener,VoiceMediaHandler, TypingListener, ChatCountListener, ProfileUpdateListener,
-        OnClickListener, OnChatEditInterFace, ConnectionStatusListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener,OnMenuItemClickListener{
+        OnClickListener, OnChatEditInterFace, ConnectionStatusListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener,OnMenuItemClickListener, interfaceInstances {
     public final static String TAG = "ChatListScreen";
     public static final String CONTACT_ID = "contact_id";
     public final static String CREATE_GROUP_REQUEST = "create_group_request";
@@ -281,6 +288,9 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 //    boolean isPictureTagged = true;
     byte taggingType = NO_TAGGING;
     String mediaUrl;
+
+    private Button loadPrevious;
+    private ProgressBar messageLoading;
     
     public SinchService.SinchServiceInterface mSinchServiceInterface;
     MediaPlayer mPlayer = null;
@@ -1055,6 +1065,8 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         mainHeaderLayout = (LinearLayout) findViewById(R.id.id_header_view);
         editHeaderLayout = (RelativeLayout) findViewById(R.id.edit_chat_header);
         okEditTextView = (TextView) findViewById(R.id.id_ok_title);
+        loadPrevious = (Button) findViewById(R.id.load_older_messages);
+        messageLoading = (ProgressBar) findViewById(R.id.message_loading);
         //Load poll views
         
         mDrawableBuilder = TextDrawable.builder()
@@ -1166,7 +1178,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             }
             contactNameTxt = getIntent().getExtras().getString(DatabaseConstants.CONTACT_NAMES_FIELD);
             if(isBulletinBroadcast){
-            	windowNameView.setText(iChatPref.getUserDomain());
+            	windowNameView.setText(iChatPref.getCurrentSGDisplayName());
             }else if(isSharedIDMessage){
             	windowNameView.setText(iChatPref.getSharedIDDisplayName(userName));
             }
@@ -1238,6 +1250,18 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         	chatOptions.setVisibility(View.GONE);
         	callOption.setVisibility(View.GONE);
         	SharedPrefManager.getInstance().saveBulletinChatCounter(0);
+            final String next_url = iChatPref.getBulletinNextURL();
+//            if(next_url == null || (next_url != null && !next_url.equals("0")))
+            if(next_url != null && !next_url.equals("0"))
+                loadPrevious.setVisibility(View.VISIBLE);
+            loadPrevious.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    //Check for bulletin next url;
+                    getBulletinMessages(iChatPref.getBulletinNextURL());
+                }
+            });
         }
         if(isSharedIDMessage){
 //        	chatOptions.setVisibility(View.GONE);
@@ -6812,82 +6836,188 @@ private void setRecordingViews(byte type){
 				infoView.setVisibility(View.GONE);
 		}
 	}
-//======================================
-//	class GalleryPagerAdapter extends PagerAdapter {
-//
-//        Context _context;
-//        LayoutInflater _inflater;
-//
-//        public GalleryPagerAdapter(Context context) {
-//            _context = context;
-//            _inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        }
-//
-//        @Override
-//        public int getCount() {
-//            return _images.size();
-//        }
-//
-//        @Override
-//        public boolean isViewFromObject(View view, Object object) {
-//            return view == ((LinearLayout) object);
-//        }
-//
-//        @Override
-//        public Object instantiateItem(ViewGroup container, final int position) {
-//            View itemView = _inflater.inflate(R.layout.pager_gallery_item, container, false);
-//            container.addView(itemView);
-//
-//            // Get the border size to show around each image
-//            int borderSize = _thumbnails.getPaddingTop();
-//            
-//            // Get the size of the actual thumbnail image
-//            int thumbnailSize = ((FrameLayout.LayoutParams)
-//                    _pager.getLayoutParams()).bottomMargin - (borderSize*2);
-//            
-//            // Set the thumbnail layout parameters. Adjust as required
-//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(thumbnailSize, thumbnailSize);
-//            params.setMargins(0, 0, borderSize, 0);
-//
-//            // You could also set like so to remove borders
-//            //ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
-//            //        ViewGroup.LayoutParams.WRAP_CONTENT,
-//            //        ViewGroup.LayoutParams.WRAP_CONTENT);
-//            
-//            final ImageView thumbView = new ImageView(_context);
-//            thumbView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//            thumbView.setLayoutParams(params);
-//            thumbView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Log.d(TAG, "Thumbnail clicked");
-//
-//                    // Set the pager position when thumbnail clicked
-//                    _pager.setCurrentItem(position);
-//                }
-//            });
-//            _thumbnails.addView(thumbView);
-//
-//            final SubsamplingScaleImageView imageView =  (SubsamplingScaleImageView) itemView.findViewById(R.id.image);
-//
-//            // Asynchronously load the image and set the thumbnail and pager view
-////            Glide.with(_context)
-////                    .load(_images.get(position))
-////                    .asBitmap()
-////                    .into(new SimpleTarget<Bitmap>() {
-////                        @Override
-////                        public void onResourceReady(Bitmap bitmap, GlideAnimation anim) {
-////                            imageView.setImage(ImageSource.bitmap(bitmap));
-////                            thumbView.setImageBitmap(bitmap);
-////                        }
-////                    });
-//
-//            return itemView;
-//        }
-//
-//        @Override
-//        public void destroyItem(ViewGroup container, int position, Object object) {
-//            container.removeView((LinearLayout) object);
-//        }
-//    }
+//-------------------------------------------------------------------
+    private void getBulletinMessages(final String url) {
+        try {
+//            final ProgressDialog progressDialog = ProgressDialog.show(this, "", "Loading. Please wait...", true);
+//            progressDialog.show();
+            retrofit2.Call call = null;
+            if(url != null && url.trim().length() > 0) {
+                System.out.println("[Hitting next url]");
+                call = objApi.getApi(this).getMoreMessages(url);
+            }
+            else {
+                System.out.println("[Hitting first time]");
+                call = objApi.getApi(this).getMessages("" + 10);
+            }
+            loadPrevious.setVisibility(View.GONE);
+            messageLoading.setVisibility(View.VISIBLE);
+            call.enqueue(new RetrofitRetrofitCallback<BulletinGetMessageDataModel>(this) {
+                @Override
+                protected void onResponseVoidzResponse(retrofit2.Call call, Response response) {
+                    System.out.println("[Here.....]");
+                }
+
+                @Override
+                protected void onResponseVoidzObject(retrofit2.Call call, BulletinGetMessageDataModel response) {
+                    if (response != null && response.getStatus() != null && response.getStatus().equalsIgnoreCase("success")) {
+                        Set<BulletinGetMessageDataModel.MessageData> messages = response.getBulletinMessageAPIList();
+                        String next_url = null;
+                        String json_body = null;
+                        String media_url = null;
+                        int type = 0;
+                        String caption = null;
+                        next_url = response.getNextUrl();
+                        if (!messages.isEmpty()) {
+                            for (BulletinGetMessageDataModel.MessageData message : messages) {
+                                json_body = message.getJsonBody();
+                                ContentValues contentvalues = new ContentValues();
+                                contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message.getSender());
+                                contentvalues.put(ChatDBConstants.TO_USER_FIELD, iChatPref.getUserDomain() + "-all");
+                                contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, message.getSenderName() + "#786#" + message.getSender());
+                                contentvalues.put(ChatDBConstants.MESSAGE_TYPE, 3);//3 - For all Bulletin Messages
+                                contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, iChatPref.getUserDomain() + "-all");
+                                contentvalues.put(ChatDBConstants.SEEN_FIELD, "1");
+                                contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, (message.getText() != null) ? message.getText() : "");
+                                contentvalues.put(ChatDBConstants.MESSAGE_ID, message.getPacketId());
+                                contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID.randomUUID().toString());
+                                System.out.println("[Creaton Date ] "+message.getCreatedDate());
+
+
+                                long currentTime = System.currentTimeMillis();
+                                Calendar calender = Calendar.getInstance();
+                                calender.setTimeInMillis(currentTime);
+                                int date = calender.get(Calendar.DATE);
+                                int oldDate = date;
+                                String oppName = message.getSender();
+                                long milis = ChatDBWrapper.getInstance().lastMessageInDB(oppName);
+                                if(milis!=-1){
+                                    calender.setTimeInMillis(milis);
+                                    oldDate = calender.get(Calendar.DATE);
+                                }
+                                if ((oldDate != date) || ChatDBWrapper.getInstance().isFirstChat(oppName)) {
+                                    contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "1");
+                                } else {
+                                    contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "0");
+                                }
+
+                                contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, convertTomilliseconds(message.getCreatedDate()));
+                                if(message.getType() != null){
+                                    try {
+                                        type = Integer.parseInt(message.getType());
+                                    }catch(NumberFormatException nex){
+                                        nex.printStackTrace();
+                                        type = 0;
+                                    }
+                                }
+                                contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getType());
+                                contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD, new Integer(1));
+                                media_url = message.getFileId();
+                                if(media_url != null && media_url.length() > 0)
+                                    media_url = Constants.LIVE_DOMAIN + "/rtMediaServer/get/" + media_url;
+                                if (json_body != null) {
+//                                    System.out.println("json_body = " + json_body);
+                                    JSONObject jsonobj = null;
+                                    try {
+                                        jsonobj = new JSONObject(json_body);
+                                        if(jsonobj.has("caption") && jsonobj.getString("caption").toString().trim().length() > 0)
+                                            caption = jsonobj.getString("caption").toString();
+//                                        if((type == XMPPMessageType.atMeXmppMessageTypeImage.ordinal()
+//                                                || type == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()
+//                                                || type == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()) && caption != null)
+                                            contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, caption);
+
+                                        if(jsonobj.has("fileName") && jsonobj.getString("fileName").toString().trim().length() > 0)
+                                            contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, jsonobj.getString("fileName").toString());
+                                        if(jsonobj.has("ext") && jsonobj.getString("ext").toString().trim().length() > 0)
+                                            media_url = media_url + "." + jsonobj.getString("ext").toString().trim();
+
+                                        if(jsonobj.has("location") && jsonobj.getString("location").toString().trim().length() > 0)
+                                         contentvalues.put(ChatDBConstants.MESSAGE_TYPE_LOCATION, jsonobj.getString("location").toString());
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, media_url);
+                                ChatDBWrapper.getInstance().insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
+                                media_url = caption = null;
+                                json_body = null;
+                                type = 0;
+                            }
+                            if(chatAdapter != null) {
+                                 runOnUiThread(new Runnable() {
+
+                                 @Override
+                                 public void run() {
+                                     chatAdapter.updateList();
+                                 }
+                                 });
+                            }
+                        }
+                        if(next_url != null) {
+                            //Save this url is shared preferences for next hit
+                            iChatPref.saveBulletinNextURL(next_url);
+                            next_url = null;
+                            loadPrevious.setVisibility(View.VISIBLE);
+                            messageLoading.setVisibility(View.GONE);
+                        }else{
+                            iChatPref.saveBulletinNextURL("0");
+                            loadPrevious.setVisibility(View.GONE);
+                            messageLoading.setVisibility(View.GONE);
+                        }
+
+                    } else {
+                        String errorMessage = response.getMessage() != null ? response.getMessage() : "Please try later";
+                        showDialog(errorMessage);
+                    }
+                }
+
+                @Override
+                protected void common() {
+//                    progressDialog.cancel();
+                }
+
+                @Override
+                public void onFailure(retrofit2.Call call, Throwable t) {
+                    super.onFailure(call, t);
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+        //--------------------------------
+        public long convertTomilliseconds(Date date){
+            long time_millis = 0;
+            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"),
+                    Locale.getDefault());
+            Date currentLocalTime = calendar.getTime();
+//            System.out.println("GMT offset is "+currentLocalTime.getTime());
+            DateFormat datef = new SimpleDateFormat("Z");
+            String localTime = datef.format(currentLocalTime);
+            System.out.println("GMT offset is "+localTime);
+
+            time_millis = date.getTime();
+            return time_millis;
+        }
+    public long convertTomilliseconds(String date)
+    {
+        long timeInMilliseconds = 0;
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+        try
+        {
+            Date mDate = sdf.parse(date);
+            timeInMilliseconds = mDate.getTime();
+            System.out.println("Date in millis :: " + timeInMilliseconds);
+            return timeInMilliseconds;
+        }
+        catch (Exception e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return timeInMilliseconds;
+    }
 }

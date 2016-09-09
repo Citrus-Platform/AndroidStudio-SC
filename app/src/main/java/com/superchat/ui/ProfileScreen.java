@@ -2220,8 +2220,8 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
 
 		@Override
 		protected void onPostExecute(String response) {
-
 			super.onPostExecute(response);
+			System.out.println("response :: "+response);
 			if (response != null && response.contains("error")) {
 				Gson gson = new GsonBuilder().create();
 				ErrorModel errorModel = gson.fromJson(response, ErrorModel.class);
@@ -2245,7 +2245,14 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
 							iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
 							showDialog("Error", citrusError.message);
 						} else if (citrusError != null && citrusError.code.equals("20026")) {
+							iSharedPrefManager.setProfileAdded(iSharedPrefManager.getUserName(), true);
+							iSharedPrefManager.setAppMode("SecondMode");
+							iSharedPrefManager.saveUserLogedOut(false);
+							iSharedPrefManager.setMobileRegistered(iSharedPrefManager.getUserPhone(), true);
+							Intent intent = new Intent(ProfileScreen.this, HomeScreen.class);
+							startActivity(intent);
 							finish();
+							return;
 						} else if (citrusError != null && citrusError.code.equals("20020")) {
 							showDialog("Error", citrusError.message);
 						} else
