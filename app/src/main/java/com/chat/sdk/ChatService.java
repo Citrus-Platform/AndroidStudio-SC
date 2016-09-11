@@ -1241,7 +1241,7 @@ public class ChatService extends Service implements interfaceInstances {
 			if (!packet.toXML().contains("<message"))
 				return;
 			try {
-//				System.out.println("Got packet " + packet.toXML() + " -- "+ packet.getPacketID());
+				System.out.println("Got packet " + packet.toXML() + " -- "+ packet.getPacketID());
 				// Collection<PacketExtension> col = packet.getExtensions();
 				// PacketExtension extens = (PacketExtension)col.toArray()[0];
 				//
@@ -3266,8 +3266,9 @@ public class ChatService extends Service implements interfaceInstances {
 				String sharedid = message.getGroupId();
 				String sharedid_display_name = message.getGroupDisplayname();
 				contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, sharedid_display_name+"<"+sharedid+">");
-			}
-			else
+			}else if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal()){
+				contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, message.getDisplayName() + "#786#" + from);
+			}else
 				contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, "");
 			
 			if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal()){	
