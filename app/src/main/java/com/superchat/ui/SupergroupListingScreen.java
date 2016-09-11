@@ -707,9 +707,10 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 		return null;
 	}
 	private boolean setProfilePic(ImageView picView, String groupPicId){
+//		System.out.println("groupPicId : "+groupPicId);
 		String img_path = getThumbPath(groupPicId);
 		picView.setImageResource(R.drawable.about_icon);
-			if(groupPicId == null || groupPicId.equals("clear") ||  groupPicId.contains("logofileid"))
+			if(groupPicId == null || (groupPicId != null && groupPicId.equals("")) || groupPicId.equals("clear") ||  groupPicId.contains("logofileid"))
 				return false;
 			if(img_path != null){
 			File file1 = new File(img_path);

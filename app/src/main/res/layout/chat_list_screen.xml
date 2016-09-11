@@ -411,6 +411,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:visibility="gone"
             android:orientation="vertical" >
 
         <Button
@@ -426,7 +427,7 @@
             android:text="@string/old_messages"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:visibility="gone"
+            android:visibility="visible"
             android:textColorHighlight="@color/header_color" />
             <ProgressBar
                 android:id="@+id/message_loading"

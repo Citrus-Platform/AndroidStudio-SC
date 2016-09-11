@@ -62,6 +62,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
@@ -164,9 +165,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -176,7 +177,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.Vector;
-import java.util.concurrent.TimeUnit;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import retrofit2.Response;
@@ -1250,18 +1250,17 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         	chatOptions.setVisibility(View.GONE);
         	callOption.setVisibility(View.GONE);
         	SharedPrefManager.getInstance().saveBulletinChatCounter(0);
-            final String next_url = iChatPref.getBulletinNextURL();
-//            if(next_url == null || (next_url != null && !next_url.equals("0")))
-            if(next_url != null && !next_url.equals("0"))
-                loadPrevious.setVisibility(View.VISIBLE);
-            loadPrevious.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    //Check for bulletin next url;
-                    getBulletinMessages(iChatPref.getBulletinNextURL());
-                }
-            });
+//            final String next_url = iChatPref.getBulletinNextURL();
+//            if(next_url != null && !next_url.equals("0"))
+//                loadPrevious.setVisibility(View.VISIBLE);
+//            loadPrevious.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    // TODO Auto-generated method stub
+//                    //Check for bulletin next url;
+//                    getBulletinMessages(iChatPref.getBulletinNextURL());
+//                }
+//            });
         }
         if(isSharedIDMessage){
 //        	chatOptions.setVisibility(View.GONE);
@@ -1307,6 +1306,23 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 	        chatList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 	        chatList.setMultiChoiceModeListener(this);
 	        chatList.setVerticalScrollBarEnabled(false);
+            if(isBulletinBroadcast){
+                LayoutInflater inflater = getLayoutInflater();
+                final ViewGroup header = (ViewGroup) inflater.inflate(R.layout.message_header, chatList, false);
+                chatList.addHeaderView(header, null, false);
+                final String next_url = iChatPref.getBulletinNextURL();
+                if(next_url != null && !next_url.equals("0")) {
+                    header.setVisibility(View.VISIBLE);
+                    header.findViewById(R.id.load_older_messages).setVisibility(View.VISIBLE);
+                    header.findViewById(R.id.load_older_messages).setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //do something
+                            getBulletinMessages(iChatPref.getBulletinNextURL(), header);
+                        }
+                    });
+                }
+            }
 	        chatList.setAdapter(chatAdapter);
 	        if (chatAdapter != null && chatAdapter.getCount() > 0)
 	            chatList.setSelection(chatAdapter.getCount() - 1);
@@ -6837,7 +6853,7 @@ private void setRecordingViews(byte type){
 		}
 	}
 //-------------------------------------------------------------------
-    private void getBulletinMessages(final String url) {
+    private void getBulletinMessages(final String url, final View header) {
         try {
 //            final ProgressDialog progressDialog = ProgressDialog.show(this, "", "Loading. Please wait...", true);
 //            progressDialog.show();
@@ -6850,8 +6866,8 @@ private void setRecordingViews(byte type){
                 System.out.println("[Hitting first time]");
                 call = objApi.getApi(this).getMessages("" + 10);
             }
-            loadPrevious.setVisibility(View.GONE);
-            messageLoading.setVisibility(View.VISIBLE);
+            (header.findViewById(R.id.load_older_messages)).setVisibility(View.GONE);
+            (header.findViewById(R.id.message_loading)).setVisibility(View.VISIBLE);
             call.enqueue(new RetrofitRetrofitCallback<BulletinGetMessageDataModel>(this) {
                 @Override
                 protected void onResponseVoidzResponse(retrofit2.Call call, Response response) {
@@ -6869,7 +6885,10 @@ private void setRecordingViews(byte type){
                         String caption = null;
                         next_url = response.getNextUrl();
                         if (!messages.isEmpty()) {
-                            for (BulletinGetMessageDataModel.MessageData message : messages) {
+                            LinkedList<BulletinGetMessageDataModel.MessageData> list = new LinkedList<BulletinGetMessageDataModel.MessageData>(messages);
+                            Iterator<BulletinGetMessageDataModel.MessageData> itr = list.descendingIterator();
+                            while(itr.hasNext()) {
+                                BulletinGetMessageDataModel.MessageData message = itr.next();
                                 json_body = message.getJsonBody();
                                 ContentValues contentvalues = new ContentValues();
                                 contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message.getSender());
@@ -6884,18 +6903,18 @@ private void setRecordingViews(byte type){
                                 System.out.println("[Creaton Date ] "+message.getCreatedDate());
 
 
-                                long currentTime = System.currentTimeMillis();
                                 Calendar calender = Calendar.getInstance();
-                                calender.setTimeInMillis(currentTime);
-                                int date = calender.get(Calendar.DATE);
-                                int oldDate = date;
+                                calender.setTimeInMillis(convertTomilliseconds(message.getCreatedDate()));
+                                int old_msg_date = calender.get(Calendar.DATE);
+
                                 String oppName = message.getSender();
-                                long milis = ChatDBWrapper.getInstance().lastMessageInDB(oppName);
-                                if(milis!=-1){
-                                    calender.setTimeInMillis(milis);
-                                    oldDate = calender.get(Calendar.DATE);
+                                long millis = ChatDBWrapper.getInstance().firstMessageInDB(oppName);
+                                if(millis != -1){
+                                    calender.setTimeInMillis(millis);
                                 }
-                                if ((oldDate != date) || ChatDBWrapper.getInstance().isFirstChat(oppName)) {
+                                int new_msg_date = calender.get(Calendar.DATE);
+
+                                if (old_msg_date < new_msg_date) {
                                     contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "1");
                                 } else {
                                     contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "0");
@@ -6915,7 +6934,7 @@ private void setRecordingViews(byte type){
                                 media_url = message.getFileId();
                                 if(media_url != null && media_url.length() > 0)
                                     media_url = Constants.LIVE_DOMAIN + "/rtMediaServer/get/" + media_url;
-                                if (json_body != null) {
+                                if (json_body != null && json_body.trim().length() > 0) {
 //                                    System.out.println("json_body = " + json_body);
                                     JSONObject jsonobj = null;
                                     try {
@@ -6958,12 +6977,13 @@ private void setRecordingViews(byte type){
                             //Save this url is shared preferences for next hit
                             iChatPref.saveBulletinNextURL(next_url);
                             next_url = null;
-                            loadPrevious.setVisibility(View.VISIBLE);
-                            messageLoading.setVisibility(View.GONE);
+                            (header.findViewById(R.id.load_older_messages)).setVisibility(View.VISIBLE);
+                            (header.findViewById(R.id.message_loading)).setVisibility(View.GONE);
                         }else{
                             iChatPref.saveBulletinNextURL("0");
-                            loadPrevious.setVisibility(View.GONE);
-                            messageLoading.setVisibility(View.GONE);
+                            (header.findViewById(R.id.load_older_messages)).setVisibility(View.GONE);
+                            (header.findViewById(R.id.message_loading)).setVisibility(View.GONE);
+                            header.setVisibility(View.GONE);
                         }
 
                     } else {
@@ -7009,8 +7029,20 @@ private void setRecordingViews(byte type){
         {
             Date mDate = sdf.parse(date);
             timeInMilliseconds = mDate.getTime();
-            System.out.println("Date in millis :: " + timeInMilliseconds);
-            return timeInMilliseconds;
+//			System.out.println("Before : Date in millis => " + timeInMilliseconds);
+//
+//			Date resultdate = new Date(timeInMilliseconds);
+//			System.out.println("Before : Date => "+sdf.format(resultdate));
+//
+//			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
+//			Date currentLocalTime = calendar.getTime();
+//
+//			System.out.println("After GTM : Date in millis => " + (timeInMilliseconds + currentLocalTime.getTime()));
+//
+//			resultdate = new Date(timeInMilliseconds + currentLocalTime.getTime());
+//			System.out.println("After GMT : Date => "+sdf.format(resultdate));
+
+//			return timeInMilliseconds + convertCurrentTimeintoMillis();
         }
         catch (Exception e)
         {
@@ -7018,6 +7050,32 @@ private void setRecordingViews(byte type){
             e.printStackTrace();
         }
 
-        return timeInMilliseconds;
+        return timeInMilliseconds + convertCurrentTimeintoMillis();
+    }
+
+    public long convertCurrentTimeintoMillis(){
+        //+05:30
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
+        String   timeZone = new SimpleDateFormat("Z").format(calendar.getTime());
+        String time = timeZone.substring(0, 3) + ":"+ timeZone.substring(3, 5);
+        if(time == null)
+            return 0;
+        long millis = 0;
+        String hr = null;
+        String min = null;
+        String[] values = null;
+
+        if(time.startsWith("-")){
+            time = time.substring(1);
+            values = time.split(":");
+            millis = -1 * ((Integer.parseInt(values[0]) * 60 * 60 * 1000) + (Integer.parseInt(values[1]) * 60 * 1000));
+
+        }else{
+            time = time.substring(1);
+            values = time.split(":");
+            millis = (Integer.parseInt(values[0]) * 60 * 60 * 1000) + (Integer.parseInt(values[1]) * 60 * 1000);
+        }
+        System.out.println("+05:30 Millis = "+millis);
+        return millis;
     }
 }

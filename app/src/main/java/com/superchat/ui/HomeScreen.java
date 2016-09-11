@@ -103,6 +103,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -3013,7 +3015,10 @@ public void onComposeClick(View view){
 						String caption = null;
 						next_url = response.getNextUrl();
 						if (!messages.isEmpty()) {
-							for (BulletinGetMessageDataModel.MessageData message : messages) {
+							LinkedList<BulletinGetMessageDataModel.MessageData> list = new LinkedList<BulletinGetMessageDataModel.MessageData>(messages);
+							Iterator<BulletinGetMessageDataModel.MessageData> itr = list.descendingIterator();
+							while(itr.hasNext()) {
+								BulletinGetMessageDataModel.MessageData message = itr.next();
 								json_body = message.getJsonBody();
 								ContentValues contentvalues = new ContentValues();
 								contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message.getSender());
@@ -3028,18 +3033,19 @@ public void onComposeClick(View view){
 								System.out.println("[Creaton Date ] "+message.getCreatedDate());
 
 
-								long currentTime = System.currentTimeMillis();
 								Calendar calender = Calendar.getInstance();
-								calender.setTimeInMillis(currentTime);
-								int date = calender.get(Calendar.DATE);
-								int oldDate = date;
+								calender.setTimeInMillis(convertTomilliseconds(message.getCreatedDate()));
+								int old_msg_date = calender.get(Calendar.DATE);
+								int new_msg_date = 0;
+
 								String oppName = message.getSender();
-								long milis = ChatDBWrapper.getInstance().lastMessageInDB(oppName);
-								if(milis!=-1){
-									calender.setTimeInMillis(milis);
-									oldDate = calender.get(Calendar.DATE);
+								long millis = ChatDBWrapper.getInstance().firstMessageInDB(oppName);
+								if(millis > 0){
+									calender.setTimeInMillis(millis);
+									new_msg_date = calender.get(Calendar.DATE);
 								}
-								if ((oldDate != date) || ChatDBWrapper.getInstance().isFirstChat(oppName)) {
+
+								if (new_msg_date == 0 || old_msg_date < new_msg_date || ChatDBWrapper.getInstance().isFirstChat(oppName)) {
 									contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "1");
 								} else {
 									contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "0");
@@ -3059,7 +3065,7 @@ public void onComposeClick(View view){
 								media_url = message.getFileId();
 								if(media_url != null && media_url.length() > 0)
 									media_url = Constants.LIVE_DOMAIN + "/rtMediaServer/get/" + media_url;
-								if (json_body != null) {
+								if (json_body != null && json_body.trim().length() > 0){
 									System.out.println("json_body = " + json_body);
 									JSONObject jsonobj = null;
 									try {
@@ -3121,8 +3127,7 @@ public void onComposeClick(View view){
 	//--------------------------------
 	public long convertTomilliseconds(Date date){
 		long time_millis = 0;
-		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"),
-				Locale.getDefault());
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
 		Date currentLocalTime = calendar.getTime();
 //            System.out.println("GMT offset is "+currentLocalTime.getTime());
 		DateFormat datef = new SimpleDateFormat("Z");
@@ -3141,21 +3146,20 @@ public void onComposeClick(View view){
 		{
 			Date mDate = sdf.parse(date);
 			timeInMilliseconds = mDate.getTime();
-			System.out.println("Before : Date in millis => " + timeInMilliseconds);
+//			System.out.println("Before : Date in millis => " + timeInMilliseconds);
+//
+//			Date resultdate = new Date(timeInMilliseconds);
+//			System.out.println("Before : Date => "+sdf.format(resultdate));
+//
+//			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
+//			Date currentLocalTime = calendar.getTime();
+//
+//			System.out.println("After GTM : Date in millis => " + (timeInMilliseconds + currentLocalTime.getTime()));
+//
+//			resultdate = new Date(timeInMilliseconds + currentLocalTime.getTime());
+//			System.out.println("After GMT : Date => "+sdf.format(resultdate));
 
-//			SimpleDateFormat sd = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
-			Date resultdate = new Date(timeInMilliseconds);
-			System.out.println("Before : Date => "+sdf.format(resultdate));
-
-			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
-			Date currentLocalTime = calendar.getTime();
-
-			System.out.println("After GTM : Date in millis => " + (timeInMilliseconds + currentLocalTime.getTime()));
-
-			resultdate = new Date(timeInMilliseconds + currentLocalTime.getTime());
-			System.out.println("After GMT : Date => "+sdf.format(resultdate));
-
-			return timeInMilliseconds;
+//			return timeInMilliseconds + convertCurrentTimeintoMillis();
 		}
 		catch (Exception e)
 		{
@@ -3163,6 +3167,32 @@ public void onComposeClick(View view){
 			e.printStackTrace();
 		}
 
-		return timeInMilliseconds;
+		return timeInMilliseconds + convertCurrentTimeintoMillis();
+	}
+
+	public long convertCurrentTimeintoMillis(){
+		//+05:30
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
+		String   timeZone = new SimpleDateFormat("Z").format(calendar.getTime());
+		String time = timeZone.substring(0, 3) + ":"+ timeZone.substring(3, 5);
+		if(time == null)
+			return 0;
+		long millis = 0;
+		String hr = null;
+		String min = null;
+		String[] values = null;
+
+		if(time.startsWith("-")){
+			time = time.substring(1);
+			values = time.split(":");
+			millis = -1 * ((Integer.parseInt(values[0]) * 60 * 60 * 1000) + (Integer.parseInt(values[1]) * 60 * 1000));
+
+		}else{
+			time = time.substring(1);
+			values = time.split(":");
+			millis = (Integer.parseInt(values[0]) * 60 * 60 * 1000) + (Integer.parseInt(values[1]) * 60 * 1000);
+		}
+		System.out.println("+05:30 Millis = "+millis);
+		return millis;
 	}
 }

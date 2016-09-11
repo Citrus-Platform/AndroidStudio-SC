@@ -1698,6 +1698,32 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 
 		return ret;
 	}
+	public long firstMessageInDB(String person) {
+		long ret = -1;
+		String sql = "SELECT "+ChatDBConstants.LAST_UPDATE_FIELD+", MIN("+ChatDBConstants.LAST_UPDATE_FIELD+") FROM "
+				+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO + " WHERE "
+				+ ChatDBConstants.FROM_USER_FIELD + " = '" + person + "' OR "
+				+ ChatDBConstants.FROM_USER_FIELD + " = '" + SharedPrefManager.getInstance().getUserName() + "' AND "
+				+ ChatDBConstants.MESSAGE_TYPE + "=" + 3;
+		Cursor cursor = null;
+		try {
+			cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
+			if (cursor != null)
+				if (cursor != null && cursor.moveToFirst()){
+					ret = cursor.getLong(cursor.getColumnIndex(ChatDBConstants.LAST_UPDATE_FIELD));
+				}
+			Log.d("ChatDBWrapper","lastMessageInDB in ret "+ret);
+		} catch (Exception e) {
+			Log.e("ChatDBWrapper",
+					"Exception in getRecievedMessages method " + e.toString());
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+				cursor = null;
+			}
+		}
+		return ret;
+	}
 
 	public ArrayList<HashMap<String, String>> getUndeliveredMessages(
 			String meUser) {

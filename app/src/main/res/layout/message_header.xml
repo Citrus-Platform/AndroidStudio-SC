@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:gravity="center_horizontal"
+        android:text="HEADER"
+        android:visibility="gone"
+        android:background="#cf9f99" />
+
+    <LinearLayout
+        android:id="@+id/load_more"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/load_older_messages"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginRight="30dip"
+            android:layout_marginLeft="30dip"
+            android:layout_marginTop="10dip"
+            android:layout_marginBottom="10dip"
+            android:background="@drawable/round_rect_blue"
+            android:onClick="onNextButtonClickedForAdmin"
+            android:text="@string/old_messages"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:visibility="gone"
+            android:textColorHighlight="@color/header_color" />
+        <ProgressBar
+            android:id="@+id/message_loading"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dip"
+            android:layout_marginBottom="10dip"
+            android:layout_gravity="center_horizontal"
+            android:indeterminate="true"
+            android:secondaryProgress="100"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+</LinearLayout>

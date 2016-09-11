@@ -373,16 +373,14 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                                 audioPlayerKey = null;
                             } else {
                                 View previousView = myVoicePlayer.getCurrentView();
-                                if (previousView != null
-                                        ) {
+                                if (previousView != null) {
                                     myVoicePlayer.reset();
                                     myVoicePlayer.clear();
                                     globalSeekBarValue = 0;
                                     globalSeekBarMaxValue = 0;
                                     audioPlayerKey = null;
                                     if (previousView.getTag() != null)
-                                        playerBundle.putBoolean(previousView
-                                                .getTag().toString(), false);
+                                        playerBundle.putBoolean(previousView.getTag().toString(), false);
                                 }
 //							playerBundle.putBoolean(mediaLocalPath, true);
                                 playerBundle.putBoolean(key, true);

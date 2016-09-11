@@ -4258,11 +4258,6 @@ public class ChatService extends Service implements interfaceInstances {
 			BulletinMessageDataModel.MessageData bulletin_message =  new BulletinMessageDataModel.MessageData();
 			int audio_length = 0;
 			String extension = null;
-//			if(message_type == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()){
-//				audio_length = MediaPlayer.create(context, Uri.fromFile(new File(file_id))).getDuration()/1000;
-//			}
-			if(message_txt != null && message_txt.trim().length() > 0)
-				bulletin_message.setText(message_txt);
 			bulletin_message.setType(""+message_type);
 			bulletin_message.setPacketId(packet_id);
 			if(file_id != null) {
@@ -4275,9 +4270,39 @@ public class ChatService extends Service implements interfaceInstances {
 			}
 			if(file_name != null)
 				bulletin_message.setFilename(file_name);
-//			JSONObject json_data = new JSONObject();
 			Map<String,String> json_data = new HashMap<String,String>();
-//			ContentValues json_data = new ContentValues();
+
+			if(message_type == XMPPMessageType.atMeXmppMessageTypeImage.ordinal()){
+				message_txt = "Sent an image";
+			}else if(message_type == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()){
+				message_txt = "Sent a video";
+			}else if(message_type == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal()){
+				message_txt = "Sent a doc file";
+			}else if(message_type == XMPPMessageType.atMeXmppMessageTypePdf.ordinal()){
+				message_txt = "Sent a pdf file";
+			}else if(message_type == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal()){
+				message_txt = "Sent a xls file";
+			}else if(message_type == XMPPMessageType.atMeXmppMessageTypePPT.ordinal()){
+				message_txt = "Sent a ppt";
+			}else if(message_type == XMPPMessageType.atMeXmppMessageTypeLocation.ordinal()){
+				message_txt = "Shared location";
+			}else if(message_type == XMPPMessageType.atMeXmppMessageTypeContact.ordinal()){
+				message_txt = "Shared contact";
+			}else if(message_type == XMPPMessageType.atMeXmppMessageTypePoll.ordinal()){
+				message_txt = "Poll";
+			}else if(message_type == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()){
+				audio_length = MediaPlayer.create(context, Uri.fromFile(new File(file_name))).getDuration()/1000;
+				byte minutes = 0;
+				byte seconds = 0;
+				String len_msg = minutes + ":" + ((seconds < 10) ? ("0"+seconds) : seconds);
+				if(audio_length > 0)
+					message_txt = "Sent a voice note : "+ len_msg;
+				else
+					message_txt = "Sent a voice note";
+			}
+
+			if(message_txt != null && message_txt.trim().length() > 0)
+				bulletin_message.setText(message_txt);
 
 
 				if (message_type == XMPPMessageType.atMeXmppMessageTypePdf.ordinal()
@@ -4296,7 +4321,7 @@ public class ChatService extends Service implements interfaceInstances {
 					json_data.put("ext", extension);
 				if(message_type == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()){
 					if(audio_length > 0)
-						json_data.put("audioLength", extension);
+						json_data.put("audioLength", ""+audio_length);
 				}
 			}else if(message_type == XMPPMessageType.atMeXmppMessageTypeLocation.ordinal() ){
 				json_data.put("caption", caption);
