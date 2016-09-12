@@ -4295,10 +4295,10 @@ public class ChatService extends Service implements interfaceInstances {
 				audio_length = MediaPlayer.create(context, Uri.fromFile(new File(file_name))).getDuration()/1000;
 				byte minutes = 0;
 				byte seconds = 0;
-				String len_msg = minutes + ":" + ((seconds < 10) ? ("0"+seconds) : seconds);
-				if(audio_length > 0)
-					message_txt = "Sent a voice note : "+ len_msg;
-				else
+//				String len_msg = minutes + ":" + ((seconds < 10) ? ("0"+seconds) : seconds);
+//				if(audio_length > 0)
+//					message_txt = "Sent a voice note : "+ len_msg;
+//				else
 					message_txt = "Sent a voice note";
 			}
 
