@@ -3030,7 +3030,7 @@ public void onComposeClick(View view){
 								contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, (message.getText() != null) ? message.getText() : "");
 								contentvalues.put(ChatDBConstants.MESSAGE_ID, message.getPacketId());
 								contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID.randomUUID().toString());
-								System.out.println("[Creaton Date ] "+message.getCreatedDate());
+//								System.out.println("[Creaton Date ] "+message.getCreatedDate());
 
 
 								Calendar calender = Calendar.getInstance();
@@ -3045,7 +3045,8 @@ public void onComposeClick(View view){
 									new_msg_date = calender.get(Calendar.DATE);
 								}
 
-								if (new_msg_date == 0 || old_msg_date < new_msg_date || ChatDBWrapper.getInstance().isFirstChat(oppName)) {
+								System.out.println("new_msg_date = "+new_msg_date+", old_msg_date = "+old_msg_date);
+								if (new_msg_date == 0 || old_msg_date < new_msg_date) {
 									contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "1");
 								} else {
 									contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "0");
@@ -3192,7 +3193,7 @@ public void onComposeClick(View view){
 			values = time.split(":");
 			millis = (Integer.parseInt(values[0]) * 60 * 60 * 1000) + (Integer.parseInt(values[1]) * 60 * 1000);
 		}
-		System.out.println("+05:30 Millis = "+millis);
+//		System.out.println("+05:30 Millis = "+millis);
 		return millis;
 	}
 }
