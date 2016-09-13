@@ -3013,6 +3013,7 @@ public void onComposeClick(View view){
 						String media_url = null;
 						int type = 0;
 						String caption = null;
+						String extension = null;
 						next_url = response.getNextUrl();
 						if (!messages.isEmpty()) {
 							LinkedList<BulletinGetMessageDataModel.MessageData> list = new LinkedList<BulletinGetMessageDataModel.MessageData>(messages);
@@ -3080,8 +3081,13 @@ public void onComposeClick(View view){
 
 										if(jsonobj.has("fileName") && jsonobj.getString("fileName").toString().trim().length() > 0)
 											contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, jsonobj.getString("fileName").toString());
-										if(jsonobj.has("ext") && jsonobj.getString("ext").toString().trim().length() > 0)
-											media_url = media_url + "." + jsonobj.getString("ext").toString().trim();
+										if(jsonobj.has("ext") && jsonobj.getString("ext").toString().trim().length() > 0) {
+											extension = jsonobj.getString("ext").toString().trim();
+											if(extension != null && extension.equals("caf"))
+												media_url = media_url + ".amr";
+											else
+												media_url = media_url + "." + extension;
+										}
 
 										if(jsonobj.has("location") && jsonobj.getString("location").toString().trim().length() > 0)
 											contentvalues.put(ChatDBConstants.MESSAGE_TYPE_LOCATION, jsonobj.getString("location").toString());
@@ -3142,7 +3148,7 @@ public void onComposeClick(View view){
 	public long convertTomilliseconds(String date)
 	{
 		long timeInMilliseconds = 0;
-		SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+		SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.US);
 		try
 		{
 			Date mDate = sdf.parse(date);

@@ -364,7 +364,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                             Log.d("ChatListAdapter", "TESTER_ onVoiceClickListener called. " + mediaLocalPath);
                             boolean isPlaying = playerBundle.getBoolean(key);
                             if (isPlaying) {
-                                System.out.println("Playing - key - "+key);
+//                                System.out.println("Playing - key - "+key);
 //							playerBundle.putBoolean(mediaLocalPath, false);
                                 playerBundle.putBoolean(key, false);
                                 myVoicePlayer.reset();
@@ -375,7 +375,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                             } else {
                                 View previousView = myVoicePlayer.getCurrentView();
                                 if (previousView != null) {
-                                    System.out.println("111111");
+//                                    System.out.println("111111");
                                     myVoicePlayer.reset();
                                     myVoicePlayer.clear();
                                     globalSeekBarValue = 0;
@@ -387,7 +387,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                                 playerBundle.putBoolean(key, true);
                                 Thread.sleep(500);
                                 if (userName.equals(myUserName)) {
-                                    System.out.println("mememememe");
+//                                    System.out.println("mememememe");
                                     audioPlayerKey = key;
                                     myVoicePlayer.setMediaHandler(ViewHolder.this);
                                     myVoicePlayer.setProgressBar(playSenderSeekBar);
@@ -400,7 +400,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                                         updateMediaLengthInDb(key, String.valueOf(myVoicePlayer.getDuration() / 1000));
                                     }
                                 } else {
-                                    System.out.println("other");
+//                                    System.out.println("other");
                                     audioPlayerKey = key;
                                     myVoicePlayer.setMediaHandler(ViewHolder.this);
                                     myVoicePlayer.setProgressBar(playRecieverSeekBar);

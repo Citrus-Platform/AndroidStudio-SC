@@ -3241,11 +3241,28 @@ public class ChatService extends Service implements interfaceInstances {
 	public String saveMessage(String from, String to, String msg, Message message, byte messageType) {
 		String name = "";
 		String captionTag  = message.getMediaTagMessage();
+		String jsonBody  = message.getJsonBody();
 		String fileName  = message.getMediaFileName();
 		String locationMsg  = message.getLocationMessage();
         boolean is_sent_from_console = false;
         if(message.isConsoleMessage() != null && message.isConsoleMessage().equalsIgnoreCase("true"))
             is_sent_from_console = true;
+		if(jsonBody != null){
+			try {
+				JSONObject jsonobj = new JSONObject(jsonBody);
+				if(jsonobj.has("caption") && jsonobj.getString("caption").toString().trim().length() > 0) {
+					captionTag = jsonobj.getString("caption").toString();
+				}
+				if(jsonobj.has("location") && jsonobj.getString("location").toString().trim().length() > 0) {
+					locationMsg = jsonobj.getString("location").toString();
+				}
+				if(jsonobj.has("fileName") && jsonobj.getString("fileName").toString().trim().length() > 0) {
+					fileName = jsonobj.getString("fileName").toString();
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 		try {
 
 			ContentValues contentvalues = new ContentValues();
@@ -3319,6 +3336,8 @@ public class ChatService extends Service implements interfaceInstances {
 					|| message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeXLS
 					|| message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypePPT)//This check has been made to receive picture/audio/video message URL in Subject
 			{
+				if(captionTag == null && fileName == null && msg != null)
+					contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, msg);
 				MediaBody media = message.getMediaBody();
 				if(media!=null){
 					String type = media.getType();
@@ -4311,6 +4330,7 @@ public class ChatService extends Service implements interfaceInstances {
 						|| message_type == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal()
 						|| message_type == XMPPMessageType.atMeXmppMessageTypePPT.ordinal()){
 					json_data.put("ext", extension);
+					json_data.put("fileName", file_name);
 				}
 
 			if (message_type == XMPPMessageType.atMeXmppMessageTypeImage.ordinal()

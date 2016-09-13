@@ -7024,7 +7024,8 @@ private void setRecordingViews(byte type){
     public long convertTomilliseconds(String date)
     {
         long timeInMilliseconds = 0;
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+//        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.US);
         try
         {
             Date mDate = sdf.parse(date);

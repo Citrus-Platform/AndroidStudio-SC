@@ -107,6 +107,7 @@ public class Message extends Packet {
 	}
 
 	private String locationMessage;
+	private String jsonBody;
 
 	private XMPPMessageType xMPPMessageType = XMPPMessageType.atMeXmppMessageTypeNormal;
 	private StatusMessageType statusMessageType = StatusMessageType.normal;
@@ -220,9 +221,17 @@ public class Message extends Packet {
 	public String getLocationMessage() {
 		return locationMessage;
 	}
-	
+
+	public String getJsonBody() {
+		return jsonBody;
+	}
+
 	public void setLocationMessage(String locationMessage) {
 		this.locationMessage = locationMessage;
+	}
+
+	public void setJsonBody(String jsonBody) {
+		this.jsonBody = jsonBody;
 	}
 	/**
 	 * Sets the seen state of the message.
@@ -713,6 +722,9 @@ public class Message extends Packet {
 		}		
 		if (locationMessage != null) {
 			buf.append(" location=\"").append(StringUtils.escapeForXML(locationMessage)).append("\"");
+		}
+		if (jsonBody != null) {
+			buf.append(" jsonBody=\"").append(StringUtils.escapeForXML(jsonBody)).append("\"");
 		}
 		if (custDest != null) {
 			buf.append(" custDest=\"").append(StringUtils.escapeForXML(custDest)).append("\"");

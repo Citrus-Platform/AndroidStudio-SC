@@ -109,6 +109,7 @@ public class PacketParserUtils {
         message.setType(Message.Type.fromString(parser.getAttributeValue("", "type")));
         message.setMessageSeenState(getN(parser.getAttributeValue("", "status")));
         message.setMediaTagMessage(parser.getAttributeValue("", "caption"));
+        message.setJsonBody(parser.getAttributeValue("", "jsonBody"));
         message.setMediaFileName(parser.getAttributeValue("", "OriginalFileName"));
         message.setDisplayName(parser.getAttributeValue("", "displayname"));
         message.setGroupDisplayName(parser.getAttributeValue("", "groupDisplayname"));
