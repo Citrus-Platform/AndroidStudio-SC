@@ -1,10 +1,5 @@
 package com.superchat.ui;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-
-import com.superchat.R;
-
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioFormat;
@@ -14,6 +9,11 @@ import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.util.Log;
+
+import com.superchat.R;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 
 public class AudioPlayer {
 
@@ -86,7 +86,7 @@ public class AudioPlayer {
         AssetFileDescriptor fd = context.getResources().openRawResourceFd(R.raw.progress_tone);
         int length = (int) fd.getLength();
 
-        AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_VOICE_CALL, SAMPLE_RATE,
+        AudioTrack audioTrack = new AudioTrack(AudioManager.MODE_IN_CALL, SAMPLE_RATE,
                 AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, length, AudioTrack.MODE_STATIC);
 
         byte[] data = new byte[length];

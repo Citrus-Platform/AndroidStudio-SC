@@ -81,7 +81,7 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 					 mCallerName.setText(myName);
 					 mCallState.setText(call.getState().toString());
 					  setProfilePic(call.getRemoteUserId());
-					  audioController = mSinchServiceInterface.getAudioController();
+					 audioController = mSinchServiceInterface.getAudioController();
 				 } else {
 					 Log.e(TAG, "Started with invalid callId, aborting.");
 					 finish();
@@ -195,7 +195,7 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 		String groupPicId = SharedPrefManager.getInstance().getUserFileId(userName);
 
 		String img_path = null;
-		android.graphics.Bitmap bitmap = null;
+		Bitmap bitmap = null;
 		if(groupPicId != null) {
 			img_path = getImagePath(groupPicId);
 			bitmap = SuperChatApplication.getBitmapFromMemCache(groupPicId);
@@ -358,6 +358,10 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 			Log.d(TAG, "Call ended. Reason: " + cause.toString());
 			mAudioPlayer.stopProgressTone();
 			setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
+			if(audioManager != null){
+				audioManager.setMode(AudioManager.USE_DEFAULT_STREAM_TYPE);
+				//audioManager.setSpeakerphoneOn(false);
+			}
 			String endMsg = "Call ended: " + call.getDetails().toString();
 //			Toast.makeText(CallScreenActivity.this, endMsg, Toast.LENGTH_LONG).show();
 			endCall();
@@ -368,7 +372,12 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 			Log.d(TAG, "Call established");
 			mAudioPlayer.stopProgressTone();
 			mCallState.setText(call.getState().toString());
-			setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+			setVolumeControlStream(AudioManager.MODE_IN_CALL);
+			if(audioManager != null){
+				audioManager.setMode(AudioManager.MODE_IN_CALL);
+				//audioManager.setSpeakerphoneOn(true);
+			}
+
 			mCallStart = System.currentTimeMillis();
 		}
 
@@ -400,12 +409,14 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 			break;
 		case R.id.speaker_button:
 			if(audioController!=null){
-				if(!isSpeaker){
+				if(isSpeaker){
 					audioController.disableSpeaker();
-					speakerButton.setImageResource(R.drawable.speaker_selected);
+					speakerButton.setImageResource(R.drawable.speaker);
+					//audioManager.setSpeakerphoneOn(false);
 				}else{
 					audioController.enableSpeaker();
-					speakerButton.setImageResource(R.drawable.speaker);
+					speakerButton.setImageResource(R.drawable.speaker_selected);
+					//audioManager.setSpeakerphoneOn(true);
 				}
 				isSpeaker = !isSpeaker;
 			}
