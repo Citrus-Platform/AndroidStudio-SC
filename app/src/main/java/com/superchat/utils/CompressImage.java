@@ -22,9 +22,13 @@ import java.io.IOException;
 public class CompressImage {
 	
 	Context context ;
+    boolean saveImage;
 	public CompressImage(Context context){
 		this.context = context ;
 	}
+    public void saveImage(boolean save){
+        saveImage = save;
+    }
 	public String compressImage(String imageUri) {
 		 
 		try{
@@ -315,15 +319,17 @@ public class CompressImage {
 	 
 	    return inSampleSize;
 	}
-//	public static final String contentPost = "Chalk/post";
 	public String getFilename() {
-//	    File file = new File(Environment.getExternalStorageDirectory().getPath(), Constants.contentTemp);//"MyFolder/Images");
-		String filename = Environment.getExternalStorageDirectory().getPath()+ File.separator + Constants.sentProfilePhoto;
-		 File file = new File(filename);//"MyFolder/Images");
+        String filename = null;
+        if(saveImage)
+             filename = Environment.getExternalStorageDirectory().getPath()+ File.separator + "SuperChat";
+        else
+		    filename = Environment.getExternalStorageDirectory().getPath()+ File.separator + Constants.sentProfilePhoto;
+		 File file = new File(filename);
 	    if (!file.exists()) {
 	        file.mkdirs();
 	    }
-	    String uriSting = (file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");//.jpg
+	    String uriSting = (file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
 	    return uriSting;
 	 
 	}
