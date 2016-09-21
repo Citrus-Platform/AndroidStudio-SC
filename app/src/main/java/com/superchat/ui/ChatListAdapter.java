@@ -2253,7 +2253,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
         }
 
 		/* Its for displaying middle text message for date change */
-        if (viewholder.isDateShow) {
+        if (viewholder.isDateShow && viewholder.time != 0) {
             String tmp = "";
             if (viewholder.message != null && (viewholder.message.contains("added")
                     || viewholder.message.contains("group created.")
@@ -2267,8 +2267,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
             viewholder.dateLayout.setVisibility(View.VISIBLE);
             viewholder.leftPersonPic.setVisibility(View.GONE);
             viewholder.senderLayout.setVisibility(View.GONE);
-            viewholder.dateText.setText(date + " " + MONTH_ARRAY[month] + " "
-                    + year + tmp);
+            viewholder.dateText.setText(date + " " + MONTH_ARRAY[month] + " " + year + tmp);
             viewholder.isTimeLineMessage = true;
         } else {
             if (isBroadCastChat && (!viewholder.userName.equals(myUserName) || viewholder.message.contains("updated broad"))) {

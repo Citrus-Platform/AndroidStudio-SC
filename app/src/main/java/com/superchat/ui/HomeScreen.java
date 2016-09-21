@@ -1958,7 +1958,7 @@ public void onComposeClick(View view){
 				contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "0");
 			}
 //			AtMeApplication.dayValue = date;
-			contentvalues.put(DatabaseConstants.LAST_UPDATE_FIELD, currentTime);
+			contentvalues.put(DatabaseConstants.LAST_UPDATE_FIELD, 0);
 
             if(SharedPrefManager.getInstance().isBroadCast(from)) {
                 if(name.indexOf("#786#") != -1) {

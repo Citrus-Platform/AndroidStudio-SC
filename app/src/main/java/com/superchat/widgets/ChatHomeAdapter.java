@@ -440,47 +440,33 @@ public void loadDialog(){
         	viewholder.muteIcon.setVisibility(View.VISIBLE);
         else
         	viewholder.muteIcon.setVisibility(View.GONE);
-        
-//        if(groupMsgSenderName != null && groupMsgSenderName.contains("<") && groupMsgSenderName.contains(">")){
-//        	if(!fromName.equals(SharedPrefManager.getInstance().getUserName()))
-//        		name = name + "@" + groupMsgSenderName.substring(0, groupMsgSenderName.indexOf('<'));
-//        	isSharedID = true;
-//        }else
-//        	isSharedID = false;
-//        String msg = cursor.getString(cursor.getColumnIndex(DatabaseConstants.MESSAGEINFO_FIELD));
+
         String msg_icon = null;
-        long time = cursor.getLong(cursor.getColumnIndex(DatabaseConstants.LAST_UPDATE_FIELD));
-        int messageType = cursor.getInt(cursor.getColumnIndex(DatabaseConstants.MESSAGE_TYPE_FIELD));
-//        int messageStatusType = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE));
-        String audio_len = null;
-        calander.setTimeInMillis(time);
-		SimpleDateFormat format = new SimpleDateFormat("hh:mm aa");
-//		if((currentCalender.get(Calendar.DAY_OF_YEAR)-calander.get(Calendar.DAY_OF_YEAR))<7)
-		int days = daysBetween(currentCalender, calander);
-		
-		String msgTime = format.format( calander.getTime());
-		if(days == 1){
-			msgTime = "Yesterday";
-		}else if(days>1 && days<7){
-			format = new SimpleDateFormat("EEE,hh:mm aa");
-			msgTime = format.format( calander.getTime());
-		}else if(days>=7){
-			format = new SimpleDateFormat("dd/MM/yy");
-			msgTime = format.format( calander.getTime());
+		String msgTime = null;
+		String audio_len = null;
+		long time = cursor.getLong(cursor.getColumnIndex(DatabaseConstants.LAST_UPDATE_FIELD));
+		int messageType = cursor.getInt(cursor.getColumnIndex(DatabaseConstants.MESSAGE_TYPE_FIELD));
+		if(time != 0) {
+			calander.setTimeInMillis(time);
+			SimpleDateFormat format = new SimpleDateFormat("hh:mm aa");
+			int days = daysBetween(currentCalender, calander);
+			msgTime = format.format(calander.getTime());
+			if (days == 1) {
+				msgTime = "Yesterday";
+			} else if (days > 1 && days < 7) {
+				format = new SimpleDateFormat("EEE,hh:mm aa");
+				msgTime = format.format(calander.getTime());
+			} else if (days >= 7) {
+				format = new SimpleDateFormat("dd/MM/yy");
+				msgTime = format.format(calander.getTime());
+			}
 		}
-		
-		
-		
-//        int am_pm = calander.get(Calendar.AM_PM);
-//        int hour = calander.get(Calendar.HOUR);
-//        int minute = calander.get(Calendar.MINUTE);
+
         int messageCount = iChatPref.getChatCountOfUser(viewholder.userName);
         if(isSharedID)
         	name = iChatPref.getSharedIDDisplayName(viewholder.userName);
         else
         	name = iChatPref.getGroupDisplayName(name);
-//        if(name!=null && name.startsWith("m"))
-//        	name = name.substring(1);
         if(viewholder.isBroadCast)
         	viewholder.nameText = iChatPref.getBroadCastDisplayName(toUserName);
         else if(isSharedID){
@@ -503,11 +489,12 @@ public void loadDialog(){
         		viewholder.nameText = name;
         }
          String usersMessagesCount = String.valueOf(messageCount);
-//         Log.d("RecentChatAdapter", "RecentChatAdapter-"+fromName+": "+usersMessagesCount+" , "+messageCount);
-//        displayImage(viewholder.image, s, true);
-//        viewholder.name.setText(cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD)));
-         viewholder.lastMessageTime.setText(msgTime);//hour+":"+minute+AM_PM[am_pm]);
-         if(messageCount>0){
+		if(time != 0) {
+			viewholder.lastMessageTime.setVisibility(View.VISIBLE);
+			viewholder.lastMessageTime.setText(msgTime);
+		}else
+			viewholder.lastMessageTime.setVisibility(View.GONE);
+         if(messageCount > 0){
         	 viewholder.unseenMessages.setVisibility(TextView.VISIBLE);
 	         viewholder.unseenMessages.setText(usersMessagesCount);
          }else{
@@ -517,20 +504,12 @@ public void loadDialog(){
         	 String tmpName = SharedPrefManager.getInstance().getGroupDisplayName(fromName);
         	 if(tmpName.contains("##$^##"))
          		viewholder.chatPerson.setText(tmpName.substring(0, tmpName.indexOf("##$^##")));
-//         	else if(tmpName.contains("_")){
-//    			tmpName = tmpName.substring(0, tmpName.indexOf("_"));
-//    			viewholder.chatPerson.setText(tmpName);
-//         	}
          	else
          		viewholder.chatPerson.setText(tmpName);
          }else if(viewholder.isBroadCast){
         	 String tmpName = SharedPrefManager.getInstance().getBroadCastDisplayName(toUserName);
         	 if(tmpName.contains("##$^##"))
          		viewholder.chatPerson.setText(tmpName.substring(0, tmpName.indexOf("##$^##")));
-//         	else if(tmpName.contains("_")){
-//    			tmpName = tmpName.substring(0, tmpName.indexOf("_"));
-//    			viewholder.chatPerson.setText(tmpName);
-//         	}
          	else
          		viewholder.chatPerson.setText(tmpName);
      	}else if(isSharedID){
@@ -541,7 +520,6 @@ public void loadDialog(){
      		viewholder.chatPerson.setText(viewholder.nameText);
      	}else if (name!=null)
         {
-//            viewholder.chatPerson.setText(name);
         	String tmpName = name.trim();
         	if(tmpName.equals(fromName)|| tmpName.equals(toUserName)){
         		if(tmpName.contains("_"))
@@ -770,82 +748,6 @@ public void loadDialog(){
                 		}
         			}
         		}
-        		
-//        	if(toUserName.equals(SharedPrefManager.getInstance().getUserName())){
-////        		if(SharedPrefManager.getInstance().getUserTypingStatus(fromName))
-////            		msg = "Typing...";
-//        		if(!SharedPrefManager.getInstance().getUserTypingStatusForGroup(fromName).equals("")){
-//        			displayName = SharedPrefManager.getInstance().getUserTypingStatusForGroup(fromName);
-//        			displayName = DBWrapper.getInstance().getChatName(displayName);
-//        			 if(displayName != null && displayName.contains("#786#"))
-//        				 displayName = displayName.substring(0, displayName.indexOf("#786#"));
-//        			msg = displayName + " is typing...";
-//        			viewholder.lastMessageIcon.setVisibility(View.GONE);
-//        		}
-//        		else if(SharedPrefManager.getInstance().getUserTypingStatus(fromName)){
-//            		msg = "Typing...";
-//            		viewholder.lastMessageIcon.setVisibility(View.GONE);
-//            		}
-//        		if(!SharedPrefManager.getInstance().getUserRecordingStatusForGroup(fromName).equals("")){
-//        			displayName = SharedPrefManager.getInstance().getUserRecordingStatusForGroup(fromName);
-//        			displayName = DBWrapper.getInstance().getChatName(displayName);
-//        			if(displayName != null && displayName.contains("#786#"))
-//        				 displayName = displayName.substring(0, displayName.indexOf("#786#"));
-//        			 msg = displayName + " is recording...";
-//        			 viewholder.lastMessageIcon.setVisibility(View.GONE);
-//        		}else if(SharedPrefManager.getInstance().getUserRecordingStatus(fromName)){
-//            		msg = "Recording...";
-//            		viewholder.lastMessageIcon.setVisibility(View.GONE);
-//            		}
-//        		 if(!SharedPrefManager.getInstance().getUserListeningStatusForGroup(fromName).equals("")){
-//             		displayName = SharedPrefManager.getInstance().getUserListeningStatusForGroup(fromName);
-//         			displayName = DBWrapper.getInstance().getChatName(displayName);
-//         			if(displayName != null && displayName.contains("#786#"))
-//         				 displayName = displayName.substring(0, displayName.indexOf("#786#"));
-//         			msg = displayName + " is listening...";
-//         			viewholder.lastMessageIcon.setVisibility(View.GONE);
-//         		}else if(SharedPrefManager.getInstance().getUserListeningStatus(fromName)){
-//            		msg = "Listening...";
-//            		viewholder.lastMessageIcon.setVisibility(View.GONE);
-//            		}
-//        	}else 
-//        	{
-////        		if(SharedPrefManager.getInstance().getUserTypingStatus(toUserName))
-////            		msg = "Typing...";
-//        		if(!SharedPrefManager.getInstance().getUserTypingStatusForGroup(toUserName).equals("")){
-//        			displayName = SharedPrefManager.getInstance().getUserTypingStatusForGroup(fromName);
-//        			displayName = DBWrapper.getInstance().getChatName(displayName);
-//        			 if(displayName != null && displayName.contains("#786#"))
-//        				 displayName = displayName.substring(0, displayName.indexOf("#786#"));
-//        			msg = displayName + " is typing...";
-//        			viewholder.lastMessageIcon.setVisibility(View.GONE);
-//        		}else  if(SharedPrefManager.getInstance().getUserTypingStatus(toUserName)){
-//            		msg = "Typing...";
-//            		viewholder.lastMessageIcon.setVisibility(View.GONE);
-//            		}
-//        		if(!SharedPrefManager.getInstance().getUserRecordingStatusForGroup(toUserName).equals("")){
-//            		displayName = SharedPrefManager.getInstance().getUserRecordingStatusForGroup(fromName);
-//        			displayName = DBWrapper.getInstance().getChatName(displayName);
-//        			if(displayName != null && displayName.contains("#786#"))
-//        				 displayName = displayName.substring(0, displayName.indexOf("#786#"));
-//        			msg = displayName + " is recording...";
-//        			viewholder.lastMessageIcon.setVisibility(View.GONE);
-//        		}else if(SharedPrefManager.getInstance().getUserRecordingStatus(toUserName)){
-//            		msg = "Recording...";
-//            		viewholder.lastMessageIcon.setVisibility(View.GONE);
-//            		}
-//        		if(!SharedPrefManager.getInstance().getUserListeningStatusForGroup(toUserName).equals("")){
-//        			displayName = SharedPrefManager.getInstance().getUserListeningStatusForGroup(fromName);
-//         			displayName = DBWrapper.getInstance().getChatName(displayName);
-//         			if(displayName != null && displayName.contains("#786#"))
-//         				 displayName = displayName.substring(0, displayName.indexOf("#786#"));
-//        			msg = displayName + " is listening...";
-//        			viewholder.lastMessageIcon.setVisibility(View.GONE);
-//        		}else if(SharedPrefManager.getInstance().getUserListeningStatus(toUserName)){
-//            		msg = "Listening...";
-//            		viewholder.lastMessageIcon.setVisibility(View.GONE);
-//            		}
-//        	}
 			if(msg!=null && msg.contains("You are welcome")) {
 				if(!viewholder.isBroadCast)
 					viewholder.lastMessage.setText("Group created by");
