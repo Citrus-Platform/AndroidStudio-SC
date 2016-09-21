@@ -115,6 +115,16 @@ public class Message extends Packet {
 	private final Set<Subject> subjects = new HashSet<Subject>();
 	private final Set<Body> bodies = new HashSet<Body>();
 	private MediaBody mediaBody;
+
+	public MessageDelay getMessageDelay() {
+		return messageDelay;
+	}
+
+	public void setMessageDelay(MessageDelay messageDelay) {
+		this.messageDelay = messageDelay;
+	}
+
+	private MessageDelay messageDelay;
 	private String displayName;
 	private String groupOwnerName;
 	private String groupDisplayname;
@@ -1024,6 +1034,24 @@ public class Message extends Packet {
 			return audioLength;
 		}
 		
+	}
+
+	/**
+	 * Represents a message delay, its language and the content of the
+	 * message.
+	 */
+	public class MessageDelay {
+		public String getStamp() {
+			return stamp;
+		}
+
+		public void setStamp(String stamp) {
+			this.stamp = stamp;
+		}
+
+		private String stamp;
+
+
 	}
 
 	/**

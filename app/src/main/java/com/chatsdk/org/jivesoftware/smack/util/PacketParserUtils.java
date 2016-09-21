@@ -190,8 +190,13 @@ public class PacketParserUtils {
                 	media.setThumb_data(parser.getAttributeValue("", "thumb_data"));
                 	media.setAudioLength(parser.getAttributeValue("", "audioLength"));
                 	message.setMediaBody(media);
-                }
-                else if (elementName.equals("thread")) {
+                }else if (elementName.equals("x")) {
+                    Message.MessageDelay delay = message.new MessageDelay();
+                    delay.setStamp(parser.getAttributeValue("", "stamp"));
+                    message.setMessageDelay(delay);
+                    System.out.println("[Delay : ] = "+delay.getStamp());
+
+                }else if (elementName.equals("thread")) {
                     if (thread == null) {
                         thread = parser.nextText();
                     }

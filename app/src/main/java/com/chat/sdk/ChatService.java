@@ -93,12 +93,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.TimeZone;
@@ -3061,6 +3064,7 @@ public class ChatService extends Service implements interfaceInstances {
 	public void saveMessage(String displayName, String from, String to,
 			String msg, Message message) {
 		String groupSenderDisplayName = message.getDisplayName();
+		Message.MessageDelay delay  = message.getMessageDelay();
 //		if(groupSenderDisplayName!=null && !groupSenderDisplayName.equals("")){
 //			displayName = groupSenderDisplayName;
 //		}
@@ -3225,8 +3229,25 @@ public class ChatService extends Service implements interfaceInstances {
 			} else {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
 			}
-//			AtMeApplication.dayValue = date;
-			contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
+			if(delay != null && delay.getStamp() != null) {
+				try {
+					String del = delay.getStamp();
+					long delay_millis = 0;
+					if(del != null && del.length() > 0)
+						delay_millis = convertDelayToMillis(del);
+//					System.out.println("[Delay in Message currentTime - ] "+currentTime);
+//					System.out.println("[Delay in Message delay_millis - ] "+delay_millis);
+//					System.out.println("[Delay in Message convertCurrentTimeintoMillis GMT+530 - ] "+convertCurrentTimeintoMillis());
+					if(delay_millis > 0)
+						contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, (delay_millis + convertCurrentTimeintoMillis()));
+					else
+						contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
+				}catch (Exception ex){
+					contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
+					ex.printStackTrace();
+				}
+			}else
+				contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
 
 			contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
 			chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
@@ -3242,6 +3263,7 @@ public class ChatService extends Service implements interfaceInstances {
 		String name = "";
 		String captionTag  = message.getMediaTagMessage();
 		String jsonBody  = message.getJsonBody();
+		Message.MessageDelay delay  = message.getMessageDelay();
 		String fileName  = message.getMediaFileName();
 		String locationMsg  = message.getLocationMessage();
         boolean is_sent_from_console = false;
@@ -3444,8 +3466,25 @@ public class ChatService extends Service implements interfaceInstances {
 			} else {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
 			}
-//			AtMeApplication.dayValue = date;
-			contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
+			if(delay != null && delay.getStamp() != null) {
+				try {
+					String del = delay.getStamp();
+					long delay_millis = 0;
+					if(del != null && del.length() > 0)
+						delay_millis = convertDelayToMillis(del);
+//					System.out.println("[Delay in Message currentTime - ] "+currentTime);
+//					System.out.println("[Delay in Message delay_millis - ] "+delay_millis);
+//					System.out.println("[Delay in Message convertCurrentTimeintoMillis GMT+530 - ] "+convertCurrentTimeintoMillis());
+					if(delay_millis > 0)
+						contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, (delay_millis + convertCurrentTimeintoMillis()));
+					else
+						contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
+				}catch (Exception ex){
+					contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
+					ex.printStackTrace();
+				}
+			}else
+				contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
 
             if(SharedPrefManager.getInstance().isBroadCast(to)) {
 				if(SharedPrefManager.getInstance().getBroadcastFirstTimeName(to) != null)
@@ -5662,6 +5701,44 @@ public class ChatService extends Service implements interfaceInstances {
                     }
                 });
     }
+	public long convertDelayToMillis(String date){
+		long timeInMilliseconds = 0;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd'T'HH:mm:ss", Locale.US);
+		try{
+			Date mDate = sdf.parse(date);
+			timeInMilliseconds = mDate.getTime();
+		}
+		catch (Exception e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return timeInMilliseconds;
+	}
+	public long convertCurrentTimeintoMillis(){
+		//+05:30
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
+		String   timeZone = new SimpleDateFormat("Z").format(calendar.getTime());
+		String time = timeZone.substring(0, 3) + ":"+ timeZone.substring(3, 5);
+		if(time == null)
+			return 0;
+		long millis = 0;
+		String hr = null;
+		String min = null;
+		String[] values = null;
+
+		if(time.startsWith("-")){
+			time = time.substring(1);
+			values = time.split(":");
+			millis = -1 * ((Integer.parseInt(values[0]) * 60 * 60 * 1000) + (Integer.parseInt(values[1]) * 60 * 1000));
+
+		}else{
+			time = time.substring(1);
+			values = time.split(":");
+			millis = (Integer.parseInt(values[0]) * 60 * 60 * 1000) + (Integer.parseInt(values[1]) * 60 * 1000);
+		}
+//		System.out.println("+05:30 Millis = "+millis);
+		return millis;
+	}
     //]]]]]]]]]]]]
 //    private void getUserProfile(final String userName){
 //        try{
