@@ -1,10 +1,5 @@
 package com.superchat.utils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -17,6 +12,11 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 
 public class CompressImage {
@@ -318,7 +318,7 @@ public class CompressImage {
 //	public static final String contentPost = "Chalk/post";
 	public String getFilename() {
 //	    File file = new File(Environment.getExternalStorageDirectory().getPath(), Constants.contentTemp);//"MyFolder/Images");
-		String filename = Environment.getExternalStorageDirectory().getPath()+ File.separator + "SuperChat";
+		String filename = Environment.getExternalStorageDirectory().getPath()+ File.separator + Constants.sentProfilePhoto;
 		 File file = new File(filename);//"MyFolder/Images");
 	    if (!file.exists()) {
 	        file.mkdirs();

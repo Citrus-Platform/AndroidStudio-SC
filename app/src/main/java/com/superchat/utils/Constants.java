@@ -62,7 +62,8 @@ public static final String imagePathPost = "SuperChat/streem/imagepost/SuperChat
 public static final String contentVideo = "SuperChat/streem/video/SuperChat";
 public static final String contentVoice = "SuperChat/streem/voice/SuperChat";
 public static final String contentPost = "SuperChat/post";
-public static final String contentProfilePhoto = "SuperChat/.profile/";
+	public static final String contentProfilePhoto = "SuperChat/.profile/";
+	public static final String sentProfilePhoto = "SuperChat/.Sent/";
 
 public static final String INVITATION_LIST = "INVITATION_LIST";
 public static final String BROADCAST = "BROADCAST";
