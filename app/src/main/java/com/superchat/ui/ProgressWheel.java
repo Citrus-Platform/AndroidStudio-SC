@@ -1,7 +1,5 @@
 package com.superchat.ui;
 
-import com.superchat.R;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -14,6 +12,8 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.superchat.R;
 
 
 /**
@@ -268,7 +268,7 @@ public class ProgressWheel extends View {
 
         barColor = a.getColor(R.styleable.ProgressWheel_barColor, barColor);
 
-        barLength = (int) a.getDimension(R.styleable.ProgressWheel_barLength,
+        barLength = (int) a.getDimension(R.styleable.ProgressWheel_barLengthpw,
                 barLength);
 
         textSize = (int) a.getDimension(R.styleable.ProgressWheel_textSize,

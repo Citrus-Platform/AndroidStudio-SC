@@ -1540,6 +1540,11 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 		isLaunched = true;
 		isRWA = SharedPrefManager.getInstance().getDomainType().equals("rwa");
 		System.out.println("[ON-RESUME CALLED]");
+
+		System.out.println("[ON-RESUME 1]");
+		startService(new Intent(SuperChatApplication.context, SinchService.class));
+		System.out.println("[ON-RESUME 2]");
+
 		bindService(new Intent(this, ChatService.class), mConnection,Context.BIND_AUTO_CREATE);
 //		chatClient.startClient(chatFragment);
 //		bindService(new Intent(this, ChatService.class), this, Context.BIND_AUTO_CREATE);

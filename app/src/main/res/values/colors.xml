@@ -102,4 +102,12 @@
     <color name ="nav_sel">#7d7d7d</color>
     <color name ="nav">#c2c2c2</color>
     <color name ="audio_tag_bg_color">#94d7e6</color>
+<!--
+    <color name="colorPrimary">#ff009dd6</color>
+    <color name="colorPrimaryDark">#008dc0</color>
+    <color name="textColorPrimary">#FFFFFF</color>
+    <color name="windowBackground">#FFFFFF</color>
+    <color name="navigationBarColor">#007dab</color>
+    <color name="colorAccent">#ff009dd6</color>
+    <color name="colorGray">#ff6e7072</color>-->
 </resources>

@@ -60,12 +60,12 @@ public class IncomingCallScreenActivity extends Activity {
 		//------------ Changes for call ---------------
 		 @Override
 		    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-			 
+
 				 mSinchServiceInterface = (SinchService.SinchServiceInterface) iBinder;
 				 if(mSinchServiceInterface!=null){
 					 Call call = mSinchServiceInterface.getCall(mCallId);
 			        if (call != null) {
-			        	
+
 			            call.addCallListener(new SinchCallListener());
 			            TextView remoteUser = (TextView) findViewById(R.id.remoteUser);
 			            String myName =  iChatPref.getUserServerName(call.getRemoteUserId());

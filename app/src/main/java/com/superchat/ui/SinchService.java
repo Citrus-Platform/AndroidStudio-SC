@@ -1,4 +1,10 @@
 package com.superchat.ui;
+import android.app.Service;
+import android.content.Intent;
+import android.os.Binder;
+import android.os.IBinder;
+import android.util.Log;
+
 import com.sinch.android.rtc.AudioController;
 import com.sinch.android.rtc.ClientRegistration;
 import com.sinch.android.rtc.Sinch;
@@ -9,14 +15,6 @@ import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallClient;
 import com.sinch.android.rtc.calling.CallClientListener;
 import com.superchat.utils.SharedPrefManager;
-
-import android.app.Service;
-import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
-import android.util.Log;
 
 public class SinchService extends Service {
 
@@ -40,6 +38,8 @@ public class SinchService extends Service {
 
     private StartFailedListener mListener;
 
+    public final static String KEY_INTENT_SINCH_SERVICE = "KilledSinchServices";
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -50,6 +50,7 @@ public class SinchService extends Service {
         if (mSinchClient != null && mSinchClient.isStarted()) {
             mSinchClient.terminate();
         }
+        sendBroadcast(new Intent(KEY_INTENT_SINCH_SERVICE));
         super.onDestroy();
     }
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -60,19 +61,24 @@ public class SinchService extends Service {
 		return START_STICKY;
 	}
     private void start(String userName) {
+        Log.d(TAG, "SinchClient start 1");
         if (mSinchClient == null) {
+            Log.d(TAG, "SinchClient start 2");
             mUserId = userName;
             mSinchClient = Sinch.getSinchClientBuilder().context(getApplicationContext()).userId(userName)
                     .applicationKey(APP_KEY)
                     .applicationSecret(APP_SECRET)
                     .environmentHost(ENVIRONMENT).build();
-
-            mSinchClient.setSupportCalling(true);
-            mSinchClient.startListeningOnActiveConnection();
-            mSinchClient.addSinchClientListener(new MySinchClientListener());
-            mSinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());
-            mSinchClient.start();
+            Log.d(TAG, "SinchClient start 3");
         }
+
+        mSinchClient.setSupportCalling(true);
+        mSinchClient.startListeningOnActiveConnection();
+        mSinchClient.addSinchClientListener(new MySinchClientListener());
+        mSinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());
+        mSinchClient.start();
+
+        Log.d(TAG, "SinchClient start 4");
     }
 
     private void stop() {
@@ -141,11 +147,14 @@ public class SinchService extends Service {
 
         @Override
         public void onClientFailed(SinchClient client, SinchError error) {
+            Log.d(TAG, "SinchClient failed 1");
             if (mListener != null) {
                 mListener.onStartFailed(error);
             }
             mSinchClient.terminate();
             mSinchClient = null;
+            Log.d(TAG, "SinchClient failed 2");
+
         }
 
         @Override
@@ -204,11 +213,11 @@ public class SinchService extends Service {
      	        }
         		return;
     		}
+
             Intent intent = new Intent(SinchService.this, IncomingCallScreenActivity.class);
             intent.putExtra(CALL_ID, call.getCallId());
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
             SinchService.this.startActivity(intent);
-           
         }
     }
 

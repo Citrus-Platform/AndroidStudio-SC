@@ -19,7 +19,7 @@
             android:layout_height="140dp"
             android:layout_centerHorizontal="true"
             ProgressWheel:barColor="#f67f7f"
-            ProgressWheel:barLength="60dp"
+            ProgressWheel:barLengthpw="60dp"
             ProgressWheel:barWidth="5dp"
             ProgressWheel:contourColor="#000000"
             ProgressWheel:circleColor="#fafafa"

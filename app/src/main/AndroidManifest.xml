@@ -314,6 +314,13 @@
             android:name="io.fabric.ApiKey"
             android:value="2dd9ecbc00f90dff7152815506e742a886c447d9" />
 
+        <receiver android:name=".service.RestartServiceReceiver" >
+            <intent-filter>
+                <action android:name="KilledSinchServices" >
+                </action>
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
