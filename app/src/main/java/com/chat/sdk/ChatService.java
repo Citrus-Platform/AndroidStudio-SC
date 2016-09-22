@@ -2525,6 +2525,7 @@ public class ChatService extends Service implements interfaceInstances {
 							Log.d(TAG, "[SettingsDialog] Connected to " + connection.getHost());
 							// ProviderManager.getInstance().addExtensionProvider("status","androidpn:iq:status",
 							// new MUCUserProvider());
+							int last_online_time = (int)((System.currentTimeMillis() - (prefManager.getLastOnline() - (5 * 1000)))/1000);
 							if (!connection.isAuthenticated())
 								connection.login(userName, password);
 							setConnection(packetListener);
@@ -2547,7 +2548,7 @@ public class ChatService extends Service implements interfaceInstances {
 							for (String group : SharedPrefManager.getInstance().getGroupNamesArray()) {
 								if (group != null && !group.equals("")){
 									if(prefManager.isGroupMemberActive(group, prefManager.getUserName()))
-										sendGroupPresence(group, -1);
+										sendGroupPresence(group, (last_online_time > 0 ? last_online_time : -1));
 								}
 							}
 							xmppConectionStatus = true;
@@ -5058,11 +5059,15 @@ public class ChatService extends Service implements interfaceInstances {
 		try {
 			//For testing, to join directly.
 //			joinMultiUserChat2(roomName);
-			int currentTime = (int)((System.currentTimeMillis() - (prefManager.getLastOnline() - (5*1000)))/1000); //new1
+			int currentTime = (int)((System.currentTimeMillis() - (prefManager.getLastOnline() - (5 * 1000)))/1000);
+//			System.out.println("prefManager.getLastOnline() => currentTime - "+prefManager.getLastOnline());
+//			System.out.println("sendGroupPresence :: currentTime - "+currentTime);
 			if(prefManager.getLastOnline() <= 0)
 				currentTime = 0;
-			if(historySeconds!=-1)
+			if(historySeconds > 0)
 				currentTime = historySeconds;
+//			if(historySeconds != -1)
+//				currentTime = historySeconds;
 			if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
 				Presence joinPresence = new Presence(Presence.Type.available);
 				String room = roomName;
