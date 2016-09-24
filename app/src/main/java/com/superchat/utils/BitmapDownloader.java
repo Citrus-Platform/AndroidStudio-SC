@@ -1,17 +1,5 @@
 package com.superchat.utils;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -20,23 +8,31 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.media.ThumbnailUtils;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.superchat.SuperChatApplication;
-import com.superchat.ui.HomeScreen;
+import com.superchat.widgets.ChatHomeAdapter;
+import com.superchat.widgets.ContactsAdapter;
 import com.superchat.widgets.RoundedImageView;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.ref.WeakReference;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class BitmapDownloader extends AsyncTask<String, Integer, String>{
     private static final String TAG = "BitmapDownloader";
@@ -53,6 +49,7 @@ public class BitmapDownloader extends AsyncTask<String, Integer, String>{
     public static final String PROFILE_PIC_REQUEST = "profile_view_request"; 
     ProgressDialog progressDialog = null;
     Context context;
+	Adapter adapter = null;
     public BitmapDownloader(Context context,ImageView profileImageView) {
     	this.context = context;
     	profileViewReference = new WeakReference<ImageView>(profileImageView);
@@ -65,6 +62,14 @@ public class BitmapDownloader extends AsyncTask<String, Integer, String>{
     	imageViewReference = new WeakReference<RoundedImageView>(roundedImageView);
     }
     public BitmapDownloader(RoundedImageView roundedImageView,ImageView defaultView) {
+    	imageViewReference = new WeakReference<RoundedImageView>(roundedImageView);
+    	defaultViewReference = new WeakReference<ImageView>(defaultView);
+    }
+    public BitmapDownloader(Adapter adapter, RoundedImageView roundedImageView, ImageView defaultView) {
+		if(adapter instanceof ChatHomeAdapter)
+			this.adapter = (ChatHomeAdapter)adapter;
+		else if(adapter instanceof ContactsAdapter)
+			this.adapter = (ContactsAdapter)adapter;
     	imageViewReference = new WeakReference<RoundedImageView>(roundedImageView);
     	defaultViewReference = new WeakReference<ImageView>(defaultView);
     }
@@ -85,9 +90,11 @@ public class BitmapDownloader extends AsyncTask<String, Integer, String>{
     @Override
     protected String doInBackground(String... params) {
     	fileId = params[0];
-    	
+//		System.out.println("[doInBackground] - fileId : "+fileId);
+		if(adapter != null && adapter instanceof ChatHomeAdapter && ((ChatHomeAdapter)adapter).inProcessing(fileId))
+			return null;
 //        return downloadBitmap(url);
-        if(params!=null && params.length>1){
+        if(params != null && params.length > 1){
         	if(params[1].equals(THUMB_REQUEST))
         		isThumbRequest = true;
         	else if(params[1].equals(PIC_VIEW_REQUEST))
@@ -119,6 +126,8 @@ public class BitmapDownloader extends AsyncTask<String, Integer, String>{
 	    		  if(file1.exists())
 	    			  return filename;
 	          }
+		if(adapter != null && adapter instanceof ChatHomeAdapter)
+			((ChatHomeAdapter)adapter).addProcessing(fileId);
 //		  File file1 = new File(filename);
 ////		  if(!file1.exists())
 //				file1.mkdir();
@@ -149,7 +158,7 @@ public class BitmapDownloader extends AsyncTask<String, Integer, String>{
 		  // input stream to read file - with 8k buffer
 		  InputStream input = new BufferedInputStream(url.openStream());
 		  // Output stream to write file
-		  
+			  System.out.println("[ filename - ] "+filename);
 		  OutputStream output = new FileOutputStream(filename);
 		  Environment.getExternalStorageDirectory().getPath();
 		  byte data[] = new byte[4096]; 
@@ -238,26 +247,62 @@ public class BitmapDownloader extends AsyncTask<String, Integer, String>{
 			context.startActivity(intent);
         }else if (imageViewReference != null) {
         	RoundedImageView imageView = imageViewReference.get();
+			ImageView defaultView = null;
         	if(imageView != null && filePath != null)
         	{
         		if(defaultViewReference!=null){
-        			ImageView defaultView = defaultViewReference.get();
+					defaultView = defaultViewReference.get();
         			if(defaultView!=null)
         				defaultView.setVisibility(View.INVISIBLE);
         		}
-        		imageView.setVisibility(View.VISIBLE);
-        		
-        		setThumb(imageView, filePath,fileId);
-//        		bm = BitmapFactory.decodeFile(filePath, null);
-//        		imageView.setImageURI(Uri.parse(filePath));
-//        		imageView.setBackgroundDrawable(null);
-//        		SuperChatApplication.addBitmapToMemoryCache(fileId, imageView);
+				if (imageView.getTag() != null && imageView.getTag().toString().contains(fileId)){
+//					System.out.println("[doInBackground] - filimageView.getTag() : "+imageView.getTag().toString());
+					imageView.setVisibility(View.VISIBLE);
+					if(adapter != null && adapter instanceof ChatHomeAdapter)
+						((ChatHomeAdapter)adapter).removeProcessing(fileId);
+					setThumb(imageView, filePath, fileId);
+				}else{
+					if(adapter instanceof ChatHomeAdapter)
+						((ChatHomeAdapter)adapter).updateUI();
+					if(imageView.getTag() != null) {
+						System.out.println("[[[[[ELSE CASE imageView.getTag() - ]]]]]] " + imageView.getTag());
+						System.out.println("[[[[[ELSE CASE fileId - ]]]]]] " + fileId);
+					}
+//					if(defaultViewReference!=null){
+//						defaultView = defaultViewReference.get();
+//						if(defaultView!=null) {
+//							System.out.println("[[[[[ELSE CASE - 2]]]]]]");
+//							defaultView.setVisibility(View.INVISIBLE);
+//							imageView.setVisibility(View.VISIBLE);
+//							imageView.setImageResource(R.drawable.profile_about_me);
+//						}
+//					}else
+					{
+						System.out.println("[[[[[ELSE CASE - 3]]]]]]");
+						if(defaultView != null) {
+							System.out.println("[[[[[ELSE CASE - 4]]]]]]");
+							imageView.setVisibility(View.VISIBLE);
+							defaultView.setVisibility(View.VISIBLE);
+						}else {
+							System.out.println("[[[[[ELSE CASE - 5]]]]]]");
+							imageView.setVisibility(View.VISIBLE);
+//							if (imageView.getTag() != null){
+//								if(adapter instanceof ChatHomeAdapter)
+//									((ChatHomeAdapter)adapter).updateUI();
+//							}
+//								setThumb(imageView, filePath, fileId);
+//							imageView.setImageResource(R.drawable.profile_about_me);
+						}
+					}
+				}
         	}
         }else if(profileViewReference!=null){
     			ImageView defaultView = profileViewReference.get();
     			if(defaultView!=null){
-    				defaultView.setVisibility(View.VISIBLE);
-    				setThumbWithoutCashing(defaultView, filePath,fileId);
+					if (defaultView.getTag() != null && defaultView.getTag().toString().contains(fileId)) {
+						defaultView.setVisibility(View.VISIBLE);
+						setThumbWithoutCashing(defaultView, filePath, fileId);
+					}
 //    				setThumb(defaultView, filePath,fileId);
 //    				updateProfilePic(fileId);
 				}
@@ -274,21 +319,21 @@ public class BitmapDownloader extends AsyncTask<String, Integer, String>{
         return Math.round(px);
     }
     private void updateProfilePic(String picId){
-    	 SuperChatApplication.removeBitmapFromMemCache(fileId);
-    	String filename = Environment.getExternalStorageDirectory().getPath()+ File.separator +Constants.contentProfilePhoto+picId+".jpg";
-    	File file1 = new File(filename);
-		 boolean isDeleted =  file1.delete();
-		  filename = Environment.getExternalStorageDirectory().getPath()+ File.separator + "SuperChat/"+fileId+".jpg";
-		  file1 = new File(filename);		 
-		  boolean isMoved =   file1.renameTo(new File(Environment.getExternalStorageDirectory().getPath()+ File.separator +Constants.contentProfilePhoto+picId+".jpg"));
-		 Log.d(TAG, "file deleted and moved status : "+isDeleted+" , "+isMoved);
-		  Bitmap bm = null;
-		    try{
-			    bm = BitmapFactory.decodeFile(file1.getPath(), null);
-			    bm = rotateImage(file1.getPath(), bm);
-			    SuperChatApplication.addBitmapToMemoryCache(picId,bm);
-		    }catch(Exception ex){
-		    }
+//    	 SuperChatApplication.removeBitmapFromMemCache(fileId);
+//    	String filename = Environment.getExternalStorageDirectory().getPath()+ File.separator +Constants.contentProfilePhoto+picId+".jpg";
+//    	File file1 = new File(filename);
+//		 boolean isDeleted =  file1.delete();
+//		  filename = Environment.getExternalStorageDirectory().getPath()+ File.separator + "SuperChat/"+fileId+".jpg";
+//		  file1 = new File(filename);
+//		  boolean isMoved =   file1.renameTo(new File(Environment.getExternalStorageDirectory().getPath()+ File.separator +Constants.contentProfilePhoto+picId+".jpg"));
+//		 Log.d(TAG, "file deleted and moved status : "+isDeleted+" , "+isMoved);
+//		  Bitmap bm = null;
+//		    try{
+//			    bm = BitmapFactory.decodeFile(file1.getPath(), null);
+//			    bm = rotateImage(file1.getPath(), bm);
+//			    SuperChatApplication.addBitmapToMemoryCache(picId,bm);
+//		    }catch(Exception ex){
+//		    }
     }
     private void setThumb(RoundedImageView imageViewl,String path,String groupPicId){
 		BitmapFactory.Options bfo = new BitmapFactory.Options();

@@ -436,6 +436,7 @@ public class ContactsAdapter extends SimpleCursorAdapter
 //			id_admin_option
 			
 			viewholder.contactImageDefault.setTag(viewholder.userNames);
+//		    System.out.println("--->"+viewholder.userNames + "- "+SharedPrefManager.getInstance().getUserFileId(viewholder.userNames));
 			if(viewholder.voipumValue.equals("0")){
 				viewholder.contactImage.setVisibility(View.INVISIBLE);
 				viewholder.adminOptionImages.setVisibility(View.VISIBLE);
@@ -444,7 +445,7 @@ public class ContactsAdapter extends SimpleCursorAdapter
 				viewholder.contactImage.setVisibility(View.VISIBLE);
 				viewholder.adminOptionImages.setVisibility(View.INVISIBLE);
 				setProfilePic(viewholder.contactImage, viewholder.contactImageDefault, viewholder.userNames,viewholder.nameText,viewholder.iconText, isSharedIDContact);
-				}
+			}
 	}
 
 	public static String formatNumber(String str){
@@ -520,15 +521,15 @@ public class ContactsAdapter extends SimpleCursorAdapter
 		ViewHolder viewholder = new ViewHolder();
 
 //		viewholder.iconText = (TextView)view.findViewById(R.id.id_icon_text);
-		viewholder.contact_status = (TextView)view.findViewById(R.id.id_contact_status);
-		viewholder.contactAddedTime = (TextView)view.findViewById(R.id.id_status_time);
-		viewholder.name = (TextView)view.findViewById(R.id.id_contact_name);
-		viewholder.contactImage = (ImageView)view.findViewById(R.id.contact_icon);
-		viewholder.contactImageDefault = (ImageView)view.findViewById(R.id.contact_icon_default);
-		viewholder.adminOptionImages = (ImageView)view.findViewById(R.id.id_admin_option);
-		viewholder.contactAddedOrNot = (ImageView)view.findViewById(R.id.id_esia_contact);
-		viewholder.user_type = (TextView)view.findViewById(R.id.user_type);
-		
+			viewholder.contact_status = (TextView) view.findViewById(R.id.id_contact_status);
+			viewholder.contactAddedTime = (TextView) view.findViewById(R.id.id_status_time);
+			viewholder.name = (TextView) view.findViewById(R.id.id_contact_name);
+			viewholder.contactImage = (ImageView) view.findViewById(R.id.contact_icon);
+			viewholder.contactImageDefault = (ImageView) view.findViewById(R.id.contact_icon_default);
+			viewholder.adminOptionImages = (ImageView) view.findViewById(R.id.id_admin_option);
+			viewholder.contactAddedOrNot = (ImageView) view.findViewById(R.id.id_esia_contact);
+			viewholder.user_type = (TextView) view.findViewById(R.id.user_type);
+
 //		if (isEditableContact){
 			viewholder.contactImage.setOnClickListener(viewholder.onCheckeClickListener);
 			viewholder.contactImageDefault.setOnClickListener(viewholder.onCheckeClickListener);
@@ -536,9 +537,9 @@ public class ContactsAdapter extends SimpleCursorAdapter
 //			viewholder.iCheckBox.setOnClickListener(viewholder.onCheckeClickListener);
 			view.setOnClickListener(viewholder.onCheckeClickListener);
 //		}
-		String s = cursor.getString(cursor.getColumnIndex(DatabaseConstants.NAME_CONTACT_ID_FIELD));
-		viewholder.id = s;
-		view.setTag(viewholder);
+			String s = cursor.getString(cursor.getColumnIndex(DatabaseConstants.NAME_CONTACT_ID_FIELD));
+			viewholder.id = s;
+			view.setTag(viewholder);
 //		displayImage(viewholder.contactImage, s, false);
 //		viewholder.userNames = cursor.getString(cursor.getColumnIndex(DatabaseConstants.USER_NAME_FIELD));
 //		setProfilePic(viewholder.contactImage,viewholder.userNames);
@@ -607,13 +608,17 @@ public class ContactsAdapter extends SimpleCursorAdapter
 				}catch(Exception ex){
 					ex.printStackTrace();
 				}
+//				Picasso.with(context)
+//						.load(Constants.media_convertget_url+groupPicId+".jpg?height=50&width=50")
+//						.into(view_default);
 				if (Build.VERSION.SDK_INT >= 11)
-					new BitmapDownloader((RoundedImageView)view,view_default).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,groupPicId, BitmapDownloader.THUMB_REQUEST);
+					new BitmapDownloader(this, (RoundedImageView)view,view_default).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,groupPicId, BitmapDownloader.THUMB_REQUEST);
 	             else
-	            	 new BitmapDownloader((RoundedImageView)view,view_default).execute(groupPicId, BitmapDownloader.THUMB_REQUEST);
+	            	 new BitmapDownloader(this, (RoundedImageView)view,view_default).execute(groupPicId, BitmapDownloader.THUMB_REQUEST);
 			}
 //			iconText.setVisibility(View.INVISIBLE);
 		}else{
+			view.setTag(null);
 //			iconText.setVisibility(View.VISIBLE);
 			if(userName.equals("view_member_stats")){
 				view_default.setVisibility(View.INVISIBLE);
@@ -645,6 +650,7 @@ public class ContactsAdapter extends SimpleCursorAdapter
 						view_default.setImageResource(R.drawable.small_helpdesk);
 						view.setImageResource(R.drawable.small_helpdesk);
 					}else{
+//						System.out.println("Here=========");
 						String name_alpha = "";
 						if(displayName != null && displayName.trim().length() > 0)
 							name_alpha = String.valueOf(displayName.charAt(0));
@@ -654,6 +660,7 @@ public class ContactsAdapter extends SimpleCursorAdapter
 						view.setVisibility(View.INVISIBLE);
 						view_default.setVisibility(View.VISIBLE);
 						view_default.setImageDrawable(drawable);
+						System.out.println();
 						view_default.setBackgroundColor(Color.TRANSPARENT);
 					}
 				}catch(Exception ex){

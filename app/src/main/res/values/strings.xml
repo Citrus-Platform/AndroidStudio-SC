@@ -509,6 +509,7 @@
     <string name="enter_alternate_sg_new">"Enter SuperGroup’s name"</string>
     <string name="creation_tell_us">"Tell us about your SuperGroup"</string>
     <string name="creation_name_sg">"Name your SuperGroup"</string>
+    <string name="creation_name_title">"Display Name"</string>
     <string name="creation_name_sg_address">"SuperGroup's real address"</string>
     <string name="creation_email_sg">"Please enter your email address"</string>
     <string name="creation_email_note">"Your email address will be used for special announcements for SuperGroup owners."</string>

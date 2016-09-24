@@ -729,7 +729,6 @@ private void onNotifiUI(){
 			View view = recentList.getChildAt(i);
 			RoundedImageView imgv = (RoundedImageView) view.findViewById(R.id.contact_icon);
 			ImageView def_imgv = (ImageView) view.findViewById(R.id.contact_icon_default);
-			System.out.println("[[[ - ]]] "+def_imgv.getTag());
 			if(def_imgv.getTag()!=null && ((String)def_imgv.getTag()).equalsIgnoreCase(userName)){
 				//Update the row.
 				if(adapter != null)
@@ -737,17 +736,7 @@ private void onNotifiUI(){
 				if(userDisplayName != null)
 					((TextView) view.findViewById(R.id.id_chat_person)).setText(userDisplayName);
 				updated = true;
-//				try {
-//					Thread.sleep(4000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
 			}
-//			else{
-//				if(adapter != null)
-//					adapter.notifyDataSetChanged();
-//			}
 		}
 		if(!updated){
 			if(adapter != null)

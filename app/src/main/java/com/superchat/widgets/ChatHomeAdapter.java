@@ -67,6 +67,8 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static com.google.android.gms.internal.zzip.runOnUiThread;
+
 // Referenced classes of package com.vopium.widget:
 //            DontPressWithParentLayout
 
@@ -764,7 +766,7 @@ public void loadDialog(){
 			viewholder.personImageDefault.setTag(toUserName);
 		else
 			viewholder.personImageDefault.setTag(fromName);
-//		System.out.println("[[[ - "+fromName);
+//		System.out.println("[[[ Image User - "+fromName);
 		if (fromName.equals(userMe)){
 			if(isSharedID)
 				setProfilePic(viewholder.personImage, viewholder.personImageDefault, viewholder.nameText, toUserName, (byte)1);
@@ -845,7 +847,32 @@ public void loadDialog(){
 	}
 	 private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
 	    private TextDrawable.IBuilder mDrawableBuilder;
-	    
+
+	HashMap processing = new HashMap();
+	public void addProcessing(String file_id){
+		processing.put(file_id, "1");
+	}
+	public void removeProcessing(String file_id){
+		processing.remove(file_id);
+	}
+	public boolean inProcessing(String file_id){
+		return processing.containsKey(file_id);
+	}
+	public void updateUI(){
+		try{
+			runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					System.out.println("[updateUI ]");
+					notifyDataSetChanged();
+				}
+			});
+			notifyDataSetChanged();
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
 	public void setProfilePic(ImageView view, ImageView view_default, String displayName, String userName, byte type){
 		String groupPicId = null;
 		if(SharedPrefManager.getInstance().isSharedIDContact(userName))
@@ -921,21 +948,26 @@ public void loadDialog(){
 			            	 new BitmapDownloader((RoundedImageView)view).execute(groupPicId, BitmapDownloader.THUMB_REQUEST);
 					}else{
 						try{
-							String name_alpha = String.valueOf(displayName.charAt(0));
-							if(displayName.contains(" ") && displayName.indexOf(' ') < (displayName.length() - 1))
-								name_alpha +=  displayName.substring(displayName.indexOf(' ') + 1).charAt(0);
-							TextDrawable drawable = mDrawableBuilder.build(name_alpha, mColorGenerator.getColor(displayName));
-							view.setVisibility(View.INVISIBLE);
-							view_default.setVisibility(View.VISIBLE);
-							view_default.setImageDrawable(drawable);
-							view_default.setBackgroundColor(Color.TRANSPARENT);
+							if(displayName != null && displayName.trim().length() > 0){
+								String name_alpha = String.valueOf(displayName.charAt(0));
+								if (displayName.contains(" ") && displayName.indexOf(' ') < (displayName.length() - 1))
+									name_alpha += displayName.substring(displayName.indexOf(' ') + 1).charAt(0);
+								TextDrawable drawable = mDrawableBuilder.build(name_alpha, mColorGenerator.getColor(displayName));
+								view.setVisibility(View.INVISIBLE);
+								view_default.setVisibility(View.VISIBLE);
+								view_default.setImageDrawable(drawable);
+								view_default.setBackgroundColor(Color.TRANSPARENT);
+							}
 						}catch(Exception ex){
 							ex.printStackTrace();
 						}
-						if (Build.VERSION.SDK_INT >= 11)
-							new BitmapDownloader((RoundedImageView)view,view_default).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,groupPicId, BitmapDownloader.THUMB_REQUEST);
-			             else
-			            	 new BitmapDownloader((RoundedImageView)view,view_default).execute(groupPicId, BitmapDownloader.THUMB_REQUEST);
+//						if(!processing.containsKey(groupPicId))
+						{
+							if (Build.VERSION.SDK_INT >= 11)
+								new BitmapDownloader(this, (RoundedImageView) view, view_default).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, groupPicId, BitmapDownloader.THUMB_REQUEST);
+							else
+								new BitmapDownloader(this, (RoundedImageView) view, view_default).execute(groupPicId, BitmapDownloader.THUMB_REQUEST);
+						}
 					}
 						 
 //					(new ProfilePicDownloader()).download(Constants.media_get_url+groupPicId+".jpg", (RoundedImageView)view, null);

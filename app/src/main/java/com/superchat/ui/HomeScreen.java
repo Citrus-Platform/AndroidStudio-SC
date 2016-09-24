@@ -422,14 +422,6 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 		if((action != null && Intent.ACTION_SEND.equals(action)) || SharedPrefManager.getInstance().isContactSynched())
 			noLoadingNeeded = true;
 		setContentView(R.layout.home_screen);
-//		 syncView = (ImageView)findViewById(R.id.sync_id);
-//		 syncAnimation = ObjectAnimator.ofFloat(syncView, "rotation", 360);
-//		syncAnimation.setDuration(1000);
-////		syncAnimation.setRepeatMode(ValueAnimator.REVERSE);
-//		syncAnimation.setRepeatCount(Animation.INFINITE);
-//		syncAnimation.cancel();
-		
-		
 		totalCountView = (MyriadRegularTextView)findViewById(R.id.id_total_unseens);
 		unseenContactView = (MyriadRegularTextView)findViewById(R.id.id_contact_unseens);
 		totalBulletinView = (MyriadRegularTextView)findViewById(R.id.id_bulletin_unseens);
@@ -443,27 +435,7 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 		publicGroupTab = (ImageView)findViewById(R.id.id_channel);
 		publicGroupTab.setOnClickListener(this);
 		loadFragments();
-//		onClick(chatMenuLayout);
-		
-//		chatClient = new XmppChatClient();
 		iPrefManager = SharedPrefManager.getInstance();
-//		if(iPrefManager.getChatCounter()>0){
-//			totalCountView.setVisibility(View.VISIBLE);
-//			totalCountView.setText(String.valueOf(iPrefManager.getChatCounter()));
-//		}else
-//			totalCountView.setVisibility(View.GONE);
-//		int contactsCount = DBWrapper.getInstance().getAllNumbersCount();
-//		if(iPrefManager.getNewContactsCounter()>=0 && (contactsCount-iPrefManager.getNewContactsCounter())>0){
-//			unseenContactView.setVisibility(View.VISIBLE);
-//			unseenContactView.setText(String.valueOf(iPrefManager.getChatCounter()));
-//		}else
-//			unseenContactView.setVisibility(View.GONE);
-//		XmppChatClient.setCustomChatNotification();//R.layout.message_notifier, R.id.chat_person_name, R.id.chat_message, R.id.chat_notification_bubble_text, R.drawable.chatgreen);
-//		XmppChatClient.initChatService(EsiaChatApplication.context, iPrefManager.getUserName(), iPrefManager.getUserPassword(), Constants.CHAT_SERVER_URL, Constants.CHAT_DOMAIN);
-		
-//		bindService(new Intent(this, ChatService.class), this, Context.BIND_AUTO_CREATE);
-//		bindService(new Intent(this, SinchService.class), this, BIND_AUTO_CREATE);
-		
 		if(Build.VERSION.SDK_INT >= 11)
 			new SignInTaskOnServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		else
@@ -486,11 +458,13 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
         
         mAdapter = new HomePagerAdapter(getSupportFragmentManager(),getApplicationContext());
         mViewPager = (CustomViewPager) findViewById(R.id.view_pager);
-//		mViewPager.setPagingEnabled(false);
-        if(getIntent().getExtras() != null)
-        	firstTimeAdmin = getIntent().getExtras().getBoolean("ADMIN_FIRST_TIME");
+		mViewPager.setPagingEnabled(true);
+		if(getIntent().getExtras() != null) {
+			firstTimeAdmin = getIntent().getExtras().getBoolean("ADMIN_FIRST_TIME");
+		}
+//		mViewPager.setOffscreenPageLimit(4);
 		mViewPager.setAdapter(mAdapter);
-		if(iPrefManager.isFirstTime() && iPrefManager.getAppMode().equals("VirginMode")){	
+		if(iPrefManager.isFirstTime() && iPrefManager.getAppMode().equals("VirginMode")){
 //			if(firstTimeAdmin){
 //				mViewPager.setCurrentItem(2);
 //				chatMenuLayout.setSelected(false);
@@ -844,7 +818,8 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 										if(groupDetail.numberOfMembers!=null)
 											sharedPrefManager.saveGroupMemberCount(groupDetail.groupName, groupDetail.numberOfMembers);
 //										boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(groupDetail.groupName);
-//										if(isFirstChat)
+										//Update Time if Single Message
+										ChatDBWrapper.getInstance(SuperChatApplication.context).updateTimeIfSingleMessageOnly(groupDetail.groupName);
 //											saveMessage(groupDetail.displayName, groupDetail.groupName,"Group created by "+groupDetail.userDisplayName);//saveMessage(groupDetail.displayName, groupDetail.groupName,"You are welcome.");
 										String oldFileId = sharedPrefManager.getUserFileId(groupDetail.fileId);
 										sharedPrefManager.saveUserFileId(groupDetail.groupName, groupDetail.fileId);
@@ -868,6 +843,7 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 //										boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(broadcastGroupDetail.broadcastGroupName);
 //										if(isFirstChat)
 //											saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName,"Broadcast created by "+broadcastGroupDetail.userDisplayName);//saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName,"You are welcome.");
+//										ChatDBWrapper.getInstance(SuperChatApplication.context).updateTimeIfSingleMessageOnly(broadcastGroupDetail.broadcastGroupName);
 										String oldFileId = sharedPrefManager.getUserFileId(broadcastGroupDetail.fileId);
 										if(broadcastGroupDetail.fileId!=null && !broadcastGroupDetail.fileId.equals("") && (oldFileId == null || !oldFileId.equals(broadcastGroupDetail.fileId)))
 										{
@@ -1903,8 +1879,8 @@ public void onComposeClick(View view){
 //				moreMenuLayout.setSelected(false);
 //				fragmentTransaction = getSupportFragmentManager().beginTransaction();
 //				replaceFragment(contactsFragment, R.id.main_frame);
-				contactsFragment.setPorfileListener();
 				mViewPager.setCurrentItem(2);
+				contactsFragment.setPorfileListener();
 			}
 			break;
 			

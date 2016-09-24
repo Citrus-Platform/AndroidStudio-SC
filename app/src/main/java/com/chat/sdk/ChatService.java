@@ -2525,7 +2525,10 @@ public class ChatService extends Service implements interfaceInstances {
 							Log.d(TAG, "[SettingsDialog] Connected to " + connection.getHost());
 							// ProviderManager.getInstance().addExtensionProvider("status","androidpn:iq:status",
 							// new MUCUserProvider());
-							int last_online_time = (int)((System.currentTimeMillis() - (prefManager.getLastOnline() - (5 * 1000)))/1000);
+							int last_online_time = 0;
+							if(prefManager.getLastOnline() > 0)
+							 	last_online_time = (int)((System.currentTimeMillis() - (prefManager.getLastOnline() - (5 * 1000)))/1000);
+//							System.out.println("(last_online_time) - "+last_online_time);
 							if (!connection.isAuthenticated())
 								connection.login(userName, password);
 							setConnection(packetListener);

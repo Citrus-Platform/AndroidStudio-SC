@@ -151,7 +151,8 @@ public class SinchService extends Service {
             if (mListener != null) {
                 mListener.onStartFailed(error);
             }
-            mSinchClient.terminate();
+            if(mSinchClient != null)
+                mSinchClient.terminate();
             mSinchClient = null;
             Log.d(TAG, "SinchClient failed 2");
 

@@ -1670,6 +1670,55 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 
 		return ret;
 	}
+	public boolean updateTimeIfSingleMessageOnly(String group_name) {
+		boolean ret = false;
+		String sql = "SELECT * FROM "
+				+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO + " WHERE "
+				+ ChatDBConstants.TO_USER_FIELD + " = '" + group_name + "' OR "
+				+ ChatDBConstants.FROM_USER_FIELD + " = '" + group_name + "'";
+		Cursor cursor = null;
+		try {
+			cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
+			System.out.println("cursor.getCount() = "+cursor.getCount());
+			if (cursor != null && cursor.getCount() == 1) {
+				cursor.moveToFirst();
+				String messageId = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID));
+				ret = true;
+				updateFirstMsgTime(messageId);
+			}
+		} catch (Exception e) {
+			Log.e("ChatDBWrapper", "Exception in getRecievedMessages method " + e.toString());
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+				cursor = null;
+			}
+		}
+		return ret;
+	}
+	public void updateFirstMsgTime(String messageId) {
+		Cursor cursor = null;
+		try {
+			long time = 0;
+			String sql = "UPDATE " + ChatDBConstants.TABLE_NAME_MESSAGE_INFO
+					+ " SET " + ChatDBConstants.LAST_UPDATE_FIELD + "='"
+					+ time + "' WHERE "
+					+ ChatDBConstants.MESSAGE_ID + "='"+messageId+"'";
+			cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
+//			if (cursor != null) {
+//				System.out.println("updateUserNameInContacts count " + cursor.getCount());
+//			}
+		} catch (Exception e) {
+			Log.e("ChatDBWrapper", "Exception in updateUserNameInContacts method "
+					+ e.toString());
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+				cursor = null;
+			}
+		}
+	}
+
 	public long lastMessageInDB(String person) {
 		long ret = -1;
 		
