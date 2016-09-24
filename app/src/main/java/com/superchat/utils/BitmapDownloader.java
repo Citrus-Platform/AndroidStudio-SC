@@ -264,6 +264,8 @@ public class BitmapDownloader extends AsyncTask<String, Integer, String>{
 				}else{
 					if(adapter instanceof ChatHomeAdapter)
 						((ChatHomeAdapter)adapter).updateUI();
+					else if(adapter instanceof ContactsAdapter)
+						((ContactsAdapter)adapter).updateUI();
 					if(imageView.getTag() != null) {
 						System.out.println("[[[[[ELSE CASE imageView.getTag() - ]]]]]] " + imageView.getTag());
 						System.out.println("[[[[[ELSE CASE fileId - ]]]]]] " + fileId);
