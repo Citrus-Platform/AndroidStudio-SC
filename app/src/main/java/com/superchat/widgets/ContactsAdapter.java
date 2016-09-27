@@ -78,7 +78,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.google.android.gms.internal.zzip.runOnUiThread;
 
 // Referenced classes of package com.vopium.widget:
 //            DontPressWithParentLayout
@@ -551,19 +550,20 @@ public class ContactsAdapter extends SimpleCursorAdapter
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     private TextDrawable.IBuilder mDrawableBuilder;
 	public void updateUI(){
-		try{
-			runOnUiThread(new Runnable() {
-
-				@Override
-				public void run() {
-					System.out.println("[updateUI ]");
-					notifyDataSetChanged();
-				}
-			});
-			notifyDataSetChanged();
-		}catch(Exception ex){
-			ex.printStackTrace();
-		}
+		notifyDataSetChanged();
+//		try{
+//			((ContactsScreen)context)runOnUiThread(new Runnable() {
+//
+//				@Override
+//				public void run() {
+//					System.out.println("[updateUI ]");
+//					notifyDataSetChanged();
+//				}
+//			});
+//			notifyDataSetChanged();
+//		}catch(Exception ex){
+//			ex.printStackTrace();
+//		}
 	}
 	public void setProfilePic(ImageView view, ImageView view_default,  String userName,String displayName,TextView iconText, boolean sharedID){
 		String groupPicId = null;

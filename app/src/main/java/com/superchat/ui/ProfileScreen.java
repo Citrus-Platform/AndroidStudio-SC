@@ -2359,7 +2359,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
 			dob = new StringBuffer(fields[0]).append(' ').append(month_value).append(' ').append(fields[2]).toString();
 		} else {
 			if (month_value.equalsIgnoreCase("January"))
-				month_value = "JAV";
+				month_value = "JAN";
 			else if (month_value.equalsIgnoreCase("February"))
 				month_value = "FEB";
 			else if (month_value.equalsIgnoreCase("March"))

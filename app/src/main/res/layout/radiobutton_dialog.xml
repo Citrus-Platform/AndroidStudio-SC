@@ -26,9 +26,77 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="6dp"
-        android:visibility="visible" 
+        android:visibility="visible"
         android:orientation="vertical">
 
+        <RadioButton
+            android:id="@+id/id_never"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:button="@null"
+            android:textSize="17sp"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:text="Never" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="#33000000" />
+
+        <RadioButton
+            android:id="@+id/id_when_tap"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:button="@null"
+            android:textSize="17sp"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:text="Only when I tap bak up"/>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="#33000000" />
+
+        <RadioButton
+            android:id="@+id/id_daily"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:button="@null"
+            android:textSize="17sp"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:text="Daily" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="#33000000" />
+
+        <RadioButton
+            android:id="@+id/id_weekly"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:button="@null"
+            android:textSize="17sp"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:text="Weekly" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="#33000000" />
+        <RadioButton
+            android:id="@+id/id_monthly"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:button="@null"
+            android:textSize="17sp"
+            android:drawableRight="@android:drawable/btn_radio"
+            android:text="Monthly" />
 
     </RadioGroup>
     

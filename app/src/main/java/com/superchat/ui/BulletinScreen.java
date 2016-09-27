@@ -342,7 +342,7 @@ public class BulletinScreen extends ListFragment  implements ChatCountListener,C
 	    		 }
 	    	 }
 	    	 else{
-	    		 cursor = wraper.getBulletinList();
+	    		 cursor = wraper.getBulletinList(BULLETIN_MEMBER);
 				 if(cursor!=null && cursor.getCount() == 0)
 				 	cursor = wraper.getBulletinList(BULLETIN_ADMIN);
 	    		 if(cursor!=null && cursor.getCount() == 0){

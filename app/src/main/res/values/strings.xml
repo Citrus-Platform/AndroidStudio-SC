@@ -566,7 +566,7 @@
      <string name="chat_backup_restore">Chat restore</string>
     <string name="chat_backup_settings">Chat backup settings</string>
     <string name="backup_to_server">Backup to Server</string>
-    <string name="back_up_over">Back up over</string>
+    <string name="back_up_over">Backup over</string>
      <string name="restore">Restore</string>
       <string name="no_thanks">No thanks</string>
     <string name="old_messages">Load more</string>

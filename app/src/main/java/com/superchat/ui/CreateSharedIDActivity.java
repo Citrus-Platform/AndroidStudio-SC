@@ -1,4 +1,5 @@
 package com.superchat.ui;
+
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -78,6 +79,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -301,7 +303,7 @@ public class CreateSharedIDActivity extends Activity implements OnClickListener{
 //				((RelativeLayout)relativeLayout.findViewById(R.id.id_right_rlayout)).setVisibility(View.GONE);
 				((TextView)relativeLayout.findViewById(R.id.user_type)).setText("You");
 			}
-			else if(isAdminUser || isSharedIDDeactivated){
+			else if(isAdminUser || isSharedIDDeactivated || text.equals(HomeScreen.getSharedIDOwnerName(sharedID))){
 				((RelativeLayout)relativeLayout.findViewById(R.id.id_right_rlayout)).setVisibility(View.GONE);
 			}else
 				((RelativeLayout)relativeLayout.findViewById(R.id.id_right_rlayout)).setVisibility(View.VISIBLE);
@@ -318,7 +320,8 @@ public class CreateSharedIDActivity extends Activity implements OnClickListener{
 
 				@Override
 				public void onClick(View v) {
-					if(!user_name.endsWith(SharedPrefManager.getInstance().getUserName()) && !isAdminUser && !isSharedIDDeactivated)
+					if(!user_name.endsWith(SharedPrefManager.getInstance().getUserName()) && !isAdminUser
+							&& !isSharedIDDeactivated && !user_name.equals(HomeScreen.getSharedIDOwnerName(sharedID)))
 						showConfirmationDialog(user_name);
 				}
 			});
@@ -412,11 +415,24 @@ public class CreateSharedIDActivity extends Activity implements OnClickListener{
 		//Update
 		groupAdmins = HomeScreen.getAdminSetForSharedID(sharedID);
 		//Add your self
-		if(SharedPrefManager.getInstance().isDomainAdminORSubAdmin()){
-			if(groupAdmins != null && !groupAdmins.contains(SharedPrefManager.getInstance().getUserName()))
-				groupAdmins.add(0, SharedPrefManager.getInstance().getUserName());
-		}else if(isAdminUser && groupAdmins != null && !groupAdmins.contains(HomeScreen.getSharedIDOwnerName(sharedID)))
+//		if(SharedPrefManager.getInstance().isDomainAdminORSubAdmin()){
+//			if(groupAdmins != null && !groupAdmins.contains(SharedPrefManager.getInstance().getUserName()))
+//				groupAdmins.add(0, SharedPrefManager.getInstance().getUserName());
+//		}else if(isAdminUser && groupAdmins != null && !groupAdmins.contains(HomeScreen.getSharedIDOwnerName(sharedID)))
+//			groupAdmins.add(0, HomeScreen.getSharedIDOwnerName(sharedID));
+
+		//Add Owner
+        boolean contains = false;
+		for(Iterator<String> it = groupAdmins.iterator(); it.hasNext();) {
+			String admin = it.next();
+			if(admin.contains(HomeScreen.getSharedIDOwnerName(sharedID))) {
+				contains = true;
+				break;
+			}
+		}
+		if(!contains)
 			groupAdmins.add(0, HomeScreen.getSharedIDOwnerName(sharedID));
+
 		String owner_name = HomeScreen.getSharedIDOwnerName(sharedID);
 		if(SharedPrefManager.getInstance().getUserServerName(owner_name) != null 
 				&& SharedPrefManager.getInstance().getUserServerName(owner_name).equals(owner_name))
@@ -425,6 +441,7 @@ public class CreateSharedIDActivity extends Activity implements OnClickListener{
 //			if(groupAdmins != null && !groupAdmins.contains(SharedPrefManager.getInstance().getUserName()))
 //				groupAdmins.add(0, SharedPrefManager.getInstance().getUserName());
 //		}
+		//Add Members
 		if(isEditMode && groupAdmins != null && groupAdmins.size() > 0){
 			mainLayout.setVisibility(View.VISIBLE);
 			mainLayout.removeAllViews();
@@ -433,6 +450,7 @@ public class CreateSharedIDActivity extends Activity implements OnClickListener{
 		if(isSharedIDDeactivated)
         	Toast.makeText(this, "This Official ID is deactivated!", Toast.LENGTH_SHORT).show();
 	}
+
 	protected void onPause() {
 		try {
 			unbindService(mMessageConnection);

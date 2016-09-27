@@ -3,7 +3,6 @@ package com.chat.sdk.db;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 
@@ -69,19 +68,19 @@ public class ChatDBWrapper {
 	public void alterTable(String table_name, String[] column_name){
 		try{
 			//Check if this new column exists, then add new one
-			SQLiteDatabase database = dbHelper.getWritableDatabase();
-	    	 Cursor cursor = database.rawQuery("SELECT * FROM "+table_name, null); // grab cursor for all data
-	    	 for(int i = 0; i < column_name.length; i++){
-		    	 int index = cursor.getColumnIndex(column_name[i]);  // see if the column is there
-		    	 if (index < 0) { 
-		    	     // missing_column not there - add it
-		    		 if(column_name.length == 1)
-		    			 database.execSQL("ALTER TABLE "+table_name+" ADD COLUMN "+column_name[i]+" integer default 0 NOT NULL;");
-		    		 else
-		    			 database.execSQL("ALTER TABLE "+table_name+" ADD COLUMN "+column_name[i]+" TEXT;");
-		    	 }
-	    	 }
-		}catch(SQLException ex){
+				SQLiteDatabase database = dbHelper.getWritableDatabase();
+				Cursor cursor = database.rawQuery("SELECT * FROM " + table_name, null); // grab cursor for all data
+				for (int i = 0; i < column_name.length; i++) {
+					int index = cursor.getColumnIndex(column_name[i]);  // see if the column is there
+					if (index < 0) {
+						// missing_column not there - add it
+						if (column_name.length == 1)
+							database.execSQL("ALTER TABLE " + table_name + " ADD COLUMN " + column_name[i] + " integer default 0 NOT NULL;");
+						else
+							database.execSQL("ALTER TABLE " + table_name + " ADD COLUMN " + column_name[i] + " TEXT;");
+					}
+				}
+		}catch(Exception ex){
 			ex.printStackTrace();
 		}
 	}
@@ -1982,6 +1981,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
             String sent_time = null;
 			String fromGroupUserName = null;
 			String org_filename = null;
+			int message_type_ID = 0;
 			int message_type = 0;
 			String txt_message = null;
 			String local_path = null;
@@ -2070,8 +2070,15 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 							 else
 								 message.put("messageTypeID", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD)));
 						 }
-						message_type = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD));
-						message.put("messageType", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE)));
+						message_type_ID = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD));
+						message_type = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE));
+
+						if(message_type == 3) {
+							message_type = message_type_ID = 0;
+							from = to = sent_time = contact_name = org_filename = local_path = null;
+							continue;
+						}
+						 message.put("messageType", message_type);
 			             message.put("dataChanged", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.IS_DATE_CHANGED_FIELD)));
 			             message.put("recipientCount", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.TOTAL_USER_COUNT_FIELD)));
 			             message.put("readUserCount", cursor.getInt(cursor.getColumnIndex(ChatDBConstants.READ_USER_COUNT_FIELD)));
@@ -2095,16 +2102,16 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						//Get Filename from media tag
 						org_filename = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG));
 						if(org_filename != null && org_filename.trim().length() > 0) {
-							if(message_type != XMPPMessageType.atMeXmppMessageTypeAudio.ordinal() && message_type != XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()
-									&& message_type != XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
+							if(message_type_ID != XMPPMessageType.atMeXmppMessageTypeAudio.ordinal() && message_type_ID != XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()
+									&& message_type_ID != XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
 								message.put("originalFileName", org_filename);
 						}else if (local_path != null){
 							if(local_path.lastIndexOf('.') != -1)
 								org_filename = local_path.substring(local_path.lastIndexOf('/') + 1, local_path.lastIndexOf('.'));
 							else
 								org_filename = local_path.substring(local_path.lastIndexOf('/') + 1);
-							if(message_type != XMPPMessageType.atMeXmppMessageTypeAudio.ordinal() && message_type != XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()
-									&& message_type != XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
+							if(message_type_ID != XMPPMessageType.atMeXmppMessageTypeAudio.ordinal() && message_type_ID != XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()
+									&& message_type_ID != XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
 								message.put("originalFileName", org_filename);
 						}
                         if(sent_time != null)
@@ -2273,6 +2280,8 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 				 MessageDataModel message_data = gson.fromJson(message.toString(), MessageDataModel.class);
 
 				ContentValues contentvalues = new ContentValues();
+				 if(message_data.messageType == 3)
+					 continue;
 				 if(os_type != null && os_type.equalsIgnoreCase("Android")) {
 					 if (message_data.fromUserName != null)
 						 contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message_data.fromUserName);

@@ -68,6 +68,9 @@ import com.superchat.model.LoginResponseModel.GroupDetail;
 import com.superchat.model.LoginResponseModel.UserResponseDetail;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.utils.Constants;
+import com.superchat.utils.FileDownloadResponseHandler;
+import com.superchat.utils.FileUploaderDownloader;
+import com.superchat.utils.NetWork;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.widgets.MyriadRegularTextView;
 
@@ -118,12 +121,13 @@ import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import ch.boye.httpclientandroidlib.entity.mime.content.FileBody;
 import retrofit2.Response;
 
 //import com.viewpagerindicator.TabPageIndicator;
 //import com.viewpagerindicator.TitlePageIndicator;
 
-public class HomeScreen extends FragmentActivity implements ServiceConnection, SinchService.StartFailedListener, OnClickListener, OnMenuItemClickListener, interfaceInstances {
+public class HomeScreen extends FragmentActivity implements ServiceConnection, SinchService.StartFailedListener, OnClickListener, OnMenuItemClickListener, interfaceInstances, FileDownloadResponseHandler {
 	private static final String TAG = "HomeScreen";
 	CustomViewPager mViewPager = null;
 	private HomePagerAdapter mAdapter;
@@ -651,6 +655,17 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 			}
 		}
 	};
+
+	@Override
+	public void onFileDownloadResposne(View view, int type, byte[] data) {
+
+	}
+
+	@Override
+	public void onFileDownloadResposne(View view, int[] type, String[] file_urls, String[] file_paths) {
+
+	}
+
 	public class SignInTaskOnServer extends AsyncTask<String, String, String> {
 		LoginModel loginForm;
 		ProgressDialog progressDialog = null;
@@ -1487,18 +1502,7 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 	}
 
 	public void onStartChatClick(View view){
-//			chatMenuLayout.setSelected(true);
-//			contactMenuLayout.setSelected(false);
-//			moreMenuLayout.setSelected(false);
-//			fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//			replaceFragment(contactsFragment, R.id.main_frame);
-		
 		if (!contactMenuLayout.isSelected()) {
-//			contactMenuLayout.setSelected(true);
-//			chatMenuLayout.setSelected(false);
-//			moreMenuLayout.setSelected(false);
-//			fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//			replaceFragment(contactsFragment, R.id.main_frame);
 			mViewPager.setCurrentItem(1);
 		}
 	}
@@ -1515,18 +1519,14 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 		isforeGround = true;
 		isLaunched = true;
 		isRWA = SharedPrefManager.getInstance().getDomainType().equals("rwa");
-		System.out.println("[ON-RESUME CALLED]");
+//		System.out.println("[ON-RESUME CALLED]");
 
-		System.out.println("[ON-RESUME 1]");
+//		System.out.println("[ON-RESUME 1]");
 		startService(new Intent(SuperChatApplication.context, SinchService.class));
-		System.out.println("[ON-RESUME 2]");
+//		System.out.println("[ON-RESUME 2]");
 
 		bindService(new Intent(this, ChatService.class), mConnection,Context.BIND_AUTO_CREATE);
-//		chatClient.startClient(chatFragment);
-//		bindService(new Intent(this, ChatService.class), this, Context.BIND_AUTO_CREATE);
-//		bindService(new Intent(this, SinchService.class), this,Context.BIND_AUTO_CREATE);
 		getShareInfo();
-//			chkSyncProcess();
 		syncProcessStart(true);
 		if(!iPrefManager.isMyExistence()){
 			showExitDialog("You have been removed.");
@@ -1539,19 +1539,9 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 				new GetVersionCode().execute();
 		}
 
-//			if(firstTimeAdmin){
-//				firstTimeAdmin = false;
-//				AlertDialog alertDialog =  new AlertDialog.Builder(HomeScreen.this).create();
-//				alertDialog.setMessage(getResources().getString(R.string.first_time_gp_creation_alert));
-//				alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-//				    new DialogInterface.OnClickListener() {
-//				        public void onClick(DialogInterface dialog, int which) {
-//				            dialog.dismiss();
-//				        }
-//				    });
-//				alertDialog.show();
-//			}
+		checkForBackUpAndUploadBackup();
 	}
+	boolean backUpFound;
 		class CheckDataBackup extends AsyncTask<String, String, String> {
 		
 		public CheckDataBackup(){
@@ -1597,16 +1587,25 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 							fileid = jsonobj.getString("backupFileId");
 						if(jsonobj.has("backupDate"))
 							lastdate = jsonobj.getString("backupDate");
+						//this time is gmt 00 time.
+						long time = convertTomilliseconds(lastdate);
+						if(time  > 0)
+							SharedPrefManager.getInstance().setLastBackUpTime(time);
+						Date date = new Date(time);
+						SimpleDateFormat dateformat = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.US);
+						System.out.println("[lastdate - ] "+lastdate);
 						 Intent intent = new Intent(HomeScreen.this, ChatBackupRestoreScreen.class);
 						 if(fileid != null)
 						    intent.putExtra(Constants.BACKUP_FILEID, fileid);
 						 if(lastdate != null)
-						   	intent.putExtra(Constants.LAST_BACKUP_DATE, lastdate);
+						   	intent.putExtra(Constants.LAST_BACKUP_DATE, dateformat.format(date));
 //					    startActivity(intent);
+						backUpFound = true;
 						startActivityForResult(intent, 111);
 					}else
 						addNewGroupsAndBroadcastsToDB();
 			} catch (JSONException e) {
+
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -1776,6 +1775,7 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 		if (resultCode == RESULT_OK)
 			switch (requestCode) {
 				case 111:
+					backUpFound = false;
 					addNewGroupsAndBroadcastsToDB();
 					break;
 			}
@@ -3182,5 +3182,146 @@ public void onComposeClick(View view){
 		}
 //		System.out.println("+05:30 Millis = "+millis);
 		return millis;
+	}
+	//------------------------------------------Back Up Code in Background------------------------
+	String zip_file_path;
+	String backedUpFileID = null;
+	private void checkForBackUpAndUploadBackup(){
+		boolean isWifi = SharedPrefManager.getInstance().isWifiBackup();
+		//Check if wifi is true, then only wifi will be used other wise both.
+		int backupOn = SharedPrefManager.getInstance().getBackupSchedule();
+		System.out.println("<<Backup type  >> "+backupOn);
+		if(!NetWork.isConnected(this)|| backupOn < 2 || backUpFound)
+			return;
+		System.out.println("[NetWork.NetWorkTypes - ] "+NetWork.getNetwork(this).ordinal());
+		if(isWifi && NetWork.getNetwork(this).ordinal() != NetWork.NetWorkTypes.WIFI.ordinal())
+			return;
+		if(!iPrefManager.isGroupsLoaded())
+			return;
+		//Check Last Backup Date
+		long time = SharedPrefManager.getInstance().getLastBackUpTime();
+		long current = System.currentTimeMillis();
+		long millis_in_day = 24 * 60 * 60 * 1000;
+//		long millis_in_day = 60 * 1000;
+
+		if(backupOn == 2)//Dialy
+			millis_in_day = millis_in_day * 1;
+		if(backupOn == 3)//Weekly
+			millis_in_day = millis_in_day * 7;
+		else if(backupOn == 4)//Monthly
+			millis_in_day = millis_in_day * 30;
+
+		//Check if Last backup time is >24 Hours then backup.
+		if((current - time) > millis_in_day){
+			System.out.println("<<More than backup time, so backing up......>>");
+			//Do backup in background
+			try {
+				zip_file_path = ChatDBWrapper.getInstance().getAllMessagesForBackup();
+				//Check if file exists then upload zip file to server
+				File file = new File(zip_file_path);
+				FileBody data = new FileBody(new File(zip_file_path));
+				if (file.exists() && (int) data.getContentLength() > 0)
+					new FileUploaderDownloader(this, this, false, true, notifyFileUploadHandler).execute(zip_file_path);
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}
+		}
+		else{
+			System.out.println("<<Less than backup time, so no back up!!>>");
+		}
+
+	}
+	private final Handler notifyFileUploadHandler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			backedUpFileID = SharedPrefManager.getInstance().getBackupFileId();
+			System.out.println("[backedUpFileID ] - "+backedUpFileID);
+			//Upload this backup file id to server
+			if(backedUpFileID != null){
+				if(Build.VERSION.SDK_INT >= 11)
+					new UploadDataBackup().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				else
+					new UploadDataBackup().execute();
+			}
+		}
+	};
+	class UploadDataBackup extends AsyncTask<String, String, String> {
+
+		public UploadDataBackup(){
+		}
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+
+		@Override
+		protected String doInBackground(String... urls) {
+			String data = null;
+			try {
+				String url = Constants.SERVER_URL + "/tiger/rest/user/profile/update";
+				Log.i(TAG, "UploadDataBackup :: doInBackground : URL - "+url);
+				JSONObject jsonobj = new JSONObject();
+				jsonobj.put("backupFileId", backedUpFileID);
+				HttpPost httppost = new HttpPost(url);
+				httppost = SuperChatApplication.addHeaderInfo(httppost,true);
+				HttpClient httpclient = new DefaultHttpClient();
+				httppost.setEntity(new StringEntity(jsonobj.toString()));
+				HttpResponse response = httpclient.execute(httppost);
+				int status = response.getStatusLine().getStatusCode();
+				if (status == 200) {
+					HttpEntity entity = response.getEntity();
+					data = EntityUtils.toString(entity);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+
+				e.printStackTrace();
+			}
+			return data;
+		}
+		@Override
+		protected void onPostExecute(String data) {
+			if(data != null){
+				//Delete directory and files
+				System.out.println("==== backup response===>"+data);
+				if(zip_file_path != null){
+					String dir_path = zip_file_path.substring(0, zip_file_path.lastIndexOf('/'));
+					deleteDirectoryWithContets(new File(dir_path));
+				}
+//				Toast.makeText(HomeScreen.this, "Data backed up successfully in background!", Toast.LENGTH_SHORT).show();
+				//Update Time in Shared Preferences
+				SharedPrefManager.getInstance().setLastBackUpTime(System.currentTimeMillis());
+			}
+		}
+	}
+	public static void deleteDirectoryWithContets(File dir)
+	{
+		if ( dir.isDirectory() )
+		{
+			String [] children = dir.list();
+			for ( int i = 0 ; i < children.length ; i ++ )
+			{
+				File child =    new File( dir , children[i] );
+				if(child.isDirectory()){
+					deleteDirectoryWithContets( child );
+					child.delete();
+				}else{
+					child.delete();
+
+				}
+			}
+			dir.delete();
+		}
+	}
+	public boolean createDirIfNotExists(String path, String folder_name) {
+		boolean ret = true;
+		File file = new File(path, folder_name);
+		if (!file.exists()) {
+			if (!file.mkdirs()) {
+				Log.e("TravellerLog :: ", "Problem creating Image folder");
+				ret = false;
+			}
+		}
+		return ret;
 	}
 }

@@ -124,6 +124,7 @@ public class SharedPrefManager {
 	private final String BACKUP_FILE_ID = "backup_file_id";
 	private final String BACKUP_OVER_WIFI = "backup_over_wifi";
 	private final String BACKUP_SCHEDULE = "backup_schedule";
+	private final String LAST_BACKUP_TIME = "last_backup_time";
 
 	private final String BULLETIN_NEXT_URL = "bulletin_next_url";
 
@@ -375,7 +376,7 @@ public boolean isUserExistence(String userName){
 	return value;
 }
 public boolean isWifiBackup(){
-	boolean value = pref.getBoolean(BACKUP_OVER_WIFI, true);
+	boolean value = pref.getBoolean(BACKUP_OVER_WIFI, false);
 	return value;
 }
 	public void setWifiBackup(boolean value){
@@ -383,17 +384,26 @@ public boolean isWifiBackup(){
 		editor.commit();
 	}
 	public int getBackupSchedule() {
-		int value = pref.getInt(BACKUP_SCHEDULE, 0);
+		int value = pref.getInt(BACKUP_SCHEDULE, -1);
 		return value;
 	}
 	public void setBackupSchedule(int newOrder) {
 		editor.putInt(BACKUP_SCHEDULE, newOrder);
 		editor.commit();
 	}
+
 public void saveUserExistence(String userName , boolean isFirstTime){
 	editor.putBoolean(ME_ACTIVATED+userName, isFirstTime);
 	editor.commit();
 }
+	public long getLastBackUpTime() {
+		long value = pref.getLong(LAST_BACKUP_TIME, 0);
+		return value;
+	}
+	public void setLastBackUpTime(long time) {
+		editor.putLong(LAST_BACKUP_TIME, time);
+		editor.commit();
+	}
 public boolean isUserInvited(String userName){
 	boolean value = pref.getBoolean(USER_INVITED+userName, true);
 	return value;

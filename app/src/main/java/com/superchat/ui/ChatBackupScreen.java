@@ -53,12 +53,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Vector;
 
 import ch.boye.httpclientandroidlib.entity.mime.content.FileBody;
-
 
 
 public class ChatBackupScreen extends Activity implements OnClickListener, OnCheckedChangeListener, FileDownloadResponseHandler{
@@ -68,6 +68,7 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
     RadioGroup radioGroup;
     Dialog radioSelectionDialog;
     TextView backupSettingTxt;
+    TextView lastBackUpDate;
     TextView backupNetworkSettingTxt;
     Button backup;
     String zip_file_path;
@@ -76,9 +77,9 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
     byte selectionType = BACK_UP_SETTING;
 	private static final String TAG = "ChatBackupScreen";
 	String backedUpFileID = null;
-	boolean isWifi = false;
+	boolean onlyWifi = false;
 	int backupOn;
-	String[] wifiOptions = new String[]{"WiFi", "Wi-Fi or Cellular"};
+	String[] wifiOptions = new String[]{"WiFi", "WiFi or Cellular"};
 	String[] backupOptions = new String[]{"Never", "Only when I tap \"Back up\"", "Daily", "Weekly", "Monthly"};
 	@Override
 	protected void onCreate(Bundle bundle) {
@@ -91,9 +92,10 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 		
 		backupSettings = (LinearLayout)findViewById(R.id.id_backup_to_server);
 		backupNetworkSettings = (LinearLayout)findViewById(R.id.id_backup_network_server);
-		
-		backupSettingTxt = (TextView)findViewById(R.id.id_backup_setting);//id_backup_network_setting
+
+		backupSettingTxt = (TextView)findViewById(R.id.id_backup_setting);
 		backupNetworkSettingTxt = (TextView)findViewById(R.id.id_backup_network_setting);
+		lastBackUpDate = (TextView)findViewById(R.id.id_last_backup_date);
 		
 		backup = (Button)findViewById(R.id.id_backup);
 		
@@ -102,39 +104,13 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 		backupNetworkSettings.setOnClickListener(this);
 
 		if(SharedPrefManager.getInstance().isWifiBackup())
-			backupSettingTxt.setText(wifiOptions[0]);
+			backupNetworkSettingTxt.setText(wifiOptions[0]);
 		else
-			backupSettingTxt.setText(wifiOptions[1]);
-		backupSettingTxt.setText(backupOptions[SharedPrefManager.getInstance().getBackupSchedule()]);
-//		
-//		submit.setOnClickListener(new OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				generateRequest();
-//			}
-//		});
-//		
-//		((TextView)findViewById(R.id.id_back)).setOnClickListener(new OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				// TODO Auto-generated method stub
-//				finish();
-//			}
-//		});
-//		confirmPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//			@Override
-//			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//				if (actionId == EditorInfo.IME_ACTION_DONE) {
-//					// Do whatever you want here
-//					generateRequest();
-//					return true;
-//				}
-//				return false;
-//			}
-//		});
-
+			backupNetworkSettingTxt.setText(wifiOptions[1]);
+		if(SharedPrefManager.getInstance().getBackupSchedule() > -1)
+			backupSettingTxt.setText(backupOptions[SharedPrefManager.getInstance().getBackupSchedule()]);
+		else if(SharedPrefManager.getInstance().getBackupSchedule() == -1)
+			backupSettingTxt.setText(backupOptions[2]);
 		(findViewById(R.id.back_id)).setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -143,6 +119,16 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 				finish();
 			}
 		});
+	}
+	public void onResume() {
+		super.onResume();
+		long time = SharedPrefManager.getInstance().getLastBackUpTime();
+		if(time > 0 ) {
+			Date date = new Date(time);
+			SimpleDateFormat dateformat = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.US);
+			lastBackUpDate.setText(dateformat.format(date));
+		}else
+			lastBackUpDate.setVisibility(View.GONE);
 	}
 //=========================================================
 	public class GeneratePasswordTask extends AsyncTask<String, String, String> {
@@ -252,11 +238,16 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 					radioSelectionDialog.dismiss();
 				if(selectionType == BACK_UP_SETTING) {
 					SharedPrefManager.getInstance().setBackupSchedule(backupOn);
+					backupSettingTxt.setText(backupOptions[backupOn]);
 				}else{
-					if(isWifi)
+					if(onlyWifi) {
 						SharedPrefManager.getInstance().setWifiBackup(true);
-					else
+						backupNetworkSettingTxt.setText(wifiOptions[0]);
+					}
+					else {
 						SharedPrefManager.getInstance().setWifiBackup(false);
+						backupNetworkSettingTxt.setText(wifiOptions[1]);
+					}
 				}
 				break;
 
@@ -264,58 +255,109 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 			// custom dialog
 
 			backupOn = SharedPrefManager.getInstance().getBackupSchedule();
+			if(backupOn == -1)
+				backupOn = 2;
 			radioSelectionDialog = new Dialog(this);
 			radioSelectionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 			radioSelectionDialog.setContentView(R.layout.radiobutton_dialog);
-	        List<String> stringList=new ArrayList<>();  // here is list 
-	        for(int i = 0; i < backupOptions.length; i++) {
-	            stringList.add(backupOptions[i]);
-	        }
-	        radioGroup = (RadioGroup) radioSelectionDialog.findViewById(R.id.radio_group);
+			RadioButton never = (RadioButton)radioSelectionDialog.findViewById(R.id.id_never);
+			RadioButton when_tap = (RadioButton)radioSelectionDialog.findViewById(R.id.id_when_tap);
+			RadioButton daily = (RadioButton)radioSelectionDialog.findViewById(R.id.id_daily);
+			RadioButton weekly = (RadioButton)radioSelectionDialog.findViewById(R.id.id_weekly);
+			RadioButton monthly = (RadioButton)radioSelectionDialog.findViewById(R.id.id_monthly);
 
-	            for(int i=0;i<stringList.size();i++){
-	                RadioButton rb = new RadioButton(this); // dynamically creating RadioButton and adding to RadioGroup.
-	                rb.setText(stringList.get(i));
-//					if(i == backupOn)
-//						rb.setChecked(true);
-	                radioGroup.addView(rb);
-	            }
-	        radioGroup.setOnCheckedChangeListener(this);
-//			radioGroup.setOnClickListener(new OnClickListener() {
-//				@Override
-//				public void onClick(View v) {
-//					radioGroup.clearCheck();
-//				}
-//			});
-	        ((TextView) radioSelectionDialog.findViewById(R.id.id_cancel)).setOnClickListener(this);
+			((TextView) radioSelectionDialog.findViewById(R.id.id_cancel)).setOnClickListener(this);
 			((TextView) radioSelectionDialog.findViewById(R.id.id_done)).setOnClickListener(this);
-	        selectionType = BACK_UP_SETTING;
-	        radioSelectionDialog.show();
+			selectionType = BACK_UP_SETTING;
+			switch(backupOn){
+				case 0:
+					never.setChecked(true);
+					break;
+				case 1:
+					when_tap.setChecked(true);
+					break;
+				case 2:
+					daily.setChecked(true);
+					break;
+				case 3:
+					weekly.setChecked(true);
+					break;
+				case 4:
+					monthly.setChecked(true);
+					break;
+			}
+			never.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					System.out.println("===never=====");
+					backupOn = 0;
+//					SharedPrefManager.getInstance().setBackupSchedule(0);
+				}
+			});
+			when_tap.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					System.out.println("===when_tap=====");
+					backupOn = 1;
+//					SharedPrefManager.getInstance().setBackupSchedule(1);
+				}
+			});
+			daily.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					System.out.println("===daily=====");
+					backupOn = 2;
+//					SharedPrefManager.getInstance().setBackupSchedule(2);
+				}
+			});
+			weekly.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					System.out.println("===weekly=====");
+					backupOn = 3;
+//					SharedPrefManager.getInstance().setBackupSchedule(3);
+				}
+			});
+			monthly.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					System.out.println("===monthly=====");
+					backupOn = 4;
+//					SharedPrefManager.getInstance().setBackupSchedule(4);
+				}
+			});
+			radioSelectionDialog.show();
 			break;
 		case R.id.id_backup_network_server:
-			isWifi = SharedPrefManager.getInstance().isWifiBackup();
+			onlyWifi = SharedPrefManager.getInstance().isWifiBackup();
 			radioSelectionDialog = new Dialog(this);
 			radioSelectionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-			radioSelectionDialog.setContentView(R.layout.radiobutton_dialog);
+			radioSelectionDialog.setContentView(R.layout.backup_over);
+			RadioButton wifi = (RadioButton)radioSelectionDialog.findViewById(R.id.id_wifi);
+			RadioButton both = (RadioButton)radioSelectionDialog.findViewById(R.id.id_both);
 			((TextView) radioSelectionDialog.findViewById(R.id.id_title)).setText("Back up over");
-	        stringList=new ArrayList<>();  // here is list 
-	        for(int i = 0; i < wifiOptions.length; i++) {
-	            stringList.add(wifiOptions[i]);
-	        }
-	        radioGroup = (RadioGroup) radioSelectionDialog.findViewById(R.id.radio_group);
-
-	            for(int i=0;i<stringList.size();i++){
-	                RadioButton rb = new RadioButton(this); // dynamically creating RadioButton and adding to RadioGroup.
-					rb.setText(stringList.get(i));
-//					if(isWifi && i == 0)
-//						rb.setChecked(true);
-//					else
-//						rb.setChecked(true);
-					radioGroup.addView(rb);
-				}
-	        radioGroup.setOnCheckedChangeListener(this);
 	        ((TextView) radioSelectionDialog.findViewById(R.id.id_cancel)).setOnClickListener(this);
 	        ((TextView) radioSelectionDialog.findViewById(R.id.id_done)).setOnClickListener(this);
+			if(onlyWifi)
+				wifi.setChecked(true);
+			else
+				both.setChecked(true);
+			wifi.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					System.out.println("===wifi=====");
+					onlyWifi = true;
+//					SharedPrefManager.getInstance().setBackupSchedule(0);
+				}
+			});
+			both.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					System.out.println("===wifi & network=====");
+					onlyWifi = false;
+//					SharedPrefManager.getInstance().setBackupSchedule(1);
+				}
+			});
 	        selectionType = BACK_UP_NETWORK_SETTING;
 	        radioSelectionDialog.show();
 			break;
@@ -324,35 +366,35 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
 		// TODO Auto-generated method stub
-		int childCount = group.getChildCount();
-        for (int x = 0; x < childCount; x++) {
-           RadioButton btn = (RadioButton) group.getChildAt(x);
-           if (btn.getId() == checkedId) {
-        	   System.out.println("selected RadioButton->"+btn.getText().toString());
-        	   if(selectionType == BACK_UP_SETTING) {
-				   backupSettingTxt.setText(btn.getText().toString());
-				   //{"Never", "Only when I tap \"Back up\"", "Daily", "Weekly", "Monthly"};
-				   if(btn.getText().toString().equalsIgnoreCase(backupOptions[0]))
-				  	 backupOn = 0;
-				   else if(btn.getText().toString().equalsIgnoreCase(backupOptions[1]))
-					   backupOn = 1;
-				   else if(btn.getText().toString().equalsIgnoreCase(backupOptions[2]))
-					   backupOn = 2;
-				   else if(btn.getText().toString().equalsIgnoreCase(backupOptions[3]))
-					   backupOn = 3;
-				   else if(btn.getText().toString().equalsIgnoreCase(backupOptions[4]))
-					   backupOn = 4;
-			   }
-        	   else if(selectionType == BACK_UP_NETWORK_SETTING) {
-				   backupNetworkSettingTxt.setText(btn.getText().toString());
-				   if(btn.getText().toString().equalsIgnoreCase(wifiOptions[0]))
-					   isWifi = true;
-				   else
-					   isWifi = false;
-			   }
-//        	   radioSelectionDialog.dismiss();
-           }
-        }
+//		int childCount = group.getChildCount();
+//        for (int x = 0; x < childCount; x++) {
+//           RadioButton btn = (RadioButton) group.getChildAt(x);
+//           if (btn.getId() == checkedId) {
+//        	   System.out.println("selected RadioButton->"+btn.getText().toString());
+//        	   if(selectionType == BACK_UP_SETTING) {
+//				   backupSettingTxt.setText(btn.getText().toString());
+//				   //{"Never", "Only when I tap \"Back up\"", "Daily", "Weekly", "Monthly"};
+//				   if(btn.getText().toString().equalsIgnoreCase(backupOptions[0]))
+//				  	 backupOn = 0;
+//				   else if(btn.getText().toString().equalsIgnoreCase(backupOptions[1]))
+//					   backupOn = 1;
+//				   else if(btn.getText().toString().equalsIgnoreCase(backupOptions[2]))
+//					   backupOn = 2;
+//				   else if(btn.getText().toString().equalsIgnoreCase(backupOptions[3]))
+//					   backupOn = 3;
+//				   else if(btn.getText().toString().equalsIgnoreCase(backupOptions[4]))
+//					   backupOn = 4;
+//			   }
+//        	   else if(selectionType == BACK_UP_NETWORK_SETTING) {
+//				   backupNetworkSettingTxt.setText(btn.getText().toString());
+//				   if(btn.getText().toString().equalsIgnoreCase(wifiOptions[0]))
+//					   onlyWifi = true;
+//				   else
+//					   onlyWifi = false;
+//			   }
+////        	   radioSelectionDialog.dismiss();
+//           }
+//        }
 	}
 	private final Handler notifyFileUploadHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
@@ -426,6 +468,8 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 					String dir_path = zip_file_path.substring(0, zip_file_path.lastIndexOf('/'));
 					deleteDirectoryWithContets(new File(dir_path));
 				}
+				//Update Time in Shared Preferences
+				SharedPrefManager.getInstance().setLastBackUpTime(System.currentTimeMillis());
 				Toast.makeText(ChatBackupScreen.this, "Data backed up successfully.", Toast.LENGTH_SHORT).show();
 			    finish();
 			}

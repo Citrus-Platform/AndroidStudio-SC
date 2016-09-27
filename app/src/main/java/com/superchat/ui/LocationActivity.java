@@ -1,10 +1,5 @@
 package com.superchat.ui;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import android.content.Intent;
 import android.location.Address;
 import android.location.Criteria;
@@ -28,6 +23,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.superchat.R;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 public class LocationActivity extends FragmentActivity implements LocationListener {
 
     GoogleMap googleMap;
@@ -44,8 +44,8 @@ public class LocationActivity extends FragmentActivity implements LocationListen
         }
         setContentView(R.layout.location_screen);
         SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.googleMap);
-        googleMap = supportMapFragment.getMap();
-        googleMap.setMyLocationEnabled(true);
+//        googleMap = supportMapFragment.getMap();
+//        googleMap.setMyLocationEnabled(true);
         
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();

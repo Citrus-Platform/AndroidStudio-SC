@@ -67,7 +67,6 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.google.android.gms.internal.zzip.runOnUiThread;
 
 // Referenced classes of package com.vopium.widget:
 //            DontPressWithParentLayout
@@ -859,19 +858,20 @@ public void loadDialog(){
 		return processing.containsKey(file_id);
 	}
 	public void updateUI(){
-		try{
-			runOnUiThread(new Runnable() {
-
-				@Override
-				public void run() {
-					System.out.println("[updateUI ]");
-					notifyDataSetChanged();
-				}
-			});
-			notifyDataSetChanged();
-		}catch(Exception ex){
-			ex.printStackTrace();
-		}
+//		try{
+//			((ChatHome)context).runOnUiThread(new Runnable() {
+//
+//				@Override
+//				public void run() {
+//					System.out.println("[updateUI ]");
+//					notifyDataSetChanged();
+//				}
+//			});
+//			notifyDataSetChanged();
+//		}catch(Exception ex){
+//			ex.printStackTrace();
+//		}
+		notifyDataSetChanged();
 	}
 	public void setProfilePic(ImageView view, ImageView view_default, String displayName, String userName, byte type){
 		String groupPicId = null;
