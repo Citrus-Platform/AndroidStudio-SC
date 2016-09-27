@@ -1,28 +1,5 @@
 package com.superchat.ui;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.superchat.R;
-import com.superchat.utils.Constants;
-import com.superchat.utils.SharedPrefManager;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -34,6 +11,29 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Window;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.superchat.R;
+import com.superchat.utils.Constants;
+import com.superchat.utils.SharedPrefManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class EsiaSplashScreen extends Activity {
 	Timer timer;
@@ -57,6 +57,8 @@ public class EsiaSplashScreen extends Activity {
 		context = this;
 		iPrefManager = SharedPrefManager.getInstance();
 		String mobileNumber = iPrefManager.getUserPhone();
+        if(iPrefManager.getBackupSchedule() == -1)
+            iPrefManager.setBackupSchedule(2);
 		if(iPrefManager.isOTPVerified() && !iPrefManager.isAdminReg() && iPrefManager.getSgListData() != null){
 			Bundle bundle = new Bundle();
 			String data = iPrefManager.getSgListData();

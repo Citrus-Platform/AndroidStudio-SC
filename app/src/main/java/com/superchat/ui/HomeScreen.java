@@ -422,6 +422,8 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
     		finish();
     		return;
     	}
+		if(SharedPrefManager.getInstance().getBackupSchedule() == -1)
+			SharedPrefManager.getInstance().setBackupSchedule(2);
 		String action = getIntent().getAction();
 		if((action != null && Intent.ACTION_SEND.equals(action)) || SharedPrefManager.getInstance().isContactSynched())
 			noLoadingNeeded = true;
@@ -491,6 +493,8 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 			bulletinMenuLayout.setSelected(false);
 			
 		}
+		if(SharedPrefManager.getInstance().getBackupSchedule() == -1)
+			SharedPrefManager.getInstance().setBackupSchedule(2);
 		startService(new Intent(SuperChatApplication.context, ChatService.class));
 		
 //		syncView.setVisibility(View.GONE);
