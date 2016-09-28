@@ -2085,9 +2085,10 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			             
 			             message.put("mediaURL", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD)));
 			             message.put("audioMessageLength", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LENGTH)));
-						local_path = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD));
-						 if(local_path != null)
-							 message.put("mediaLocalPath", local_path);
+
+//						local_path = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD));
+//						 if(local_path != null)
+//							 message.put("mediaLocalPath", local_path);
 
 						message.put("readTime", convertToDate(cursor.getLong(cursor.getColumnIndex(ChatDBConstants.READ_TIME_FIELD))));
 

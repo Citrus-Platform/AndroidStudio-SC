@@ -858,13 +858,15 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 //			    	mediaFileUpload.execute(url, key,mediaThumb, msgType+"",captionTagMsg);
 //		    	}
 //		    }
-        public void uploadMedia(String url, int msgType) {//XMPPMessageType type){//String mediaLocalPath, String key, String mediaThumb, XMPPMessageType type){
-            Log.d(TAG, "file uploading repeating: " + url + " , " + processing.get(url) + " , " + key);
+        public void uploadMedia(String url, int msgType) {
+            if(processing.containsKey(url))
+                return;
+            System.out.println("file uploading repeating: " + url + " , " + processing.get(url) + " , " + key);
             if (Build.VERSION.SDK_INT >= 11)
                 new MediaFileUpload(key, url).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url, key, mediaThumb, msgType + "", captionTagMsg);
             else
                 new MediaFileUpload(key, url).execute(url, key, mediaThumb, msgType + "", captionTagMsg);
-//				    	startShowingProgress();
+            processing.put(url, "0");
         }
 
         public void download(String url, int msgType, ImageView imageView, ProgressBar pb, Object[] callbackParams) {
@@ -1785,17 +1787,16 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 
             @Override
             protected void onPostExecute(String response) {
-//					if(response!=null)
-//						refreshAdpter();
-                if (localUri != null) {//if(response == null && localUri!=null){
-                    processing.put(localUri, null);
-
+                if (localUri != null) {
+                    processing.remove(localUri);
                 }
                 Cursor cursor1 = null;
-                if (isBulletinBroadcast)
+                if (isBulletinBroadcast) {
                     cursor1 = ChatDBWrapper.getInstance().getUserChatList(chatName, CHAT_LIST_BULLETIN);
-                else
+                }
+                else {
                     cursor1 = ChatDBWrapper.getInstance().getUserChatList(chatName, CHAT_LIST_NORMAL);
+                }
                 swapCursor(cursor1);
                 notifyDataSetChanged();
                 super.onPostExecute(response);
@@ -2573,7 +2574,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                         ((ProgressBar) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_bar_indeterminate)).setVisibility(View.VISIBLE);
                     }
                     if (viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null) {
-                        processing.put(viewholder.mediaLocalPath, "0");
+//                        processing.put(viewholder.mediaLocalPath, "0");
                         viewholder.uploadMedia(viewholder.mediaLocalPath, viewholder.messageType);//XMPPMessageType.atMeXmppMessageTypeImage);//viewholder.mediaLocalPath, viewholder.key,viewholder.mediaThumb,XMPPMessageType.atMeXmppMessageTypeImage);
                     }
                 } else if(viewholder.mediaLocalPath != null){
@@ -2659,7 +2660,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                             viewholder.rightImgProgressIndeterminate.setVisibility(View.VISIBLE);
                         }
                         if (viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null) {
-                            processing.put(viewholder.mediaLocalPath, "0");
+//                            processing.put(viewholder.mediaLocalPath, "0");
                             viewholder.uploadMedia(viewholder.mediaLocalPath, viewholder.messageType);//XMPPMessageType.atMeXmppMessageTypeImage);//viewholder.mediaLocalPath, viewholder.key,viewholder.mediaThumb,XMPPMessageType.atMeXmppMessageTypeImage);
                         }
                     } else if(viewholder.mediaLocalPath != null){
@@ -2686,7 +2687,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 ((ImageView) viewholder.rightFileLayout.findViewById(R.id.id_file_image)).setImageResource(R.drawable.pdf);
                 if (viewholder.mediaUrl == null || viewholder.mediaUrl.equals("") || !viewholder.mediaUrl.startsWith("http"))
                     if (viewholder.mediaLocalPath != null && viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null) {
-                        processing.put(viewholder.mediaLocalPath, "0");
+//                        processing.put(viewholder.mediaLocalPath, "0");
                         viewholder.uploadMedia(viewholder.mediaLocalPath, viewholder.messageType);
                     }
                 viewholder.sendImgView.setOnLongClickListener(viewholder.onLongPressListener);
@@ -2696,14 +2697,11 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 viewholder.senderMsgText.setVisibility(View.GONE);
                 ((ImageView) viewholder.rightFileLayout.findViewById(R.id.id_file_image)).setImageResource(R.drawable.docs);
                 if (viewholder.mediaUrl == null || viewholder.mediaUrl.equals("") || !viewholder.mediaUrl.startsWith("http")){
-                    if (viewholder.mediaLocalPath != null && viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null)
-                        processing.put(viewholder.mediaLocalPath, "0");
+                    if (viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null)
+//                        System.out.println("[Calling here======>]");
+//                        processing.put(viewholder.mediaLocalPath, "0");
                         viewholder.uploadMedia(viewholder.mediaLocalPath, viewholder.messageType);
                     }
-//                else{
-//                        Object[] params = new Object[]{this, viewholder.key, cursor, viewholder.progressPercent, viewholder.mediaUrl};
-//                        viewholder.download(viewholder.mediaUrl, viewholder.messageType, viewholder.sendImgView, viewholder.progressbar, params);
-//                    }
                 viewholder.sendImgView.setOnLongClickListener(viewholder.onLongPressListener);
             } else if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal()) {
                 viewholder.sendImgView.setVisibility(View.GONE);
@@ -2713,7 +2711,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 ((ImageView) viewholder.rightFileLayout.findViewById(R.id.id_file_image)).setImageResource(R.drawable.xls);
                 if (viewholder.mediaUrl == null || viewholder.mediaUrl.equals("") || !viewholder.mediaUrl.startsWith("http"))
                     if (viewholder.mediaLocalPath != null && viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null) {
-                        processing.put(viewholder.mediaLocalPath, "0");
+//                        processing.put(viewholder.mediaLocalPath, "0");
                         viewholder.uploadMedia(viewholder.mediaLocalPath, viewholder.messageType);
                     }
                 viewholder.sendImgView.setOnLongClickListener(viewholder.onLongPressListener);
@@ -2725,7 +2723,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 ((ImageView) viewholder.rightFileLayout.findViewById(R.id.id_file_image)).setImageResource(R.drawable.ppt);
                 if (viewholder.mediaUrl == null || viewholder.mediaUrl.equals("") || !viewholder.mediaUrl.startsWith("http"))
                     if (viewholder.mediaLocalPath != null && viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null) {
-                        processing.put(viewholder.mediaLocalPath, "0");
+                        processing.put(viewholder.mediaLocalPath, "0/");
                         viewholder.uploadMedia(viewholder.mediaLocalPath, viewholder.messageType);
                     }
                 viewholder.sendImgView.setOnLongClickListener(viewholder.onLongPressListener);
@@ -2874,7 +2872,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 						viewholder.rightImgProgressIndeterminate.setVisibility(View.VISIBLE);
 					}
 					if (viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null){
-						processing.put(viewholder.mediaLocalPath, "0");
+//						processing.put(viewholder.mediaLocalPath, "0");
 						viewholder.uploadMedia(viewholder.mediaLocalPath,viewholder.messageType);//XMPPMessageType.atMeXmppMessageTypeImage);//viewholder.mediaLocalPath, viewholder.key,viewholder.mediaThumb,XMPPMessageType.atMeXmppMessageTypeImage);
 					}
 				}else if(viewholder.mediaUrl.startsWith("http") && viewholder.mediaLocalPath == null){
