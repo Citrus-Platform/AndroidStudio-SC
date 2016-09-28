@@ -5070,7 +5070,7 @@ Handler wheelHandler = new Handler(){
                                     || AppUtil.capturedPath1.toLowerCase().endsWith(".jpeg")
                                     || AppUtil.capturedPath1.toLowerCase().endsWith(".png")) {
                                 compressImage = new CompressImage(this);
-                                if(requestCode == AppUtil.POSITION_CAMERA_PICTURE)
+                                if(requestCode == AppUtil.POSITION_CAMERA_PICTURE || requestCode == 5)
                                     compressImage.saveImage(true);
                                 AppUtil.capturedPath1 = compressImage.compressImage(AppUtil.capturedPath1);
                                 mediaUrl = AppUtil.capturedPath1;
