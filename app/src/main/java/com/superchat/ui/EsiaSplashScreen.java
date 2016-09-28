@@ -57,8 +57,10 @@ public class EsiaSplashScreen extends Activity {
 		context = this;
 		iPrefManager = SharedPrefManager.getInstance();
 		String mobileNumber = iPrefManager.getUserPhone();
-        if(iPrefManager.getBackupSchedule() == -1)
+        if(iPrefManager.getBackupSchedule() == -1) {
             iPrefManager.setBackupSchedule(2);
+            SharedPrefManager.getInstance().setLastBackUpTime(System.currentTimeMillis());
+        }
 		if(iPrefManager.isOTPVerified() && !iPrefManager.isAdminReg() && iPrefManager.getSgListData() != null){
 			Bundle bundle = new Bundle();
 			String data = iPrefManager.getSgListData();

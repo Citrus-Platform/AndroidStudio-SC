@@ -745,47 +745,51 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 	public Cursor getBulletinList(byte type) {
 		String sql = "";
 		String bulletin_name = SharedPrefManager.getInstance().getUserDomain() + "-all";
-		if(type == 1){
-			sql = "SELECT " + "DISTINCT("
-					+ ChatDBConstants.CONTACT_NAMES_FIELD + "), "
-					+ ChatDBConstants._ID + ", "
-					+ ChatDBConstants.FROM_USER_FIELD + ", "
-					+ ChatDBConstants.TO_USER_FIELD + ", "
-					+ ChatDBConstants.MESSAGEINFO_FIELD + ","
-					+ ChatDBConstants.FROM_GROUP_USER_FIELD + ", "
-					+ ChatDBConstants.FROM_GROUP_USER_FIELD + ", "
-					+ ChatDBConstants.MESSAGE_TYPE_FIELD + ","
-					+ ChatDBConstants.MEDIA_CAPTION_TAG + ","
-					+ ChatDBConstants.MESSAGE_MEDIA_LENGTH + ","
-					+ ChatDBConstants.UNREAD_COUNT_FIELD + ","
-					+ ChatDBConstants.LAST_UPDATE_FIELD + ", MAX("
-					+ ChatDBConstants.LAST_UPDATE_FIELD + ") FROM "
-					+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO +" WHERE "+ChatDBConstants.MESSAGE_TYPE + "=" + 3 + " GROUP BY "
-					+ ChatDBConstants.MESSAGE_TYPE + " ORDER BY "
-					+ ChatDBConstants.LAST_UPDATE_FIELD + " DESC";//
+		Cursor cursor = null;
+		try {
+			if (type == 1) {
+				sql = "SELECT " + "DISTINCT("
+						+ ChatDBConstants.CONTACT_NAMES_FIELD + "), "
+						+ ChatDBConstants._ID + ", "
+						+ ChatDBConstants.FROM_USER_FIELD + ", "
+						+ ChatDBConstants.TO_USER_FIELD + ", "
+						+ ChatDBConstants.MESSAGEINFO_FIELD + ","
+						+ ChatDBConstants.FROM_GROUP_USER_FIELD + ", "
+						+ ChatDBConstants.FROM_GROUP_USER_FIELD + ", "
+						+ ChatDBConstants.MESSAGE_TYPE_FIELD + ","
+						+ ChatDBConstants.MEDIA_CAPTION_TAG + ","
+						+ ChatDBConstants.MESSAGE_MEDIA_LENGTH + ","
+						+ ChatDBConstants.UNREAD_COUNT_FIELD + ","
+						+ ChatDBConstants.LAST_UPDATE_FIELD + ", MAX("
+						+ ChatDBConstants.LAST_UPDATE_FIELD + ") FROM "
+						+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO + " WHERE " + ChatDBConstants.MESSAGE_TYPE + "=" + 3 + " GROUP BY "
+						+ ChatDBConstants.MESSAGE_TYPE + " ORDER BY "
+						+ ChatDBConstants.LAST_UPDATE_FIELD + " DESC";//
+			} else
+				sql = "SELECT " + "DISTINCT("
+						+ ChatDBConstants.CONTACT_NAMES_FIELD + "), "
+						+ ChatDBConstants._ID + ", "
+						+ ChatDBConstants.FROM_USER_FIELD + ", "
+						+ ChatDBConstants.TO_USER_FIELD + ", "
+						+ ChatDBConstants.MESSAGEINFO_FIELD + ","
+						+ ChatDBConstants.FROM_GROUP_USER_FIELD + ", "
+						+ ChatDBConstants.FROM_GROUP_USER_FIELD + ", "
+						+ ChatDBConstants.MESSAGE_TYPE_FIELD + ","
+						+ ChatDBConstants.MEDIA_CAPTION_TAG + ","
+						+ ChatDBConstants.MESSAGE_MEDIA_LENGTH + ","
+						+ ChatDBConstants.UNREAD_COUNT_FIELD + ","
+						+ ChatDBConstants.LAST_UPDATE_FIELD + ", MAX("
+						+ ChatDBConstants.LAST_UPDATE_FIELD + ") FROM "
+						+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO + " WHERE " + ChatDBConstants.MESSAGE_TYPE + "=" + 3 + " AND "
+						+ ChatDBConstants.TO_USER_FIELD + " != '" + bulletin_name + "' GROUP BY "
+						+ ChatDBConstants.CONTACT_NAMES_FIELD + " ORDER BY "
+						+ ChatDBConstants.LAST_UPDATE_FIELD + " DESC";
+
+			Log.d("ChatDBWrapper", "getBulletinList query: " + sql);
+			cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
+		}catch (Exception ex){
+			ex.printStackTrace();
 		}
-		else
-			sql = "SELECT " + "DISTINCT("
-					+ ChatDBConstants.CONTACT_NAMES_FIELD + "), "
-					+ ChatDBConstants._ID + ", "
-					+ ChatDBConstants.FROM_USER_FIELD + ", "
-					+ ChatDBConstants.TO_USER_FIELD + ", "
-					+ ChatDBConstants.MESSAGEINFO_FIELD + ","
-					+ ChatDBConstants.FROM_GROUP_USER_FIELD + ", "
-					+ ChatDBConstants.FROM_GROUP_USER_FIELD + ", "
-					+ ChatDBConstants.MESSAGE_TYPE_FIELD + ","
-					+ ChatDBConstants.MEDIA_CAPTION_TAG + ","
-					+ ChatDBConstants.MESSAGE_MEDIA_LENGTH + ","
-					+ ChatDBConstants.UNREAD_COUNT_FIELD + ","
-					+ ChatDBConstants.LAST_UPDATE_FIELD + ", MAX("
-					+ ChatDBConstants.LAST_UPDATE_FIELD + ") FROM "
-					+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO +" WHERE "+ChatDBConstants.MESSAGE_TYPE + "=" + 3 + " AND "
-					+ ChatDBConstants.TO_USER_FIELD + " != '"+ bulletin_name+ "' GROUP BY "
-					+ ChatDBConstants.CONTACT_NAMES_FIELD + " ORDER BY "
-					+ ChatDBConstants.LAST_UPDATE_FIELD + " DESC";
-		
-		Log.d("ChatDBWrapper", "getBulletinList query: " + sql);
-		Cursor cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
 		return cursor;
 	}
 	
