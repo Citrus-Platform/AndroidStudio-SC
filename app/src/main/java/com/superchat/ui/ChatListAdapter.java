@@ -2723,7 +2723,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 ((ImageView) viewholder.rightFileLayout.findViewById(R.id.id_file_image)).setImageResource(R.drawable.ppt);
                 if (viewholder.mediaUrl == null || viewholder.mediaUrl.equals("") || !viewholder.mediaUrl.startsWith("http"))
                     if (viewholder.mediaLocalPath != null && viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null) {
-                        processing.put(viewholder.mediaLocalPath, "0/");
+//                        processing.put(viewholder.mediaLocalPath, "0");
                         viewholder.uploadMedia(viewholder.mediaLocalPath, viewholder.messageType);
                     }
                 viewholder.sendImgView.setOnLongClickListener(viewholder.onLongPressListener);
