@@ -91,7 +91,9 @@ public class EsiaSplashScreen extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Intent intent = new Intent(EsiaSplashScreen.this, SupergroupListingScreen.class);
+
+            //SupergroupListingScreenNew.start(EsiaSplashScreen.this, number, invitedDomainNameSet, false);
+            Intent intent = new Intent(EsiaSplashScreen.this, SupergroupListingScreen.class);
 			bundle.putString(Constants.MOBILE_NUMBER_TXT, number);
 			if(ownerDomainNameSet != null && ownerDomainNameSet.size() > 0)
 				bundle.putStringArrayList("OWNERDOMAINNAMESET", ownerDomainNameSet);

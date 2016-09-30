@@ -25,12 +25,12 @@ import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -127,7 +127,10 @@ import retrofit2.Response;
 //import com.viewpagerindicator.TabPageIndicator;
 //import com.viewpagerindicator.TitlePageIndicator;
 
-public class HomeScreen extends FragmentActivity implements ServiceConnection, SinchService.StartFailedListener, OnClickListener, OnMenuItemClickListener, interfaceInstances, FileDownloadResponseHandler {
+public class HomeScreen extends AppCompatActivity implements ServiceConnection, SinchService.StartFailedListener, OnClickListener, OnMenuItemClickListener, interfaceInstances, FileDownloadResponseHandler ,FragmentDrawer.FragmentDrawerListener {
+
+	private FragmentDrawer drawerFragment;
+
 	private static final String TAG = "HomeScreen";
 	CustomViewPager mViewPager = null;
 	private HomePagerAdapter mAdapter;
@@ -428,6 +431,11 @@ public class HomeScreen extends FragmentActivity implements ServiceConnection, S
 		if((action != null && Intent.ACTION_SEND.equals(action)) || SharedPrefManager.getInstance().isContactSynched())
 			noLoadingNeeded = true;
 		setContentView(R.layout.home_screen);
+
+		drawerFragment = (FragmentDrawer)
+				getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
+		drawerFragment.setDrawerListener(this);
+
 		totalCountView = (MyriadRegularTextView)findViewById(R.id.id_total_unseens);
 		unseenContactView = (MyriadRegularTextView)findViewById(R.id.id_contact_unseens);
 		totalBulletinView = (MyriadRegularTextView)findViewById(R.id.id_bulletin_unseens);
@@ -3327,5 +3335,26 @@ public void onComposeClick(View view){
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public void onDrawerItemSelected(View view, int position) {
+		displayView(position);
+	}
+
+	private void displayView(int position) {
+		Fragment fragment = null;
+		String title = getString(R.string.app_name);
+		switch (position) {
+			case 0:
+				break;
+			case 1:
+				break;
+			case 2:
+				break;
+			default:
+				break;
+		}
+
 	}
 }

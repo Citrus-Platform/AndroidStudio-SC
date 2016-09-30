@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <color name="colorPrimary">#ff009dd6</color>
+    <color name="colorPrimaryDark">#008dc0</color>
+    <color name="textColorPrimary">#FFFFFF</color>
+    <color name="windowBackground">#FFFFFF</color>
+    <color name="navigationBarColor">#007dab</color>
+    <color name="colorAccent">#ff009dd6</color>
+    <color name="colorGray">#ff6e7072</color>
+
     <color name="header_color">#fff2750f</color>
     <color name="screen_background_color">#ffffffff</color>
     <color name="header_footer_color">#ff009dd6</color>

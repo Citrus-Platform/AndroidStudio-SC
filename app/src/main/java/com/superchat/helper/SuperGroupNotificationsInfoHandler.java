@@ -120,7 +120,6 @@ public class SuperGroupNotificationsInfoHandler {
         return metaInfo;
     }
 
-
     private int countCheckSGInfo = 0;
     private boolean saveSGInfo(final SuperGroupNotificationInfo sgInfo) {
         boolean isSGDataSaved = false;
