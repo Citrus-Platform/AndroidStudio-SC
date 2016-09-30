@@ -501,8 +501,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			bulletinMenuLayout.setSelected(false);
 			
 		}
-		if(SharedPrefManager.getInstance().getBackupSchedule() == -1)
-			SharedPrefManager.getInstance().setBackupSchedule(2);
 		startService(new Intent(SuperChatApplication.context, ChatService.class));
 		
 //		syncView.setVisibility(View.GONE);

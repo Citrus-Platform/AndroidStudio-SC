@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class PhoenixDatabaseHelper extends SQLiteOpenHelper {
 
 	public PhoenixDatabaseHelper(Context context) {
-		super(context, "superchat.db", null, 1);
+		super(context, "superchat.db", null, 2);
 	}
 
 	public void onCreate(SQLiteDatabase sqlitedatabase) {

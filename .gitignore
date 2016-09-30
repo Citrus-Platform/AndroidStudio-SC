@@ -4,3 +4,4 @@ app/build/
 app/SuperChat Release.apk
 app/app-release.apk
 build/generated/mockable-android-23.jar
+*.apk

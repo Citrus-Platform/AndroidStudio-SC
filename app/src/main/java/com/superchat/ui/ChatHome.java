@@ -366,9 +366,10 @@ public class ChatHome extends ListFragment  implements ChatCountListener,Connect
 			 super.onPreExecute();
 	     }
 	     protected String doInBackground(String... args) {
+			 if(SuperChatApplication.context == null)
+				 SuperChatApplication.context = getActivity().getApplicationContext();
 	    	 ChatDBWrapper wraper = ChatDBWrapper.getInstance(SuperChatApplication.context);
-	    	 wraper.
-					 alterTable(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, new String[]{ChatDBConstants.MESSAGE_TYPE});
+	    	 wraper.alterTable(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, new String[]{ChatDBConstants.MESSAGE_TYPE});
 			 cursor = wraper.getRecentChatList(null);
 			
 			 if(cursor!=null && cursor.getCount() > 0){
