@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -49,6 +50,8 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
@@ -781,10 +784,8 @@ private void registerUserOnServer(String super_group,String sg_display_name, Vie
 			welcomeDialog = null;
 			return;
 		}
-		SharedPrefManager.getInstance().clearSharedPref();
-		Intent intent = new Intent(this, RegistrationOptions.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivity(intent);
+
+		finish();
 	}
 @Override
 public void onBackPressed() {
@@ -1245,26 +1246,8 @@ class SuperGroupListingAdapter extends BaseAdapter {
 					sharedPrefManager.saveUserName(objUserModel.username);
 					sharedPrefManager.saveUserPassword(objUserModel.password);
 					sharedPrefManager.setOTPVerified(false);
-					
-					if(newUser || pendingProfile){
-						Intent intent = new Intent(SupergroupListingScreenNew.this, ProfileScreen.class);
-						Bundle bundle = new Bundle();
-						sharedPrefManager.setFirstTime(true);
-						sharedPrefManager.setAppMode("VirginMode");
-						bundle.putString(Constants.CHAT_USER_NAME, objUserModel.username);
-						bundle.putString(Constants.CHAT_NAME, "");
-						bundle.putBoolean(Constants.REG_TYPE, false);
-						bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
-						intent.putExtras(bundle);
-						startActivity(intent);
-					}else{
-						Intent intent = new Intent(SupergroupListingScreenNew.this, HomeScreen.class);
-						sharedPrefManager.setProfileAdded(sharedPrefManager.getUserName(),true);
-						startActivity(intent);
-					}
-					finish();
-					if(welcomeDialog != null)
-						welcomeDialog.cancel();
+
+					showDialogWantToSwitchGroup(objUserModel.username);
 				} 
 				else{
 					runOnUiThread(new Runnable() {
@@ -1305,6 +1288,67 @@ class SuperGroupListingAdapter extends BaseAdapter {
 				super.onFailure(arg0, arg1);
 			}
 		});
+	}
+
+	private void showDialogWantToSwitchGroup(final String userName){
+
+		new MaterialDialog.Builder(this)
+				.title("Want to Switch")
+				.content("Do you want to switch to new group ?")
+				.positiveText("Switch")
+				.negativeText("Cancel")
+				.onPositive(new MaterialDialog.SingleButtonCallback() {
+					@Override
+					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+						saveDataAndMove(userName);
+					}
+				})
+				.onNeutral(new MaterialDialog.SingleButtonCallback() {
+					@Override
+					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+						// TODO
+					}
+				})
+				.onNegative(new MaterialDialog.SingleButtonCallback() {
+					@Override
+					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+						// TODO
+						saveDataAndMove(userName);
+					}
+				})
+				.onAny(new MaterialDialog.SingleButtonCallback() {
+					@Override
+					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+						// TODO
+					}
+				})
+				.show();
+
+	}
+
+	private void saveDataAndMove(final String userName){
+
+		SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance();
+
+		if(newUser || pendingProfile){
+			Intent intent = new Intent(SupergroupListingScreenNew.this, ProfileScreen.class);
+			Bundle bundle = new Bundle();
+			sharedPrefManager.setFirstTime(true);
+			sharedPrefManager.setAppMode("VirginMode");
+			bundle.putString(Constants.CHAT_USER_NAME, userName);
+			bundle.putString(Constants.CHAT_NAME, "");
+			bundle.putBoolean(Constants.REG_TYPE, false);
+			bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
+			intent.putExtras(bundle);
+			startActivity(intent);
+		}else{
+			Intent intent = new Intent(SupergroupListingScreenNew.this, HomeScreen.class);
+			sharedPrefManager.setProfileAdded(sharedPrefManager.getUserName(),true);
+			startActivity(intent);
+		}
+		finish();
+		if(welcomeDialog != null)
+			welcomeDialog.cancel();
 	}
 //------------------------------------------------------
 //	public void onProfileImagePicClick(String file_id){

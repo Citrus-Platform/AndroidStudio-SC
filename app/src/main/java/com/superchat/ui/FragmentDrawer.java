@@ -18,7 +18,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.superchat.R;
@@ -26,13 +28,14 @@ import com.superchat.model.SGroupListObject;
 import com.superchat.model.SlidingMenuData;
 import com.superchat.utils.SharedPrefManager;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentDrawer extends Fragment {
+public class FragmentDrawer extends Fragment implements View.OnClickListener{
 
     private static String TAG = FragmentDrawer.class.getSimpleName();
 
@@ -44,6 +47,7 @@ public class FragmentDrawer extends Fragment {
     private static String[] titles = null;
     private FragmentDrawerListener drawerListener;
 
+    LinearLayout llInvited;
     RelativeLayout notificationLayout;
     ImageView notification;
     ImageView notificationoff;
@@ -57,6 +61,7 @@ public class FragmentDrawer extends Fragment {
         this.drawerListener = listener;
     }
 
+    ArrayList<String> invitedDomainNameSet = new ArrayList<String>();
     public List<ExpandableListAdapter.Item> getSuperGroupList() {
         List<ExpandableListAdapter.Item> dataList = new ArrayList<>();
 
@@ -97,7 +102,23 @@ public class FragmentDrawer extends Fragment {
 
         dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0"));
 
+        /**
+         * Get Invited List Data in String Array
+         */
+        {
+            try {
+                JSONObject jsonTemp = new JSONObject(data);
+                //invitedDomainNameSet
+                JSONArray array = jsonTemp.getJSONArray("invitedDomainNameSet");
+                invitedDomainNameSet = new ArrayList<String>();
+                for (int i = 0; i < array.length(); i++) {
+                    invitedDomainNameSet.add(array.getString(i));
+                }
+                ;
+            } catch(Exception e){
 
+            }
+        }
         if (ownerDomainNameSet != null && ownerDomainNameSet.size() > 0) {
 
             for (int i = 0; i < ownerDomainNameSet.size(); i++) {
@@ -148,6 +169,7 @@ public class FragmentDrawer extends Fragment {
         View layout = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         recyclerView = (RecyclerView) layout.findViewById(R.id.drawerList);
 
+        llInvited = (LinearLayout) layout.findViewById(R.id.llInvited);
         notification = (ImageView) layout.findViewById(R.id.notification);
         notificationoff = (ImageView) layout.findViewById(R.id.notificationoff);
         notificationLayout = (RelativeLayout) layout.findViewById(R.id.notificationLayout);
@@ -166,6 +188,7 @@ public class FragmentDrawer extends Fragment {
             }
         });
 
+        llInvited.setOnClickListener(this);
         ////////////////////////////////////////////////////////////
         adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity());
         ////////////////////////////////////////////////////////////
@@ -208,6 +231,23 @@ public class FragmentDrawer extends Fragment {
             }
         });
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        int viewID = v.getId();
+        switch(viewID){
+            case R.id.llInvited:{
+                if(invitedDomainNameSet != null && invitedDomainNameSet.size() > 0) {
+                    SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
+                    String number = iPrefManager.getUserPhone();
+                    SupergroupListingScreenNew.start(getActivity(), number, invitedDomainNameSet, false);
+                } else {
+                    Toast.makeText(getActivity(), "Invited List is empty", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
+        }
     }
 
     public static interface ClickListener {

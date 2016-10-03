@@ -35,7 +35,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class EsiaSplashScreen extends Activity {
+public class
+EsiaSplashScreen extends Activity {
 	Timer timer;
 	SharedPrefManager iPrefManager;
 	public static final String EXTRA_MESSAGE = "message";
