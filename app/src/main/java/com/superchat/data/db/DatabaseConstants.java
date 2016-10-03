@@ -70,6 +70,10 @@ public static final byte MEDIA_FAILED = 4;
 			+ " BOOLEAN,"
 			+ DatabaseConstants.CONTACT_VERSION
 			+ " INTEGER,"
+			+ DatabaseConstants.USER_ID
+			+ " LONG, "
+			+ DatabaseConstants.USER_SG
+			+ " TEXT,"
 			+ DatabaseConstants.IS_FAVOURITE_FIELD + " INTEGER NOT NULL);";
 
 	// contact number constants
@@ -111,6 +115,10 @@ public static final byte MEDIA_FAILED = 4;
 			+ DatabaseConstants.PHONE_NUMBER_TYPE_FIELD
 			+ " INTEGER NOT NULL,"
 			+ DatabaseConstants.IS_FAVOURITE_FIELD + " INTEGER,"
+			+ DatabaseConstants.USER_ID
+			+ " LONG, "
+			+ DatabaseConstants.USER_SG
+			+ " TEXT,"
 			+ DatabaseConstants.STATE_FIELD + " INTEGER NOT NULL);";
 	public static final String TABLE_CONTACT_NUMBERS = "CREATE TABLE IF NOT EXISTS "
 			+ DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS
@@ -144,6 +152,10 @@ public static final byte MEDIA_FAILED = 4;
 			+ DatabaseConstants.BUILDING_NUMBER + " TEXT, "
 			+ DatabaseConstants.ADDRESS + " TEXT, "
 			+ DatabaseConstants.RESIDENCE_TYPE + " TEXT, "
+			+ DatabaseConstants.USER_ID
+			+ " LONG, "
+			+ DatabaseConstants.USER_SG
+			+ " TEXT,"
 			+ DatabaseConstants.STATE_FIELD + " INTEGER NOT NULL);";
 
 	// contact email constants

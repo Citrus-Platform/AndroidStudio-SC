@@ -66,6 +66,8 @@ public class ApiClient {
 
                         boolean withPassword = true;
                         if(withPassword){
+                            System.out.println("[UserID - ] "+SharedPrefManager.getInstance().getUserId());
+                            System.out.println("[Pass - ] "+SharedPrefManager.getInstance().getUserPassword());
                             String auData = "'"+ SharedPrefManager.getInstance().getUserId()+":"+ HttpHeaderUtils.encriptPass(SharedPrefManager.getInstance().getUserPassword())+"'";
                             builder.header("audata",auData);
                         }

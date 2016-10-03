@@ -66,6 +66,7 @@ import com.superchat.model.LoginResponseModel;
 import com.superchat.model.LoginResponseModel.BroadcastGroupDetail;
 import com.superchat.model.LoginResponseModel.GroupDetail;
 import com.superchat.model.LoginResponseModel.UserResponseDetail;
+import com.superchat.model.MarkSGActive;
 import com.superchat.model.RegistrationFormResponse;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.utils.Constants;
@@ -123,6 +124,7 @@ import java.util.regex.Pattern;
 import javax.net.ssl.HttpsURLConnection;
 
 import ch.boye.httpclientandroidlib.entity.mime.content.FileBody;
+import retrofit2.Call;
 import retrofit2.Response;
 
 //import com.viewpagerindicator.TabPageIndicator;
@@ -677,22 +679,33 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	public void onFileDownloadResposne(View view, int[] type, String[] file_urls, String[] file_paths) {
 
 	}
-	public void updateCurrentSGData(String user){
+	public void updateUserData(String user){
 		try {
 			SharedPrefManager prefManager = SharedPrefManager.getInstance();
-			String sg_name = user.substring(user.indexOf("_") + 1);
 			long userID = prefManager.getSGUserID(user);
-			cleanDataAndSwitchrSG(user);
 			//update shared preference
+			System.out.println("[UserID - ] "+userID);
+			System.out.println("[Pass - ] "+prefManager.getSGPassword(user));
 			prefManager.saveUserId(userID);
 			prefManager.saveUserName(user);
 			prefManager.saveUserPassword(prefManager.getSGPassword(user));
-
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	public void updateUserSGData(String user){
+		try {
+			SharedPrefManager prefManager = SharedPrefManager.getInstance();
+			String sg_name = user.substring(user.indexOf("_") + 1);
 			prefManager.saveUserDomain(sg_name);
 			prefManager.saveCurrentSGDisplayName(sg_name);
-			cleanDataAndSwitchrSG(sg_name);
-			invalidateOptionsMenu();
-			loadFragments();
+			cleanDataAndSwitchSG(sg_name);
+			//Set contact and group synchs
+			prefManager.setContactSynched(false);
+			prefManager.setGroupsLoaded(false);
+			isContactSync = false;
+			if(chatFragment != null)
+				chatFragment.refreshList();
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
@@ -708,10 +721,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			 loginForm = new LoginModel();
 			this.sg_user = sg_user;
 			if(sg_user != null) {
-				loginForm.setUserName(sg_user);
-				loginForm.setPassword(sharedPrefManager.getSGPassword(sg_user));
+				loginForm.setUserName(sharedPrefManager.getUserName());
+				loginForm.setPassword(sharedPrefManager.getUserPassword());
 				//update shared preference
-				updateCurrentSGData(sg_user);
+				updateUserSGData(sg_user);
 			}else{
 				loginForm.setUserName(sharedPrefManager.getUserName());
 				loginForm.setPassword(sharedPrefManager.getUserPassword());
@@ -3380,13 +3393,11 @@ public void onComposeClick(View view){
 	}
 //------------------------- Clear Data to switch for another SG ------------------------------------------
 	public void switchSG(String sg){
-//		cleanDataAndSwitchrSG(sg);
-		if(Build.VERSION.SDK_INT >= 11)
-			new SignInTaskOnServer(sg).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-		else
-			new SignInTaskOnServer(sg).execute();
+		String sg_name = sg.substring(sg.indexOf("_") + 1);
+		updateUserData(sg);
+		activateSG(sg_name);
 	}
-	public void cleanDataAndSwitchrSG(String sg_name){
+	public void cleanDataAndSwitchSG(String sg_name){
 		try{
 			//Clear All Shared Preferences Data
 //			SharedPrefManager.getInstance().clearSharedPref();
@@ -3398,4 +3409,36 @@ public void onComposeClick(View view){
 			ex.toString();
 		}
 	}
+//------------------------- Activate SG --------------------
+    private void activateSG(final String sgname){
+        try{
+            Call call = objApi.getApi(this).markSGActive(sgname);
+            call.enqueue(new RetrofitRetrofitCallback<MarkSGActive>(this) {
+                @Override
+                protected void onResponseVoidzResponse(Call call, Response response) {
+                    System.out.println("Retrofit : onResponseVoidzResponse 1 - "+response.toString());
+
+                }
+
+                @Override
+                protected void onResponseVoidzObject(Call call, MarkSGActive response) {
+                    System.out.println("Retrofit : onResponseVoidzObject 2 - "+response.toString());
+					if(Build.VERSION.SDK_INT >= 11)
+						new SignInTaskOnServer(sgname).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					else
+						new SignInTaskOnServer(sgname).execute();
+
+                }
+
+                @Override
+                protected void common() {
+					System.out.println("Retrofit : onResponseVoidzObject 3 - ");
+
+                }
+            });
+        } catch(Exception e){
+            objExceptione.printStackTrace(e);
+
+        }
+    }
 }

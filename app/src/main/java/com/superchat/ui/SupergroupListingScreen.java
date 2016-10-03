@@ -918,9 +918,9 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 		}
 		SharedPrefManager.getInstance().saveUserPhone(mobileNumber);
 		if (Build.VERSION.SDK_INT >= 11)
-			new ActivatedomainTaskOnServer(registrationForm, view).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			new ActivatedomainTaskOnServer(registrationForm, view, super_group).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		else
-			new ActivatedomainTaskOnServer(registrationForm, view).execute();
+			new ActivatedomainTaskOnServer(registrationForm, view, super_group).execute();
 	}
 
 	public void restartActivity(Activity activity) {
@@ -1251,11 +1251,13 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 	public class ActivatedomainTaskOnServer extends AsyncTask<String, String, String> {
 		RegistrationForm registrationForm;
 		ProgressDialog progressDialog = null;
+		String active_sg_name = null;
 		View view1;
 
-		public ActivatedomainTaskOnServer(RegistrationForm registrationForm, final View view1) {
+		public ActivatedomainTaskOnServer(RegistrationForm registrationForm, final View view1, String active_sg_name) {
 			this.registrationForm = registrationForm;
 			this.view1 = view1;
+			this.active_sg_name = active_sg_name;
 		}
 
 		@Override
@@ -1302,6 +1304,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 							RegistrationFormResponse regObjRes = gson.fromJson(str, RegistrationFormResponse.class);
 							DomainSetObject regObj = new DomainSetObject();
 							//RegistrationForm regObj = new RegistrationForm();
+							long current_user_id = 0;
 
 							ArrayList<DomainSetObject> activateDomainDataSet = new ArrayList<DomainSetObject>();
 							DomainSetObject domainSetObject = new DomainSetObject();
@@ -1314,6 +1317,14 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 										System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
 										iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
 										iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
+										iPrefManager.saveUserDomain(superGroupName);
+										if (selectedSGDisplayName != null)
+											iPrefManager.saveCurrentSGDisplayName(selectedSGDisplayName);
+										iPrefManager.saveUserId(regObj.getUserId());
+										iPrefManager.setAppMode("VirginMode");
+										iPrefManager.saveUserLogedOut(false);
+										iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
+										current_user_id = regObj.getUserId();
 									}else{
 										regObj = regObjRes.getActivateDomainDataSet().get(i);
 										System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
@@ -1321,29 +1332,9 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 										iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
 									}
 								}
+								verifyUserSG(current_user_id);
 							}
-
-							if (regObj != null) {
-								SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
-//								if (iPrefManager != null && iPrefManager.getUserId() != 0) {
-//									if (iPrefManager.getUserId() != regObj.getUserId()) {
-//										try {
-//											DBWrapper.getInstance().clearMessageDB();
-//										} catch (Exception e) {
-//										}
-//									}
-//								}
-								iPrefManager.saveUserDomain(superGroupName);
-								if (selectedSGDisplayName != null)
-									iPrefManager.saveCurrentSGDisplayName(selectedSGDisplayName);
-								iPrefManager.saveUserId(regObj.getUserId());
-								iPrefManager.setAppMode("VirginMode");
-								iPrefManager.saveUserLogedOut(false);
-								iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
-							}
-							verifyUserSG(regObj.getUserId());
 						}
-
 					}
 				} catch (ClientProtocolException e) {
 					Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());

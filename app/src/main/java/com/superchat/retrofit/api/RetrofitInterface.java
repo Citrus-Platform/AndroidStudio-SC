@@ -2,6 +2,7 @@ package com.superchat.retrofit.api;
 
 import com.superchat.model.BulletinGetMessageDataModel;
 import com.superchat.model.BulletinMessageDataModel;
+import com.superchat.model.MarkSGActive;
 import com.superchat.model.UserProfileModel;
 import com.superchat.retrofit.request.model.UserAdminRequest;
 import com.superchat.retrofit.response.model.UserAdminResponse;
@@ -37,5 +38,8 @@ public interface RetrofitInterface {
 
     @POST(PREFIX_URL + "user/bulletin/post")
     Call<BulletinMessageDataModel> postBulletinMessage(@Body BulletinMessageDataModel.MessageData requestObject);
+
+    @GET(PREFIX_URL + "user/markactive")
+    Call<MarkSGActive> markSGActive(@Query("domainName") String domainName);
 
 }

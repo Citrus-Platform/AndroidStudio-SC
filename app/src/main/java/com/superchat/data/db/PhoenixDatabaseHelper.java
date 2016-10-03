@@ -26,18 +26,19 @@ public class PhoenixDatabaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-//		switch(oldVersion) {
-//			case 1:
-////				db.execSQL(DATABASE_CREATE_color);
-//				// we want both updates, so no break statement here...
-//			case 2:
-//				db.execSQL(DatabaseConstants.TABLE_MESSAGE_INFO);
-//		}
 		// If you need to add a column
 		if (newVersion > oldVersion) {
-//			db.execSQL("ALTER TABLE foo ADD COLUMN new_column INTEGER DEFAULT 0");
 			db.execSQL("ALTER TABLE " + DatabaseConstants.TABLE_MESSAGE_INFO + " ADD COLUMN " + ChatDBConstants.USER_ID + " long;");
 			db.execSQL("ALTER TABLE " + DatabaseConstants.TABLE_MESSAGE_INFO + " ADD COLUMN " + ChatDBConstants.USER_SG + " TEXT;");
+
+			db.execSQL("ALTER TABLE " + DatabaseConstants.TABLE_CONTACT_NAMES + " ADD COLUMN " + ChatDBConstants.USER_ID + " long;");
+			db.execSQL("ALTER TABLE " + DatabaseConstants.TABLE_CONTACT_NAMES + " ADD COLUMN " + ChatDBConstants.USER_SG + " TEXT;");
+
+			db.execSQL("ALTER TABLE " + DatabaseConstants.TABLE_CONTACT_NUMBERS + " ADD COLUMN " + ChatDBConstants.USER_ID + " long;");
+			db.execSQL("ALTER TABLE " + DatabaseConstants.TABLE_CONTACT_NUMBERS + " ADD COLUMN " + ChatDBConstants.USER_SG + " TEXT;");
+
+			db.execSQL("ALTER TABLE " + DatabaseConstants.TABLE_ALL_CONTACT_NUMBERS + " ADD COLUMN " + ChatDBConstants.USER_ID + " long;");
+			db.execSQL("ALTER TABLE " + DatabaseConstants.TABLE_ALL_CONTACT_NUMBERS + " ADD COLUMN " + ChatDBConstants.USER_SG + " TEXT;");
 		}
 	}
 }
