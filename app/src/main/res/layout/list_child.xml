@@ -4,7 +4,6 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
     android:paddingBottom="2dp"
     android:paddingTop="2dp">
 
@@ -33,7 +32,7 @@
                 android:paddingTop="5dp"
                 android:singleLine="true"
                 android:text="Dummy text fdfdfdfdfdfdfdfdfdfdfdfdvdvdbfbzdfsdfsdfsdfsfsdfb"
-                android:textColor="@color/colorGray"
+                android:textColor="@color/white"
                 android:textSize="18sp" />
         </RelativeLayout>
 

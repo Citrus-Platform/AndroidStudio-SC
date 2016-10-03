@@ -9,7 +9,8 @@
     android:paddingLeft="13dp"
     android:paddingRight="10dp"
     android:paddingStart="13dp"
-    android:paddingTop="3dp">
+    android:paddingTop="3dp"
+    android:visibility="gone">
 
     <TextView
         android:id="@+id/header_title"

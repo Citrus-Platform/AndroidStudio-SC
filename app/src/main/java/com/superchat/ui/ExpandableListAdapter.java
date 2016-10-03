@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.superchat.R;
 import com.superchat.utils.Log;
-import com.superchat.utils.SharedPrefManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -143,9 +142,9 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     @Override
                     public void onClick(View v) {
                         Log.e("temp", "change UI");
-                        SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance();
+                        /*SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance();
                         sharedPrefManager.saveUserName("918130069224" + "_" + item.text);
-                        sharedPrefManager.saveUserPassword("ykqMT9n4gX");
+                        sharedPrefManager.saveUserPassword("ykqMT9n4gX");*/
                         //((HomeScreen)context).LoginTaskOnServer();
                     }
                 });

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
-
-    <!-- view background color -->
-    <solid android:color="#ff36a9de"></solid>
+<!--
+    &lt;!&ndash; view background color &ndash;&gt;
+    <solid android:color="#ff36a9de"></solid>-->
 
     <!-- view border color and width -->
     <stroke
         android:width="0.5dip"
-        android:color="#ff5691ac"></stroke>
+        android:color="@color/white"></stroke>
 
     <!-- If you want to add some padding -->
     <padding

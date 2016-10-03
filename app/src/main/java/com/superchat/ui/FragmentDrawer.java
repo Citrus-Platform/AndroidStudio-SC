@@ -102,23 +102,6 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener{
 
         dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0"));
 
-        /**
-         * Get Invited List Data in String Array
-         */
-        {
-            try {
-                JSONObject jsonTemp = new JSONObject(data);
-                //invitedDomainNameSet
-                JSONArray array = jsonTemp.getJSONArray("invitedDomainNameSet");
-                invitedDomainNameSet = new ArrayList<String>();
-                for (int i = 0; i < array.length(); i++) {
-                    invitedDomainNameSet.add(array.getString(i));
-                }
-                ;
-            } catch(Exception e){
-
-            }
-        }
         if (ownerDomainNameSet != null && ownerDomainNameSet.size() > 0) {
 
             for (int i = 0; i < ownerDomainNameSet.size(); i++) {
@@ -141,7 +124,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener{
             }
         }
         ///////////////////////////////////////////////
-        dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Invited Group", "0", "0"));
+       /* dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Invited Group", "0", "0"));
 
         if (invitedDomainNameSetTemp != null && invitedDomainNameSetTemp.size() > 0) {
             for (int i = 0; i < invitedDomainNameSetTemp.size(); i++) {
@@ -149,6 +132,24 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener{
                         invitedDomainNameSetTemp.get(i).getDomainName(),
                         invitedDomainNameSetTemp.get(i).getDomainCount(),
                         invitedDomainNameSetTemp.get(i).getDomainNotify()));
+            }
+        }*/
+
+        /**
+         * Get Invited List Data in String Array
+         */
+        {
+            try {
+                JSONObject jsonTemp = new JSONObject(data);
+                //invitedDomainNameSet
+                JSONArray array = jsonTemp.getJSONArray("invitedDomainNameSet");
+                invitedDomainNameSet = new ArrayList<String>();
+                for (int i = 0; i < array.length(); i++) {
+                    invitedDomainNameSet.add(array.getString(i));
+                }
+                ;
+            } catch(Exception e){
+
             }
         }
 
