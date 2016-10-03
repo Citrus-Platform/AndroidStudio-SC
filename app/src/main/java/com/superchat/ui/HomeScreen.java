@@ -66,6 +66,7 @@ import com.superchat.model.LoginResponseModel;
 import com.superchat.model.LoginResponseModel.BroadcastGroupDetail;
 import com.superchat.model.LoginResponseModel.GroupDetail;
 import com.superchat.model.LoginResponseModel.UserResponseDetail;
+import com.superchat.model.RegistrationFormResponse;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.utils.Constants;
 import com.superchat.utils.FileDownloadResponseHandler;
@@ -130,6 +131,7 @@ import retrofit2.Response;
 public class HomeScreen extends AppCompatActivity implements ServiceConnection, SinchService.StartFailedListener, OnClickListener, OnMenuItemClickListener, interfaceInstances, FileDownloadResponseHandler ,FragmentDrawer.FragmentDrawerListener {
 
 	private FragmentDrawer drawerFragment;
+	public static RegistrationFormResponse multipleSGDAta;
 
 	private static final String TAG = "HomeScreen";
 	CustomViewPager mViewPager = null;
@@ -451,9 +453,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		loadFragments();
 		iPrefManager = SharedPrefManager.getInstance();
 		if(Build.VERSION.SDK_INT >= 11)
-			new SignInTaskOnServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			new SignInTaskOnServer(null).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		else
-			new SignInTaskOnServer().execute();
+			new SignInTaskOnServer(null).execute();
 		
 		//UserID, UserName, Display Name
 //		if(SharedPrefManager.getInstance().getUserId() > 0)
@@ -675,16 +677,45 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	public void onFileDownloadResposne(View view, int[] type, String[] file_urls, String[] file_paths) {
 
 	}
+	public void updateCurrentSGData(String user){
+		try {
+			SharedPrefManager prefManager = SharedPrefManager.getInstance();
+			String sg_name = user.substring(user.indexOf("_") + 1);
+			long userID = prefManager.getSGUserID(user);
+			cleanDataAndSwitchrSG(user);
+			//update shared preference
+			prefManager.saveUserId(userID);
+			prefManager.saveUserName(user);
+			prefManager.saveUserPassword(prefManager.getSGPassword(user));
+
+			prefManager.saveUserDomain(sg_name);
+			prefManager.saveCurrentSGDisplayName(sg_name);
+			cleanDataAndSwitchrSG(sg_name);
+			invalidateOptionsMenu();
+			loadFragments();
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
 
 	public class SignInTaskOnServer extends AsyncTask<String, String, String> {
 		LoginModel loginForm;
 		ProgressDialog progressDialog = null;
 		SharedPrefManager sharedPrefManager;
-		public SignInTaskOnServer(){
+		String sg_user = null;
+		public SignInTaskOnServer(String sg_user){
 			 sharedPrefManager = SharedPrefManager.getInstance();
 			 loginForm = new LoginModel();
-			loginForm.setUserName(sharedPrefManager.getUserName());
-			loginForm.setPassword(sharedPrefManager.getUserPassword());
+			this.sg_user = sg_user;
+			if(sg_user != null) {
+				loginForm.setUserName(sg_user);
+				loginForm.setPassword(sharedPrefManager.getSGPassword(sg_user));
+				//update shared preference
+				updateCurrentSGData(sg_user);
+			}else{
+				loginForm.setUserName(sharedPrefManager.getUserName());
+				loginForm.setPassword(sharedPrefManager.getUserPassword());
+			}
 			if(sharedPrefManager.getDeviceToken() != null)
 				loginForm.setToken(sharedPrefManager.getDeviceToken());
 			String version = "";
@@ -3348,12 +3379,19 @@ public void onComposeClick(View view){
 
 	}
 //------------------------- Clear Data to switch for another SG ------------------------------------------
-	public void cleanDataForSG(String sg_name){
+	public void switchSG(String sg){
+//		cleanDataAndSwitchrSG(sg);
+		if(Build.VERSION.SDK_INT >= 11)
+			new SignInTaskOnServer(sg).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		else
+			new SignInTaskOnServer(sg).execute();
+	}
+	public void cleanDataAndSwitchrSG(String sg_name){
 		try{
 			//Clear All Shared Preferences Data
-			SharedPrefManager.getInstance().clearSharedPref();
+//			SharedPrefManager.getInstance().clearSharedPref();
 			//Clear All Messages - Message Info Table
-//			ChatDBWrapper.getInstance().clearMessageDB();
+			ChatDBWrapper.getInstance().clearMessageDB();
 			//Clear All Contacts - Contacts Table
 			DBWrapper.getInstance().clearAllDB();
 		}catch(Exception ex){

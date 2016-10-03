@@ -1147,7 +1147,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 				try {
 					response = client1.execute(httpPost);
 					final int statusCode = response.getStatusLine().getStatusCode();
-					if (statusCode == HttpStatus.SC_OK) { //new1
+					if (statusCode == HttpStatus.SC_OK) {
 						HttpEntity entity = response.getEntity();
 //						    System.out.println("SERVER RESPONSE STRING: " + entity.getContent());
 						BufferedReader rd = new BufferedReader(new InputStreamReader(entity.getContent()));
@@ -1305,56 +1305,40 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 
 							ArrayList<DomainSetObject> activateDomainDataSet = new ArrayList<DomainSetObject>();
 							DomainSetObject domainSetObject = new DomainSetObject();
-							for(int i = 0 ; i<regObjRes.getActivateDomainDataSet().size() ; i++){
-								if(registrationForm.getDomainName().equalsIgnoreCase(regObjRes.getActivateDomainDataSet().get(i).getDomainName())){
-									regObj = regObjRes.getActivateDomainDataSet().get(i);
+							if(regObjRes != null) {
+								SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
+								HomeScreen.multipleSGDAta = regObjRes;
+								for (int i = 0; i < regObjRes.getActivateDomainDataSet().size(); i++) {
+									if (registrationForm.getDomainName().equalsIgnoreCase(regObjRes.getActivateDomainDataSet().get(i).getDomainName())) {
+										regObj = regObjRes.getActivateDomainDataSet().get(i);
+										System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
+										iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
+										iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
+									}else{
+										regObj = regObjRes.getActivateDomainDataSet().get(i);
+										System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
+										iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
+										iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
+									}
 								}
 							}
 
 							if (regObj != null) {
 								SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
-								if (iPrefManager != null && iPrefManager.getUserId() != 0) {
-									if (iPrefManager.getUserId() != regObj.getUserId()) {
-										try {
-											DBWrapper.getInstance().clearMessageDB();
-//														iPrefManager.clearSharedPref();
-										} catch (Exception e) {
-										}
-									}
-								}
-								//Log.i(TAG, "SignupTaskOnServer :: password, mobileNumber: " + regObj.getPassword() + " , " + regObj.iMobileNumber);
-                                /*iPrefManager.saveUserDomain(superGroupName);
-                                if (selectedSGDisplayName != null)
-                                    iPrefManager.saveCurrentSGDisplayName(selectedSGDisplayName);
-                                iPrefManager.saveAuthStatus(regObj.iStatus);
-                                if (regObj.token != null)
-                                    iPrefManager.saveDeviceToken(regObj.token);
-                                iPrefManager.saveUserId(regObj.iUserId);
-                                iPrefManager.setAppMode("VirginMode");
-                                iPrefManager.saveUserPhone(regObj.iMobileNumber);
-//											iPrefManager.saveUserPassword(regObj.getPassword());
-                                iPrefManager.saveUserLogedOut(false);
-                                pendingProfile = regObj.pendingProfile;
-//											pendingProfile = true;
-                                iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
-                            }
-                            verifyUserSG(regObj.iUserId);*/
-
+//								if (iPrefManager != null && iPrefManager.getUserId() != 0) {
+//									if (iPrefManager.getUserId() != regObj.getUserId()) {
+//										try {
+//											DBWrapper.getInstance().clearMessageDB();
+//										} catch (Exception e) {
+//										}
+//									}
+//								}
 								iPrefManager.saveUserDomain(superGroupName);
 								if (selectedSGDisplayName != null)
 									iPrefManager.saveCurrentSGDisplayName(selectedSGDisplayName);
-
-								//iPrefManager.saveAuthStatus(regObj.iStatus);
-                                /*if (regObj.token != null)
-                                    iPrefManager.saveDeviceToken(regObj.token);*/
 								iPrefManager.saveUserId(regObj.getUserId());
 								iPrefManager.setAppMode("VirginMode");
-
-								//iPrefManager.saveUserPhone(regObj.iMobileNumber);
-//											iPrefManager.saveUserPassword(regObj.getPassword());
 								iPrefManager.saveUserLogedOut(false);
-								//pendingProfile = regObj.pendingProfile;
-//											pendingProfile = true;
 								iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
 							}
 							verifyUserSG(regObj.getUserId());
