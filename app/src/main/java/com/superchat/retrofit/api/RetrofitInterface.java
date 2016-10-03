@@ -20,22 +20,22 @@ public interface RetrofitInterface {
 
     String PREFIX_URL = "/tiger/rest/";
 
-    @POST(PREFIX_URL + "/user/makesubadmin/")
+    @POST(PREFIX_URL + "user/makesubadmin/")
     Call<UserAdminResponse> makeAdmin(@Body UserAdminRequest requestObject);
 
-    @POST(PREFIX_URL + "/user/removesubadmin /")
+    @POST(PREFIX_URL + "user/removesubadmin /")
     Call<UserAdminResponse> removeAdmin(@Body UserAdminRequest requestObject);
 
-    @GET(PREFIX_URL + "/user/profile/get")
+    @GET(PREFIX_URL + "user/profile/get")
     Call<UserProfileModel> getUserProfile(@Query("userName") String userName);
 
-    @GET(PREFIX_URL + "/user/bulletin/get")
+    @GET(PREFIX_URL + "user/bulletin/get")
     Call<BulletinGetMessageDataModel> getMessages(@Query("limit") String minId);
 
     @GET
     Call<BulletinGetMessageDataModel> getMoreMessages(@Url String url);
 
-    @POST(PREFIX_URL + "/user/bulletin/post")
+    @POST(PREFIX_URL + "user/bulletin/post")
     Call<BulletinMessageDataModel> postBulletinMessage(@Body BulletinMessageDataModel.MessageData requestObject);
 
 }

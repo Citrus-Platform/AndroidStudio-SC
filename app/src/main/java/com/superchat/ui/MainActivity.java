@@ -1540,7 +1540,7 @@ public class MainActivity extends FragmentActivity implements
 				e.printStackTrace();
 			}
 			String clientVersion = "Android_"+version;
-					registrationForm = new RegistrationForm(formatedNumber, "normal",imei, imsi, clientVersion);
+					registrationForm = new RegistrationForm(formatedNumber, "normal",imei, imsi, clientVersion, null, true);
 					registrationForm.setToken(imei);
 					registrationForm.countryCode = countryCodeView.getText().toString().replace("+", "");
 					countryCode = registrationForm.countryCode;

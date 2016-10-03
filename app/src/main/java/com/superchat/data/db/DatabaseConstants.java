@@ -184,6 +184,9 @@ public static final byte MEDIA_FAILED = 4;
 	public static final String MESSAGE_MEDIA_LENGTH = "message_media_length";
 	public static final String MESSAGE_MEDIA_LOCAL_PATH_FIELD = "message_media_local";
 	public static final String MEDIA_STATUS = "media_status";
+	//New Added Fields
+	public static final String USER_ID = "user_id";
+	public static final String USER_SG = "user_sg";
 	public static final String TABLE_MESSAGE_INFO = "CREATE TABLE IF NOT EXISTS "
 			+ DatabaseConstants.TABLE_NAME_MESSAGE_INFO
 			+ "("
@@ -223,6 +226,10 @@ public static final byte MEDIA_FAILED = 4;
 			+ " TEXT,"
 			+ ChatDBConstants.MESSAGE_TYPE
 			+ " INTEGER  DEFAULT 0, "
+			+ DatabaseConstants.USER_ID
+			+ " LONG, "
+			+ DatabaseConstants.USER_SG
+			+ " TEXT,"
 			+ DatabaseConstants.MESSAGE_TYPE_FIELD + " INTEGER DEFAULT 0);";
 	
 	

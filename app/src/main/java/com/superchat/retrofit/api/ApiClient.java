@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 
 import com.superchat.SuperChatApplication;
+import com.superchat.utils.Constants;
 import com.superchat.utils.HttpHeaderUtils;
 import com.superchat.utils.SharedPrefManager;
 
@@ -22,7 +23,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiClient {
 
     private static ApiClient uniqInstance;
-    private final String API_URL_LIVE = "http://superchat3c.com/";
+    private final String API_URL_LIVE = "http://" + Constants.LIVE_DOMAIN;
 
     private RetrofitInterface apiMazkara;
 

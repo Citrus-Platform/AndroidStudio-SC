@@ -6668,6 +6668,9 @@ private void setRecordingViews(byte type){
 			contentvalues.put(DatabaseConstants.LAST_UPDATE_FIELD, currentTime);
 
 			contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
+            //Save USerID and SG in DB
+            contentvalues.put(DatabaseConstants.USER_ID, SharedPrefManager.getInstance().getUserId());
+            contentvalues.put(DatabaseConstants.USER_SG, SharedPrefManager.getInstance().getUserDomain());
 			chatDBWrapper.insertInDB(DatabaseConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 		} catch (Exception e) {
 
@@ -6731,8 +6734,10 @@ private void setRecordingViews(byte type){
 			contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
 
 			contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
-			ChatDBWrapper.getInstance().insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO,
-					contentvalues);
+            //Save USerID and SG in DB
+            contentvalues.put(DatabaseConstants.USER_ID, SharedPrefManager.getInstance().getUserId());
+            contentvalues.put(DatabaseConstants.USER_SG, SharedPrefManager.getInstance().getUserDomain());
+			ChatDBWrapper.getInstance().insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 //			if (chatListener != null)
 //				chatListener.notifyChatRecieve(from,msg);
 		} catch (Exception e) {
@@ -6861,11 +6866,11 @@ private void setRecordingViews(byte type){
 //            progressDialog.show();
             retrofit2.Call call = null;
             if(url != null && url.trim().length() > 0) {
-                System.out.println("[Hitting next url]");
+                System.out.println("ChatListScreen: [Hitting next url]");
                 call = objApi.getApi(this).getMoreMessages(url);
             }
             else {
-                System.out.println("[Hitting first time]");
+                System.out.println("ChatListScreen: [Hitting first time]");
                 call = objApi.getApi(this).getMessages("" + 10);
             }
             (header.findViewById(R.id.load_older_messages)).setVisibility(View.GONE);
@@ -6873,7 +6878,7 @@ private void setRecordingViews(byte type){
             call.enqueue(new RetrofitRetrofitCallback<BulletinGetMessageDataModel>(this) {
                 @Override
                 protected void onResponseVoidzResponse(retrofit2.Call call, Response response) {
-                    System.out.println("[Here.....]");
+                    System.out.println("ChatListScreen: [Here.....]");
                 }
 
                 @Override
@@ -6902,7 +6907,7 @@ private void setRecordingViews(byte type){
                                 contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, (message.getText() != null) ? message.getText() : "");
                                 contentvalues.put(ChatDBConstants.MESSAGE_ID, message.getPacketId());
                                 contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID.randomUUID().toString());
-                                System.out.println("[Creaton Date ] "+message.getCreatedDate());
+                                System.out.println("ChatListScreen: [Creaton Date ] "+message.getCreatedDate());
 
 
                                 Calendar calender = Calendar.getInstance();

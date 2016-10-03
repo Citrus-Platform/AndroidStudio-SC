@@ -34,6 +34,7 @@ import com.chat.sdk.ChatConnectListener;
 import com.chat.sdk.ChatService;
 import com.chat.sdk.ConnectionStatusListener;
 import com.chat.sdk.ProfileUpdateListener;
+import com.chat.sdk.db.ChatDBConstants;
 import com.chat.sdk.db.ChatDBWrapper;
 import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
 import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
@@ -1180,6 +1181,9 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
             contentvalues.put(DatabaseConstants.LAST_UPDATE_FIELD, currentTime);
 
             contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
+            //Save USerID and SG in DB
+            contentvalues.put(ChatDBConstants.USER_ID, SharedPrefManager.getInstance().getUserId());
+            contentvalues.put(ChatDBConstants.USER_SG, SharedPrefManager.getInstance().getUserDomain());
             chatDBWrapper.insertInDB(DatabaseConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
         } catch (Exception e) {
 

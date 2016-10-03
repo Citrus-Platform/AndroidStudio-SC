@@ -432,6 +432,9 @@ public class BulletinScreen extends ListFragment  implements ChatCountListener,C
 			contentvalues.put(DatabaseConstants.LAST_UPDATE_FIELD, currentTime);
 
 			contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
+			//Save USerID and SG in DB
+			contentvalues.put(DatabaseConstants.USER_ID, SharedPrefManager.getInstance().getUserId());
+			contentvalues.put(DatabaseConstants.USER_SG, SharedPrefManager.getInstance().getUserDomain());
 			dbwrapper.insertInDB(DatabaseConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
 		} catch (Exception e) {
 

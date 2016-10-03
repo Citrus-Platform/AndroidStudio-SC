@@ -58,15 +58,17 @@ public class DBWrapper {
 		dbHelper.getWritableDatabase().setTransactionSuccessful();
 	}
 	public void clearAllDB() {
-		SQLiteDatabase sqlitedatabase = dbHelper.getWritableDatabase();
-		beginTransaction();
-		int i = sqlitedatabase.delete(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, null, null);
-		Log.i(TAG, (new StringBuilder()).append("Deleted from Data::").append(i).toString());
-		int k = sqlitedatabase.delete(
-				DatabaseConstants.TABLE_NAME_CONTACT_EMAILS, null, null);
-		Log.i(TAG,(new StringBuilder()).append("Deleted from Names::").append(k).toString());
-		setTransaction();
-		endTransaction();
+		if(isTableExists(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS)) {
+			SQLiteDatabase sqlitedatabase = dbHelper.getWritableDatabase();
+			beginTransaction();
+			int i = sqlitedatabase.delete(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, null, null);
+			Log.i(TAG, (new StringBuilder()).append("Deleted from Data::").append(i).toString());
+
+//		int k = sqlitedatabase.delete(DatabaseConstants.TABLE_NAME_CONTACT_EMAILS, null, null);
+//		Log.i(TAG,(new StringBuilder()).append("Deleted from Names::").append(k).toString());
+			setTransaction();
+			endTransaction();
+		}
 	}
 
 	public void deleteTable(String table) {
@@ -106,9 +108,11 @@ public class DBWrapper {
 
 	public void clearMessageDB() {
 		try{
-			SQLiteDatabase sqlitedatabase = dbHelper.getWritableDatabase();
-			int i = sqlitedatabase.delete(DatabaseConstants.TABLE_NAME_MESSAGE_INFO, null, null);
-			Log.i(TAG, (new StringBuilder()).append("Deleted from Data::").append(i).toString());
+			if(isTableExists(DatabaseConstants.TABLE_NAME_MESSAGE_INFO)) {
+				SQLiteDatabase sqlitedatabase = dbHelper.getWritableDatabase();
+				int i = sqlitedatabase.delete(DatabaseConstants.TABLE_NAME_MESSAGE_INFO, null, null);
+				Log.i(TAG, (new StringBuilder()).append("Deleted from Data::").append(i).toString());
+			}
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}

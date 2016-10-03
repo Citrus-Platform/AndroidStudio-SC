@@ -137,11 +137,11 @@ public class ChatDBWrapper {
 		return ret;
 	}
 	public void clearMessageDB() {
-		SQLiteDatabase sqlitedatabase = dbHelper.getWritableDatabase();
-		int i = sqlitedatabase.delete(
-				ChatDBConstants.TABLE_NAME_MESSAGE_INFO, null, null);
-		Log.i(TAG, (new StringBuilder()).append("Deleted from Data::")
-				.append(i).toString());
+		if(isTableExists(ChatDBConstants.TABLE_NAME_MESSAGE_INFO)) {
+			SQLiteDatabase sqlitedatabase = dbHelper.getWritableDatabase();
+			int i = sqlitedatabase.delete(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, null, null);
+			Log.i(TAG, (new StringBuilder()).append("Deleted from Data::").append(i).toString());
+		}
 	}
 
 	public long deleteInDB(String table, ArrayList arraylist, String s1) {
@@ -2836,4 +2836,19 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 
 		return l;
 	}
+//Check if table exists
+public boolean isTableExists(String tableName) {
+	boolean isExist = false;
+	Cursor cursor = dbHelper.getWritableDatabase().rawQuery("select * from sqlite_master where tbl_name = '" + tableName + "'", null);
+	if (cursor != null) {
+		if (cursor.getCount() > 0) {
+			isExist = true;
+			System.out.println("ChatDBWrapper :: "+tableName +" = true");
+		}
+		else
+			System.out.println("ChatDBWrapper :: "+tableName +" = false");
+		cursor.close();
+	}
+	return isExist;
+}
 }

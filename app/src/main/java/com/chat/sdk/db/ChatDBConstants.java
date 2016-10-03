@@ -54,6 +54,10 @@ public static final byte MEDIA_FAILED = 4;
 	 * Message.SeenState.seen,
 	 * Message.SeenState.wait
 	 */
+	//New Added Fields
+	public static final String USER_ID = "user_id";
+	public static final String USER_SG = "user_sg";
+	//Old Fields
 	public static final String MESSAGE_TYPE = "message_type";
 	public static final String MESSAGE_TYPE_FIELD = "message_type_id";
 	public static final String MESSAGE_THUMB_FIELD = "message_thumb_image";
@@ -116,6 +120,10 @@ public static final byte MEDIA_FAILED = 4;
 			+ " TEXT,"
 			+ ChatDBConstants.MESSAGE_TYPE
 			+ " INTEGER  DEFAULT 0, "
+			+ ChatDBConstants.USER_ID
+			+ " LONG, "
+			+ ChatDBConstants.USER_SG
+			+ " TEXT,"
 			+ ChatDBConstants.MESSAGE_TYPE_FIELD + " INTEGER DEFAULT 0);";
 	
 	// user message status info

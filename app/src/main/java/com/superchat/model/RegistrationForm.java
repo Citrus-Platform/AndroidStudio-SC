@@ -2,12 +2,13 @@ package com.superchat.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Set;
+
 public class RegistrationForm {
 
 	private static final String TO_STRING_TEMPLATE = "mobileNumber: %s, type: %s, imei: %s, imsi: %s, clientVersion: %s";
 
-//	private String mobileNumber;
-
+	// private String mobileNumber;
 	private String type;
 	private String imei;
 	private String imsi;
@@ -21,19 +22,53 @@ public class RegistrationForm {
 
 	@SerializedName("userId")
 	public long iUserId;
-	
+
 	@SerializedName("mobileNumber")
 	public String iMobileNumber = null;
 
 	@SerializedName("pendingProfile")
 	public boolean pendingProfile = false;
-	
+
 	@SerializedName("domainName")
 	public String domainName = null;
-	
+
+	@SerializedName("activeDomainName")
+	public String activeDomainName = null;
+
+	@SerializedName("domainNameSet")
+	private Set<String> domainNameSet;
+
+	@SerializedName("activateAll")
+	public boolean activateAll = false;
+
+	public void setActiveDomainName(String activeDomainName) {
+		this.activeDomainName = activeDomainName;
+	}
+
+	public String getActiveDomainName() {
+		return activeDomainName;
+	}
+
+	public boolean isActivateAll() {
+		return activateAll;
+	}
+
+	public void setActivateAll(boolean activateAll) {
+		this.activateAll = activateAll;
+	}
+
+	public void setDomainNameSet(Set<String> domainNameSet) {
+		this.domainNameSet = domainNameSet;
+	}
+
+	public Set<String> getDomainNameSet() {
+		return domainNameSet;
+	}
+
 	public boolean isPendingProfile() {
 		return pendingProfile;
 	}
+
 	public String getDomainName() {
 		return domainName;
 	}
@@ -44,10 +79,10 @@ public class RegistrationForm {
 
 	@SerializedName("countryCode")
 	public String countryCode = null;
-	
+
 	@SerializedName("token")
 	public String token = null;
-	
+
 	public String getToken() {
 		return token;
 	}
@@ -61,13 +96,15 @@ public class RegistrationForm {
 	}
 
 	public RegistrationForm(String mobileNumber, String type, String imei,
-			String imsi, String clientVersion) {
+							String imsi, String clientVersion, Set<String> domainNameSet, boolean activateAll) {
 		this.iMobileNumber = mobileNumber;
 		this.type = type;
 		this.imei = imei;
 		setToken(imei);
 		this.imsi = imsi;
 		this.clientVersion = clientVersion;
+		this.domainNameSet = domainNameSet;
+		this.activateAll = activateAll;
 	}
 
 	public String toString() {

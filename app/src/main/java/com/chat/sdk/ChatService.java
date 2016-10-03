@@ -3254,12 +3254,14 @@ public class ChatService extends Service implements interfaceInstances {
 				contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
 
 			contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
+			//Save USerID and SG in DB
+			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
+			contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
 			chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
 			if (chatListener != null)
 				chatListener.notifyChatRecieve(from, msg);
 		} catch (Exception e) {
-			Log.d(TAG, "Exception during save message" + from + "-" + to + "-"
-					+ msg);
+			Log.d(TAG, "Exception during save message" + from + "-" + to + "-"+ msg);
 		}
 	}
 
@@ -3501,6 +3503,9 @@ public class ChatService extends Service implements interfaceInstances {
 			    contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, SharedPrefManager.getInstance().getUserDomain() + "-all");
 			else
 				contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
+			//Save USerID and SG in DB
+			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
+			contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
 			long insertedInfo = chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 			Log.d(TAG, "insertedInfo during message save: " + insertedInfo + " , " + contentvalues.valueSet().toArray());
 			if (chatListener != null)
@@ -5493,6 +5498,9 @@ public class ChatService extends Service implements interfaceInstances {
                 contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, SharedPrefManager.getInstance().getBroadcastFirstTimeName(from));
             else
 			    contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
+			//Save USerID and SG in DB
+			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
+			contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
 			chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
 //			if (chatListener != null)
 //				chatListener.notifyChatRecieve(from,msg);
@@ -5541,6 +5549,9 @@ public class ChatService extends Service implements interfaceInstances {
 //			AtMeApplication.dayValue = date;
 			contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
 			contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
+			//Save USerID and SG in DB
+			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
+			contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
 			chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
 			if (chatListener != null)
 				chatListener.notifyChatRecieve(from,msg);
@@ -5662,6 +5673,9 @@ public class ChatService extends Service implements interfaceInstances {
 			contentvalues.put(DatabaseConstants.LAST_UPDATE_FIELD, currentTime);
 
 			contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
+			//Save USerID and SG in DB
+			contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
+			contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
 			chatDBWrapper.insertInDB(DatabaseConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 		} catch (Exception e) {
 

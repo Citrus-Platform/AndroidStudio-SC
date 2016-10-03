@@ -717,10 +717,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			String JSONstring = new Gson().toJson(loginForm);
 		    DefaultHttpClient client1 = new DefaultHttpClient();
 		    
-//			Log.d("HomeScreen", "serverUpdateCreateGroupInfo request:"+JSONstring);
-			
+			System.out.println("HomeScreen :: SignInTaskOnServer : URL : "+(Constants.SERVER_URL+ "/tiger/rest/user/login"));
+			System.out.println("HomeScreen :: SignInTaskOnServer : serverUpdateCreateGroupInfo request: "+JSONstring);
+
 			 HttpPost httpPost = new HttpPost(Constants.SERVER_URL+ "/tiger/rest/user/login");
-//	         httpPost.setEntity(new UrlEncodedFormEntity(JSONstring));
 			 HttpResponse response = null;
 			 String str = "";
 	         try {
@@ -730,22 +730,18 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				 try {
 					 response = client1.execute(httpPost);
 					 final int statusCode=response.getStatusLine().getStatusCode();
-					 if (statusCode == HttpStatus.SC_OK){ //new1
+					 if (statusCode == HttpStatus.SC_OK){
 						 HttpEntity entity = response.getEntity();
-//						    System.out.println("SERVER RESPONSE STRING: " + entity.getContent());
 						    BufferedReader rd = new BufferedReader(new InputStreamReader(entity.getContent()));
 						    String line = "";
-				           
 				            while ((line = rd.readLine()) != null) {
-				            	
 				            	str+=line;
 				            }
 				            if(str!=null &&!str.equals("")){
-//								Log.d(TAG,"login response : "+str);
+								System.out.println("HomeScreen :: SignInTaskOnServer : response : "+str);
 				            	Gson gson = new GsonBuilder().create();
-				            	LoginResponseModel loginObj = gson.fromJson(str,LoginResponseModel.class);
+				            	LoginResponseModel loginObj = gson.fromJson(str, LoginResponseModel.class);
 								if (loginObj != null && loginObj.status!=null && loginObj.status.equals("success")) {
-									
 									if(loginObj.getDomainType()!=null && !loginObj.getDomainType().equals(""))
 										sharedPrefManager.setDomainType(loginObj.getDomainType());									
 									if(loginObj.domainPrivacyType!=null && loginObj.domainPrivacyType.equals("open"))
@@ -767,15 +763,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 									} else
 										sharedPrefManager.setAsDomainAdmin(false);
 									
-									if(loginObj.directoryUserSet!=null){
-										
+									if(loginObj.directoryUserSet != null){
+										System.out.println("HomeScreen :: SignInTaskOnServer : Writing in TABLE_NAME_CONTACT_NUMBERS.");
 										for (UserResponseDetail userDetail : loginObj.directoryUserSet) {
 											String number = DBWrapper.getInstance().getContactNumber(userDetail.userName);
 											if(number!=null && !number.equals(""))
 												continue;
 	//										UserResponseDetail userDetail = loginObj.directoryUserSet.get(st);
 										ContentValues contentvalues = new ContentValues();
-										
 										contentvalues.put(DatabaseConstants.USER_NAME_FIELD,userDetail.userName);
 										contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(1));
 										contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,userDetail.mobileNumber);	
@@ -801,7 +796,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 											sharedPrefManager.saveUserDesignation(userDetail.userName, userDetail.designation);
 										if(userDetail.gender!=null){
 											sharedPrefManager.saveUserGender(userDetail.userName, userDetail.gender);
-											Log.i(TAG, "userName : "+userDetail.userName+", gender : "+userDetail.gender);
+//											Log.i(TAG, "userName : "+userDetail.userName+", gender : "+userDetail.gender);
 										}
 										if(userDetail.imageFileId!=null){
 											sharedPrefManager.saveUserFileId(userDetail.userName, userDetail.imageFileId);
@@ -817,6 +812,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 									}
 								}
 									directoryGroupSet = loginObj.directoryGroupSet;
+									if(directoryGroupSet != null) {
+										System.out.println("HomeScreen :: SignInTaskOnServer : Writing Groups..");
+									}
 									for (GroupDetail groupDetail : loginObj.directoryGroupSet) {
 //										Log.d(TAG, "counter check  Login response : "+groupDetail.type+""+groupDetail.displayName+" , "+groupDetail.numberOfMembers);
 //										writeLogsToFile(groupDetail.groupName+" - "+groupDetail.displayName);
@@ -850,6 +848,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 										sharedPrefManager.saveUserFileId(groupDetail.groupName, groupDetail.fileId);
 									}
 									directoryBroadcastGroupSet = loginObj.directoryBroadcastGroupSet;
+									if(directoryBroadcastGroupSet != null) {
+										System.out.println("HomeScreen :: SignInTaskOnServer : Writing Broadcast..");
+									}
 									for (BroadcastGroupDetail broadcastGroupDetail : loginObj.directoryBroadcastGroupSet) {
 										sharedPrefManager.saveBroadCastName(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.displayName);
 										sharedPrefManager.saveBroadCastDisplayName(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.displayName);
@@ -901,12 +902,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 												}
 										}
 									}
-									
-									
 					            }
-									
-									
-				            
 				            }
 					 }
 				} catch (ClientProtocolException e) {
@@ -921,8 +917,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution Exception:"+e.toString());
 				e.printStackTrace();
 			}
-		
-		
 			return str;
 		}
 		@Override
@@ -1260,7 +1254,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 										sharedPrefManager.saveUserDesignation(userDetail.userName, userDetail.designation);
 									if(userDetail.gender!=null){
 										sharedPrefManager.saveUserGender(userDetail.userName, userDetail.gender);
-										Log.i(TAG, "userName : "+userDetail.userName+", gender : "+userDetail.gender);
+//										Log.i(TAG, "userName : "+userDetail.userName+", gender : "+userDetail.gender);
 									}
 									if(userDetail.imageFileId!=null){
 										sharedPrefManager.saveUserFileId(userDetail.userName, userDetail.imageFileId);
@@ -1962,7 +1956,9 @@ public void onComposeClick(View view){
                 }
             }else
 			    contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
-			System.out.println("[Message - ] "+contentvalues.toString());
+			//Save USerID and SG in DB
+			contentvalues.put(DatabaseConstants.USER_ID, SharedPrefManager.getInstance().getUserId());
+			contentvalues.put(DatabaseConstants.USER_SG, SharedPrefManager.getInstance().getUserDomain());
 			chatDBWrapper.insertInDB(DatabaseConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 		} catch (Exception e) {
 
@@ -2271,6 +2267,7 @@ public void onComposeClick(View view){
             	if (loginObj != null) {
 					if(loginObj.directoryBroadcastGroupSet != null && loginObj.directoryBroadcastGroupSet.size() > 0){
 						sharedIDData.clear();
+						System.out.println("HomeScreen :: SignInTaskOnServer : Writing Official ID Data..");
 						for (BroadcastGroupDetail shared_id_detail : loginObj.directoryBroadcastGroupSet) {
 							if(sharedPrefManager.getSharedIDDisplayName(shared_id_detail.broadcastGroupName) == null){
 								System.out.println("Shared ID :: "+shared_id_detail.displayName+" : "+shared_id_detail.broadcastGroupName);
@@ -2602,7 +2599,7 @@ public void onComposeClick(View view){
 											iPrefManager.saveUserDesignation(userDetail.userName, userDetail.designation);
 										if(userDetail.gender!=null){
 											iPrefManager.saveUserGender(userDetail.userName, userDetail.gender);
-											Log.i(TAG, "userName : "+userDetail.userName+", gender : "+userDetail.gender);
+//											Log.i(TAG, "userName : "+userDetail.userName+", gender : "+userDetail.gender);
 										}
 										ContactUpDatedModel.UserDetail.PrivacyStatusMap privacyStatusMap = userDetail.getPrivacyStatusMap();
 										if(privacyStatusMap!=null){
@@ -2979,20 +2976,11 @@ public void onComposeClick(View view){
 		try {
 			retrofit2.Call call = null;
 			final SharedPrefManager pref = SharedPrefManager.getInstance();
-//			if(url != null && url.trim().length() > 0) {
-//				System.out.println("[Hitting next url]");
-//				call = objApi.getApi(this).getMoreMessages(url);
-//			}
-//			else {
-//				System.out.println("[Hitting first time]");
-//				call = objApi.getApi(this).getMessages("" + 10);
-//			}
 			call = objApi.getApi(this).getMessages("" + 10);
-
 			call.enqueue(new RetrofitRetrofitCallback<BulletinGetMessageDataModel>(this) {
 				@Override
 				protected void onResponseVoidzResponse(retrofit2.Call call, Response response) {
-					System.out.println("[Here.....]");
+//					System.out.println("[Here.....]");
 				}
 
 				@Override
@@ -3009,6 +2997,7 @@ public void onComposeClick(View view){
 						if (!messages.isEmpty()) {
 							LinkedList<BulletinGetMessageDataModel.MessageData> list = new LinkedList<BulletinGetMessageDataModel.MessageData>(messages);
 							Iterator<BulletinGetMessageDataModel.MessageData> itr = list.descendingIterator();
+							System.out.println("HomeScreen :: SignInTaskOnServer : Writing Bulletin Messages..");
 							while(itr.hasNext()) {
 								BulletinGetMessageDataModel.MessageData message = itr.next();
 								json_body = message.getJsonBody();
@@ -3087,6 +3076,9 @@ public void onComposeClick(View view){
 									}
 								}
 								contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, media_url);
+								//Save USerID and SG in DB
+								contentvalues.put(ChatDBConstants.USER_ID, SharedPrefManager.getInstance().getUserId());
+								contentvalues.put(ChatDBConstants.USER_SG, SharedPrefManager.getInstance().getUserDomain());
 								ChatDBWrapper.getInstance().insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
 								media_url = caption = null;
 								json_body = null;
@@ -3354,5 +3346,18 @@ public void onComposeClick(View view){
 				break;
 		}
 
+	}
+//------------------------- Clear Data to switch for another SG ------------------------------------------
+	public void cleanDataForSG(String sg_name){
+		try{
+			//Clear All Shared Preferences Data
+			SharedPrefManager.getInstance().clearSharedPref();
+			//Clear All Messages - Message Info Table
+//			ChatDBWrapper.getInstance().clearMessageDB();
+			//Clear All Contacts - Contacts Table
+			DBWrapper.getInstance().clearAllDB();
+		}catch(Exception ex){
+			ex.toString();
+		}
 	}
 }
