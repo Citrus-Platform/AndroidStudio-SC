@@ -127,6 +127,7 @@ public class SharedPrefManager {
 	private final String LAST_BACKUP_TIME = "last_backup_time";
 
 	private final String BULLETIN_NEXT_URL = "bulletin_next_url";
+	private final String SG_PASSWORD = "sg_password";
 
 	private static SharedPrefManager sharedPrefManager;
 
@@ -1108,6 +1109,17 @@ public boolean isContactModified(){
 	}
 	public void saveBroadCastDisplayName(String room,String displayName) {
 		editor.putString(BROADCAST_DISPLAY_NAME+room, displayName);
+		editor.commit();
+	}
+	public String getSGPassword(String sg) {
+		String value = null;
+		try{
+			value = pref.getString(SG_PASSWORD+sg, null);
+		}catch(Exception e){}
+		return value;
+	}
+	public void saveSGPassword(String sg,String pass) {
+		editor.putString(SG_PASSWORD+sg, pass);
 		editor.commit();
 	}
 	public void saveSharedIDDisplayName(String room, String displayName) {

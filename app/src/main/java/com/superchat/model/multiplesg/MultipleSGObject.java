@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * Created by maheshsonker on 03/10/16.
  */
 
-public class RootObject
+public class MultipleSGObject
 {
     private OwnerDomainName ownerDomainName;
 

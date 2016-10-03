@@ -1271,7 +1271,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 			DefaultHttpClient client1 = new DefaultHttpClient();
 
 			Log.e(TAG, "ActivatedomainTaskOnServer :: request:" + JSONstring);
-			String url = "http://superchat3c.com/tiger/rest/user/activatedomain";
+			String url = Constants.SERVER_URL +"/tiger/rest/user/activatedomain";
 			Log.e(TAG, "ActivatedomainTaskOnServer :: url:" + url);
 			HttpPost httpPost = new HttpPost(url);
 //	         httpPost.setEntity(new UrlEncodedFormEntity(JSONstring));

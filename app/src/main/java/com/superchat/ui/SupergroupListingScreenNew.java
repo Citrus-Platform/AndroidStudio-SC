@@ -757,7 +757,7 @@ private void registerUserOnServer(String super_group,String sg_display_name, Vie
 	}
 	selectedSGDisplayName = sg_display_name;
 	String clientVersion = "Android_"+version;
-	RegistrationForm registrationForm = new RegistrationForm(mobileNumber, "normal",imei, imsi, clientVersion);
+	RegistrationForm registrationForm = new RegistrationForm(mobileNumber, "normal",imei, imsi, clientVersion, null, true);
 	registrationForm.setToken(imei);
 	registrationForm.countryCode = countryCode;
 	if(super_group != null && super_group.trim().length() > 0)
