@@ -582,6 +582,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 					showNameDialog(sg_display_name);
 				else
 					registerUserOnServer(supergroup_name, sg_display_name, v);
+				return;
 			}
 		});
 		((TextView) welcomeDialog.findViewById(R.id.id_back)).setOnClickListener(new OnClickListener() {
@@ -610,6 +611,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 					else
 						intent.setDataAndType(Uri.parse("file://" + file_path), "image/*");
 					startActivity(intent);
+					return;
 				}
 			}
 		});
@@ -908,9 +910,9 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 				domainNameSet.add("" + ownerDomainNameSet.get(i).getDomainName());
 			}
 		}
-		//////////////////////////////////////////////////////////////////////
 		RegistrationForm registrationForm = new RegistrationForm(mobileNumber, "normal", imei, imsi, clientVersion ,domainNameSet ,true);
-		registrationForm.setToken(imei);
+		if(Constants.regid != null)
+			registrationForm.setToken(Constants.regid);
 		registrationForm.countryCode = countryCode;
 		if (super_group != null && super_group.trim().length() > 0){
 			registrationForm.setDomainName(super_group);
@@ -1317,7 +1319,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 										System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
 										iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
 										iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
-										iPrefManager.saveUserDomain(superGroupName);
+										iPrefManager.saveUserDomain(regObj.getDomainName());
 										if (selectedSGDisplayName != null)
 											iPrefManager.saveCurrentSGDisplayName(selectedSGDisplayName);
 										iPrefManager.saveUserId(regObj.getUserId());
@@ -1325,13 +1327,13 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 										iPrefManager.saveUserLogedOut(false);
 										iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
 										current_user_id = regObj.getUserId();
-										DBWrapper.getInstance().updateSGCredentials(superGroupName, regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
+										DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
 									}else{
 										regObj = regObjRes.getActivateDomainDataSet().get(i);
 										System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
 										iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
 										iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
-										DBWrapper.getInstance().updateSGCredentials(superGroupName, regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
+										DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
 									}
 								}
 								verifyUserSG(current_user_id);

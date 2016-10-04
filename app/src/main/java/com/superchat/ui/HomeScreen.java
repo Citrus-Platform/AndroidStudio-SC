@@ -1562,6 +1562,22 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		intent.putExtra(Constants.CHAT_TYPE, Constants.NARMAL_CHAT);
 		startActivity(intent);
 	}
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		boolean frompush = false;
+		Bundle extras = intent.getExtras();
+		if (extras != null) {
+			frompush = extras.getBoolean("FROM_NOTIFICATION");
+			if(frompush) {
+				String user = iPrefManager.getUserPhone();
+				if(user != null && user.contains("-"))
+					user = user.replace("-", "");
+				switchSG(user + "_" + extras.getString("DOMAIN_NAME"));
+				return;
+			}
+		}
+	}
 	public void onResume(){
 		super.onResume();
 		isforeGround = true;
@@ -1586,7 +1602,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			else
 				new GetVersionCode().execute();
 		}
-
 		checkForBackUpAndUploadBackup();
 	}
 	boolean backUpFound;
@@ -2003,6 +2018,7 @@ public void onComposeClick(View view){
 			//Save USerID and SG in DB
 			contentvalues.put(DatabaseConstants.USER_ID, SharedPrefManager.getInstance().getUserId());
 			contentvalues.put(DatabaseConstants.USER_SG, SharedPrefManager.getInstance().getUserDomain());
+			System.out.println("HomeScreen::saveMessage: - "+contentvalues.toString());
 			chatDBWrapper.insertInDB(DatabaseConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 		} catch (Exception e) {
 

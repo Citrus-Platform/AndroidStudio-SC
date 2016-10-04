@@ -702,6 +702,7 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 		
 	public Cursor getRecentChatList(String searchKey) {
 		String sql = "";
+		String sg_name = SharedPrefManager.getInstance().getUserDomain();
 		if(searchKey==null || searchKey.equals(""))
 		sql = "SELECT " + "DISTINCT("
 				+ ChatDBConstants.CONTACT_NAMES_FIELD + "), "
@@ -716,7 +717,7 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 				+ ChatDBConstants.UNREAD_COUNT_FIELD + ","
 				+ ChatDBConstants.LAST_UPDATE_FIELD + ", MAX("
 				+ ChatDBConstants.LAST_UPDATE_FIELD + ") FROM "
-				+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO +" WHERE "+ChatDBConstants.MESSAGE_TYPE + "!=" + 3 + " GROUP BY "
+				+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO +" WHERE "+ChatDBConstants.MESSAGE_TYPE + "!=" + 3 + " AND " + ChatDBConstants.USER_SG+"='"+sg_name+"'"+ " GROUP BY "
 				+ ChatDBConstants.CONTACT_NAMES_FIELD + " ORDER BY "
 				+ ChatDBConstants.LAST_UPDATE_FIELD + " DESC";
 		else
@@ -734,16 +735,17 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 					+ ChatDBConstants.LAST_UPDATE_FIELD + ", MAX("
 					+ ChatDBConstants.LAST_UPDATE_FIELD + ") FROM "
 					+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO
-					+" WHERE "+ChatDBConstants.CONTACT_NAMES_FIELD + " like '"+searchKey
+					+" WHERE "+ChatDBConstants.CONTACT_NAMES_FIELD + " like '"+searchKey + " AND " + ChatDBConstants.USER_SG+"='"+sg_name+"'"
 					+"' GROUP BY "
 					+ ChatDBConstants.CONTACT_NAMES_FIELD + " ORDER BY "
 					+ ChatDBConstants.LAST_UPDATE_FIELD + " DESC";
-		Log.d("ChatDBWrapper", "getRecentChatList query: " + sql);
+		Log.e("ChatDBWrapper", "getRecentChatList query: " + sql);
 		Cursor cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
 		return cursor;
 	}
 	public Cursor getBulletinList(byte type) {
 		String sql = "";
+		String sg_name = SharedPrefManager.getInstance().getUserDomain();
 		String bulletin_name = SharedPrefManager.getInstance().getUserDomain() + "-all";
 		Cursor cursor = null;
 		try {
@@ -762,7 +764,9 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 						+ ChatDBConstants.UNREAD_COUNT_FIELD + ","
 						+ ChatDBConstants.LAST_UPDATE_FIELD + ", MAX("
 						+ ChatDBConstants.LAST_UPDATE_FIELD + ") FROM "
-						+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO + " WHERE " + ChatDBConstants.MESSAGE_TYPE + "=" + 3 + " GROUP BY "
+						+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO + " WHERE " + ChatDBConstants.MESSAGE_TYPE + "=" + 3 + " AND "
+						+ ChatDBConstants.USER_SG + "='" + sg_name + "'"
+						+ " GROUP BY "
 						+ ChatDBConstants.MESSAGE_TYPE + " ORDER BY "
 						+ ChatDBConstants.LAST_UPDATE_FIELD + " DESC";//
 			} else
@@ -781,11 +785,12 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 						+ ChatDBConstants.LAST_UPDATE_FIELD + ", MAX("
 						+ ChatDBConstants.LAST_UPDATE_FIELD + ") FROM "
 						+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO + " WHERE " + ChatDBConstants.MESSAGE_TYPE + "=" + 3 + " AND "
+						+ ChatDBConstants.USER_SG + "='" + sg_name + "' AND "
 						+ ChatDBConstants.TO_USER_FIELD + " != '" + bulletin_name + "' GROUP BY "
 						+ ChatDBConstants.CONTACT_NAMES_FIELD + " ORDER BY "
 						+ ChatDBConstants.LAST_UPDATE_FIELD + " DESC";
 
-			Log.d("ChatDBWrapper", "getBulletinList query: " + sql);
+			Log.e("ChatDBWrapper", "getBulletinList query: " + sql);
 			cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
 		}catch (Exception ex){
 			ex.printStackTrace();
@@ -795,6 +800,7 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 	
 	public Cursor getBulletinList() {
 		String sql = "";
+		String sg_name = SharedPrefManager.getInstance().getUserDomain();
 		String bulletin_name = SharedPrefManager.getInstance().getUserDomain() + "-all";
 		sql = "SELECT " + "DISTINCT("
 				+ ChatDBConstants.CONTACT_NAMES_FIELD + "), "
@@ -811,11 +817,12 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 				+ ChatDBConstants.LAST_UPDATE_FIELD + ", MAX("
 				+ ChatDBConstants.LAST_UPDATE_FIELD + ") FROM "
 				+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO +" WHERE "+ChatDBConstants.MESSAGE_TYPE + "=" + 3 + " AND "
+				+ ChatDBConstants.USER_SG + "='" + sg_name + "' AND "
 				+ ChatDBConstants.TO_USER_FIELD + " == '"+ bulletin_name+ "' GROUP BY "
 				+ ChatDBConstants.CONTACT_NAMES_FIELD + " ORDER BY "
 				+ ChatDBConstants.LAST_UPDATE_FIELD + " DESC";
 		
-		Log.d("ChatDBWrapper", "getBulletinList query: " + sql);
+		Log.e("ChatDBWrapper", "getBulletinList query: " + sql);
 		Cursor cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
 		return cursor;
 	}
@@ -1879,6 +1886,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 	 */
 	public Cursor getUserChatList(String userName, byte type) {
 		String sql = null;
+		String sg_name = SharedPrefManager.getInstance().getUserDomain();
 		if(type == 1)
 			sql = "SELECT " + ChatDBConstants._ID + ", "
 					+ ChatDBConstants.CONTACT_NAMES_FIELD + ", "
@@ -1903,7 +1911,8 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 					+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO + " WHERE ("
 					+ ChatDBConstants.FROM_USER_FIELD + "='" + userName + "' OR "
 					+ ChatDBConstants.TO_USER_FIELD + "='" + userName + "') AND "
-					+ ChatDBConstants.MESSAGE_TYPE + "!=" + 3
+					+ ChatDBConstants.MESSAGE_TYPE + "!=" + 3 +" AND "
+					+ ChatDBConstants.USER_SG + "='" + sg_name + "'"
 					+ " ORDER BY " + ChatDBConstants.LAST_UPDATE_FIELD;
 		else
 			sql = "SELECT " + ChatDBConstants._ID + ", "
@@ -1929,9 +1938,10 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 					+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO + " WHERE "
 //					+ ChatDBConstants.FROM_USER_FIELD + "='" + userName + "' OR "
 //					+ ChatDBConstants.TO_USER_FIELD + "='" + userName + "' AND "
-					+ ChatDBConstants.MESSAGE_TYPE + "=" + 3
+					+ ChatDBConstants.MESSAGE_TYPE + "=" + 3 +" AND "
+					+ ChatDBConstants.USER_SG + "='" + sg_name + "'"
 					+ " ORDER BY " + ChatDBConstants.LAST_UPDATE_FIELD;
-		Log.d("ChatDBWrapper", "getRecentChatList query: " + sql);
+		Log.e("ChatDBWrapper", "getUserChatList query: " + sql);
 		Cursor cursor = null;
 		try{
 			if(dbHelper!=null){

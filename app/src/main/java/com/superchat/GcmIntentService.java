@@ -1,21 +1,5 @@
 package com.superchat;
 
-import java.io.File;
-import java.util.Calendar;
-import java.util.TimeZone;
-
-import com.chat.sdk.ChatService;
-import com.chat.sdk.db.ChatDBConstants;
-import com.chat.sdk.db.ChatDBWrapper;
-import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.superchat.data.db.DBWrapper;
-import com.superchat.ui.ChatListScreen;
-import com.superchat.utils.Constants;
-import com.superchat.utils.SharedPrefManager;
-
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningServiceInfo;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -33,6 +17,21 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.util.Log;
 import android.widget.RemoteViews;
+
+import com.chat.sdk.ChatService;
+import com.chat.sdk.db.ChatDBConstants;
+import com.chat.sdk.db.ChatDBWrapper;
+import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.superchat.data.db.DBWrapper;
+import com.superchat.ui.ChatListScreen;
+import com.superchat.ui.HomeScreen;
+import com.superchat.utils.Constants;
+import com.superchat.utils.SharedPrefManager;
+
+import java.io.File;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * Created by maheshsonker on 15/05/16.
@@ -59,7 +58,8 @@ public class GcmIntentService extends IntentService {
 	private Builder messageNotification;
 	SharedPrefManager prefManager;
 	static String notificationPackage = "";
-	static String notificationActivity = ".ui.ChatListScreen";
+//	static String notificationActivity = ".ui.ChatListScreen";
+	static String notificationActivity = ".ui.HomeScreen";
 
     public GcmIntentService() {
         super("GcmIntentService");
@@ -82,11 +82,13 @@ public class GcmIntentService extends IntentService {
         String messageType = gcm.getMessageType(intent);
         String senderUserName = null;
         String groupName = null;
+        String domainName = null;
         String senderDisplayName = null;
         String message = null;
         String from = "";
         String screen = null;
         String[] data = null;
+		String currentDomain = prefManager.getUserDomain();
         if (extras != null && !extras.isEmpty()) {
         	if(extras.containsKey("message"))
         		message = extras.getString("message");
@@ -99,6 +101,8 @@ public class GcmIntentService extends IntentService {
         	}
         	if(extras.containsKey("username"))
         		senderUserName = extras.getString("username");
+        	if(extras.containsKey("domainName"))
+				domainName = extras.getString("domainName");
         	if(extras.containsKey("screen"))
         		screen = extras.getString("screen");
         	if(extras.containsKey("groupname"))
@@ -118,17 +122,32 @@ public class GcmIntentService extends IntentService {
 //            			showNotificationForGroupMessage(senderUserName, groupName, senderDisplayName, message, 0, 0);
 //            		else
 //            			showNotificationForP2PMessage(senderUserName, senderDisplayName, message, (byte)0, 0);
-                Log.i(TAG, "GCM - Push Message Received: " + extras.toString());
+                Log.e(TAG, "GCM - Push Message Received: " + extras.toString());
+				if(domainName != null && !domainName.equals(currentDomain)){
+					if(screen != null && screen.equalsIgnoreCase("group"))
+            			showNotificationForGroupMessage(domainName, senderUserName, groupName, senderDisplayName, message, 0, 0, true);
+            		else
+            			showNotificationForP2PMessage(domainName, senderUserName, senderDisplayName, message, (byte)0, 0, true);
+
+				}else{
+					Log.i(TAG, "isMyServiceRunning : false");
+					if(ChatService.xmppConectionStatus){
+						Log.i(TAG, "ChatService.xmppConectionStatus: "+ChatService.xmppConectionStatus);
+						ChatService.xmppConectionStatus = false;
+						stopService(new Intent(SuperChatApplication.context, ChatService.class));
+					}
+					startService(new Intent(SuperChatApplication.context, ChatService.class));
+				}
 //                if(!isMyServiceRunning(ChatService.class, SuperChatApplication.context))
-                {
-                	Log.i(TAG, "isMyServiceRunning : false");
-	                if(ChatService.xmppConectionStatus){
-	                	Log.i(TAG, "ChatService.xmppConectionStatus: "+ChatService.xmppConectionStatus);
-	         		   ChatService.xmppConectionStatus = false;
-	         		   stopService(new Intent(SuperChatApplication.context, ChatService.class));
-	         	   }
-	         	   startService(new Intent(SuperChatApplication.context, ChatService.class));
-                }
+//                {
+//                	Log.i(TAG, "isMyServiceRunning : false");
+//	                if(ChatService.xmppConectionStatus){
+//	                	Log.i(TAG, "ChatService.xmppConectionStatus: "+ChatService.xmppConectionStatus);
+//	         		   ChatService.xmppConectionStatus = false;
+//	         		   stopService(new Intent(SuperChatApplication.context, ChatService.class));
+//	         	   }
+//	         	   startService(new Intent(SuperChatApplication.context, ChatService.class));
+//                }
 //                else
 //                	Log.i(TAG, "isMyServiceRunning : true");
             }
@@ -174,8 +193,8 @@ public class GcmIntentService extends IntentService {
 //		startService(new Intent(SuperChatApplication.context, SinchService.class));
     }
  //===================================================================================
-    public void showNotificationForGroupMessage(String senderName, String groupID,
-			String displayName, String msg, int type, int mediaType) {
+    public void showNotificationForGroupMessage(String domainName, String senderName, String groupID,
+			String displayName, String msg, int type, int mediaType, boolean forOtherSG) {
 		 if(senderName != null && senderName.contains("#786#"))
 			 senderName = senderName.substring(0, senderName.indexOf("#786#"));
 		CharSequence tickerText = msg;
@@ -221,24 +240,26 @@ public class GcmIntentService extends IntentService {
 				tickerText = "Message from " + notificationSenderName + "@" + grpDisplayName;
 		messageNotification.setWhen(System.currentTimeMillis());
 		messageNotification.setTicker(tickerText);
-		Intent notificationIntent = new Intent();
+		Intent notificationIntent = new Intent(context, HomeScreen.class);
 		Log.d(TAG, "notificationPackage: "+notificationPackage+" , "+notificationActivity);
-		notificationIntent.setClassName(notificationPackage, notificationPackage+notificationActivity);
+//		notificationIntent.setClassName(notificationPackage, "com.superchat.ui.Ho.meScreen");
 //		Intent notificationIntent = new Intent(context,
 //				ChatListScreen.class);
 		notificationIntent.putExtra(ChatDBConstants.CONTACT_NAMES_FIELD, grpDisplayName);
 		notificationIntent.putExtra(ChatDBConstants.USER_NAME_FIELD, user);
 		notificationIntent.putExtra("FROM_NOTIFICATION", true);
-		
+		notificationIntent.putExtra("DOMAIN_NAME", domainName);
+
 //		if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal())
 //			notificationIntent.putExtra("FROM_BULLETIN_NOTIFICATION", true);
 		
-		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-				| Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+//		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+		notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+				Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		notificationIntent.setAction(Long.toString(System.currentTimeMillis()));
 		PendingIntent contentIntent = PendingIntent.getActivity(
 				SuperChatApplication.context, 0, notificationIntent,
-				PendingIntent.FLAG_ONE_SHOT);
+				PendingIntent.FLAG_UPDATE_CURRENT);
 //		if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal())
 //			messageNotification.setContentTitle(notificationSenderName + "@" + SharedPrefManager.getInstance().getSharedIDDisplayName(grpDisplayName));
 //		else
@@ -303,8 +324,8 @@ public class GcmIntentService extends IntentService {
 
 	}
    //========================================
-    public void showNotificationForP2PMessage(String from, String displayName,
-			String msg, byte messageType, int mediaType) {
+    public void showNotificationForP2PMessage(String domainName, String from, String displayName,
+			String msg, byte messageType, int mediaType, boolean forOtherSG) {
     	SharedPrefManager sharedPref = SharedPrefManager.getInstance();
 		 if(displayName!=null && displayName.contains("#786#"))
 			 displayName = displayName.substring(0, displayName.indexOf("#786#"));

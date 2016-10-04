@@ -39,7 +39,6 @@ import com.chat.sdk.ChatCountListener;
 import com.chat.sdk.ChatService;
 import com.chat.sdk.ConnectionStatusListener;
 import com.chat.sdk.ProfileUpdateListener;
-import com.chat.sdk.db.ChatDBConstants;
 import com.chat.sdk.db.ChatDBWrapper;
 import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
 import com.superchat.R;
@@ -370,7 +369,7 @@ public class ChatHome extends ListFragment  implements ChatCountListener,Connect
 				 SuperChatApplication.context = getActivity().getApplicationContext();
 	    	 ChatDBWrapper wraper = ChatDBWrapper.getInstance(SuperChatApplication.context);
 //	    	 wraper.alterTable(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, new String[]{ChatDBConstants.MESSAGE_TYPE});
-	    	 wraper.alterTable(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, new String[]{ChatDBConstants.MESSAGE_TYPE});
+//	    	 wraper.alterTable(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, new String[]{ChatDBConstants.MESSAGE_TYPE});
 			 cursor = wraper.getRecentChatList(null);
 			
 			 if(cursor!=null && cursor.getCount() > 0){

@@ -3257,6 +3257,7 @@ public class ChatService extends Service implements interfaceInstances {
 			//Save USerID and SG in DB
 			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
 			contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+			System.out.println("ChatService - 3::saveMessage: - "+contentvalues.toString());
 			chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
 			if (chatListener != null)
 				chatListener.notifyChatRecieve(from, msg);
@@ -3506,6 +3507,7 @@ public class ChatService extends Service implements interfaceInstances {
 			//Save USerID and SG in DB
 			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
 			contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+			System.out.println("ChatService - 2::saveMessage: - "+contentvalues.toString());
 			long insertedInfo = chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 			Log.d(TAG, "insertedInfo during message save: " + insertedInfo + " , " + contentvalues.valueSet().toArray());
 			if (chatListener != null)
@@ -5676,6 +5678,7 @@ public class ChatService extends Service implements interfaceInstances {
 			//Save USerID and SG in DB
 			contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
 			contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
+			System.out.println("ChatService - 1::saveMessage: - "+contentvalues.toString());
 			chatDBWrapper.insertInDB(DatabaseConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 		} catch (Exception e) {
 
