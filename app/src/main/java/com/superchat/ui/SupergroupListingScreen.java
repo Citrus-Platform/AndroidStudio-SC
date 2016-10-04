@@ -916,6 +916,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 		registrationForm.countryCode = countryCode;
 		if (super_group != null && super_group.trim().length() > 0){
 			registrationForm.setDomainName(super_group);
+			registrationForm.setiUserId(SharedPrefManager.getInstance().getUserId());
 			registrationForm.setActiveDomainName(super_group);
 		}
 		SharedPrefManager.getInstance().saveUserPhone(mobileNumber);

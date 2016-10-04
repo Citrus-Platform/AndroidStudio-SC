@@ -20,6 +20,14 @@ public class RegistrationForm {
 	@SerializedName("status")
 	public String iStatus = null;
 
+	public long getiUserId() {
+		return iUserId;
+	}
+
+	public void setiUserId(long iUserId) {
+		this.iUserId = iUserId;
+	}
+
 	@SerializedName("userId")
 	public long iUserId;
 
