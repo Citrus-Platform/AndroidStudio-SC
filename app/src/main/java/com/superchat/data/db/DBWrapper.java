@@ -1839,6 +1839,8 @@ public boolean isContactModified(String rawId, int version){
 //----------------------------------------------------------------------------
 	public void updateOwnedSGData(OwnerDomainName sg_data){
 		try{
+			//Update Shared Preferences for owned Domain
+			SharedPrefManager.getInstance().saveOwnedDomain(sg_data.getDomainName());
 			ContentValues contentvalues = new ContentValues();
 			contentvalues.put(DatabaseConstants.DOMAIN_NAME, sg_data.getDomainName());
 			contentvalues.put(DatabaseConstants.DOMAIN_ADMIN_NAME, sg_data.getAdminName());

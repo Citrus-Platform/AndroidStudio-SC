@@ -47,6 +47,7 @@ public class SharedPrefManager {
 	private final String FIRST_TIME_APP = "mode"; // For Frash User
 	private final String USER_ID = "user_id";
 	private final String USER_DOMAIN = "user_domain";
+	private final String OWNED_DOMAIN = "owned_domain";
 	private final String USER_DOMAIN_DISPLAY_NAME = "use_domain_display_name";
 	private final String USER_GENDER = "user_gender";
 	private final String USER_ORG_NAME = "org_name";
@@ -1043,6 +1044,15 @@ public boolean isContactModified(){
 
 	public String getUserDomain() {
 		String value = pref.getString(USER_DOMAIN, "");
+		return value;
+	}
+	public void saveOwnedDomain(String domain) {
+		editor.putString(OWNED_DOMAIN, domain);
+		editor.commit();
+	}
+
+	public String getOwnedDomain() {
+		String value = pref.getString(OWNED_DOMAIN, null);
 		return value;
 	}
 
