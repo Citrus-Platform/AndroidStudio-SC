@@ -1658,7 +1658,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 							SharedPrefManager.getInstance().setLastBackUpTime(time);
 						Date date = new Date(time);
 						SimpleDateFormat dateformat = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.US);
-						System.out.println("[lastdate - ] "+lastdate);
+//						System.out.println("[lastdate - ] "+lastdate);
 						 Intent intent = new Intent(HomeScreen.this, ChatBackupRestoreScreen.class);
 						 if(fileid != null)
 						    intent.putExtra(Constants.BACKUP_FILEID, fileid);

@@ -508,12 +508,26 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 		}
 	}
 
+	boolean backFromProfile;
 	public void onResume() {
 		super.onResume();
 		if (showAlertForAlreadyOwnedSG) {
 			showDialog(getResources().getString(R.string.sg_already_owned_alert));
 			showAlertForAlreadyOwnedSG = false;
 		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == RESULT_OK)
+			switch (requestCode) {
+				case 222:
+					//Call bulk Activation screen.
+					backFromProfile = true;
+					registerUserOnServer(superGroupName, selectedSGDisplayName, null);
+					break;
+			}
 	}
 
 	public void showDialog(String s, boolean custom) {
@@ -916,7 +930,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 //			}
 //		}
 		RegistrationForm registrationForm = null;
-		if(isInvitedDomain(invitedDomainNameSet, super_group)){
+		if(isInvitedDomain(invitedDomainNameSet, super_group) && !backFromProfile){
 			registrationForm = new RegistrationForm(mobileNumber, "normal", imei, imsi, clientVersion , null ,false);
 		}else{
 			registrationForm = new RegistrationForm(mobileNumber, "normal", imei, imsi, clientVersion , domainNameSet ,true);
@@ -930,7 +944,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 			registrationForm.setActiveDomainName(super_group);
 		}
 		SharedPrefManager.getInstance().saveUserPhone(mobileNumber);
-		if(isInvitedDomain(invitedDomainNameSet, super_group)){
+		if(isInvitedDomain(invitedDomainNameSet, super_group) && !backFromProfile){
 			if (Build.VERSION.SDK_INT >= 11)
 				new SignupTaskOnServer(registrationForm, view).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			else
@@ -1366,8 +1380,15 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 										DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
 									}
 								}
+								if(backFromProfile){
+									Intent intent = new Intent(SupergroupListingScreen.this, HomeScreen.class);
+									iPrefManager.setProfileAdded(iPrefManager.getUserName(), true);
+									startActivity(intent);
+									finish();
+								}else {
 									current_user_id = registrationForm.getiUserId();
-								verifyUserSG(current_user_id);
+									verifyUserSG(current_user_id);
+								}
 							}
 						}
 					}
@@ -1604,16 +1625,18 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 						bundle.putString(Constants.CHAT_NAME, "");
 						bundle.putBoolean(Constants.REG_TYPE, false);
 						bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
+						bundle.putBoolean("PROFILE_EDIT_BACK_TO_PREV", true);
 						intent.putExtras(bundle);
-						startActivity(intent);
+						startActivityForResult(intent, 222);
+//						startActivity(intent);
 					} else {
 						Intent intent = new Intent(SupergroupListingScreen.this, HomeScreen.class);
 						sharedPrefManager.setProfileAdded(sharedPrefManager.getUserName(), true);
 						intent.putExtra("groupList", groupList);
 						intent.putExtra("mobileNumber", mobileNumber);
 						startActivity(intent);
+						finish();
 					}
-					finish();
 					if (welcomeDialog != null)
 						welcomeDialog.cancel();
 				} else {

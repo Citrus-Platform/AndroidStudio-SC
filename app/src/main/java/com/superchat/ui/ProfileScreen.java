@@ -1,5 +1,6 @@
 package com.superchat.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -230,6 +231,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
     String displayName;
     boolean isViewOnlyDisplayName;
     String userComingFromScreen;
+    boolean backToPrevUI = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,6 +252,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
             displayName = bundle.getString(Constants.CHAT_NAME, displayName);
             manage_by_admin = bundle.getBoolean("MANAGE_MEMBER_BY_ADMIN");
             reg_flow = bundle.getBoolean("PROFILE_EDIT_REG_FLOW");
+            backToPrevUI = bundle.getBoolean("PROFILE_EDIT_BACK_TO_PREV");
             domainReg = bundle.getBoolean(Constants.REG_TYPE);
             isViewOnlyDisplayName = bundle.getBoolean("VIEW_ONLY");
 
@@ -2290,10 +2293,17 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                         // InviteMemberScreen.class);
                         intent = new Intent(ProfileScreen.this, BulkInvitationScreen.class);
                         intent.putExtra(Constants.REG_TYPE, true);
+                        startActivity(intent);
                     } else {
-                        intent = new Intent(ProfileScreen.this, HomeScreen.class);
+                        if(backToPrevUI) {
+                            setResult(Activity.RESULT_OK);
+                            finish();
+                        }else {
+                            intent = new Intent(ProfileScreen.this, HomeScreen.class);
+                            startActivity(intent);
+                        }
                     }
-                    startActivity(intent);
+//                    startActivity(intent);
                     // finish();
                 } else if (purposeType == EDIT_MEMBER_BY_SG_OWNER) {
                     if (selfEdit)
