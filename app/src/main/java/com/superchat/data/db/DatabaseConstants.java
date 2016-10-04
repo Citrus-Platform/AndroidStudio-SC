@@ -62,6 +62,7 @@ public static final byte MEDIA_FAILED = 4;
 	public static final String DOMAIN_USER_NAME = "domain_user_name";
 	public static final String DOMAIN_USER_PASSWORD = "domain_user_password";
 	public static final String DOMAIN_ACTIVATE_STATUS = "domain_activate_status";
+	public static final String DOMAIN_TYPE_VALUE = "domain_type_value";
 
 	public static final String TABLE_MULTIPLE_SG_DATA = "CREATE TABLE IF NOT EXISTS "
 			+ DatabaseConstants.TABLE_NAME_MULTIPLE_SG
@@ -69,7 +70,7 @@ public static final byte MEDIA_FAILED = 4;
 			+ DatabaseConstants._ID
 			+ " INTEGER PRIMARY KEY AUTOINCREMENT,"
 			+ DatabaseConstants.DOMAIN_NAME
-			+" TEXT NOT NULL,"
+			+" TEXT UNIQUE NOT NULL,"
 			+ DatabaseConstants.DOMAIN_ADMIN_NAME
 			+ " TEXT NOT NULL,"
 			+ DatabaseConstants.DOMAIN_ORG_NAME
@@ -85,6 +86,8 @@ public static final byte MEDIA_FAILED = 4;
 			+ DatabaseConstants.DOMAIN_ACTIVATE_STATUS
 			+ " TEXT, "
 			+ DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT
+			+ " INTEGER, "
+			+ DatabaseConstants.DOMAIN_TYPE_VALUE
 			+ " INTEGER, "
 			+ DatabaseConstants.DOMAIN_USER_ID
 			+ " LONG, "
@@ -166,7 +169,8 @@ public static final byte MEDIA_FAILED = 4;
 			+ DatabaseConstants._ID
 			+ " INTEGER PRIMARY KEY AUTOINCREMENT,"
 			+ DatabaseConstants.CONTACT_NUMBERS_FIELD
-			+ " LONG UNIQUE NOT NULL,"
+//			+ " LONG UNIQUE NOT NULL,"
+			+ " LONG NOT NULL,"
 			+ DatabaseConstants.DISPLAY_NUMBERS_FIELD
 			+ " TEXT,"
 			+ DatabaseConstants.RAW_CONTACT_ID

@@ -30,7 +30,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -3415,6 +3414,7 @@ public void onComposeClick(View view){
 	public void switchSG(String sg){
 		String sg_name = sg.substring(sg.indexOf("_") + 1);
 		updateUserData(sg);
+		progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
 		activateSG(sg_name);
 	}
 	public void cleanDataAndSwitchSG(String sg_name){
@@ -3442,6 +3442,10 @@ public void onComposeClick(View view){
 
                 @Override
                 protected void onResponseVoidzObject(Call call, MarkSGActive response) {
+					if(progressDialog != null){
+						progressDialog.dismiss();
+						progressDialog = null;
+					}
                     System.out.println("Retrofit : onResponseVoidzObject 2 - "+response.toString());
 					if(Build.VERSION.SDK_INT >= 11)
 						new SignInTaskOnServer(sgname).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
