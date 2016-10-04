@@ -5,6 +5,7 @@ package com.superchat.ui;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
@@ -26,6 +27,7 @@ import com.google.gson.Gson;
 import com.superchat.R;
 import com.superchat.model.SGroupListObject;
 import com.superchat.model.SlidingMenuData;
+import com.superchat.utils.Constants;
 import com.superchat.utils.SharedPrefManager;
 
 import org.json.JSONArray;
@@ -48,6 +50,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener{
     private FragmentDrawerListener drawerListener;
 
     LinearLayout llInvited;
+    LinearLayout llAddSuperGroup;
     RelativeLayout notificationLayout;
     ImageView notification;
     ImageView notificationoff;
@@ -170,6 +173,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener{
         View layout = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         recyclerView = (RecyclerView) layout.findViewById(R.id.drawerList);
 
+        llAddSuperGroup = (LinearLayout) layout.findViewById(R.id.llAddSuperGroup);
         llInvited = (LinearLayout) layout.findViewById(R.id.llInvited);
         notification = (ImageView) layout.findViewById(R.id.notification);
         notificationoff = (ImageView) layout.findViewById(R.id.notificationoff);
@@ -189,6 +193,11 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener{
             }
         });
 
+        if(SharedPrefManager.getInstance().getOwnedDomain() == null) {
+            llAddSuperGroup.setVisibility(View.GONE);
+        }
+
+        llAddSuperGroup.setOnClickListener(this);
         llInvited.setOnClickListener(this);
         ////////////////////////////////////////////////////////////
         adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity());
@@ -246,6 +255,27 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener{
                 } else {
                     Toast.makeText(getActivity(), "Invited List is empty", Toast.LENGTH_SHORT).show();
                 }
+                break;
+            }
+            case R.id.llAddSuperGroup:{
+                SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
+                String mobileNumber = iPrefManager.getUserPhone();
+
+                Bundle bundle = new Bundle();
+                Intent intent = new Intent(getActivity(), ProfileScreen.class);
+                bundle.putString(Constants.KEY_SCREEN_USER_COMING_FROM, Constants.VAL_SCREEN_USER_COMING_FROM_NEW_USER_AFTER_LOGIN);
+                bundle.putBoolean(Constants.REG_TYPE, true);
+                bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
+                //SPECIAL DATA FOR BACK
+                bundle.putBoolean("PROFILE_FIRST", true);
+                if(mobileNumber.indexOf('-') != -1)
+                    intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber.substring(mobileNumber.indexOf('-') + 1));
+                else
+                    intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber);
+                intent.putExtra(Constants.REG_TYPE, "ADMIN");
+                intent.putExtra("REGISTER_SG", true);
+                intent.putExtras(bundle);
+                startActivity(intent);
                 break;
             }
         }

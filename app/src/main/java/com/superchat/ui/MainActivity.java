@@ -247,6 +247,9 @@ public class MainActivity extends FragmentActivity implements
 			break;
 		}
 	}
+
+	String userComingFromScreen;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -257,6 +260,7 @@ public class MainActivity extends FragmentActivity implements
 		String circle_name = null;
 		String domain_name = null;
 		if(bundle != null){
+			userComingFromScreen = bundle.getString(Constants.KEY_SCREEN_USER_COMING_FROM);
 			if(bundle.get(Constants.REG_TYPE) != null)
 				reg_type = bundle.get(Constants.REG_TYPE).toString();
 			domain_name = bundle.getString(Constants.DOMAIN_NAME);
@@ -2343,6 +2347,10 @@ public class MainActivity extends FragmentActivity implements
 //							 startActivity(intent);
 							 sharedPrefManager.setFirstTime(true);
 							 finish();
+
+							if(Constants.VAL_SCREEN_USER_COMING_FROM_NEW_USER_AFTER_LOGIN.trim().equalsIgnoreCase(userComingFromScreen)) {
+								// Code to switch to Super Group
+							}
 						}
 						else{
 //							bundle.putBoolean(Constants.REG_TYPE, false);

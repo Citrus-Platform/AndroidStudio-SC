@@ -16,7 +16,11 @@ public static final String DOMAIN_NAME = "domain_name";
 public static final String EMAIL = "email";
 public static final String NAME = "name";
 public static final String ORGNAME = "org_name";
-public static final String REG_TYPE = "reg_type";
+	public static final String REG_TYPE = "reg_type";
+	public static final String KEY_SCREEN_USER_COMING_FROM = "reg_type";
+	public static final String VAL_SCREEN_USER_COMING_FROM_NEW_USER_AFTER_LOGIN = "newUserAfterLogin";
+	public static final String VAL_SCREEN_USER_COMING_FROM_NEW_USER_BEFORE_LOGIN = "newUserBeforeLogin";
+
 public static final String contentTemp = "SuperChat/temp";
 public static final String imageTempPath = "SuperChat/streem/tmp/SuperChat";
 
