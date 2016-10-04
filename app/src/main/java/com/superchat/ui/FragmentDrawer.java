@@ -14,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -178,20 +179,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener{
         notification = (ImageView) layout.findViewById(R.id.notification);
         notificationoff = (ImageView) layout.findViewById(R.id.notificationoff);
         notificationLayout = (RelativeLayout) layout.findViewById(R.id.notificationLayout);
-        notificationLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (flagNotify == true) {
-                    flagNotify = false;
-                    notification.setVisibility(View.VISIBLE);
-                    notificationoff.setVisibility(View.GONE);
-                } else {
-                    flagNotify = true;
-                    notification.setVisibility(View.GONE);
-                    notificationoff.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+        notificationLayout.setOnClickListener(this);
 
         if(SharedPrefManager.getInstance().getOwnedDomain() == null) {
             llAddSuperGroup.setVisibility(View.GONE);
@@ -243,15 +231,39 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener{
 
     }
 
+    private final int CODE_INVITE = 101;
+    private final int CODE_ADD_SUPERGROUP = 102;
+
     @Override
     public void onClick(View v) {
         int viewID = v.getId();
         switch(viewID){
+            case R.id.notificationLayout:{
+                if (flagNotify == true) {
+                    flagNotify = false;
+                    notification.setVisibility(View.VISIBLE);
+                    notificationoff.setVisibility(View.GONE);
+                } else {
+                    flagNotify = true;
+                    notification.setVisibility(View.GONE);
+                    notificationoff.setVisibility(View.VISIBLE);
+                }
+
+                break;
+            }
             case R.id.llInvited:{
                 if(invitedDomainNameSet != null && invitedDomainNameSet.size() > 0) {
                     SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
                     String number = iPrefManager.getUserPhone();
-                    SupergroupListingScreenNew.start(getActivity(), number, invitedDomainNameSet, false);
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constants.MOBILE_NUMBER_TXT, number);
+                    bundle.putStringArrayList(SupergroupListingScreenNew.KEY_INVITED_DOMAIN_SET, invitedDomainNameSet);
+                    bundle.putBoolean(SupergroupListingScreenNew.KEY_SHOW_OWNED_ALERT, false);
+
+                    Intent starter = new Intent(getActivity(), SupergroupListingScreenNew.class);
+                    starter.putExtras(bundle);
+                    startActivityForResult(starter, CODE_INVITE);
                 } else {
                     Toast.makeText(getActivity(), "Invited List is empty", Toast.LENGTH_SHORT).show();
                 }
@@ -275,9 +287,39 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener{
                 intent.putExtra(Constants.REG_TYPE, "ADMIN");
                 intent.putExtra("REGISTER_SG", true);
                 intent.putExtras(bundle);
-                startActivity(intent);
+                startActivityForResult(intent, CODE_ADD_SUPERGROUP);
                 break;
             }
+        }
+
+        if(mDrawerLayout != null) {
+            mDrawerLayout.closeDrawer(Gravity.LEFT);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case CODE_INVITE: {
+                try{
+                    String SG_NAME = data.getStringExtra("SG_NAME");
+                    ( (HomeScreen) getActivity()).switchSG(SG_NAME);
+                } catch(Exception e){
+
+                }
+                break;
+            }
+            case CODE_ADD_SUPERGROUP: {
+                try{
+                    String SG_NAME = data.getStringExtra("SG_NAME");
+                    ( (HomeScreen) getActivity()).switchSG(SG_NAME);
+                } catch(Exception e){
+
+                }
+                break;
+            }
+
         }
     }
 

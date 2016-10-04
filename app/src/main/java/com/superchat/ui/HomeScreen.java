@@ -30,6 +30,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -177,20 +178,20 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	boolean isContactSync;
 	boolean noLoadingNeeded = false;
 	public static boolean firstTimeAdmin = false;
-	
+
 	public static boolean refreshContactList;
-	
+
 	boolean isRWA = false;
 
 	public Set<GroupDetail> directoryGroupSet = null;
 	public Set<BroadcastGroupDetail> directoryBroadcastGroupSet;
-	
+
 	public static HashMap<String, String> textDataRetain = new HashMap<String, String>();
 	public static ArrayList<LoginResponseModel.GroupDetail> groupsData = new ArrayList<LoginResponseModel.GroupDetail>();
 	public static ArrayList<LoginResponseModel.BroadcastGroupDetail> sharedIDData = new ArrayList<LoginResponseModel.BroadcastGroupDetail>();
-	
+
 	public static List<String> getAdminSetForSharedID(String shared_id){
-		List<String> admin = new ArrayList<String>(); 
+		List<String> admin = new ArrayList<String>();
 		try{
 			for(LoginResponseModel.BroadcastGroupDetail groups : HomeScreen.sharedIDData){
 				if(groups.broadcastGroupName.equalsIgnoreCase(shared_id))
@@ -336,40 +337,40 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		if(syncTimer==null){
 		syncTimer = new Timer();
 		syncTimer.schedule(new TimerTask() {
-			
+
 			@Override
 			public void run() {
 				if(syncAnimation!=null)
 				{
 					if(!syncAnimation.isRunning()){
 						runOnUiThread(new Runnable() {
-							
+
 							@Override
 							public void run() {
 								syncAnimation.start();
 							}
 						});
-						
+
 					}
 //			}else if(syncAnimation!=null && syncAnimation.isRunning()){
 //				runOnUiThread(new Runnable() {
-//					
+//
 //					@Override
 //					public void run() {
 ////						RefrshList();
 //						syncAnimation.cancel();
 //					}
 //				});
-//					
+//
 //					cancel();
 					}else
 						cancel();
-				
+
 			}
 		}, 500,2000);
 		}
 	}
-	
+
 	public void OnSyncClick(View view){
 		if(syncAnimation==null){
 		 	syncAnimation = ObjectAnimator.ofFloat(view, "rotation", 360);
@@ -378,7 +379,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			syncAnimation.setRepeatCount(Animation.INFINITE);
 		}
 //			syncAnimation.cancel();
-			
+
 		if(SharedPrefManager.getInstance().isOpenDomain()){
 			isContactSync = true;
 			isLoginProcessing = true;
@@ -395,11 +396,11 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //			AtMeApplication.syncContactsWithServer(this);
 //			chkSyncProcess();
 //			if(syncAnimation!=null){
-				
+
 //				syncAnimation.start();
 //				contactSyncMessage.setVisibility(View.VISIBLE);
 //			}
-//			
+//
 //		}
 		isContactSync = true;
 		syncProcessStart(true);
@@ -443,7 +444,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		totalCountView = (MyriadRegularTextView)findViewById(R.id.id_total_unseens);
 		unseenContactView = (MyriadRegularTextView)findViewById(R.id.id_contact_unseens);
 		totalBulletinView = (MyriadRegularTextView)findViewById(R.id.id_bulletin_unseens);
-		
+
 		contactMenuLayout = (ImageView)findViewById(R.id.id_contact);
 		contactMenuLayout.setOnClickListener(this);
 		chatMenuLayout = (ImageView)findViewById(R.id.id_chat);
@@ -458,7 +459,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			new SignInTaskOnServer(null).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		else
 			new SignInTaskOnServer(null).execute();
-		
+
 		//UserID, UserName, Display Name
 //		if(SharedPrefManager.getInstance().getUserId() > 0)
 //			Crashlytics.setUserIdentifier(""+SharedPrefManager.getInstance().getUserId());
@@ -469,11 +470,11 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //		//Set Mobile Model
 //		if(ClientProperty.CLIENT_PARAMS != null)
 //			Crashlytics.setString("mob_prop", "UN##"+SettingData.sSelf.getUserName()+"::"+ClientProperty.CLIENT_PARAMS);
-			
+
 //		Tracker t = ((SuperChatApplication) getApplicationContext()).getTracker(TrackerName.APP_TRACKER);
 //        t.setScreenName("Home Screen");
 //        t.send(new HitBuilders.AppViewBuilder().build());
-        
+
         mAdapter = new HomePagerAdapter(getSupportFragmentManager(),getApplicationContext());
         mViewPager = (CustomViewPager) findViewById(R.id.view_pager);
 		mViewPager.setPagingEnabled(true);
@@ -503,10 +504,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			publicGroupTab.setSelected(false);
 			contactMenuLayout.setSelected(false);
 			bulletinMenuLayout.setSelected(false);
-			
+
 		}
 		startService(new Intent(SuperChatApplication.context, ChatService.class));
-		
+
 //		syncView.setVisibility(View.GONE);
 //		TabPageIndicator titleIndicator = (TabPageIndicator)findViewById(R.id.titles);
 //		 titleIndicator.setViewPager(mViewPager);
@@ -525,7 +526,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 							bulletinMenuLayout.setSelected(false);
 							publicGroupTab.setSelected(false);
 //							syncView.setVisibility(View.GONE);
-							
+
 							chatMenuLayout.setSelected(true);
 							break;
 					case 2:
@@ -533,7 +534,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 							bulletinMenuLayout.setSelected(false);
 							publicGroupTab.setSelected(false);
 //							syncView.setVisibility(View.INVISIBLE);
-							
+
 							if(contactsFragment!=null && contactsFragment.adapter!=null && isContactRefreshed){
 								contactsFragment.showAllContacts();
 								contactsFragment.setPorfileListener();
@@ -550,7 +551,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						contactMenuLayout.setSelected(false);
 						bulletinMenuLayout.setSelected(false);
 //						syncView.setVisibility(View.GONE);
-						
+
 						publicGroupTab.setSelected(true);
 						publicGroupFragment.refreshList();
 						publicGroupFragment.restScreen();
@@ -560,7 +561,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 							publicGroupTab.setSelected(false);
 							chatMenuLayout.setSelected(false);
 //							syncView.setVisibility(View.GONE);
-							
+
 							bulletinMenuLayout.setSelected(true);
 						break;
 					}
@@ -605,7 +606,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		}
 		return version;
 	}
-	
+
 	public void notificationUI(){
 		if(isforeGround){
 			notificationHandler.sendEmptyMessage(0);
@@ -618,13 +619,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				totalCountView.setText(String.valueOf(iPrefManager.getChatCounter()));
 			}else
 				totalCountView.setVisibility(View.GONE);
-			
+
 			if(iPrefManager.getBulletinChatCounter() > 0){
 				totalBulletinView.setVisibility(View.VISIBLE);
 				totalBulletinView.setText(String.valueOf(iPrefManager.getBulletinChatCounter()));
 			}else
 				totalBulletinView.setVisibility(View.GONE);
-			
+
 			int contactsCount = DBWrapper.getInstance().getAllNumbersCount();
 			if((contactsCount-iPrefManager.getNewContactsCounter())>0){
 				unseenContactView.setVisibility(View.VISIBLE);
@@ -711,6 +712,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		}
 	}
 
+
 	public class SignInTaskOnServer extends AsyncTask<String, String, String> {
 		LoginModel loginForm;
 		ProgressDialog progressDialog = null;
@@ -760,7 +762,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			// TODO Auto-generated method stub
 			String JSONstring = new Gson().toJson(loginForm);
 		    DefaultHttpClient client1 = new DefaultHttpClient();
-		    
+
 			System.out.println("HomeScreen :: SignInTaskOnServer : URL : "+(Constants.SERVER_URL+ "/tiger/rest/user/login"));
 			System.out.println("HomeScreen :: SignInTaskOnServer : serverUpdateCreateGroupInfo request: "+JSONstring);
 
@@ -769,7 +771,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			 String str = "";
 	         try {
 	        	 httpPost = SuperChatApplication.addHeaderInfo(httpPost,false);
-	        	
+
 				httpPost.setEntity(new StringEntity(JSONstring));
 				 try {
 					 response = client1.execute(httpPost);
@@ -787,7 +789,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				            	LoginResponseModel loginObj = gson.fromJson(str, LoginResponseModel.class);
 								if (loginObj != null && loginObj.status!=null && loginObj.status.equals("success")) {
 									if(loginObj.getDomainType()!=null && !loginObj.getDomainType().equals(""))
-										sharedPrefManager.setDomainType(loginObj.getDomainType());									
+										sharedPrefManager.setDomainType(loginObj.getDomainType());
 									if(loginObj.domainPrivacyType!=null && loginObj.domainPrivacyType.equals("open"))
 										sharedPrefManager.setDomainAsPublic(true);
 									else
@@ -806,7 +808,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 											sharedPrefManager.saveDomainUnjoinedCount(loginObj.unJoinedUserCount);
 									} else
 										sharedPrefManager.setAsDomainAdmin(false);
-									
+
 									if(loginObj.directoryUserSet != null){
 										System.out.println("HomeScreen :: SignInTaskOnServer : Writing in TABLE_NAME_CONTACT_NUMBERS.");
 										for (UserResponseDetail userDetail : loginObj.directoryUserSet) {
@@ -817,7 +819,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 										ContentValues contentvalues = new ContentValues();
 										contentvalues.put(DatabaseConstants.USER_NAME_FIELD,userDetail.userName);
 										contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(1));
-										contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,userDetail.mobileNumber);	
+										contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,userDetail.mobileNumber);
 										int id = userDetail.userName.hashCode();
 										if (id < -1)
 											id = -(id);
@@ -825,13 +827,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 										contentvalues.put(DatabaseConstants.RAW_CONTACT_ID,Integer.valueOf(id));
 										contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, userDetail.name);
 										contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD,Integer.valueOf(0));
-										
+
 										contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
 										contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
 										contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
 										contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
 										DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
-										
+
 										if(userDetail.currentStatus!=null)
 											sharedPrefManager.saveUserStatusMessage(userDetail.userName, userDetail.currentStatus);
 										if(userDetail.department!=null)
@@ -954,7 +956,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				} catch (IOException e) {
 					Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
 				}
-				 
+
 			} catch (UnsupportedEncodingException e1) {
 				Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution UnsupportedEncodingException:"+e1.toString());
 			}catch(Exception e){
@@ -1031,7 +1033,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 							finalJSONbject.put("mobilenumber", number);
 							if(sharedPrefManager.getUserFileId(sharedPrefManager.getUserName()) != null)
 								finalJSONbject.put("fileId", sharedPrefManager.getUserFileId(sharedPrefManager.getUserName()));
-							if(sharedPrefManager.getUserStatusMessage(sharedPrefManager.getUserName()) != null 
+							if(sharedPrefManager.getUserStatusMessage(sharedPrefManager.getUserName()) != null
 									&& sharedPrefManager.getUserStatusMessage(sharedPrefManager.getUserName()).trim().length() > 0)
 								finalJSONbject.put("statusMessage", sharedPrefManager.getUserStatusMessage(sharedPrefManager.getUserName()));
 						} catch (JSONException e) {
@@ -1045,7 +1047,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						}else
 							mViewPager.setCurrentItem(0);
 					}
-					
+
 					if(!isContactSync && !iPrefManager.isGroupsLoaded()){
 						if(Build.VERSION.SDK_INT >= 11)
 							new OpenGroupTaskOnServer(!iPrefManager.isFirstTime()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -1058,8 +1060,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 								new ContactMatchingLoadingTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 							else
 								new ContactMatchingLoadingTask().execute();
-							
-							
+
+
 						}else{
 							if(Build.VERSION.SDK_INT >= 11)
 								new DomainsUserTaskOnServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -1079,7 +1081,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				new GetSharedIDListFromServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			else
 				new GetSharedIDListFromServer().execute();
-			
+
 //			if(iPrefManager.isFirstTime() && iPrefManager.getAppMode().equals("VirginMode"))
 			{
 				 if(Build.VERSION.SDK_INT >= 11)
@@ -1087,7 +1089,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					else
 						new CheckDataBackup().execute();
 			 }
-			
+
 			if(new_user && messageService != null){
 				String json = finalJSONbject.toString();
 				Log.i(TAG, "Final JSON :  " + json);
@@ -1152,7 +1154,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		}
 		@Override
 		protected void onPostExecute(String str) {
-			
+
 			if (progressDialog != null) {
 				progressDialog.dismiss();
 				progressDialog = null;
@@ -1161,9 +1163,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				if(isContactSync)
 					syncProcessStart(false);
 				iPrefManager.setFirstTime(false);
-				isContactSync =false;				
+				isContactSync =false;
 				firstTimeAdmin = false;
-				iPrefManager.setContactSynched(true); 
+				iPrefManager.setContactSynched(true);
 				if(contactsFragment!=null)
 					contactsFragment.showAllContacts();
 				int contactsCount = DBWrapper.getInstance().getAllNumbersCount();
@@ -1208,7 +1210,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			 HttpPost httpPost = new HttpPost(Constants.SERVER_URL+ "/tiger/rest/user/directory?domainName="+sharedPrefManager.getUserDomain()+"&pg=1&limit=1000");
 			 httpPost = SuperChatApplication.addHeaderInfo(httpPost,true);
 			 HttpResponse response = null;
-			 
+
 	         try {
 				 try {
 					 response = client1.execute(httpPost);
@@ -1219,7 +1221,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						    String line = "";
 				            String str = "";
 				            while ((line = rd.readLine()) != null) {
-				            	
+
 				            	str+=line;
 				            }
 				            if(str!=null &&!str.equals("")){
@@ -1244,14 +1246,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 											firstTimeAdmin = true;
 											continue;
 											}
-									
+
 							        //Alter Table for the values.
 //									wrapper.alterTable(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, new String[]{DatabaseConstants.FLAT_NUMBER, DatabaseConstants.BUILDING_NUMBER,
 //											DatabaseConstants.ADDRESS, DatabaseConstants.RESIDENCE_TYPE});
 									ContentValues contentvalues = new ContentValues();
 									contentvalues.put(DatabaseConstants.USER_NAME_FIELD,userDetail.userName);
 									contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(1));
-									contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,userDetail.mobileNumber);	
+									contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,userDetail.mobileNumber);
 									int id = userDetail.userName.hashCode();
 									if (id < -1)
 										id = -(id);
@@ -1270,7 +1272,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 									contentvalues.put(DatabaseConstants.BUILDING_NUMBER, userDetail.buildingNumber);
 									contentvalues.put(DatabaseConstants.ADDRESS, userDetail.address);
 									contentvalues.put(DatabaseConstants.RESIDENCE_TYPE, userDetail.residenceType);
-									
+
 									contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
 									if(!userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName()))
 										wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
@@ -1311,7 +1313,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 										}
 									}
 								}
-							}	
+							}
 					     }
 				     }
 				  }
@@ -1440,7 +1442,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		bteldialog.setContentView(R.layout.custom_dialog);
 		((TextView)bteldialog.findViewById(R.id.id_dialog_message)).setText(s);
 		((TextView)bteldialog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
-			
+
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				bteldialog.cancel();
@@ -1456,7 +1458,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		bteldialog.setContentView(R.layout.custom_dialog);
 		((TextView)bteldialog.findViewById(R.id.id_dialog_message)).setText(s);
 		((TextView)bteldialog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
-			
+
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				if(error_code != null && error_code.equals("20020") ){
@@ -1493,7 +1495,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		((TextView)bteldialog.findViewById(R.id.id_dialog_message)).setText(s);
 		((TextView)bteldialog.findViewById(R.id.id_ok)).setText("Exit");
 		((TextView)bteldialog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
-			
+
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				bteldialog.cancel();
@@ -1501,7 +1503,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				ChatDBWrapper.getInstance().clearMessageDB();
 				DBWrapper.getInstance().clearAllDB();
 				Intent intent = new Intent(HomeScreen.this, MainActivity.class);
-				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK); 
+				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 				startActivity(intent);
 				return false;
 			}
@@ -1606,7 +1608,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	}
 	boolean backUpFound;
 		class CheckDataBackup extends AsyncTask<String, String, String> {
-		
+
 		public CheckDataBackup(){
 		}
 		@Override
@@ -1644,7 +1646,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		    	System.out.println("Response======>"+data);
 		    	try {
 					JSONObject jsonobj = new JSONObject(data);
-					if (jsonobj != null && jsonobj.getString("status") != null 
+					if (jsonobj != null && jsonobj.getString("status") != null
 							&& jsonobj.getString("status").equalsIgnoreCase("success")){
 						if(jsonobj.has("backupFileId"))
 							fileid = jsonobj.getString("backupFileId");
@@ -1678,12 +1680,12 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		@Override
 		protected void onPostExecute(String data) {
 			if(data != null){
-				
+
 			}
 		}
 	}
-	
-	
+
+
 	@Override
 	public void onBackPressed() {
 	    int count = getFragmentManager().getBackStackEntryCount();
@@ -1706,21 +1708,21 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		    if (intent!=null && type != null && action != null && Intent.ACTION_SEND.equals(action)) {
 			    if (type.startsWith("image/"))
 			    	sharingType = IMAGE_SHARING;
-			    else if (type.startsWith("application/pdf")) 
-			    	sharingType = PDF_SHARING;	
+			    else if (type.startsWith("application/pdf"))
+			    	sharingType = PDF_SHARING;
 			    else if (type.startsWith("application/msword") || type.startsWith("application/doc")|| type.endsWith("document"))
 				sharingType = DOC_SHARING;
 				else if (type.startsWith("application/vnd.ms-excel") || type.startsWith("application/xls") || type.endsWith(".sheet"))
 			    	sharingType = XLS_SHARING;
 			    else if (type.startsWith("audio/"))
-			    	sharingType = VOICE_SHARING;	
-			    else if (type.startsWith("video/")) 
+			    	sharingType = VOICE_SHARING;
+			    else if (type.startsWith("video/"))
 			    	sharingType = VIDEO_SHARING;
 				else if (type.startsWith("application/ppt") || type.equalsIgnoreCase("application/*") || type.contains(".presentation") || type.endsWith("powerpoint"))
 					sharingType = PPT_SHARING;
 			    else
 			    	sharingType = 0;
-			    
+
 				if(sharingType!=0){
 				    	Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
 			    		if (imageUri != null) {
@@ -1812,7 +1814,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             full_path = writeFileAndGetFullPath(getContentResolver().openInputStream(fileAttachUri),
                     new File(Environment.getExternalStorageDirectory() + "//" + path));
 		}catch(Exception ex){
-			
+
 		}
 		return full_path;
 	}
@@ -1904,7 +1906,7 @@ public void onComposeClick(View view){
 }
 	@Override
 	public void onClick(View v) {
-		
+
 		switch(v.getId()){
 		case R.id.id_more:
 			if(calledForShare && !SharedPrefManager.getInstance().isDomainAdminORSubAdmin()){
@@ -1946,10 +1948,10 @@ public void onComposeClick(View view){
 				contactsFragment.setPorfileListener();
 			}
 			break;
-			
+
 		}
-		
-		
+
+
 	}
 	public void saveMessage(String displayName, String from, String msg) {
 		try {
@@ -2052,17 +2054,17 @@ public void onComposeClick(View view){
 				return  publicGroupFragment;//new PublicGroupScreen();
 			case 2:
 				return (contactsFragment = new ContactsScreen());
-			
+
 			case 3:
 				return  new BulletinScreen();
 			}
-			
+
 			return null;
 		}
-//		@Override  
-//	    public CharSequence getPageTitle(int position) {  
-//	        return titles[position];  
-//	    }  
+//		@Override
+//	    public CharSequence getPageTitle(int position) {
+//	        return titles[position];
+//	    }
 	}
 //------------ Changes for call ---------------
 	 @Override
@@ -2070,11 +2072,11 @@ public void onComposeClick(View view){
 	        if (SinchService.class.getName().equals(componentName.getClassName())) {
 	            mSinchServiceInterface = (SinchService.SinchServiceInterface) iBinder;
 	            onServiceConnected();
-	            
+
 	          //Register the user for call
 	    		if (!getSinchServiceInterface().isStarted()) {
 	                getSinchServiceInterface().startClient(SharedPrefManager.getInstance().getUserName());
-	            } 
+	            }
 	        }
 	    }
 
@@ -2105,7 +2107,7 @@ public void onComposeClick(View view){
 		@Override
 		public void onStarted() {
 			// TODO Auto-generated method stub
-			
+
 		}
 		private class OpenGroupTaskOnServer extends AsyncTask<String, String, String> {
 			LoginModel loginForm;
@@ -2136,13 +2138,13 @@ public void onComposeClick(View view){
 					searchText = "text="+params[0]+"&";
 				}
 			    DefaultHttpClient client1 = new DefaultHttpClient();
-			    
+
 //				Log.d("HomeScreen", "serverUpdateCreateGroupInfo request:"+JSONstring);  p5domain
 				 HttpPost httpPost = new HttpPost(Constants.SERVER_URL+ "/tiger/rest/group/search?"+searchText+"limit=1000");
 //		         httpPost.setEntity(new UrlEncodedFormEntity(JSONstring));
 				 httpPost = SuperChatApplication.addHeaderInfo(httpPost,true);
 				 HttpResponse response = null;
-				 
+
 		         try {
 //					httpPost.setEntity(new StringEntity(JSONstring));
 					 try {
@@ -2155,7 +2157,7 @@ public void onComposeClick(View view){
 							    String line = "";
 					            String str = "";
 					            while ((line = rd.readLine()) != null) {
-					            	
+
 					            	str+=line;
 					            }
 					            if(str!=null &&!str.equals("")){
@@ -2169,11 +2171,11 @@ public void onComposeClick(View view){
 													SharedPrefManager.getInstance().saveUserGroupInfo(groupDetail.groupName, SharedPrefManager.getInstance().getUserName(), SharedPrefManager.PUBLIC_CHANNEL, true);
 												groupsData.add(groupDetail);
 											}
-										}	
+										}
 						            }
-										
-										
-					            
+
+
+
 					            }
 						 }
 					} catch (ClientProtocolException e) {
@@ -2181,13 +2183,13 @@ public void onComposeClick(View view){
 					} catch (IOException e) {
 						Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
 					}
-					 
+
 				} catch(Exception e){
 					Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution Exception:"+e.toString());
 					e.printStackTrace();
 				}
-			
-			
+
+
 				return null;
 			}
 			@Override
@@ -2266,7 +2268,7 @@ public void onComposeClick(View view){
 				 HttpPost httpPost = new HttpPost(Constants.SERVER_URL+ "/tiger/rest/sharedid/getall?domainName="+sharedPrefManager.getUserDomain());
 				 httpPost = SuperChatApplication.addHeaderInfo(httpPost,true);
 				 HttpResponse response = null;
-				 
+
 		         try {
 					 try {
 						 response = client1.execute(httpPost);
@@ -2286,13 +2288,13 @@ public void onComposeClick(View view){
 					} catch (IOException e) {
 						Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
 					}
-					 
+
 				} catch(Exception e){
 					Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution Exception:"+e.toString());
 					e.printStackTrace();
 				}
-			
-			
+
+
 				return null;
 			}
 			@Override
@@ -2304,7 +2306,7 @@ public void onComposeClick(View view){
 				if(str != null && str.length() > 0){
 					try {
 						JSONObject jsonobj = new JSONObject(str);
-						if (jsonobj != null && jsonobj.getString("status") != null 
+						if (jsonobj != null && jsonobj.getString("status") != null
 								&& jsonobj.getString("status").equalsIgnoreCase("success")){
 							if(str != null && !str.equals("")){
 								parseSharedIDData(str);
@@ -2340,7 +2342,7 @@ public void onComposeClick(View view){
 								//Shared ID name is saved in username field
 								contentvalues.put(DatabaseConstants.USER_NAME_FIELD, shared_id_detail.broadcastGroupName);
 								contentvalues.put(DatabaseConstants.VOPIUM_FIELD, Integer.valueOf(1));
-								contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, shared_id_detail.broadcastGroupMemberId);	
+								contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, shared_id_detail.broadcastGroupMemberId);
 								int id = shared_id_detail.userName.hashCode();
 								if (id < -1)
 									id = -(id);
@@ -2438,11 +2440,11 @@ public void onComposeClick(View view){
 		private void serverUpdateContactsInfo(List<String> numbers){
 			SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
 			ContactUploadModel model = new ContactUploadModel(iPrefManager.getUserId(),null, numbers);
-			  String JSONstring = new Gson().toJson(model);		    
+			  String JSONstring = new Gson().toJson(model);
 			    DefaultHttpClient client1 = new DefaultHttpClient();
-			   
+
 //				Log.d(TAG, "serverUpdateCreateGroupInfo request:"+JSONstring);
-				
+
 				 HttpPost httpPost = new HttpPost(Constants.SERVER_URL+ "/tiger/rest/contact/match");
 //		         httpPost.setEntity(new UrlEncodedFormEntity(JSONstring));
 				 httpPost = SuperChatApplication.addHeaderInfo(httpPost,true);
@@ -2459,7 +2461,7 @@ public void onComposeClick(View view){
 					            String line = "";
 					            String str = "";
 					            while ((line = rd.readLine()) != null) {
-					            	
+
 					            	str+=line;
 					            }
 					            if(str!=null &&!str.equals("")){
@@ -2477,8 +2479,8 @@ public void onComposeClick(View view){
 										DBWrapper wrapper = DBWrapper.getInstance();
 //										Log.d(TAG,
 //												"serverUpdateContactsInfo onSuccess : Contact synced successful. ");
-										
-											
+
+
 //											if(iPrefManager.isDomainAdmin()){
 //												String number1 = DBWrapper.getInstance().getContactNumber("create_group");
 //												ContentValues contentvalues = new ContentValues();
@@ -2486,7 +2488,7 @@ public void onComposeClick(View view){
 //													contentvalues.put(DatabaseConstants.USER_NAME_FIELD,"create_group");
 //													contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(0));
 //													contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"00000");	
+//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"00000");
 //													contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
 //													contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, SuperChatApplication.context.getResources().getString(R.string.create_group));
 //													contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
@@ -2503,7 +2505,7 @@ public void onComposeClick(View view){
 //													contentvalues.put(DatabaseConstants.USER_NAME_FIELD,"create_broadcast");
 //													contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(0));
 //													contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"11111");	
+//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"11111");
 //													contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
 //													contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, SuperChatApplication.context.getResources().getString(R.string.create_broadcast_list));
 //													contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
@@ -2520,7 +2522,7 @@ public void onComposeClick(View view){
 //													contentvalues.put(DatabaseConstants.USER_NAME_FIELD,"new_domain_member");
 //													contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(0));
 //													contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"22222");	
+//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"22222");
 //													contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
 //													contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, SuperChatApplication.context.getResources().getString(R.string.invite_member));
 //													contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
@@ -2537,7 +2539,7 @@ public void onComposeClick(View view){
 //													contentvalues.put(DatabaseConstants.USER_NAME_FIELD,"remove_domain_member");
 //													contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(0));
 //													contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"333333");	
+//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"333333");
 //													contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
 //													contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, SuperChatApplication.context.getResources().getString(R.string.manage_members));
 //													contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
@@ -2554,7 +2556,7 @@ public void onComposeClick(View view){
 //													contentvalues.put(DatabaseConstants.USER_NAME_FIELD,"view_member_stats");
 //													contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(0));
 //													contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"444444");	
+//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"444444");
 //													contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
 //													contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, SuperChatApplication.context.getResources().getString(R.string.view_member_stats));
 //													contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
@@ -2571,7 +2573,7 @@ public void onComposeClick(View view){
 //													contentvalues.put(DatabaseConstants.USER_NAME_FIELD,"create_channel");
 //													contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(0));
 //													contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"555555");	
+//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"555555");
 //													contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
 //													contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, SuperChatApplication.context.getResources().getString(R.string.create_channel));
 //													contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
@@ -2589,7 +2591,7 @@ public void onComposeClick(View view){
 //													contentvalues.put(DatabaseConstants.USER_NAME_FIELD,"new_domain_member");
 //													contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(0));
 //													contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"22222");	
+//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"22222");
 //													contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
 //													contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, getString(R.string.invite_member));
 //													contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
@@ -2624,7 +2626,7 @@ public void onComposeClick(View view){
 										ContentValues contentvalues = new ContentValues();
 										contentvalues.put(DatabaseConstants.USER_NAME_FIELD,userDetail.userName);
 										contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(1));
-										contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,userDetail.mobileNumber);	
+										contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,userDetail.mobileNumber);
 										int id = userDetail.userName.hashCode();
 										if (id < -1)
 											id = -(id);
@@ -2636,20 +2638,20 @@ public void onComposeClick(View view){
 										contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
 										contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
 										contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
-										
+
 										//Add Address Details
 										contentvalues.put(DatabaseConstants.FLAT_NUMBER, userDetail.flatNumber);
 										contentvalues.put(DatabaseConstants.BUILDING_NUMBER, userDetail.buildingNumber);
 										contentvalues.put(DatabaseConstants.ADDRESS, userDetail.address);
 										contentvalues.put(DatabaseConstants.RESIDENCE_TYPE, userDetail.residenceType);
-										
+
 										contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
 										if(!userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
 											wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
 //										else
 											if(userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
 												iPrefManager.saveDisplayName((userDetail.name != null ? userDetail.name : ""));
-											
+
 											iPrefManager.saveUserServerName(userDetail.userName, (userDetail.name != null ? userDetail.name : ""));
 										if(userDetail.currentStatus!=null)
 											iPrefManager.saveUserStatusMessage(userDetail.userName, userDetail.currentStatus);
@@ -2687,7 +2689,7 @@ public void onComposeClick(View view){
 											}
 										}
 									}
-									
+
 //										for (String st : updatedModel.mobileNumberUserBaseMap
 //												.keySet()) {
 //											ContactUpDatedModel.UserDetail userDetail = updatedModel.mobileNumberUserBaseMap.get(st);
@@ -2705,7 +2707,7 @@ public void onComposeClick(View view){
 //											contentvalues
 //											.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,
 //													userDetail.mobileNumber);
-//											
+//
 //											DBWrapper.getInstance().updateAtMeDirectStatus(contentvalues,DatabaseConstants.CONTACT_NUMBERS_FIELD);
 //											DBWrapper.getInstance().updateAtMeContactDetails(contentvalues,userDetail.mobileNumber);
 //											DBWrapper.getInstance().updateUserNameInContacts(userDetail.userName,userDetail.mobileNumber);
@@ -2726,7 +2728,7 @@ public void onComposeClick(View view){
 //									else
 //										contactSyncState = CONTACT_SYNC_FAILED;
 					            }
-					           
+
 				            }
 //						 else
 //				            	contactSyncState = CONTACT_SYNC_FAILED;
@@ -2737,43 +2739,43 @@ public void onComposeClick(View view){
 					}catch(Exception e){
 //						contactSyncState = CONTACT_SYNC_FAILED;
 					}
-					 
+
 				} catch (UnsupportedEncodingException e1) {
 //					contactSyncState = CONTACT_SYNC_FAILED;
 				}catch(Exception e){
 //					contactSyncState = CONTACT_SYNC_FAILED;
 				}
-			
+
 		}
 		public static String formatNumber(String str){
 			try{
 				if(str==null)
 					return null;
-			
+
 				boolean isCountryCheckingNeeded = false;
 				if(str.startsWith("00"))
 				isCountryCheckingNeeded = true;
 				if(str.length()>1)
-					while(str.startsWith("0")){					
+					while(str.startsWith("0")){
 						if(str.length()>1)
 							str = str.substring(1);
 						else break;
 					}
-				
-				
+
+
 			boolean isPlus = str.contains("+")?true:false;
 			if(isPlus)
 				isCountryCheckingNeeded = true;
-			
+
 			str = str.replace(" ","");
 			str = str.replace("+","");
 			str = str.replace("-","");
 			str = str.replace("(","");
 			str = str.replace(")","");
-			
+
 			if(str.length()<8)
 				return str;
-			
+
 			String replacingCode = null;
 			boolean isNumberModified = false;
 			if(isCountryCheckingNeeded){
@@ -2793,7 +2795,7 @@ public void onComposeClick(View view){
 				else
 					str = code+"-"+str;
 			}
-			
+
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -2829,7 +2831,7 @@ public void onComposeClick(View view){
 
 	      }
 
-	     
+
 
 	      public String getData(String urlPath) {
 	    	  try{
@@ -2841,19 +2843,19 @@ public void onComposeClick(View view){
 	    	   java.io.InputStream input = urlConnection.getInputStream();
 
 	    	  int count;
-		     
+
 //	            java.io.InputStream input = conection.getInputStream();
 	            // getting file length
 				  int lenghtOfFile = urlConnection.getContentLength();
 				  // input stream to read file - with 8k buffer
 //				  java.io.InputStream input = new BufferedInputStream(urlConnection.openStream());
 				  // Output stream to write file
-				  byte data[] = new byte[4096]; 
+				  byte data[] = new byte[4096];
 				  long total = 0;
 				  StringBuilder sb = new StringBuilder();
 				  while ((count = input.read(data)) != -1) {
-	           
-	           
+
+
 
 //	            while (input.read(b) > 0) {
 
@@ -2862,7 +2864,7 @@ public void onComposeClick(View view){
 	            }
 
 	            input.close();
-	    	
+
 	            return sb.toString();
 	    	  }catch(Throwable e){
 	    		  e.printStackTrace();
@@ -2883,7 +2885,7 @@ public void onComposeClick(View view){
 		            	iPrefManager.setUpdateCheck(true);
 		        }else
 		        	iPrefManager.setUpdateCheck(true);//Toast.makeText(HomeScreen.this, "Current version " + currentVersion + "playstore version " + onlineVersion, Toast.LENGTH_LONG).show();
-		        
+
 //		        Log.d("update", "Current version " + currentVersion + "playstore version " + onlineVersion);
 		    }
 		}
@@ -2895,13 +2897,13 @@ public void onComposeClick(View view){
 
 		        String[] onlineVersionData = onlineVersion.split("[.]");
 
-		       
+
 
 		        Integer[] currentVersionInt = new Integer[3];
 
 		        Integer[] onlineVersionInt = new Integer[3];
 
-		       
+
 
 		        for (int i = 0; i < 3; i++) {
 
@@ -2915,7 +2917,7 @@ public void onComposeClick(View view){
 
 		        }
 
-		       
+
 
 		        for (int i = 0; i < 3; i++) {
 		              if (currentVersionInt[i] < onlineVersionInt[i]) {
@@ -2939,7 +2941,7 @@ public void onComposeClick(View view){
 			((TextView)bteldialog.findViewById(R.id.id_send)).setText("Update Now");
 			((TextView)bteldialog.findViewById(R.id.id_cancel)).setText("Later");
 			((TextView)bteldialog.findViewById(R.id.id_send)).setOnTouchListener(new OnTouchListener() {
-				
+
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
 					bteldialog.cancel();
@@ -2963,7 +2965,7 @@ public void onComposeClick(View view){
 				}
 			});
 	((TextView)bteldialog.findViewById(R.id.id_cancel)).setOnTouchListener(new OnTouchListener() {
-				
+
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
 					bteldialog.cancel();
@@ -2972,13 +2974,13 @@ public void onComposeClick(View view){
 			});
 			bteldialog.show();
 		}
-		
+
 		public void showPopup(View v){
 			 PopupMenu popup = new PopupMenu(this, v);
 			 popup.setOnMenuItemClickListener(this);
 			 if (publicGroupTab.isSelected())// && iPrefManager.isDomainAdmin())
 				 popup.getMenu().add(0,0,0,getResources().getString(R.string.create_group));
-			
+
 			 if(contactMenuLayout.isSelected()){
 				 if(iPrefManager.isDomainAdmin()){
 					 popup.getMenu().add(0,2,0,getResources().getString(R.string.create_broadcast_list));
@@ -3000,11 +3002,11 @@ public void onComposeClick(View view){
 		        case 0: // Create A group
 		        	Intent intent = new Intent(HomeScreen.this, CreateGroupScreen.class);
 					intent.putExtra(Constants.CHANNEL_CREATION, true);
-					startActivity(intent);	
+					startActivity(intent);
 					return true;
 		        case 1: // Settings
 		        	intent = new Intent(HomeScreen.this, MoreScreen.class);
-					startActivity(intent);		
+					startActivity(intent);
 					return true;
 		        case 2: // create_broadcast_list
 		        	intent = new Intent(SuperChatApplication.context, CreateBroadCastScreen.class);
@@ -3387,6 +3389,7 @@ public void onComposeClick(View view){
 		return ret;
 	}
 
+
 	@Override
 	public void onDrawerItemSelected(View view, int position) {
 		displayView(position);
@@ -3405,6 +3408,7 @@ public void onComposeClick(View view){
 			default:
 				break;
 		}
+
 
 	}
 //------------------------- Clear Data to switch for another SG ------------------------------------------

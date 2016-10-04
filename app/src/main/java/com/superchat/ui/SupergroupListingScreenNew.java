@@ -1348,7 +1348,14 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
         } else {
 
         }
+
+        Intent data = new Intent();
+        data.putExtra("SG_NAME",""+superGroupName);
+
+        setResult(RESULT_OK, data);
         finish();
+
+
         if (welcomeDialog != null)
             welcomeDialog.cancel();
     }
