@@ -588,7 +588,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
+				// TODO Auto-generated method stubR
 				welcomeDialog.cancel();
 			}
 		});
@@ -1325,11 +1325,13 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 										iPrefManager.saveUserLogedOut(false);
 										iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
 										current_user_id = regObj.getUserId();
+										DBWrapper.getInstance().updateSGCredentials(superGroupName, regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
 									}else{
 										regObj = regObjRes.getActivateDomainDataSet().get(i);
 										System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
 										iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
 										iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
+										DBWrapper.getInstance().updateSGCredentials(superGroupName, regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
 									}
 								}
 								verifyUserSG(current_user_id);

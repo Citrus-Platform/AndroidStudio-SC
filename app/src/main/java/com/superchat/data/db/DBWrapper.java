@@ -11,6 +11,9 @@ import com.chatsdk.org.jivesoftware.smack.packet.Message;
 import com.google.gson.Gson;
 import com.superchat.SuperChatApplication;
 import com.superchat.model.LoginResponseModel.UserResponseDetail;
+import com.superchat.model.multiplesg.InvitedDomainNameSet;
+import com.superchat.model.multiplesg.JoinedDomainNameSet;
+import com.superchat.model.multiplesg.OwnerDomainName;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
 
@@ -1832,5 +1835,155 @@ public boolean isContactModified(String rawId, int version){
 		}
 
 		return l;
+	}
+//----------------------------------------------------------------------------
+	public void updateOwnedSGData(OwnerDomainName sg_data){
+		try{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put(DatabaseConstants.DOMAIN_NAME, sg_data.getDomainName());
+			contentvalues.put(DatabaseConstants.DOMAIN_ADMIN_NAME, sg_data.getAdminName());
+			contentvalues.put(DatabaseConstants.DOMAIN_ORG_NAME, sg_data.getOrgName());
+			contentvalues.put(DatabaseConstants.DOMAIN_PRIVACY_TYPE, sg_data.getPrivacyType());
+			contentvalues.put(DatabaseConstants.DOMAIN_TYPE, sg_data.getDomainType());
+			contentvalues.put(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT, Integer.valueOf(sg_data.getUnreadCounter()));
+			contentvalues.put(DatabaseConstants.DOMAIN_CREATED_DATE, sg_data.getCreatedDate());
+			long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
+			if(row > 0)
+				Log.e("DBWrapper", "updateOwnedSGData count " + row);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	public void updateSGCredentials(String sg_name, String sg_username, String sg_password, long user_id, boolean active){
+		try{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put(DatabaseConstants.DOMAIN_USER_NAME, sg_username);
+			contentvalues.put(DatabaseConstants.DOMAIN_USER_PASSWORD, sg_password);
+			contentvalues.put(DatabaseConstants.DOMAIN_ACTIVATE_STATUS, active);
+			contentvalues.put(DatabaseConstants.DOMAIN_USER_ID, user_id);
+//			DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
+			// updating row
+			int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
+					new String[] { sg_name });
+			if(row > 0)
+				Log.e("DBWrapper", "updateSGCredentials count " + row);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	public void updateJoinedSGData(ArrayList<JoinedDomainNameSet> list){
+		try{
+			for (JoinedDomainNameSet sg_data : list) {
+				ContentValues contentvalues = new ContentValues();
+				contentvalues.put(DatabaseConstants.DOMAIN_NAME, sg_data.getDomainName());
+				contentvalues.put(DatabaseConstants.DOMAIN_ADMIN_NAME, sg_data.getAdminName());
+				contentvalues.put(DatabaseConstants.DOMAIN_ORG_NAME, sg_data.getOrgName());
+				contentvalues.put(DatabaseConstants.DOMAIN_PRIVACY_TYPE, sg_data.getPrivacyType());
+				contentvalues.put(DatabaseConstants.DOMAIN_TYPE, sg_data.getDomainType());
+				contentvalues.put(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT, Integer.valueOf(sg_data.getUnreadCounter()));
+				contentvalues.put(DatabaseConstants.DOMAIN_CREATED_DATE, sg_data.getCreatedDate());
+				long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
+				if(row > 0)
+					Log.e("DBWrapper", "updateJoinedSGData count " + row);
+			}
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	public void updateInvitedSGData(ArrayList<InvitedDomainNameSet> list){
+		try{
+			for (InvitedDomainNameSet sg_data : list) {
+				ContentValues contentvalues = new ContentValues();
+				contentvalues.put(DatabaseConstants.DOMAIN_NAME, sg_data.getDomainName());
+				contentvalues.put(DatabaseConstants.DOMAIN_ADMIN_NAME, sg_data.getAdminName());
+				contentvalues.put(DatabaseConstants.DOMAIN_ORG_NAME, sg_data.getOrgName());
+				contentvalues.put(DatabaseConstants.DOMAIN_PRIVACY_TYPE, sg_data.getPrivacyType());
+				contentvalues.put(DatabaseConstants.DOMAIN_TYPE, sg_data.getDomainType());
+				contentvalues.put(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT, Integer.valueOf(sg_data.getUnreadCounter()));
+				contentvalues.put(DatabaseConstants.DOMAIN_CREATED_DATE, sg_data.getCreatedDate());
+				long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
+				if(row > 0)
+					Log.e("DBWrapper", "updateInvitedSGData count " + row);
+			}
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	public String getSGName(String username) {
+		String sg_name = null;
+		Cursor cursor = DBWrapper.getInstance().query(
+				DatabaseConstants.TABLE_NAME_MULTIPLE_SG,
+				new String[] { DatabaseConstants.DOMAIN_NAME },
+				DatabaseConstants.DOMAIN_USER_NAME + "='" + username+"'", null,
+				null);
+		if (cursor != null) {
+			while (cursor.moveToNext())
+				sg_name = cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_NAME));
+		}
+		if (cursor != null)
+			cursor.close();
+		return sg_name;
+	}
+
+
+	public String getDisplayName1(String userName) {
+		String contactPerson = "User-Name";
+		Cursor cursor = DBWrapper.getInstance().query(
+				DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,
+				new String[] { DatabaseConstants.CONTACT_NAMES_FIELD },
+				DatabaseConstants.USER_NAME_FIELD + "='" + userName+"'", null,
+				null);
+		if (cursor != null) {
+			while (cursor.moveToNext())
+				contactPerson = cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD));
+		}
+		if (cursor != null)
+			cursor.close();
+		return contactPerson;
+	}
+	public String getSGUserName(String sg) {
+		String sg_username = null;
+		Cursor cursor = DBWrapper.getInstance().query(
+				DatabaseConstants.TABLE_NAME_MULTIPLE_SG,
+				new String[] { DatabaseConstants.DOMAIN_USER_NAME },
+				DatabaseConstants.DOMAIN_NAME + "='" + sg +"'", null,
+				null);
+		if (cursor != null) {
+			while (cursor.moveToNext())
+				sg_username = cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_USER_NAME));
+		}
+		if (cursor != null)
+			cursor.close();
+		return sg_username;
+	}
+	public long getSGUserID(String sg) {
+		long user_id = 0;
+		Cursor cursor = DBWrapper.getInstance().query(
+				DatabaseConstants.TABLE_NAME_MULTIPLE_SG,
+				new String[] { DatabaseConstants.DOMAIN_USER_ID },
+				DatabaseConstants.DOMAIN_NAME + "='" + sg +"'", null,
+				null);
+		if (cursor != null) {
+			while (cursor.moveToNext())
+				user_id = cursor.getLong(cursor.getColumnIndex(DatabaseConstants.DOMAIN_USER_ID));
+		}
+		if (cursor != null)
+			cursor.close();
+		return user_id;
+	}
+	public String getSGPassword(String sg) {
+		String user_password = null;
+		Cursor cursor = DBWrapper.getInstance().query(
+				DatabaseConstants.TABLE_NAME_MULTIPLE_SG,
+				new String[] { DatabaseConstants.DOMAIN_USER_PASSWORD },
+				DatabaseConstants.DOMAIN_NAME + "='" + sg +"'", null,
+				null);
+		if (cursor != null) {
+			while (cursor.moveToNext())
+				user_password = cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_USER_PASSWORD));
+		}
+		if (cursor != null)
+			cursor.close();
+		return user_password;
 	}
 }

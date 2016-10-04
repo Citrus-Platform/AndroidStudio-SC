@@ -22,6 +22,7 @@ public class PhoenixDatabaseHelper extends SQLiteOpenHelper {
 		sqlitedatabase.execSQL(DatabaseConstants.TABLE_CONTACT_NUMBERS);
 		sqlitedatabase.execSQL(DatabaseConstants.TABLE_ALL_CONTACT_NUMBERS);
 		sqlitedatabase.execSQL(DatabaseConstants.TABLE_CONTACT_EMAILS);
+		sqlitedatabase.execSQL(DatabaseConstants.TABLE_MULTIPLE_SG_DATA);
 	}
 
 	@Override

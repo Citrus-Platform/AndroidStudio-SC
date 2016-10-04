@@ -1246,8 +1246,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 											}
 									
 							        //Alter Table for the values.
-									wrapper.alterTable(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, new String[]{DatabaseConstants.FLAT_NUMBER, DatabaseConstants.BUILDING_NUMBER,
-											DatabaseConstants.ADDRESS, DatabaseConstants.RESIDENCE_TYPE});
+//									wrapper.alterTable(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, new String[]{DatabaseConstants.FLAT_NUMBER, DatabaseConstants.BUILDING_NUMBER,
+//											DatabaseConstants.ADDRESS, DatabaseConstants.RESIDENCE_TYPE});
 									ContentValues contentvalues = new ContentValues();
 									contentvalues.put(DatabaseConstants.USER_NAME_FIELD,userDetail.userName);
 									contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(1));
@@ -2603,8 +2603,8 @@ public void onComposeClick(View view){
 											}
 //											UserResponseDetail userDetail = loginObj.directoryUserSet.get(st);
 										//Alter Modified Tables here
-										wrapper.alterTable(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, new String[]{DatabaseConstants.FLAT_NUMBER, DatabaseConstants.BUILDING_NUMBER,
-												DatabaseConstants.ADDRESS, DatabaseConstants.RESIDENCE_TYPE});
+//										wrapper.alterTable(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, new String[]{DatabaseConstants.FLAT_NUMBER, DatabaseConstants.BUILDING_NUMBER,
+//												DatabaseConstants.ADDRESS, DatabaseConstants.RESIDENCE_TYPE});
 										ContentValues contentvalues = new ContentValues();
 										contentvalues.put(DatabaseConstants.USER_NAME_FIELD,userDetail.userName);
 										contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(1));

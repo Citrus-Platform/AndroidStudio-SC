@@ -1,34 +1,5 @@
 package com.superchat.ui;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Random;
-import java.util.TimeZone;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.model.ErrorModel;
-import com.superchat.model.RegGenrateCodeModel;
-import com.superchat.model.RegMatchCodeModel;
-import com.superchat.utils.Constants;
-import com.superchat.utils.DataEncryption;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.widgets.MyriadRegularEditText;
-import com.superchat.widgets.MyriadRegularTextView;
-import com.superchat.widgets.MyriadSemiboldTextView;
-
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -57,6 +28,41 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.data.db.DBWrapper;
+import com.superchat.model.ErrorModel;
+import com.superchat.model.RegGenrateCodeModel;
+import com.superchat.model.RegMatchCodeModel;
+import com.superchat.model.SGroupListObject;
+import com.superchat.model.SlidingMenuData;
+import com.superchat.model.multiplesg.InvitedDomainNameSet;
+import com.superchat.model.multiplesg.JoinedDomainNameSet;
+import com.superchat.model.multiplesg.MultipleSGObject;
+import com.superchat.model.multiplesg.OwnerDomainName;
+import com.superchat.utils.Constants;
+import com.superchat.utils.DataEncryption;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.widgets.MyriadRegularEditText;
+import com.superchat.widgets.MyriadRegularTextView;
+import com.superchat.widgets.MyriadSemiboldTextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Random;
+import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MobileVerificationScreen extends FragmentActivity implements OnClickListener{
 	private static final String TAG = "MobileVerificationScreen";
@@ -539,8 +545,23 @@ public void onDestroy(){
 					if(regAsAdmin)
 						iPrefManager.setAdminReg(true);
 					iPrefManager.setOTPVerifiedTime(System.currentTimeMillis());
-					if(arg1 != null && arg1.length() > 0)
+					if(arg1 != null && arg1.length() > 0) {
 						iPrefManager.setSGListData(arg1);
+						//Update in DB also
+						MultipleSGObject gsonObject = new Gson().fromJson(arg1, MultipleSGObject.class);
+
+						OwnerDomainName owned = gsonObject.getOwnerDomainName();
+						if(owned != null)
+							DBWrapper.getInstance().updateOwnedSGData(owned);
+						ArrayList<JoinedDomainNameSet> joinedSG = new ArrayList<>();
+						joinedSG = gsonObject.getJoinedDomainNameSet();
+						if(joinedSG != null && joinedSG.size() > 0)
+							DBWrapper.getInstance().updateJoinedSGData(joinedSG);
+						ArrayList<InvitedDomainNameSet> invitedSG = new ArrayList<>();
+						invitedSG = gsonObject.getInvitedDomainNameSet();
+						if(invitedSG != null && invitedSG.size() > 0)
+							DBWrapper.getInstance().updateInvitedSGData(invitedSG);
+					}
 					if(!isAppDestroy){
 						Bundle bundle = new Bundle();
 						JSONObject json;

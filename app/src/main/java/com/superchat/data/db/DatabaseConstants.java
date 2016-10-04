@@ -49,7 +49,47 @@ public static final byte MEDIA_FAILED = 4;
 	public static final String POLL_TXT_MESSAGE = "poll_txt_message";
 
 
-	//Poll related Data -
+	//Multiple SG related Data -
+	public static final String TABLE_NAME_MULTIPLE_SG = "multiple_sg_table";
+	public static final String DOMAIN_NAME = "domain_name";
+	public static final String DOMAIN_ADMIN_NAME = "domain_admin_name";
+	public static final String DOMAIN_ORG_NAME = "domain_org_name";
+	public static final String DOMAIN_PRIVACY_TYPE = "domain_privacy_type";
+	public static final String DOMAIN_TYPE = "domain_type";
+	public static final String DOMAIN_UNREAD_MSG_COUNT = "domain_unread_msg_count";
+	public static final String DOMAIN_CREATED_DATE = "domain_created_date";
+	public static final String DOMAIN_USER_ID = "domain_user_id";
+	public static final String DOMAIN_USER_NAME = "domain_user_name";
+	public static final String DOMAIN_USER_PASSWORD = "domain_user_password";
+	public static final String DOMAIN_ACTIVATE_STATUS = "domain_activate_status";
+
+	public static final String TABLE_MULTIPLE_SG_DATA = "CREATE TABLE IF NOT EXISTS "
+			+ DatabaseConstants.TABLE_NAME_MULTIPLE_SG
+			+ "("
+			+ DatabaseConstants._ID
+			+ " INTEGER PRIMARY KEY AUTOINCREMENT,"
+			+ DatabaseConstants.DOMAIN_NAME
+			+" TEXT NOT NULL,"
+			+ DatabaseConstants.DOMAIN_ADMIN_NAME
+			+ " TEXT NOT NULL,"
+			+ DatabaseConstants.DOMAIN_ORG_NAME
+			+ " TEXT, "
+			+ DatabaseConstants.DOMAIN_PRIVACY_TYPE
+			+ " TEXT, "
+			+ DatabaseConstants.DOMAIN_TYPE
+			+ " TEXT, "
+			+ DatabaseConstants.DOMAIN_USER_NAME
+			+ " TEXT, "
+			+ DatabaseConstants.DOMAIN_USER_PASSWORD
+			+ " TEXT, "
+			+ DatabaseConstants.DOMAIN_ACTIVATE_STATUS
+			+ " TEXT, "
+			+ DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT
+			+ " INTEGER, "
+			+ DatabaseConstants.DOMAIN_USER_ID
+			+ " LONG, "
+			+ DatabaseConstants.DOMAIN_CREATED_DATE + " TEXT);";
+
 
 	public static final String TABLE_CONTACT_NAMES = "CREATE TABLE IF NOT EXISTS "
 			+ DatabaseConstants.TABLE_NAME_CONTACT_NAMES
