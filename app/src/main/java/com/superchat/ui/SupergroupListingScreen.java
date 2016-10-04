@@ -910,7 +910,17 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 				domainNameSet.add("" + ownerDomainNameSet.get(i).getDomainName());
 			}
 		}
-		RegistrationForm registrationForm = new RegistrationForm(mobileNumber, "normal", imei, imsi, clientVersion ,domainNameSet ,true);
+//		if (invitedDomainNameSet != null && invitedDomainNameSet.size() > 0) {
+//			for (int i = 0; i < invitedDomainNameSet.size(); i++) {
+//				domainNameSet.add("" + invitedDomainNameSet.get(i).getDomainName());
+//			}
+//		}
+		RegistrationForm registrationForm = null;
+		if(isInvitedDomain(invitedDomainNameSet, super_group)){
+			registrationForm = new RegistrationForm(mobileNumber, "normal", imei, imsi, clientVersion , null ,false);
+		}else{
+			registrationForm = new RegistrationForm(mobileNumber, "normal", imei, imsi, clientVersion , domainNameSet ,true);
+		}
 		if(Constants.regid != null)
 			registrationForm.setToken(Constants.regid);
 		registrationForm.countryCode = countryCode;
@@ -920,10 +930,25 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 			registrationForm.setActiveDomainName(super_group);
 		}
 		SharedPrefManager.getInstance().saveUserPhone(mobileNumber);
-		if (Build.VERSION.SDK_INT >= 11)
-			new ActivatedomainTaskOnServer(registrationForm, view, super_group).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-		else
-			new ActivatedomainTaskOnServer(registrationForm, view, super_group).execute();
+		if(isInvitedDomain(invitedDomainNameSet, super_group)){
+			if (Build.VERSION.SDK_INT >= 11)
+				new SignupTaskOnServer(registrationForm, view).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			else
+				new SignupTaskOnServer(registrationForm, view).execute();
+
+		}else {
+			if (Build.VERSION.SDK_INT >= 11)
+				new ActivatedomainTaskOnServer(registrationForm, view, super_group).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			else
+				new ActivatedomainTaskOnServer(registrationForm, view, super_group).execute();
+		}
+	}
+	public boolean isInvitedDomain(ArrayList<SGroupListObject> list, String sg){
+		for(SGroupListObject data : list){
+			if(data.getDomainName() != null && data.getDomainName().equals(sg))
+				return true;
+		}
+		return false;
 	}
 
 	public void restartActivity(Activity activity) {
@@ -1193,8 +1218,12 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 								pendingProfile = regObj.pendingProfile;
 //											pendingProfile = true;
 								iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
+								//Save Domain DAta
+//								iPrefManager.saveSGPassword(regObj.getDomainName(), regObj.getPassword()); 
+//								iPrefManager.saveSGUserID(iPrefManager.getUserName(), regObj.getiUserId()); 
+								iPrefManager.saveUserDomain(regObj.getDomainName());
 							}
-							verifyUserSG(regObj.iUserId);
+							verifyUserSG(regObj.getiUserId());
 						}
 
 					}
@@ -1324,8 +1353,8 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 										if (selectedSGDisplayName != null)
 											iPrefManager.saveCurrentSGDisplayName(selectedSGDisplayName);
 										iPrefManager.saveUserId(regObj.getUserId());
-										iPrefManager.setAppMode("VirginMode");
-										iPrefManager.saveUserLogedOut(false);
+//										iPrefManager.setAppMode("VirginMode");
+//										iPrefManager.saveUserLogedOut(false);
 										iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
 										current_user_id = regObj.getUserId();
 										DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
@@ -1337,6 +1366,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 										DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
 									}
 								}
+									current_user_id = registrationForm.getiUserId();
 								verifyUserSG(current_user_id);
 							}
 						}
@@ -1561,6 +1591,9 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 					sharedPrefManager.saveUserName(objUserModel.username);
 					sharedPrefManager.saveUserPassword(objUserModel.password);
 					sharedPrefManager.setOTPVerified(false);
+					//Save SG data
+					sharedPrefManager.saveSGPassword(objUserModel.username, objUserModel.password);
+					sharedPrefManager.saveSGUserID(objUserModel.username, sharedPrefManager.getUserId());
 
 					if (newUser || pendingProfile) {
 						Intent intent = new Intent(SupergroupListingScreen.this, ProfileScreen.class);
