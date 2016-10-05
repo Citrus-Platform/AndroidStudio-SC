@@ -748,6 +748,10 @@ public boolean isContactModified(){
 			editor.putString(GROUP_NAME, prevName + "%#%" + groupName);
 		editor.commit();
 	}
+	public void removeAllGroups() {
+			editor.putString(GROUP_NAME, null);
+			editor.commit();
+	}
 	public void saveBroadCastName(String broadCastName,String displayName) {
 		String prevName = getBroadCastName();
 		if(prevName.contains(broadCastName))

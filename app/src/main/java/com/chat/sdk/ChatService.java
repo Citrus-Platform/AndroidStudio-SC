@@ -2549,7 +2549,7 @@ public class ChatService extends Service implements interfaceInstances {
 //							 SubscriptionMode subscriptionMode =  Roster.getDefaultSubscriptionMode();
 							Thread.sleep(2000);
 //							System.out.println("chatLogin :: total groups to join :- "+SharedPrefManager.getInstance().getGroupNamesArray().length);
-							for (String group : SharedPrefManager.getInstance().getGroupNamesArray()) {
+							for (String group : prefManager.getGroupNamesArray()) {
 								if (group != null && !group.equals("")){
 									if(prefManager.isGroupMemberActive(group, prefManager.getUserName()))
 										sendGroupPresence(group, (last_online_time > 0 ? last_online_time : -1));
@@ -3005,16 +3005,22 @@ public class ChatService extends Service implements interfaceInstances {
 	}
 
 	public void chatLogout() {
-		if (connection != null && connection.isConnected()) {
-			try {
-				connection.removePacketListener(packetListener);
-				connection.disconnect();
-				xmppConectionStatus = false;
-				clearAllNotifications();
-			} catch (Exception e) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				if (connection != null && connection.isConnected()) {
+					try {
+						connection.removePacketListener(packetListener);
+						connection.disconnect();
+						xmppConectionStatus = false;
+						clearAllNotifications();
+					} catch (Exception e) {
+					}
+					connection = null;
+				}
 			}
-			connection = null;
-		}
+		}).start();
+
 	}
 	public void saveGroupOrBroadcastStatus(String from, String packetId, Message.SeenState state) {
 		try{

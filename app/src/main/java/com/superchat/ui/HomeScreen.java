@@ -787,6 +787,11 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				            	Gson gson = new GsonBuilder().create();
 				            	LoginResponseModel loginObj = gson.fromJson(str, LoginResponseModel.class);
 								if (loginObj != null && loginObj.status!=null && loginObj.status.equals("success")) {
+									if(isSwitchSG){
+										//Important lines, this will remove all the groups of previous SG from Shared - Otherwise that will be joined.
+										System.out.println("(Removing all groups from Shared Pref.)");
+										sharedPrefManager.removeAllGroups();
+									}
 									if(loginObj.getDomainType()!=null && !loginObj.getDomainType().equals(""))
 										sharedPrefManager.setDomainType(loginObj.getDomainType());
 									if(loginObj.domainPrivacyType!=null && loginObj.domainPrivacyType.equals("open"))
@@ -1002,7 +1007,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //				if (str!=null && str.contains("success"))
 				if(isSwitchSG && messageService != null) {
 					messageService.chatLogout();
-
 					messageService.chatLogin();
 				}
 				if(iPrefManager.isContactSynched() && iPrefManager.isGroupsLoaded()){
