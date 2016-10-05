@@ -3442,7 +3442,7 @@ public void onComposeClick(View view){
 			//Clear All Shared Preferences Data
 //			SharedPrefManager.getInstance().clearSharedPref();
 			//Clear All Messages - Message Info Table
-			ChatDBWrapper.getInstance().clearMessageDB();
+//			ChatDBWrapper.getInstance().clearMessageDB();
 			//Clear All Contacts - Contacts Table
 			DBWrapper.getInstance().clearAllDB();
 		}catch(Exception ex){
