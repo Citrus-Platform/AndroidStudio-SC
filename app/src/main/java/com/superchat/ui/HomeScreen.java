@@ -13,6 +13,10 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -30,7 +34,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -69,12 +75,14 @@ import com.superchat.model.LoginResponseModel.UserResponseDetail;
 import com.superchat.model.MarkSGActive;
 import com.superchat.model.RegistrationFormResponse;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
+import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
 import com.superchat.utils.FileDownloadResponseHandler;
 import com.superchat.utils.FileUploaderDownloader;
 import com.superchat.utils.NetWork;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.widgets.MyriadRegularTextView;
+import com.superchat.widgets.RoundedImageView;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -435,9 +443,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		if((action != null && Intent.ACTION_SEND.equals(action)) || SharedPrefManager.getInstance().isContactSynched())
 			noLoadingNeeded = true;
 		setContentView(R.layout.home_screen);
+		Toolbar mToolbar;
+		mToolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(mToolbar);
 
 		drawerFragment = (FragmentDrawer)
 				getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
+		drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
 		drawerFragment.setDrawerListener(this);
 
 		totalCountView = (MyriadRegularTextView)findViewById(R.id.id_total_unseens);
@@ -3433,6 +3445,7 @@ public void onComposeClick(View view){
 	public void switchSG(String sg){
 		String sg_name = sg.substring(sg.indexOf("_") + 1);
 		String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
+		drawerFragment.fragmentClose();
 		updateUserData(sg);
 		System.out.println("<< mobileNumber :: Switch :: "+SharedPrefManager.getInstance().getUserPhone());
 		SharedPrefManager.getInstance().setProfileAdded(current_username, true);
@@ -3488,4 +3501,105 @@ public void onComposeClick(View view){
 
         }
     }
+//-------------------------------------------------------------------------
+	public void updateSlidingDrawer(String text , String fileId) {
+		drawerFragment.currentSGName.setText("" + text);
+		setProfilePic(drawerFragment.displayPictureCurrent , fileId);
+	}
+//-------------------------------------------------------------------------
+	private boolean setProfilePic(ImageView picView, String groupPicId) {
+	//		System.out.println("groupPicId : "+groupPicId);
+		String img_path = getThumbPath(groupPicId);
+		picView.setImageResource(R.drawable.about_icon);
+		if (groupPicId == null || (groupPicId != null && groupPicId.equals("")) || groupPicId.equals("clear") || groupPicId.contains("logofileid"))
+			return false;
+		if (img_path != null) {
+			File file1 = new File(img_path);
+	//			Log.d(TAG, "PicAvailibilty: "+ Uri.parse(filename)+" , "+filename+" , "+file1.exists());
+			if (file1.exists()) {
+				picView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+	//				picView.setImageURI(Uri.parse(img_path));
+				setThumb((ImageView) picView, img_path, groupPicId);
+				return true;
+			} else {
+				if (Build.VERSION.SDK_INT >= 11)
+					new BitmapDownloader((RoundedImageView) picView).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, groupPicId, BitmapDownloader.THUMB_REQUEST);
+				else
+					new BitmapDownloader((RoundedImageView) picView).execute(groupPicId, BitmapDownloader.THUMB_REQUEST);
+			}
+		} else {
+			if (Build.VERSION.SDK_INT >= 11)
+				new BitmapDownloader((RoundedImageView) picView).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, groupPicId, BitmapDownloader.THUMB_REQUEST);
+			else
+				new BitmapDownloader((RoundedImageView) picView).execute(groupPicId, BitmapDownloader.THUMB_REQUEST);
+
+		}
+		return false;
+	}
+	private String getThumbPath(String groupPicId) {
+		if (groupPicId == null)
+			groupPicId = SharedPrefManager.getInstance().getUserFileId(SharedPrefManager.getInstance().getUserName()); // 1_1_7_G_I_I3_e1zihzwn02
+		if (groupPicId != null) {
+			String profilePicUrl = groupPicId + ".jpg";//AppConstants.media_get_url+
+			File file = Environment.getExternalStorageDirectory();
+			String filename = file.getPath() + File.separator + Constants.contentProfilePhoto + profilePicUrl;
+			File contentFile = new File(filename);
+			if (contentFile != null && contentFile.exists()) {
+				return filename;
+			}
+
+		}
+		return null;
+	}
+	private void setThumb(ImageView imageViewl, String path, String groupPicId) {
+		BitmapFactory.Options bfo = new BitmapFactory.Options();
+		bfo.inSampleSize = 2;
+		Bitmap bm = null;
+		try {
+			bm = BitmapFactory.decodeFile(path, bfo);
+//		    bm = ThumbnailUtils.extractThumbnail(bm, 200, 200);
+			bm = rotateImage(path, bm);
+//		    bm = Bitmap.createScaledBitmap(bm, 200, 200, true);
+		} catch (Exception ex) {
+
+		}
+		if (bm != null) {
+			imageViewl.setImageBitmap(bm);
+//	    	SuperChatApplication.addBitmapToMemoryCache(groupPicId,bm);
+		} else {
+			try {
+				imageViewl.setImageURI(Uri.parse(path));
+			} catch (Exception e) {
+
+			}
+		}
+	}
+
+	public static Bitmap rotateImage(String path, Bitmap bm) {
+		int orientation = 1;
+		try {
+			ExifInterface exifJpeg = new ExifInterface(path);
+			orientation = exifJpeg.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+////			orientation = Integer.parseInt(exifJpeg.getAttribute(ExifInterface.TAG_ORIENTATION));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (orientation != ExifInterface.ORIENTATION_NORMAL) {
+			int width = bm.getWidth();
+			int height = bm.getHeight();
+			Matrix matrix = new Matrix();
+			if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
+				matrix.postRotate(90);
+			} else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
+				matrix.postRotate(180);
+			} else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+				matrix.postRotate(270);
+			}
+			return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, true);
+		}
+
+		return bm;
+	}
+
 }

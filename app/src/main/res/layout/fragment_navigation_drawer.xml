@@ -20,15 +20,18 @@
             android:layout_height="50dp"
             android:layout_margin="16dp">
 
-            <ImageView
-                android:id="@+id/displayPicture"
+            <com.superchat.widgets.RoundedImageView
+                android:id="@+id/displayPictureCurrent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_launcher" />
+
+
         </LinearLayout>
 
         <TextView
+            android:id="@+id/currentSGName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -36,7 +39,6 @@
             android:ellipsize="end"
             android:gravity="center|left"
             android:singleLine="true"
-            android:text="Levis"
             android:textColor="@color/white"
             android:textSize="22sp" />
 
@@ -44,23 +46,16 @@
             android:id="@+id/notificationLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
             android:layout_margin="5dp"
             android:padding="6dp">
 
             <ImageView
-                android:id="@+id/notification"
+                android:id="@+id/notifyCurrent"
                 android:layout_width="70dp"
                 android:layout_height="20dp"
                 android:src="@drawable/ic_icon_navigation_unmute" />
-
-            <ImageView
-                android:id="@+id/notificationoff"
-                android:layout_width="70dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_icon_navigation_mute"
-                android:visibility="gone"/>
 
         </RelativeLayout>
     </RelativeLayout>
@@ -93,7 +88,7 @@
                 android:id="@+id/user"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Rajiv Mallik (You)"
+                android:text=" (You)"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 
@@ -127,8 +122,8 @@
                 <ImageView
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:paddingTop="5dp"
                     android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
                     android:src="@drawable/ic_icon_navigation_plus" />
             </LinearLayout>
         </LinearLayout>
@@ -197,8 +192,8 @@
         android:background="@color/md_grey_900"
         android:paddingBottom="20dp"
         android:paddingLeft="10dp"
-        android:paddingTop="20dp"
         android:paddingRight="10dp"
+        android:paddingTop="20dp"
         android:weightSum="10">
 
 

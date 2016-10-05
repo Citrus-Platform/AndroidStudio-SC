@@ -1,6 +1,14 @@
 package com.superchat.ui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +18,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.superchat.R;
+import com.superchat.data.db.DBWrapper;
+import com.superchat.utils.BitmapDownloader;
+import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.widgets.RoundedImageView;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,36 +116,48 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             case CHILD:
                 final ListChildViewHolder itemControllerChild = (ListChildViewHolder) holder;
                 itemControllerChild.refferalItem = item;
+
                 itemControllerChild.child_title.setText(item.text);
-
-                if (item.count != null) {
-                    if (item.count.equalsIgnoreCase("0")) {
-                        itemControllerChild.countContainer.setVisibility(View.GONE);
-                    } else {
-                        itemControllerChild.countContainer.setVisibility(View.VISIBLE);
-                        itemControllerChild.child_notificationCount.setText("" + item.count);
-                    }
+                ///////////////////////////////////////////////////////
+                String fileId = DBWrapper.getInstance().getSGLogoFileID(item.text);
+                if (fileId != null && fileId.length() > 0) {
+                    setProfilePic(itemControllerChild.displayPicture, fileId);
                 } else {
+
+                }
+                //count of child//////////////
+                int muteId = DBWrapper.getInstance().getSGMuteInfo(item.text);
+                if (muteId == 0) {
+                    itemControllerChild.btn_notify_toggle.setVisibility(View.GONE);
+                } else {
+                    itemControllerChild.btn_notify_toggle.setVisibility(View.VISIBLE);
+                }
+
+                //notify or not////////////
+                int countId = DBWrapper.getInstance().getNewMessageCountForSG(item.text);
+                if (countId == 0) {
                     itemControllerChild.countContainer.setVisibility(View.GONE);
-                }
-
-
-                if (item.notify != null) {
-                    if (item.notify.equalsIgnoreCase("notificationOff")) {
-                        itemControllerChild.btn_notify_toggle.setImageResource(R.drawable.ic_launcher);
-                    } else if (item.notify.equalsIgnoreCase("disconnected")) {
-                        itemControllerChild.btn_notify_toggle.setImageResource(R.drawable.ic_launcher);
-                    } else if (item.notify.equalsIgnoreCase("notConnected")) {
-                        itemControllerChild.btn_notify_toggle.setImageResource(R.drawable.ic_launcher);
-                    } else {
-                        itemControllerChild.btn_notify_toggle.setBackgroundDrawable(null);
-                    }
                 } else {
-                    itemControllerChild.btn_notify_toggle.setBackgroundDrawable(null);
+                    itemControllerChild.countContainer.setVisibility(View.VISIBLE);
+                    itemControllerChild.child_notificationCount.setText("" + countId);
                 }
 
 
-                itemControllerChild.btn_notify_toggle.setOnClickListener(new View.OnClickListener() {
+                //activate or not////////////
+                int activeId = DBWrapper.getInstance().getNewMessageCountForSG(item.text);
+                if (activeId == 0) {
+                    itemControllerChild.btn_active_toggle.setVisibility(View.GONE);
+                } else if(activeId == 1){
+                    itemControllerChild.btn_active_toggle.setBackgroundResource(R.drawable.refresh);
+                }else {
+                    //itemControllerChild.btn_active_toggle.setBackgroundResource(R.drawable.error);
+                }
+
+                //DBWrapper.getInstance().getSGDisplayName(sg);
+                ///////////////////////////////////////////////////////
+
+
+                itemControllerChild.btn_active_toggle.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Log.e("temp", "is here");
@@ -143,18 +169,11 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     @Override
                     public void onClick(View v) {
                         SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance();
-                        Log.e("temp", "change UI - "+item.text);
-                        Log.e("temp", "change UI - "+sharedPrefManager.getUserPhone());
                         String user = sharedPrefManager.getUserPhone();
-                        if(user != null && user.contains("-"))
+                        if (user != null && user.contains("-"))
                             user = user.replace("-", "");
-                        if(context != null)
-                         ((HomeScreen)context).switchSG(user+"_"+item.text);
-
-                        /*SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance();
-                        sharedPrefManager.saveUserName("918130069224" + "_" + item.text);
-                        sharedPrefManager.saveUserPassword("ykqMT9n4gX");*/
-                        //((HomeScreen)context).LoginTaskOnServer();
+                        if (context != null)
+                            ((HomeScreen) context).switchSG(user + "_" + item.text);
                     }
                 });
                 break;
@@ -184,8 +203,10 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     private static class ListChildViewHolder extends RecyclerView.ViewHolder {
+        public ImageView displayPicture;
         public TextView child_title;
         public ImageView btn_notify_toggle;
+        public ImageView btn_active_toggle;
         public TextView child_notificationCount;
         public RelativeLayout countContainer;
         public Item refferalItem;
@@ -193,9 +214,11 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         public ListChildViewHolder(View itemView) {
             super(itemView);
+            displayPicture = (ImageView) itemView.findViewById(R.id.displayPicture);
             child_title = (TextView) itemView.findViewById(R.id.child_title);
             child_notificationCount = (TextView) itemView.findViewById(R.id.child_notificationCount);
             btn_notify_toggle = (ImageView) itemView.findViewById(R.id.btn_notify_toggle);
+            btn_active_toggle = (ImageView)itemView.findViewById(R.id.btn_active_toggle);
             countContainer = (RelativeLayout) itemView.findViewById(R.id.countContainer);
             container = (RelativeLayout) itemView.findViewById(R.id.container);
         }
@@ -218,5 +241,102 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             this.count = count;
             this.notify = notify;
         }
+    }
+
+    private boolean setProfilePic(ImageView picView, String groupPicId) {
+//		System.out.println("groupPicId : "+groupPicId);
+        String img_path = getThumbPath(groupPicId);
+        picView.setImageResource(R.drawable.about_icon);
+        if (groupPicId == null || (groupPicId != null && groupPicId.equals("")) || groupPicId.equals("clear") || groupPicId.contains("logofileid"))
+            return false;
+        if (img_path != null) {
+            File file1 = new File(img_path);
+//			Log.d(TAG, "PicAvailibilty: "+ Uri.parse(filename)+" , "+filename+" , "+file1.exists());
+            if (file1.exists()) {
+                picView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+//				picView.setImageURI(Uri.parse(img_path));
+                setThumb((ImageView) picView, img_path, groupPicId);
+                return true;
+            } else {
+                if (Build.VERSION.SDK_INT >= 11)
+                    new BitmapDownloader((RoundedImageView) picView).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, groupPicId, BitmapDownloader.THUMB_REQUEST);
+                else
+                    new BitmapDownloader((RoundedImageView) picView).execute(groupPicId, BitmapDownloader.THUMB_REQUEST);
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= 11)
+                new BitmapDownloader((RoundedImageView) picView).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, groupPicId, BitmapDownloader.THUMB_REQUEST);
+            else
+                new BitmapDownloader((RoundedImageView) picView).execute(groupPicId, BitmapDownloader.THUMB_REQUEST);
+
+        }
+        return false;
+    }
+
+    private void setThumb(ImageView imageViewl, String path, String groupPicId) {
+        BitmapFactory.Options bfo = new BitmapFactory.Options();
+        bfo.inSampleSize = 2;
+        Bitmap bm = null;
+        try {
+            bm = BitmapFactory.decodeFile(path, bfo);
+//		    bm = ThumbnailUtils.extractThumbnail(bm, 200, 200);
+            bm = rotateImage(path, bm);
+//		    bm = Bitmap.createScaledBitmap(bm, 200, 200, true);
+        } catch (Exception ex) {
+
+        }
+        if (bm != null) {
+            imageViewl.setImageBitmap(bm);
+//	    	SuperChatApplication.addBitmapToMemoryCache(groupPicId,bm);
+        } else {
+            try {
+                imageViewl.setImageURI(Uri.parse(path));
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
+    public static Bitmap rotateImage(String path, Bitmap bm) {
+        int orientation = 1;
+        try {
+            ExifInterface exifJpeg = new ExifInterface(path);
+            orientation = exifJpeg.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+////			orientation = Integer.parseInt(exifJpeg.getAttribute(ExifInterface.TAG_ORIENTATION));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (orientation != ExifInterface.ORIENTATION_NORMAL) {
+            int width = bm.getWidth();
+            int height = bm.getHeight();
+            Matrix matrix = new Matrix();
+            if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
+                matrix.postRotate(90);
+            } else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
+                matrix.postRotate(180);
+            } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+                matrix.postRotate(270);
+            }
+            return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, true);
+        }
+
+        return bm;
+    }
+
+    private String getThumbPath(String groupPicId) {
+        if (groupPicId == null)
+            groupPicId = SharedPrefManager.getInstance().getUserFileId(SharedPrefManager.getInstance().getUserName()); // 1_1_7_G_I_I3_e1zihzwn02
+        if (groupPicId != null) {
+            String profilePicUrl = groupPicId + ".jpg";//AppConstants.media_get_url+
+            File file = Environment.getExternalStorageDirectory();
+            String filename = file.getPath() + File.separator + Constants.contentProfilePhoto + profilePicUrl;
+            File contentFile = new File(filename);
+            if (contentFile != null && contentFile.exists()) {
+                return filename;
+            }
+
+        }
+        return null;
     }
 }

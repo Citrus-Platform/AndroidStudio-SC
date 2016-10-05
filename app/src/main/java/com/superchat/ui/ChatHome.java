@@ -487,6 +487,7 @@ public class ChatHome extends ListFragment  implements ChatCountListener,Connect
 			superGroupName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
 		if(superGroupIcon != null)
 			setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
+		((HomeScreen) getActivity()).updateSlidingDrawer(SharedPrefManager.getInstance().getCurrentSGDisplayName(), SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
 		super.onResume();
 	}
 	public void getShareInfo(){
