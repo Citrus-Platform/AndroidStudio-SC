@@ -1000,6 +1000,11 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					showDialog("Please try again later.", null);
 			}else{
 //				if (str!=null && str.contains("success"))
+				if(isSwitchSG && messageService != null) {
+					messageService.chatLogout();
+
+					messageService.chatLogin();
+				}
 				if(iPrefManager.isContactSynched() && iPrefManager.isGroupsLoaded()){
 					//Get all the shared ID's - This call is for everyone
 					String shared_id_data = sharedPrefManager.getSharedIDData();

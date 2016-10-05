@@ -2482,6 +2482,7 @@ public class ChatService extends Service implements interfaceInstances {
 						password = prefManager.getUserPassword();
 					}
 					SmackAndroid.init(SuperChatApplication.context);
+					Log.e(TAG, "chatLogin: userName === "+userName);
 					userMe = userName;
 					ConnectionConfiguration connConfig = null;
 					try {
@@ -3008,6 +3009,7 @@ public class ChatService extends Service implements interfaceInstances {
 			try {
 				connection.removePacketListener(packetListener);
 				connection.disconnect();
+				xmppConectionStatus = false;
 				clearAllNotifications();
 			} catch (Exception e) {
 			}
@@ -3512,12 +3514,11 @@ public class ChatService extends Service implements interfaceInstances {
 			contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
 			System.out.println("ChatService - 2::saveMessage: - "+contentvalues.toString());
 			long insertedInfo = chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
-			Log.d(TAG, "insertedInfo during message save: " + insertedInfo + " , " + contentvalues.valueSet().toArray());
+			Log.e(TAG, "insertedInfo during message save: " + insertedInfo + " , " + contentvalues.valueSet().toArray());
 			if (chatListener != null)
 				chatListener.notifyChatRecieve(from, msg);
 		} catch (Exception e) {
-			Log.d(TAG, "Exception during save message" + from + "-" + to + "-"
-					+ msg);
+			Log.d(TAG, "Exception during save message" + from + "-" + to + "-" + msg);
 		}
 		return name;
 	}

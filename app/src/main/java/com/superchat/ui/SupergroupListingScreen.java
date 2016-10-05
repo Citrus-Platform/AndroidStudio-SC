@@ -1387,7 +1387,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 									startActivity(intent);
 									finish();
 								}else {
-									current_user_id = registrationForm.getiUserId();
+//									current_user_id = registrationForm.getiUserId();
 									verifyUserSG(current_user_id);
 								}
 							}
