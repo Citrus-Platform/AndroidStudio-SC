@@ -1852,6 +1852,7 @@ public boolean isContactModified(String rawId, int version){
 			contentvalues.put(DatabaseConstants.DOMAIN_TYPE_VALUE, Integer.valueOf(1));
 			contentvalues.put(DatabaseConstants.DOMAIN_ORG_URL, sg_data.getOrgUrl());
 			contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
+			contentvalues.put(DatabaseConstants.DOMAIN_MUTE_INFO, Integer.valueOf(0));
 			long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
 			if(row > 0)
 				Log.e("DBWrapper", "updateOwnedSGData count " + row);
@@ -1898,6 +1899,33 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+	public void updateSGMuteInfo(String sg_name, int value){
+		try{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put(DatabaseConstants.DOMAIN_MUTE_INFO, Integer.valueOf(value));
+			int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
+					new String[] { sg_name });
+			if(row > 0)
+				Log.e("DBWrapper", "updateSGMuteInfo count " + row);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	public int getSGMuteInfo(String sg) {
+		int mute = 0;
+		Cursor cursor = DBWrapper.getInstance().query(
+				DatabaseConstants.TABLE_NAME_MULTIPLE_SG,
+				new String[] { DatabaseConstants.DOMAIN_MUTE_INFO },
+				DatabaseConstants.DOMAIN_NAME + "='" + sg+"'", null,
+				null);
+		if (cursor != null) {
+			while (cursor.moveToNext())
+				mute = cursor.getInt(cursor.getColumnIndex(DatabaseConstants.DOMAIN_MUTE_INFO));
+		}
+		if (cursor != null)
+			cursor.close();
+		return mute;
+	}
 
 	public void updateJoinedSGData(ArrayList<JoinedDomainNameSet> list){
 		try{
@@ -1913,6 +1941,7 @@ public boolean isContactModified(String rawId, int version){
 				contentvalues.put(DatabaseConstants.DOMAIN_TYPE_VALUE, Integer.valueOf(2));
 				contentvalues.put(DatabaseConstants.DOMAIN_ORG_URL, sg_data.getOrgUrl());
 				contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
+				contentvalues.put(DatabaseConstants.DOMAIN_MUTE_INFO, Integer.valueOf(0));
 				long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
 				if(row > 0)
 					Log.e("DBWrapper", "updateJoinedSGData count " + row);
@@ -1935,6 +1964,7 @@ public boolean isContactModified(String rawId, int version){
 				contentvalues.put(DatabaseConstants.DOMAIN_TYPE_VALUE, Integer.valueOf(3));
 				contentvalues.put(DatabaseConstants.DOMAIN_ORG_URL, sg_data.getOrgUrl());
 				contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
+				contentvalues.put(DatabaseConstants.DOMAIN_MUTE_INFO, Integer.valueOf(0));
 				long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
 				if(row > 0)
 					Log.e("DBWrapper", "updateInvitedSGData count " + row);
@@ -1957,6 +1987,21 @@ public boolean isContactModified(String rawId, int version){
 		if (cursor != null)
 			cursor.close();
 		return sg_name;
+	}
+	public int getNewMessageCountForSG(String sg) {
+		int msg_count = 0;
+		Cursor cursor = DBWrapper.getInstance().query(
+				DatabaseConstants.TABLE_NAME_MULTIPLE_SG,
+				new String[] { DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT },
+				DatabaseConstants.DOMAIN_NAME + "='" + sg+"'", null,
+				null);
+		if (cursor != null) {
+			while (cursor.moveToNext())
+				msg_count = cursor.getInt(cursor.getColumnIndex(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT));
+		}
+		if (cursor != null)
+			cursor.close();
+		return msg_count;
 	}
 
 
