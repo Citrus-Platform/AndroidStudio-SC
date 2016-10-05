@@ -997,6 +997,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 							showDialog(citrusError.message, null);
 						}else if(citrusError!=null && citrusError.code.equals("20020") ){
 							showDialog(citrusError.message, citrusError.code);
+						}else if(citrusError!=null && citrusError.code.equals("20031") ){
+							showDialog(citrusError.message, citrusError.code);
+//							DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
 						}else
 							showDialog(citrusError.message, null);
 					} else if (errorModel.message != null){

@@ -1927,6 +1927,35 @@ public boolean isContactModified(String rawId, int version){
 			cursor.close();
 		return mute;
 	}
+	public void updateSGActiveStatus(String sg_name, String value){
+		try{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put(DatabaseConstants.DOMAIN_ACTIVATE_STATUS, value);
+			int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
+					new String[] { sg_name });
+			if(row > 0)
+				Log.e("DBWrapper", "updateSGActiveStatus count " + row);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	public boolean isSGActive(String sg) {
+		String active = null;
+		Cursor cursor = DBWrapper.getInstance().query(
+				DatabaseConstants.TABLE_NAME_MULTIPLE_SG,
+				new String[] { DatabaseConstants.DOMAIN_ACTIVATE_STATUS },
+				DatabaseConstants.DOMAIN_NAME + "='" + sg+"'", null,
+				null);
+		if (cursor != null) {
+			while (cursor.moveToNext())
+				active = cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_ACTIVATE_STATUS));
+		}
+		if (cursor != null)
+			cursor.close();
+		if(active != null && active.equalsIgnoreCase("true"))
+			return true;
+		return false;
+	}
 
 	public void updateJoinedSGData(ArrayList<JoinedDomainNameSet> list){
 		try{

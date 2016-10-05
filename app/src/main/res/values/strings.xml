@@ -534,6 +534,7 @@
     <string name="shared_id">"Common official ID"</string>
     <string name="re_invite_confirmation">"Do you want to re-invite "</string>
     <string name="reactivate_alert">"Your account has been deactivated on this phone, please reactivate your account or contact your SuperGroup Admin."</string>
+    <string name="account_deactivated">"Your account has been deactivated, please contact your SuperGroup Admin."</string>
     <string name="support_txt">"If you are having problems with the app or signing up, please contact us.\nIf you are a large organization, team or group contact us and we will help with set up."
 	</string>
     <string name="shared_is_popup">"What is this? \n\nIf you want more than one users to manage messages sent to a single entity like ‘Customer service’ or ‘Accounts’, use a Common official ID.\n\nNOTE: The Common official ID gets added to all members’ contact list.\n\nCreate a Common official ID?"

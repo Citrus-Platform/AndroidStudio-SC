@@ -1361,18 +1361,25 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 								for (int i = 0; i < regObjRes.getActivateDomainDataSet().size(); i++) {
 									if (registrationForm.getDomainName().equalsIgnoreCase(regObjRes.getActivateDomainDataSet().get(i).getDomainName())) {
 										regObj = regObjRes.getActivateDomainDataSet().get(i);
-										System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
-										iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
-										iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
-										iPrefManager.saveUserDomain(regObj.getDomainName());
-										if (selectedSGDisplayName != null)
-											iPrefManager.saveCurrentSGDisplayName(selectedSGDisplayName);
-										iPrefManager.saveUserId(regObj.getUserId());
+										if(regObj.isActivateSuccess()) {
+											System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
+											iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
+											iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
+											iPrefManager.saveUserDomain(regObj.getDomainName());
+											if (selectedSGDisplayName != null)
+												iPrefManager.saveCurrentSGDisplayName(selectedSGDisplayName);
+											iPrefManager.saveUserId(regObj.getUserId());
 //										iPrefManager.setAppMode("VirginMode");
 //										iPrefManager.saveUserLogedOut(false);
-										iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
-										current_user_id = regObj.getUserId();
-										DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
+											iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
+											current_user_id = regObj.getUserId();
+											DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
+										}else{
+											DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
+											if(welcomeDialog != null)
+												welcomeDialog.dismiss();
+											Toast.makeText(SupergroupListingScreen.this, getString(R.string.account_deactivated), Toast.LENGTH_SHORT).show();
+										}
 									}else{
 										regObj = regObjRes.getActivateDomainDataSet().get(i);
 										System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
