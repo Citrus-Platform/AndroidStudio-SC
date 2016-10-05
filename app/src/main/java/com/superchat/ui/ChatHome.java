@@ -465,6 +465,7 @@ public class ChatHome extends ListFragment  implements ChatCountListener,Connect
 				adapter.notifyDataSetChanged();
 				adapter.notifyDataSetInvalidated();
 			}
+			onNotifiUI();
 		} catch(Exception e){
 			e.printStackTrace();
 		}

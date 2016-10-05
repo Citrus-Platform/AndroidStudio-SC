@@ -130,6 +130,7 @@ public class SharedPrefManager {
 	private final String BULLETIN_NEXT_URL = "bulletin_next_url";
 	private final String SG_PASSWORD = "sg_password";
 	private final String SG_USER_ID = "sg_userid";
+	private final String SG_BACKUP_CHECKED = "sg_backup_checked";
 
 	private static SharedPrefManager sharedPrefManager;
 
@@ -243,6 +244,15 @@ public class SharedPrefManager {
         editor.putBoolean(DOMAIN_SUB_ADMIN + user, flag);
         editor.commit();
     }
+
+	public boolean isBackupCheckedForSG(String sg){
+		return pref.getBoolean(SG_BACKUP_CHECKED + sg, false);
+	}
+	public void setBackupCheckedForSG(String sg,boolean flag){
+		editor.putBoolean(SG_BACKUP_CHECKED + sg, flag);
+		editor.commit();
+	}
+
 	public boolean isUpdateCheckNeeded(){
 		return pref.getBoolean(APP_UPDATE, true);
 	}
@@ -1038,6 +1048,7 @@ public boolean isContactModified(){
 		editor.commit();
 	}
 	public void saveUserDomain(String domain) {
+		System.out.println("<< Domain >> : "+domain);
 		editor.putString(USER_DOMAIN, domain);
 		editor.commit();
 	}

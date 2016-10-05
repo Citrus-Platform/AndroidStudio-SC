@@ -3034,7 +3034,10 @@ public class ChatService extends Service implements interfaceInstances {
 			contentvalues.put(ChatDBConstants.SEEN_TIME_FIELD, currentTime);
 		contentvalues.put(ChatDBConstants.SEEN_FIELD, state.ordinal());
 //		contentvalues.put(ChatDBConstants.GROUP_UUID_FIELD, groupUUID);
-		long insertId = chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_STATUS_INFO,contentvalues);
+		//Save USerID and SG in DB
+		contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
+		contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+		long insertId = chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_STATUS_INFO, contentvalues);
 		if(insertId == -1){
 			chatDBWrapper.updateGroupOrBroadCastSeenStatus(from,"(\"" + packetId + "\")", state,currentTime);
 		}

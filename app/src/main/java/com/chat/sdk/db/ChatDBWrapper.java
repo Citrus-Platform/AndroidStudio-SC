@@ -689,8 +689,9 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 //		return cursor;
 //	}
 	public Cursor getGroupOrBroadCastUsersStatus(String messageId){
+		String sg_name = SharedPrefManager.getInstance().getUserDomain();
 		String sql = "SELECT*FROM "
-				+ ChatDBConstants.TABLE_NAME_STATUS_INFO + " WHERE " + ChatDBConstants.MESSAGE_ID + " = '" + messageId +"'";
+				+ ChatDBConstants.TABLE_NAME_STATUS_INFO + " WHERE " + ChatDBConstants.MESSAGE_ID + " = '" + messageId +"'" + " AND " + ChatDBConstants.USER_SG+"='"+sg_name+"'";
 		Cursor cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
 		if (cursor != null && cursor.moveToFirst()) {
 			do {
@@ -998,6 +999,7 @@ public boolean isBroadCastMessage(String idArrays){
 	public void updateGroupOrBroadCastSeenStatus(String userName, String idArrays,
 			Message.SeenState state, long statusTime) {
 		Log.d("ChatDBWrapper", "updateGroupOrBroadCastSeenStatus idArrays " + idArrays);
+		String sg_name = SharedPrefManager.getInstance().getUserDomain();
 		Cursor cursor = null;
 		try {
 			String sql = null;
@@ -1007,6 +1009,7 @@ public boolean isBroadCastMessage(String idArrays){
 				+ ChatDBConstants.DELIVER_TIME_FIELD + "='"+ statusTime + "' WHERE "
 				+ ChatDBConstants.MESSAGE_ID + " IN " + idArrays
 				+ " AND " + ChatDBConstants.SEEN_FIELD + " != '"+ Message.SeenState.seen + "'"
+				+ " AND " + ChatDBConstants.USER_SG+"='"+sg_name+"'"
 				+ " AND " + ChatDBConstants.FROM_USER_FIELD + " != '"+ userName + "'";
 			}else
 				sql = "UPDATE " + ChatDBConstants.TABLE_NAME_STATUS_INFO
@@ -1014,6 +1017,7 @@ public boolean isBroadCastMessage(String idArrays){
 				+ ChatDBConstants.SEEN_TIME_FIELD + "='"+ statusTime + "' WHERE "
 				+ ChatDBConstants.MESSAGE_ID + " IN " + idArrays
 				+ " AND " + ChatDBConstants.SEEN_FIELD + " != '"+ Message.SeenState.seen + "'"
+				+ " AND " + ChatDBConstants.USER_SG+"='"+sg_name+"'"
 				+ " AND " + ChatDBConstants.FROM_USER_FIELD + " != '"+ userName + "'";
 			
 			cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
@@ -1035,6 +1039,7 @@ public boolean isBroadCastMessage(String idArrays){
 	public void updateGroupOrBroadCastSeenStatus(String userName, String idArrays,
 												 int state, long statusTime) {
 		Log.d("ChatDBWrapper", "updateGroupOrBroadCastSeenStatus idArrays " + idArrays);
+		String sg_name = SharedPrefManager.getInstance().getUserDomain();
 		Cursor cursor = null;
 		try {
 			String sql = null;
@@ -1044,6 +1049,7 @@ public boolean isBroadCastMessage(String idArrays){
 						+ ChatDBConstants.DELIVER_TIME_FIELD + "='"+ statusTime + "' WHERE "
 						+ ChatDBConstants.MESSAGE_ID + " IN " + idArrays
 						+ " AND " + ChatDBConstants.SEEN_FIELD + " != '"+ Message.SeenState.seen + "'"
+						+ " AND " + ChatDBConstants.USER_SG+"='"+sg_name+"'"
 						+ " AND " + ChatDBConstants.FROM_USER_FIELD + " != '"+ userName + "'";
 			}else
 				sql = "UPDATE " + ChatDBConstants.TABLE_NAME_STATUS_INFO
@@ -1051,6 +1057,7 @@ public boolean isBroadCastMessage(String idArrays){
 						+ ChatDBConstants.SEEN_TIME_FIELD + "='"+ statusTime + "' WHERE "
 						+ ChatDBConstants.MESSAGE_ID + " IN " + idArrays
 						+ " AND " + ChatDBConstants.SEEN_FIELD + " != '"+ Message.SeenState.seen + "'"
+						+ " AND " + ChatDBConstants.USER_SG+"='"+sg_name+"'"
 						+ " AND " + ChatDBConstants.FROM_USER_FIELD + " != '"+ userName + "'";
 
 			cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
@@ -1976,11 +1983,12 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 //	viewholder.totalGroupUsers=cursor.getInt(cursor.getColumnIndex(ChatDBConstants.TOTAL_USER_COUNT_FIELD));
 //	viewholder.totalGroupReadUsers=cursor.getInt(cursor.getColumnIndex(ChatDBConstants.READ_USER_COUNT_FIELD));
 	public String getAllMessagesForBackup() {
-		String query = "SELECT * FROM " + ChatDBConstants.TABLE_NAME_MESSAGE_INFO + " ORDER BY " + ChatDBConstants.LAST_UPDATE_FIELD;
+		SharedPrefManager pref = SharedPrefManager.getInstance();
+		String current_sg = pref.getUserDomain();
+		String query = "SELECT * FROM " + ChatDBConstants.TABLE_NAME_MESSAGE_INFO + " WHERE " + ChatDBConstants.USER_SG + "='"+ current_sg + "'" + " ORDER BY " + ChatDBConstants.LAST_UPDATE_FIELD;
 		Log.d("ChatDBWrapper", "getAllMessagesForBackup query: " + query);
 		Cursor cursor = null;
 		String compressed_file_path = null;
-        SharedPrefManager pref = SharedPrefManager.getInstance();
 		try{
 			String backup_dir = "SCBackup";
 			String zip_file = "SCBackup.zip";
@@ -2036,6 +2044,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 //						22.	readTime
 //						23.	messageType
 //						24. messageTypeID
+//						25. sgName
 				//========================= FOR IOS ====		
 //						1.	chatType
 //						2.	userID
@@ -2056,6 +2065,10 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 							message.put("fromGroupUserName", pref.getUserServerName(from)  + "#786#" + from);
 						}else
 							message.put("fromGroupUserName", fromGroupUserName);
+						//Add Current Sg and User ID
+						message.put("sgName", cursor.getString(cursor.getColumnIndex(ChatDBConstants.USER_SG)));
+						message.put("userID", cursor.getString(cursor.getColumnIndex(ChatDBConstants.USER_ID)));
+
 			             message.put("messageID", cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID)));
 			             message.put("toUserName", to);
 						 txt_message = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGEINFO_FIELD));
@@ -2190,7 +2203,8 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 				}
 				
 				//Read data from status table
-				query = "SELECT*FROM " + ChatDBConstants.TABLE_NAME_STATUS_INFO;
+
+				query = "SELECT*FROM " + ChatDBConstants.TABLE_NAME_STATUS_INFO + " WHERE " + ChatDBConstants.USER_SG + "='"+ current_sg + "'";
 				cursor = dbHelper.getWritableDatabase().rawQuery(query, null);
 				Log.i("ChatDBWrapper", "record count - "+cursor.getCount());
 				if (cursor != null && cursor.moveToFirst()){
@@ -2199,6 +2213,10 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 		             JSONObject message = null;
 					do{
 						 message = new JSONObject();
+						//Add Current Sg and User ID
+						 message.put("sgName", cursor.getString(cursor.getColumnIndex(ChatDBConstants.USER_SG)));
+						 message.put("userID", cursor.getString(cursor.getColumnIndex(ChatDBConstants.USER_ID)));
+
 			             message.put(ChatDBConstants.MESSAGE_ID, cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID)));
 			             message.put(ChatDBConstants.SEEN_FIELD, cursor.getString(cursor.getColumnIndex(ChatDBConstants.SEEN_FIELD)));
 			             message.put(ChatDBConstants.DELIVER_TIME_FIELD, convertToDate(cursor.getLong(cursor.getColumnIndex(ChatDBConstants.DELIVER_TIME_FIELD))));
@@ -2307,6 +2325,10 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 							 contentvalues.put(ChatDBConstants.TO_USER_FIELD, message_data.toUserName);
 					 } else
 						 contentvalues.put(ChatDBConstants.TO_USER_FIELD, pref.getUserName());
+					 //Add SG Name and user ID
+					 contentvalues.put(ChatDBConstants.USER_SG, message_data.getSgName());
+					 contentvalues.put(ChatDBConstants.USER_ID, message_data.getUserID());
+
 					 if (message_data.fromGroupUserName == null)
 						 message_data.fromGroupUserName = "";
 					 contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, message_data.fromGroupUserName);
@@ -2380,6 +2402,10 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 							 else
 							 	contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message_data.roomID);
 						 }
+						 //Add SG Name and user ID
+						 contentvalues.put(ChatDBConstants.USER_SG, message_data.getSgName());
+						 contentvalues.put(ChatDBConstants.USER_ID, message_data.getUserID());
+
 						 if (pref.isBroadCast(message_data.roomID)) {
 							 contact_name = pref.getBroadCastDisplayName(message_data.roomID) + "#786#" + message_data.roomID;
 							 contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message_data.messageType);
@@ -2475,7 +2501,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 				JSONObject status = data.getJSONObject(i);
 				System.out.println("Status ==> "+(i+1)+":: "+status.toString());
 				MessageStatusModel message_data = gson.fromJson(status.toString(), MessageStatusModel.class);
-				saveGroupOrBroadcastStatus(message_data.from_user, message_data.message_id, message_data.seen, message_data.deliver_time, message_data.seen_time);
+				saveGroupOrBroadcastStatus(message_data.userId, message_data.sgName, message_data.from_user, message_data.message_id, message_data.seen, message_data.deliver_time, message_data.seen_time);
 			}
 
 		} catch (Exception ex) {
@@ -2484,7 +2510,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 		return success;
 	}
 
-	public void saveGroupOrBroadcastStatus(String from, String message_id, int state, String dtime,  String stime) {
+	public void saveGroupOrBroadcastStatus(long userid, String sg, String from, String message_id, int state, String dtime,  String stime) {
 		try{
 			ContentValues contentvalues = new ContentValues();
 			contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
@@ -2501,6 +2527,9 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			if(state == 3)
 				contentvalues.put(ChatDBConstants.SEEN_TIME_FIELD, seen_time);
 			contentvalues.put(ChatDBConstants.SEEN_FIELD, state);
+			//Save USerID and SG in DB
+			contentvalues.put(ChatDBConstants.USER_ID, userid);
+			contentvalues.put(ChatDBConstants.USER_SG, sg);
 			long insertId = insertInDB(ChatDBConstants.TABLE_NAME_STATUS_INFO,contentvalues);
 			if(insertId == -1){
 				updateGroupOrBroadCastSeenStatus(from,"(\"" + message_id + "\")", state, delivered_time);

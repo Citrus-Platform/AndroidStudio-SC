@@ -24,6 +24,12 @@ public class OwnerDomainName
 
     public void setOrgName(String orgName) { this.orgName = orgName; }
 
+    private String logoFileId;
+
+    public String getLogoFileId() { return this.logoFileId; }
+
+    public void setLogoFileId(String orgName) { this.logoFileId = logoFileId; }
+
     private String orgUrl;
 
     public String getOrgUrl() { return this.orgUrl; }

@@ -140,6 +140,10 @@ public static final byte MEDIA_FAILED = 4;
 				+ChatDBConstants.SEEN_FIELD+ " INTEGER NOT NULL,"
 				+ ChatDBConstants.DELIVER_TIME_FIELD+ " LONG,"
 				+ ChatDBConstants.SEEN_TIME_FIELD+ " LONG,"
+				+ ChatDBConstants.USER_ID
+				+ " LONG, "
+				+ ChatDBConstants.USER_SG
+				+ " TEXT,"
 				+ ChatDBConstants.FROM_USER_FIELD+ " TEXT NOT NULL);";
 //				+ ChatDBConstants.GROUP_UUID_FIELD+ " TEXT);";
 }

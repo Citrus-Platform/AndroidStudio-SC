@@ -74,9 +74,28 @@ public class MessageDataModel {
 	@SerializedName(value = "textMessage")
 	public String textMessage = null;
 
+	public String getSgName() {
+		return sgName;
+	}
+
+	public void setSgName(String sgName) {
+		this.sgName = sgName;
+	}
+
+	@SerializedName(value = "sgName")
+	public String sgName = null;
+
+	public String getUserID() {
+		return userID;
+	}
+
+	public void setUserID(String userID) {
+		this.userID = userID;
+	}
+
 	@SerializedName(value = "userID")
 	public String userID = null;
-	
+
 	@SerializedName(value = "date")
 	public String date = null;
 	

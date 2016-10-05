@@ -63,6 +63,8 @@ public static final byte MEDIA_FAILED = 4;
 	public static final String DOMAIN_USER_PASSWORD = "domain_user_password";
 	public static final String DOMAIN_ACTIVATE_STATUS = "domain_activate_status";
 	public static final String DOMAIN_TYPE_VALUE = "domain_type_value";
+	public static final String DOMAIN_ORG_URL = "domain_profile_pic";
+	public static final String DOMAIN_LOGO_FILE_ID = "domain_logo_file_id";
 
 	public static final String TABLE_MULTIPLE_SG_DATA = "CREATE TABLE IF NOT EXISTS "
 			+ DatabaseConstants.TABLE_NAME_MULTIPLE_SG
@@ -74,6 +76,8 @@ public static final byte MEDIA_FAILED = 4;
 			+ DatabaseConstants.DOMAIN_ADMIN_NAME
 			+ " TEXT NOT NULL,"
 			+ DatabaseConstants.DOMAIN_ORG_NAME
+			+ " TEXT, "
+			+ DatabaseConstants.DOMAIN_ORG_URL
 			+ " TEXT, "
 			+ DatabaseConstants.DOMAIN_PRIVACY_TYPE
 			+ " TEXT, "
@@ -91,6 +95,8 @@ public static final byte MEDIA_FAILED = 4;
 			+ " INTEGER, "
 			+ DatabaseConstants.DOMAIN_USER_ID
 			+ " LONG, "
+			+ DatabaseConstants.DOMAIN_LOGO_FILE_ID
+			+ " TEXT, "
 			+ DatabaseConstants.DOMAIN_CREATED_DATE + " TEXT);";
 
 

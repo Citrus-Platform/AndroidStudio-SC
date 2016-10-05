@@ -525,6 +525,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 				case 222:
 					//Call bulk Activation screen.
 					backFromProfile = true;
+					DBWrapper.getInstance().updateSGTypeValue(superGroupName, 2);//Joined
 					registerUserOnServer(superGroupName, selectedSGDisplayName, null);
 					break;
 			}

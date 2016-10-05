@@ -1850,6 +1850,8 @@ public boolean isContactModified(String rawId, int version){
 			contentvalues.put(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT, Integer.valueOf(sg_data.getUnreadCounter()));
 			contentvalues.put(DatabaseConstants.DOMAIN_CREATED_DATE, sg_data.getCreatedDate());
 			contentvalues.put(DatabaseConstants.DOMAIN_TYPE_VALUE, Integer.valueOf(1));
+			contentvalues.put(DatabaseConstants.DOMAIN_ORG_URL, sg_data.getOrgUrl());
+			contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
 			long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
 			if(row > 0)
 				Log.e("DBWrapper", "updateOwnedSGData count " + row);
@@ -1872,6 +1874,30 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+	public void updateSGTypeValue(String sg_name, int type){
+		try{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put(DatabaseConstants.DOMAIN_TYPE_VALUE, Integer.valueOf(type));
+			int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
+					new String[] { sg_name });
+			if(row > 0)
+				Log.e("DBWrapper", "updateSGInvitationJoined count " + row);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	public void updateSGLogoFileID(String sg_name, String fileID){
+		try{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, fileID);
+			int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
+					new String[] { sg_name });
+			if(row > 0)
+				Log.e("DBWrapper", "updateSGLogoFileID count " + row);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
 
 	public void updateJoinedSGData(ArrayList<JoinedDomainNameSet> list){
 		try{
@@ -1885,6 +1911,8 @@ public boolean isContactModified(String rawId, int version){
 				contentvalues.put(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT, Integer.valueOf(sg_data.getUnreadCounter()));
 				contentvalues.put(DatabaseConstants.DOMAIN_CREATED_DATE, sg_data.getCreatedDate());
 				contentvalues.put(DatabaseConstants.DOMAIN_TYPE_VALUE, Integer.valueOf(2));
+				contentvalues.put(DatabaseConstants.DOMAIN_ORG_URL, sg_data.getOrgUrl());
+				contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
 				long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
 				if(row > 0)
 					Log.e("DBWrapper", "updateJoinedSGData count " + row);
@@ -1905,6 +1933,8 @@ public boolean isContactModified(String rawId, int version){
 				contentvalues.put(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT, Integer.valueOf(sg_data.getUnreadCounter()));
 				contentvalues.put(DatabaseConstants.DOMAIN_CREATED_DATE, sg_data.getCreatedDate());
 				contentvalues.put(DatabaseConstants.DOMAIN_TYPE_VALUE, Integer.valueOf(3));
+				contentvalues.put(DatabaseConstants.DOMAIN_ORG_URL, sg_data.getOrgUrl());
+				contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
 				long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
 				if(row > 0)
 					Log.e("DBWrapper", "updateInvitedSGData count " + row);
@@ -1955,6 +1985,21 @@ public boolean isContactModified(String rawId, int version){
 		if (cursor != null) {
 			while (cursor.moveToNext())
 				sg_username = cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_USER_NAME));
+		}
+		if (cursor != null)
+			cursor.close();
+		return sg_username;
+	}
+	public String getSGLogoFileID(String sg) {
+		String sg_username = null;
+		Cursor cursor = DBWrapper.getInstance().query(
+				DatabaseConstants.TABLE_NAME_MULTIPLE_SG,
+				new String[] { DatabaseConstants.DOMAIN_LOGO_FILE_ID },
+				DatabaseConstants.DOMAIN_NAME + "='" + sg +"'", null,
+				null);
+		if (cursor != null) {
+			while (cursor.moveToNext())
+				sg_username = cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_LOGO_FILE_ID));
 		}
 		if (cursor != null)
 			cursor.close();

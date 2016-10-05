@@ -693,10 +693,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			ex.printStackTrace();
 		}
 	}
-	public void updateUserSGData(String user){
+	public void updateUserSGData(String sg_name){
 		try {
 			SharedPrefManager prefManager = SharedPrefManager.getInstance();
-			String sg_name = user.substring(user.indexOf("_") + 1);
+//			String sg_name = user.substring(user.indexOf("_") + 1);
 			prefManager.saveUserDomain(sg_name);
 			prefManager.saveCurrentSGDisplayName(sg_name);
 			cleanDataAndSwitchSG(sg_name);
@@ -716,16 +716,16 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		LoginModel loginForm;
 		ProgressDialog progressDialog = null;
 		SharedPrefManager sharedPrefManager;
-		String sg_user = null;
-		public SignInTaskOnServer(String sg_user){
+		String sg_name = null;
+		public SignInTaskOnServer(String sg_name){
 			 sharedPrefManager = SharedPrefManager.getInstance();
 			 loginForm = new LoginModel();
-			this.sg_user = sg_user;
-			if(sg_user != null) {
+			this.sg_name = sg_name;
+			if(sg_name != null) {
 				loginForm.setUserName(sharedPrefManager.getUserName());
 				loginForm.setPassword(sharedPrefManager.getUserPassword());
 				//update shared preference
-				updateUserSGData(sg_user);
+				updateUserSGData(sg_name);
 			}else{
 				loginForm.setUserName(sharedPrefManager.getUserName());
 				loginForm.setPassword(sharedPrefManager.getUserPassword());
@@ -1072,6 +1072,11 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					}
 				}
 			}
+			if(isSwitchSG){
+				isSwitchSG = false;
+//				loadFragments();
+//				chatFragment.refreshList();
+			}
 			//Get all the shared ID's - This call is for everyone
 			String shared_id_data = sharedPrefManager.getSharedIDData();
 			if(shared_id_data != null && shared_id_data.length() > 0)
@@ -1080,14 +1085,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				new GetSharedIDListFromServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			else
 				new GetSharedIDListFromServer().execute();
-
-//			if(iPrefManager.isFirstTime() && iPrefManager.getAppMode().equals("VirginMode"))
-			{
-				 if(Build.VERSION.SDK_INT >= 11)
-						new CheckDataBackup().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-					else
-						new CheckDataBackup().execute();
-			 }
+			if(sharedPrefManager.isBackupCheckedForSG(sharedPrefManager.getUserDomain())) {
+				addNewGroupsAndBroadcastsToDB();
+			}else {
+				if (Build.VERSION.SDK_INT >= 11)
+					new CheckDataBackup().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				else
+					new CheckDataBackup().execute();
+			}
 
 			if(new_user && messageService != null){
 				String json = finalJSONbject.toString();
@@ -1679,7 +1684,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		@Override
 		protected void onPostExecute(String data) {
 			if(data != null){
-
+				iPrefManager.setBackupCheckedForSG(iPrefManager.getUserDomain(), true);
 			}
 		}
 	}
@@ -1963,8 +1968,7 @@ public void onComposeClick(View view){
 			    contentvalues.put(DatabaseConstants.TO_USER_FIELD, from);
 			else
 			    contentvalues.put(DatabaseConstants.TO_USER_FIELD, myName);
-			contentvalues.put(DatabaseConstants.UNREAD_COUNT_FIELD,
-					new Integer(1));
+			contentvalues.put(DatabaseConstants.UNREAD_COUNT_FIELD, new Integer(1));
 			contentvalues.put(DatabaseConstants.FROM_GROUP_USER_FIELD, "");
 			contentvalues.put(DatabaseConstants.SEEN_FIELD, com.chatsdk.org.jivesoftware.smack.packet.Message.SeenState.sent.ordinal());
 
@@ -3411,10 +3415,12 @@ public void onComposeClick(View view){
 
 	}
 //------------------------- Clear Data to switch for another SG ------------------------------------------
+	boolean isSwitchSG;
 	public void switchSG(String sg){
 		String sg_name = sg.substring(sg.indexOf("_") + 1);
 		updateUserData(sg);
 		progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
+		isSwitchSG = true;
 		activateSG(sg_name);
 	}
 	public void cleanDataAndSwitchSG(String sg_name){

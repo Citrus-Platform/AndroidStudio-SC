@@ -19,11 +19,17 @@ public class MessageStatusModel {
     @SerializedName(value = "deliver_time")
     public String deliver_time;
 
+    @SerializedName(value = "sgName")
+    public String sgName;
+
     @SerializedName(value = "seen_time")
     public String seen_time;
 
     @SerializedName(value = "currentStatus")
     public int currentStatus;
+
+    @SerializedName(value = "userId")
+    public long userId;
 
     @SerializedName(value = "seen")
     public int seen;
