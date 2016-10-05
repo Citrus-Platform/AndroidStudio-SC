@@ -52,6 +52,7 @@ public static final byte MEDIA_FAILED = 4;
 	//Multiple SG related Data -
 	public static final String TABLE_NAME_MULTIPLE_SG = "multiple_sg_table";
 	public static final String DOMAIN_NAME = "domain_name";
+	public static final String DOMAIN_DISPLAY_NAME = "domain_display_name";
 	public static final String DOMAIN_ADMIN_NAME = "domain_admin_name";
 	public static final String DOMAIN_ORG_NAME = "domain_org_name";
 	public static final String DOMAIN_PRIVACY_TYPE = "domain_privacy_type";
@@ -74,6 +75,8 @@ public static final byte MEDIA_FAILED = 4;
 			+ " INTEGER PRIMARY KEY AUTOINCREMENT,"
 			+ DatabaseConstants.DOMAIN_NAME
 			+" TEXT UNIQUE NOT NULL,"
+			+ DatabaseConstants.DOMAIN_DISPLAY_NAME
+			+ " TEXT, "
 			+ DatabaseConstants.DOMAIN_ADMIN_NAME
 			+ " TEXT NOT NULL,"
 			+ DatabaseConstants.DOMAIN_ORG_NAME

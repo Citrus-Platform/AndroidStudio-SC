@@ -340,6 +340,7 @@ EsiaSplashScreen extends Activity {
 	}
 
 	private boolean isVerifiedUser(String mobileNumber) {
+        System.out.println("<< mobileNumber :: "+mobileNumber);
 		if (mobileNumber == null)
 			return false;
 		boolean isVerified = iPrefManager.isMobileVerified(mobileNumber);

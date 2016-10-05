@@ -10,6 +10,16 @@ public class OwnerDomainName
 
     public String getDomainName() { return this.domainName; }
 
+    public String getDomainDisplayName() {
+        return domainDisplayName;
+    }
+
+    public void setDomainDisplayName(String domainDisplayName) {
+        this.domainDisplayName = domainDisplayName;
+    }
+
+    private String domainDisplayName;
+
     public void setDomainName(String domainName) { this.domainName = domainName; }
 
     private String adminName;

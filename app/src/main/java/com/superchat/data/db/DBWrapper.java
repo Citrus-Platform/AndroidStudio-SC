@@ -1843,6 +1843,7 @@ public boolean isContactModified(String rawId, int version){
 			SharedPrefManager.getInstance().saveOwnedDomain(sg_data.getDomainName());
 			ContentValues contentvalues = new ContentValues();
 			contentvalues.put(DatabaseConstants.DOMAIN_NAME, sg_data.getDomainName());
+			contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDomainDisplayName());
 			contentvalues.put(DatabaseConstants.DOMAIN_ADMIN_NAME, sg_data.getAdminName());
 			contentvalues.put(DatabaseConstants.DOMAIN_ORG_NAME, sg_data.getOrgName());
 			contentvalues.put(DatabaseConstants.DOMAIN_PRIVACY_TYPE, sg_data.getPrivacyType());
@@ -1932,6 +1933,7 @@ public boolean isContactModified(String rawId, int version){
 			for (JoinedDomainNameSet sg_data : list) {
 				ContentValues contentvalues = new ContentValues();
 				contentvalues.put(DatabaseConstants.DOMAIN_NAME, sg_data.getDomainName());
+				contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDomainDisplayName());
 				contentvalues.put(DatabaseConstants.DOMAIN_ADMIN_NAME, sg_data.getAdminName());
 				contentvalues.put(DatabaseConstants.DOMAIN_ORG_NAME, sg_data.getOrgName());
 				contentvalues.put(DatabaseConstants.DOMAIN_PRIVACY_TYPE, sg_data.getPrivacyType());
@@ -1955,6 +1957,7 @@ public boolean isContactModified(String rawId, int version){
 			for (InvitedDomainNameSet sg_data : list) {
 				ContentValues contentvalues = new ContentValues();
 				contentvalues.put(DatabaseConstants.DOMAIN_NAME, sg_data.getDomainName());
+				contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDomainDisplayName());
 				contentvalues.put(DatabaseConstants.DOMAIN_ADMIN_NAME, sg_data.getAdminName());
 				contentvalues.put(DatabaseConstants.DOMAIN_ORG_NAME, sg_data.getOrgName());
 				contentvalues.put(DatabaseConstants.DOMAIN_PRIVACY_TYPE, sg_data.getPrivacyType());
@@ -2045,6 +2048,21 @@ public boolean isContactModified(String rawId, int version){
 		if (cursor != null) {
 			while (cursor.moveToNext())
 				sg_username = cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_LOGO_FILE_ID));
+		}
+		if (cursor != null)
+			cursor.close();
+		return sg_username;
+	}
+	public String getSGDisplayName(String sg) {
+		String sg_username = null;
+		Cursor cursor = DBWrapper.getInstance().query(
+				DatabaseConstants.TABLE_NAME_MULTIPLE_SG,
+				new String[] { DatabaseConstants.DOMAIN_DISPLAY_NAME },
+				DatabaseConstants.DOMAIN_NAME + "='" + sg +"'", null,
+				null);
+		if (cursor != null) {
+			while (cursor.moveToNext())
+				sg_username = cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_DISPLAY_NAME));
 		}
 		if (cursor != null)
 			cursor.close();

@@ -1079,6 +1079,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			}
 			if(isSwitchSG){
 				isSwitchSG = false;
+				if(chatFragment != null)
+					chatFragment.notifyChatRecieve("", "");
 //				loadFragments();
 //				chatFragment.refreshList();
 			}
@@ -3423,7 +3425,10 @@ public void onComposeClick(View view){
 	boolean isSwitchSG;
 	public void switchSG(String sg){
 		String sg_name = sg.substring(sg.indexOf("_") + 1);
+		String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
 		updateUserData(sg);
+		System.out.println("<< mobileNumber :: Switch :: "+SharedPrefManager.getInstance().getUserPhone());
+		SharedPrefManager.getInstance().setProfileAdded(current_username, true);
 		progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
 		isSwitchSG = true;
 		activateSG(sg_name);

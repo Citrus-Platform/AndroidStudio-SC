@@ -12,6 +12,16 @@ public class InvitedDomainNameSet
 
     public void setDomainName(String domainName) { this.domainName = domainName; }
 
+    public String getDomainDisplayName() {
+        return domainDisplayName;
+    }
+
+    public void setDomainDisplayName(String domainDisplayName) {
+        this.domainDisplayName = domainDisplayName;
+    }
+
+    private String domainDisplayName;
+
     private String adminName;
 
     public String getAdminName() { return this.adminName; }

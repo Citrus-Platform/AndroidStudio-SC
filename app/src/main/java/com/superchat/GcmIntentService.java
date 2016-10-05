@@ -254,8 +254,7 @@ public class GcmIntentService extends IntentService {
 //			notificationIntent.putExtra("FROM_BULLETIN_NOTIFICATION", true);
 		
 //		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-		notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-				Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		notificationIntent.setAction(Long.toString(System.currentTimeMillis()));
 		PendingIntent contentIntent = PendingIntent.getActivity(
 				SuperChatApplication.context, 0, notificationIntent,
@@ -368,12 +367,13 @@ public class GcmIntentService extends IntentService {
 		tickerText = "Message from " + displayName;
 		messageNotification.setWhen(System.currentTimeMillis());
 		messageNotification.setTicker(tickerText);
-		Intent notificationIntent = new Intent();
+		Intent notificationIntent = new Intent(context, HomeScreen.class);
 		Log.d(TAG, "notificationPackage: "+notificationPackage+" , "+notificationActivity);
 		notificationIntent.setClassName(notificationPackage, notificationPackage+notificationActivity);
 		notificationIntent.putExtra(ChatDBConstants.CONTACT_NAMES_FIELD, displayName);
 		notificationIntent.putExtra(ChatDBConstants.USER_NAME_FIELD, user);
 		notificationIntent.putExtra("FROM_NOTIFICATION", true);
+		notificationIntent.putExtra("DOMAIN_NAME", domainName);
 		
 //		if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal())
 //			notificationIntent.putExtra("FROM_BULLETIN_NOTIFICATION", true);
@@ -382,11 +382,10 @@ public class GcmIntentService extends IntentService {
 		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
 		notificationIntent.setAction(Long.toString(System.currentTimeMillis()));
 		PendingIntent contentIntent = PendingIntent.getActivity(
-				context, 0, notificationIntent, PendingIntent.FLAG_ONE_SHOT);
+				context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		messageNotification.setContentTitle(displayName);
-			 
-			messageNotification.setContentText(msg);
+		messageNotification.setContentText(msg);
 		messageNotification.setContentIntent(contentIntent);
 		int count = prefManager.getChatCountOfUser(user);
 		Notification notification = messageNotification.build();

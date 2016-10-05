@@ -210,6 +210,7 @@ public class SharedPrefManager {
 		editor.commit();
 	}
 	public void setMobileVerified(String mobileNumber,boolean flag){
+		System.out.println("<< mobileNumber : "+mobileNumber +", verified = "+flag);
 		editor.putBoolean(MOBILE_VARIFIED+mobileNumber, flag);
 		editor.commit();
 	}
@@ -1048,7 +1049,7 @@ public boolean isContactModified(){
 		editor.commit();
 	}
 	public void saveUserDomain(String domain) {
-		System.out.println("<< Domain >> : "+domain);
+//		System.out.println("<< Domain >> : "+domain);
 		editor.putString(USER_DOMAIN, domain);
 		editor.commit();
 	}
