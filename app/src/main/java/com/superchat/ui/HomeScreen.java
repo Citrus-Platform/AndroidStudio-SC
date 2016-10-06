@@ -760,7 +760,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		}
 		@Override
 		protected void onPreExecute() {
-			if(!noLoadingNeeded) {
+			if(!noLoadingNeeded && !isSwitchSG) {
 				progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
 				noLoadingNeeded = false;
 			}
@@ -3288,7 +3288,7 @@ public void onComposeClick(View view){
 		updateUserData(sg);
 		System.out.println("<< mobileNumber :: Switch :: "+SharedPrefManager.getInstance().getUserPhone());
 		SharedPrefManager.getInstance().setProfileAdded(current_username, true);
-//		progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
+		progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
 		activateSG(sg_name);
 	}
 	public void cleanDataAndSwitchSG(String sg_name){
@@ -3345,6 +3345,7 @@ public void onComposeClick(View view){
 	public void updateSlidingDrawer(String text , String fileId) {
 		drawerFragment.currentSGName.setText("" + text);
 		setProfilePic(drawerFragment.displayPictureCurrent , fileId);
+		drawerFragment.user.setText("" + SharedPrefManager.getInstance().getDisplayName() + "(You)");
 	}
 //-------------------------------------------------------------------------
 	private boolean setProfilePic(ImageView picView, String groupPicId) {
