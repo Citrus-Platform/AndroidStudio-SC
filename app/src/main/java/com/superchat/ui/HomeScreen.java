@@ -872,6 +872,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 											}
 										}
 									}
+									DBWrapper.getInstance().updateSGContactsLoaded(iPrefManager.getUserDomain(), "true");
 								}
 									directoryGroupSet = loginObj.directoryGroupSet;
 									if(directoryGroupSet != null) {
@@ -908,6 +909,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //											saveMessage(groupDetail.displayName, groupDetail.groupName,"Group created by "+groupDetail.userDisplayName);//saveMessage(groupDetail.displayName, groupDetail.groupName,"You are welcome.");
 										String oldFileId = sharedPrefManager.getUserFileId(groupDetail.fileId);
 										sharedPrefManager.saveUserFileId(groupDetail.groupName, groupDetail.fileId);
+//										DBWrapper.getInstance().updateSGGroupsBroadcastLoaded(iPrefManager.getUserDomain(), "true");
 									}
 									directoryBroadcastGroupSet = loginObj.directoryBroadcastGroupSet;
 									if(directoryBroadcastGroupSet != null) {
@@ -1024,7 +1026,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					messageService.chatLogout();
 					messageService.chatLogin();
 				}
-				if(iPrefManager.isContactSynched() && iPrefManager.isGroupsLoaded()){
+//				if(iPrefManager.isContactSynched() && iPrefManager.isGroupsLoaded()){
+				if(iPrefManager.isContactSynched() && !DBWrapper.getInstance().isSGSharedIDLoaded(iPrefManager.getUserDomain())){
 					//Get all the shared ID's - This call is for everyone
 					String shared_id_data = sharedPrefManager.getSharedIDData();
 					if(shared_id_data != null && shared_id_data.length() > 0)
@@ -1071,13 +1074,15 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 							mViewPager.setCurrentItem(0);
 					}
 
-					if(!isContactSync && !iPrefManager.isGroupsLoaded()){
+//					if(!isContactSync && !iPrefManager.isGroupsLoaded()){
+					if(!isContactSync && !DBWrapper.getInstance().isSGGroupsBroadcastLoaded(iPrefManager.getUserDomain())){
 						if(Build.VERSION.SDK_INT >= 11)
 							new OpenGroupTaskOnServer(!iPrefManager.isFirstTime()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 						else
 							new OpenGroupTaskOnServer(!iPrefManager.isFirstTime()).execute();
 					}
-					if(!iPrefManager.isContactSynched()){
+//					if(!iPrefManager.isContactSynched()){
+					if(!DBWrapper.getInstance().isSGContactsLoaded(iPrefManager.getUserDomain())){
 						if(sharedPrefManager.isOpenDomain()){
 							if(Build.VERSION.SDK_INT >= 11)
 								new ContactMatchingLoadingTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -1091,9 +1096,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 							else
 								new DomainsUserTaskOnServer().execute();
 						}
-						//call Once
-						getBulletinMessages();
 					}
+					//call Once
+					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain()))
+						getBulletinMessages();
 				}
 			}
 			if(isSwitchSG){
@@ -1107,10 +1113,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			String shared_id_data = sharedPrefManager.getSharedIDData();
 			if(shared_id_data != null && shared_id_data.length() > 0)
 				parseSharedIDData(shared_id_data);
-			if(Build.VERSION.SDK_INT >= 11)
-				new GetSharedIDListFromServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-			else
-				new GetSharedIDListFromServer().execute();
+			if(!DBWrapper.getInstance().isSGSharedIDLoaded(iPrefManager.getUserDomain()))
+			{
+				if (Build.VERSION.SDK_INT >= 11)
+					new GetSharedIDListFromServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				else
+					new GetSharedIDListFromServer().execute();
+			}
 			if(sharedPrefManager.isBackupCheckedForSG(sharedPrefManager.getUserDomain())) {
 				addNewGroupsAndBroadcastsToDB();
 			}else {
@@ -2202,9 +2211,7 @@ public void onComposeClick(View view){
 											}
 										}
 						            }
-
-
-
+									DBWrapper.getInstance().updateSGGroupsBroadcastLoaded(iPrefManager.getUserDomain(), "true");
 					            }
 						 }
 					} catch (ClientProtocolException e) {
@@ -2339,6 +2346,8 @@ public void onComposeClick(View view){
 								&& jsonobj.getString("status").equalsIgnoreCase("success")){
 							if(str != null && !str.equals("")){
 								parseSharedIDData(str);
+								System.out.println("[HomeScreen : SHared ID : Done for - "+SharedPrefManager.getInstance().getUserDomain());
+								DBWrapper.getInstance().updateSGSharedIDLoaded(SharedPrefManager.getInstance().getUserDomain(), "true");
 							}
 						}//else Do Nothing
 				} catch (JSONException e) {
@@ -2471,11 +2480,7 @@ public void onComposeClick(View view){
 			ContactUploadModel model = new ContactUploadModel(iPrefManager.getUserId(),null, numbers);
 			  String JSONstring = new Gson().toJson(model);
 			    DefaultHttpClient client1 = new DefaultHttpClient();
-
-//				Log.d(TAG, "serverUpdateCreateGroupInfo request:"+JSONstring);
-
 				 HttpPost httpPost = new HttpPost(Constants.SERVER_URL+ "/tiger/rest/contact/match");
-//		         httpPost.setEntity(new UrlEncodedFormEntity(JSONstring));
 				 httpPost = SuperChatApplication.addHeaderInfo(httpPost,true);
 				 HttpResponse response = null;
 		         try {
@@ -2485,7 +2490,6 @@ public void onComposeClick(View view){
 						 final int statusCode=response.getStatusLine().getStatusCode();
 						 if (statusCode == HttpStatus.SC_OK){ //new1
 							 HttpEntity entity = response.getEntity();
-		//					    System.out.println("SERVER RESPONSE STRING: " + entity.getContent());
 							    BufferedReader rd = new BufferedReader(new InputStreamReader(entity.getContent()));
 					            String line = "";
 					            String str = "";
@@ -2506,132 +2510,6 @@ public void onComposeClick(View view){
 									ContactUpDatedModel updatedModel = gson.fromJson(str,ContactUpDatedModel.class);
 									if (updatedModel != null) {
 										DBWrapper wrapper = DBWrapper.getInstance();
-//										Log.d(TAG,
-//												"serverUpdateContactsInfo onSuccess : Contact synced successful. ");
-
-
-//											if(iPrefManager.isDomainAdmin()){
-//												String number1 = DBWrapper.getInstance().getContactNumber("create_group");
-//												ContentValues contentvalues = new ContentValues();
-//												if(number1==null){
-//													contentvalues.put(DatabaseConstants.USER_NAME_FIELD,"create_group");
-//													contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(0));
-//													contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"00000");
-//													contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
-//													contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, SuperChatApplication.context.getResources().getString(R.string.create_group));
-//													contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
-//													int id = "create_group".hashCode();
-//													if (id < -1)
-//														id = -(id);
-//													contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD,Integer.valueOf(id));
-//													contentvalues.put(DatabaseConstants.RAW_CONTACT_ID,Integer.valueOf(id));
-//													DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
-//												}
-//												String number1 = DBWrapper.getInstance().getContactNumber("create_broadcast");
-//												if(number1==null){
-//													contentvalues = new ContentValues();
-//													contentvalues.put(DatabaseConstants.USER_NAME_FIELD,"create_broadcast");
-//													contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(0));
-//													contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"11111");
-//													contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
-//													contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, SuperChatApplication.context.getResources().getString(R.string.create_broadcast_list));
-//													contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
-//													int id = "create_broadcast".hashCode();
-//													if (id < -1)
-//														id = -(id);
-//													contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD,Integer.valueOf(id));
-//													contentvalues.put(DatabaseConstants.RAW_CONTACT_ID,Integer.valueOf(id));
-//													DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
-//												}
-//												number1 = DBWrapper.getInstance().getContactNumber("new_domain_member");
-//												if(number1==null){
-//													contentvalues = new ContentValues();
-//													contentvalues.put(DatabaseConstants.USER_NAME_FIELD,"new_domain_member");
-//													contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(0));
-//													contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"22222");
-//													contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
-//													contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, SuperChatApplication.context.getResources().getString(R.string.invite_member));
-//													contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
-//													int id = "new_domain_member".hashCode();
-//													if (id < -1)
-//														id = -(id);
-//													contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD,Integer.valueOf(id));
-//													contentvalues.put(DatabaseConstants.RAW_CONTACT_ID,Integer.valueOf(id));
-//													DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
-//												}
-//												number1 = DBWrapper.getInstance().getContactNumber("remove_domain_member");
-//												if(number1==null){
-//													contentvalues = new ContentValues();
-//													contentvalues.put(DatabaseConstants.USER_NAME_FIELD,"remove_domain_member");
-//													contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(0));
-//													contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"333333");
-//													contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
-//													contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, SuperChatApplication.context.getResources().getString(R.string.manage_members));
-//													contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
-//													int id = "remove_domain_member".hashCode();
-//													if (id < -1)
-//														id = -(id);
-//													contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD,Integer.valueOf(id));
-//													contentvalues.put(DatabaseConstants.RAW_CONTACT_ID,Integer.valueOf(id));
-//													DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
-//												}
-//												number1 = DBWrapper.getInstance().getContactNumber("view_member_stats");
-//												if(number1==null){
-//													contentvalues = new ContentValues();
-//													contentvalues.put(DatabaseConstants.USER_NAME_FIELD,"view_member_stats");
-//													contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(0));
-//													contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"444444");
-//													contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
-//													contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, SuperChatApplication.context.getResources().getString(R.string.view_member_stats));
-//													contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
-//													int id = "view_member_stats".hashCode();
-//													if (id < -1)
-//														id = -(id);
-//													contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD,Integer.valueOf(id));
-//													contentvalues.put(DatabaseConstants.RAW_CONTACT_ID,Integer.valueOf(id));
-//													DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
-//												}
-//												number1 = DBWrapper.getInstance().getContactNumber("create_channel");
-//												if(number1==null){
-//													contentvalues = new ContentValues();
-//													contentvalues.put(DatabaseConstants.USER_NAME_FIELD,"create_channel");
-//													contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(0));
-//													contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"555555");
-//													contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
-//													contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, SuperChatApplication.context.getResources().getString(R.string.create_channel));
-//													contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
-//													int id = "create_channel".hashCode();
-//													if (id < -1)
-//														id = -(id);
-//													contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD,Integer.valueOf(id));
-//													contentvalues.put(DatabaseConstants.RAW_CONTACT_ID,Integer.valueOf(id));
-//													DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
-//												}
-//											}else if(SharedPrefManager.getInstance().isOpenDomain()){
-//												String number1 = DBWrapper.getInstance().getContactNumber("new_domain_member");
-//												if(number1==null){
-//													ContentValues contentvalues = new ContentValues();
-//													contentvalues.put(DatabaseConstants.USER_NAME_FIELD,"new_domain_member");
-//													contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(0));
-//													contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-//													contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,"22222");
-//													contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
-//													contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, getString(R.string.invite_member));
-//													contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
-//													int id = "new_domain_member".hashCode();
-//													if (id < -1)
-//														id = -(id);
-//													contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD,Integer.valueOf(id));
-//													contentvalues.put(DatabaseConstants.RAW_CONTACT_ID,Integer.valueOf(id));
-//													DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
-//												}
-//											}
 											for (String st : updatedModel.mobileNumberUserBaseMap.keySet()) {
 												ContactUpDatedModel.UserDetail userDetail = updatedModel.mobileNumberUserBaseMap.get(st);
 //											}
@@ -2674,14 +2552,16 @@ public void onComposeClick(View view){
 										contentvalues.put(DatabaseConstants.ADDRESS, userDetail.address);
 										contentvalues.put(DatabaseConstants.RESIDENCE_TYPE, userDetail.residenceType);
 
-										contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
+										contentvalues.put(DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
+										//Save USerID and SG in DB
+										contentvalues.put(DatabaseConstants.USER_ID, SharedPrefManager.getInstance().getUserId());
+										contentvalues.put(DatabaseConstants.USER_SG, SharedPrefManager.getInstance().getUserDomain());
+
 										if(!userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
 											wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
-//										else
-											if(userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
-												iPrefManager.saveDisplayName((userDetail.name != null ? userDetail.name : ""));
-
-											iPrefManager.saveUserServerName(userDetail.userName, (userDetail.name != null ? userDetail.name : ""));
+										if(userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
+											iPrefManager.saveDisplayName((userDetail.name != null ? userDetail.name : ""));
+										iPrefManager.saveUserServerName(userDetail.userName, (userDetail.name != null ? userDetail.name : ""));
 										if(userDetail.currentStatus!=null)
 											iPrefManager.saveUserStatusMessage(userDetail.userName, userDetail.currentStatus);
 										if(userDetail.department!=null)
@@ -2690,7 +2570,6 @@ public void onComposeClick(View view){
 											iPrefManager.saveUserDesignation(userDetail.userName, userDetail.designation);
 										if(userDetail.gender!=null){
 											iPrefManager.saveUserGender(userDetail.userName, userDetail.gender);
-//											Log.i(TAG, "userName : "+userDetail.userName+", gender : "+userDetail.gender);
 										}
 										ContactUpDatedModel.UserDetail.PrivacyStatusMap privacyStatusMap = userDetail.getPrivacyStatusMap();
 										if(privacyStatusMap!=null){
@@ -2706,10 +2585,6 @@ public void onComposeClick(View view){
 										if(userDetail.imageFileId!=null){
 											iPrefManager.saveUserFileId(userDetail.userName, userDetail.imageFileId);
 											if(userDetail.imageFileId!=null && !userDetail.imageFileId.equals("")){
-//												if (Build.VERSION.SDK_INT >= 11)
-//													new BitmapDownloader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,userDetail.imageFileId);
-//									             else
-//									            	 new BitmapDownloader().execute(userDetail.imageFileId);
 												Message msg = new Message();
 												Bundle data = new Bundle();
 												data.putString("TaskMessage",userDetail.imageFileId);
@@ -2718,49 +2593,10 @@ public void onComposeClick(View view){
 											}
 										}
 									}
-
-//										for (String st : updatedModel.mobileNumberUserBaseMap
-//												.keySet()) {
-//											ContactUpDatedModel.UserDetail userDetail = updatedModel.mobileNumberUserBaseMap.get(st);
-//											//						Log.d(TAG, "contacts sync info with sip address: " + userDetail.iSipAddress);
-//											ContentValues contentvalues = new ContentValues();
-////											contentvalues.put(
-////													DatabaseConstants.USER_SIP_ADDRESS,
-////													userDetail.iSipAddress);
-//											contentvalues.put(
-//													DatabaseConstants.USER_NAME_FIELD,
-//													userDetail.userName);
-//											contentvalues.put(
-//													DatabaseConstants.VOPIUM_FIELD,
-//													Integer.valueOf(1));
-//											contentvalues
-//											.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,
-//													userDetail.mobileNumber);
-//
-//											DBWrapper.getInstance().updateAtMeDirectStatus(contentvalues,DatabaseConstants.CONTACT_NUMBERS_FIELD);
-//											DBWrapper.getInstance().updateAtMeContactDetails(contentvalues,userDetail.mobileNumber);
-//											DBWrapper.getInstance().updateUserNameInContacts(userDetail.userName,userDetail.mobileNumber);
-//											if(userDetail!=null && userDetail.imageFileId!=null && !userDetail.imageFileId.equals("")){
-//												if(iPrefManager.getUserFileId(userDetail.userName) == null || !iPrefManager.getUserFileId(userDetail.userName).equals(userDetail.imageFileId))
-//													new BitmapDownloader().execute(userDetail.imageFileId);
-//												}
-//											if(iPrefManager!=null && userDetail!=null && userDetail.userName!=null){
-//												iPrefManager.saveUserFileId(userDetail.userName, userDetail.imageFileId);
-//												iPrefManager.saveUserStatusMessage(userDetail.userName,  userDetail.currentStatus);
-//												if(userDetail.name!=null)
-//													iPrefManager.saveUserServerName(userDetail.userName,userDetail.name);
-//												DBWrapper.getInstance(context).getChatName(userDetail.userName);
-//											}
-//										}
-//										contactSyncState = CONTACT_SYNC_SUCESSED;
-									}
-//									else
-//										contactSyncState = CONTACT_SYNC_FAILED;
+								}
 					            }
 
 				            }
-//						 else
-//				            	contactSyncState = CONTACT_SYNC_FAILED;
 					} catch (ClientProtocolException e) {
 //						contactSyncState = CONTACT_SYNC_FAILED;
 					} catch (IOException e) {
@@ -2774,7 +2610,8 @@ public void onComposeClick(View view){
 				}catch(Exception e){
 //					contactSyncState = CONTACT_SYNC_FAILED;
 				}
-
+			System.out.println("[HomeScreen : Contacts ID : Done for - "+iPrefManager.getUserDomain());
+			DBWrapper.getInstance().updateSGContactsLoaded(iPrefManager.getUserDomain(), "true");
 		}
 		public static String formatNumber(String str){
 			try{
@@ -3088,7 +2925,6 @@ public void onComposeClick(View view){
 						if (!messages.isEmpty()) {
 							LinkedList<BulletinGetMessageDataModel.MessageData> list = new LinkedList<BulletinGetMessageDataModel.MessageData>(messages);
 							Iterator<BulletinGetMessageDataModel.MessageData> itr = list.descendingIterator();
-							System.out.println("HomeScreen :: SignInTaskOnServer : Writing Bulletin Messages..");
 							while(itr.hasNext()) {
 								BulletinGetMessageDataModel.MessageData message = itr.next();
 								json_body = message.getJsonBody();
@@ -3175,6 +3011,8 @@ public void onComposeClick(View view){
 								json_body = null;
 								type = 0;
 							}
+							System.out.println("[HomeScreen : Bulletin  : Done for - "+iPrefManager.getUserDomain());
+							DBWrapper.getInstance().updateSGBulletinLoaded(iPrefManager.getUserDomain(), "true");
 						}
 						if(next_url != null) {
 							//Save this url is shared preferences for next hit
@@ -3445,22 +3283,24 @@ public void onComposeClick(View view){
 	public void switchSG(String sg){
 		String sg_name = sg.substring(sg.indexOf("_") + 1);
 		String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
+		isSwitchSG = true;
 		drawerFragment.fragmentClose();
 		updateUserData(sg);
 		System.out.println("<< mobileNumber :: Switch :: "+SharedPrefManager.getInstance().getUserPhone());
 		SharedPrefManager.getInstance().setProfileAdded(current_username, true);
-		progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
-		isSwitchSG = true;
+//		progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
 		activateSG(sg_name);
 	}
 	public void cleanDataAndSwitchSG(String sg_name){
 		try{
 			//Clear All Shared Preferences Data
 //			SharedPrefManager.getInstance().clearSharedPref();
+
 			//Clear All Messages - Message Info Table
 //			ChatDBWrapper.getInstance().clearMessageDB();
+
 			//Clear All Contacts - Contacts Table
-			DBWrapper.getInstance().clearAllDB();
+//			DBWrapper.getInstance().clearAllDB();
 		}catch(Exception ex){
 			ex.toString();
 		}

@@ -1939,6 +1939,122 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+	public void updateSGContactsLoaded(String sg_name, String value){
+		try{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put(DatabaseConstants.DOMAIN_CONTACTS_LOADED, value);
+			int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
+					new String[] { sg_name });
+			if(row > 0)
+				Log.e("DBWrapper", "updateSGContactsLoaded count " + row);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	public boolean isSGContactsLoaded(String sg) {
+		String loaded = null;
+		Cursor cursor = DBWrapper.getInstance().query(
+				DatabaseConstants.TABLE_NAME_MULTIPLE_SG,
+				new String[] { DatabaseConstants.DOMAIN_CONTACTS_LOADED },
+				DatabaseConstants.DOMAIN_NAME + "='" + sg+"'", null,
+				null);
+		if (cursor != null) {
+			while (cursor.moveToNext())
+				loaded = cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_CONTACTS_LOADED));
+		}
+		if (cursor != null)
+			cursor.close();
+		if(loaded != null && loaded.equalsIgnoreCase("true"))
+			return true;
+		return false;
+	}
+	public void updateSGGroupsBroadcastLoaded(String sg_name, String value){
+		try{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put(DatabaseConstants.DOMAIN_GROUPS_LOADED, value);
+			int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
+					new String[] { sg_name });
+			if(row > 0)
+				Log.e("DBWrapper", "updateSGGroupsBroadcastLoaded count " + row);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	public boolean isSGGroupsBroadcastLoaded(String sg) {
+		String loaded = null;
+		Cursor cursor = DBWrapper.getInstance().query(
+				DatabaseConstants.TABLE_NAME_MULTIPLE_SG,
+				new String[] { DatabaseConstants.DOMAIN_GROUPS_LOADED},
+				DatabaseConstants.DOMAIN_NAME + "='" + sg+"'", null,
+				null);
+		if (cursor != null) {
+			while (cursor.moveToNext())
+				loaded = cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_GROUPS_LOADED));
+		}
+		if (cursor != null)
+			cursor.close();
+		if(loaded != null && loaded.equalsIgnoreCase("true"))
+			return true;
+		return false;
+	}
+	public void updateSGSharedIDLoaded(String sg_name, String value){
+		try{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put(DatabaseConstants.DOMAIN_OFFICIAL_ID_LOADED, value);
+			int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
+					new String[] { sg_name });
+			if(row > 0)
+				Log.e("DBWrapper", "updateSGSharedIDLoaded count " + row);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	public boolean isSGSharedIDLoaded(String sg) {
+		String loaded = null;
+		Cursor cursor = DBWrapper.getInstance().query(
+				DatabaseConstants.TABLE_NAME_MULTIPLE_SG,
+				new String[] { DatabaseConstants.DOMAIN_OFFICIAL_ID_LOADED},
+				DatabaseConstants.DOMAIN_NAME + "='" + sg+"'", null,
+				null);
+		if (cursor != null) {
+			while (cursor.moveToNext())
+				loaded = cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_OFFICIAL_ID_LOADED));
+		}
+		if (cursor != null)
+			cursor.close();
+		if(loaded != null && loaded.equalsIgnoreCase("true"))
+			return true;
+		return false;
+	}
+	public void updateSGBulletinLoaded(String sg_name, String value){
+		try{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put(DatabaseConstants.DOMAIN_BULLETIN_LOADED, value);
+			int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
+					new String[] { sg_name });
+			if(row > 0)
+				Log.e("DBWrapper", "updateBulletinLoaded count " + row);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	public boolean isSGBulletinLoaded(String sg) {
+		String loaded = null;
+		Cursor cursor = DBWrapper.getInstance().query(
+				DatabaseConstants.TABLE_NAME_MULTIPLE_SG,
+				new String[] { DatabaseConstants.DOMAIN_BULLETIN_LOADED},
+				DatabaseConstants.DOMAIN_NAME + "='" + sg+"'", null,
+				null);
+		if (cursor != null) {
+			while (cursor.moveToNext())
+				loaded = cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_BULLETIN_LOADED));
+		}
+		if (cursor != null)
+			cursor.close();
+		if(loaded != null && loaded.equalsIgnoreCase("true"))
+			return true;
+		return false;
+	}
 	public boolean isSGActive(String sg) {
 		String active = null;
 		Cursor cursor = DBWrapper.getInstance().query(
