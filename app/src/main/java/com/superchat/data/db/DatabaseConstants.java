@@ -69,6 +69,12 @@ public static final byte MEDIA_FAILED = 4;
 	public static final String DOMAIN_MUTE_INFO = "domain_mute_info";
 	public static final String DOMAIN_ACTIVE_INFO = "domain_active_info";
 
+	public static final String DOMAIN_CONTACTS_LOADED = "domain_contacts_loaded";
+	public static final String DOMAIN_GROUPS_LOADED = "domain_groups_loaded";
+	public static final String DOMAIN_OFFICIAL_ID_LOADED = "domain_official_id_loaded";
+	public static final String DOMAIN_BULLETIN_LOADED = "domain_bulletin_loaded";
+
+
 	public static final String TABLE_MULTIPLE_SG_DATA = "CREATE TABLE IF NOT EXISTS "
 			+ DatabaseConstants.TABLE_NAME_MULTIPLE_SG
 			+ "("
@@ -101,6 +107,14 @@ public static final byte MEDIA_FAILED = 4;
 			+ DatabaseConstants.DOMAIN_MUTE_INFO
 			+ " INTEGER, "
 			+ DatabaseConstants.DOMAIN_ACTIVE_INFO
+			+ " INTEGER, "
+			+ DatabaseConstants.DOMAIN_CONTACTS_LOADED
+			+ " INTEGER, "
+			+ DatabaseConstants.DOMAIN_GROUPS_LOADED
+			+ " INTEGER, "
+			+ DatabaseConstants.DOMAIN_OFFICIAL_ID_LOADED
+			+ " INTEGER, "
+			+ DatabaseConstants.DOMAIN_BULLETIN_LOADED
 			+ " INTEGER, "
 			+ DatabaseConstants.DOMAIN_USER_ID
 			+ " LONG, "

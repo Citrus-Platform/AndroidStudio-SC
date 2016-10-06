@@ -124,6 +124,8 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
     public static List<String> inviteUsersList = null;
     public static ChatService inviteService = null;
 
+    String userCurrentSG = null;
+
     private ServiceConnection mConnection = new ServiceConnection() {
 
         public void onServiceConnected(ComponentName className, IBinder binder) {
@@ -166,6 +168,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
         multiOptionTitle = (LinearLayout) findViewById(R.id.id_multiselect_option);
         multiOptionTitle.setVisibility(View.GONE);
         Bundle extras = getIntent().getExtras();
+        userCurrentSG = SharedPrefManager.getInstance().getUserDomain();
         if (extras != null) {
             SCREEN_TYPE = extras.getByte(Constants.CHAT_TYPE, Constants.NARMAL_CHAT);
             groupFileId = extras.getString(Constants.GROUP_FILE_ID, null);
@@ -311,14 +314,13 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                     String as[] = null;
                     String s2 = null;
                     if (i >= 1) {
-                        s2 = "(" + DatabaseConstants.VOPIUM_FIELD + "=? OR " + DatabaseConstants.VOPIUM_FIELD + "=? )" + "AND "
-                                + DatabaseConstants.CONTACT_NAMES_FIELD + " like ?";
+                        s2 = "(" + DatabaseConstants.VOPIUM_FIELD + "=? OR " + DatabaseConstants.VOPIUM_FIELD + "=? )"
+                                + " AND " + DatabaseConstants.USER_SG + "='" + userCurrentSG + "'"
+                                + " AND " + DatabaseConstants.CONTACT_NAMES_FIELD + " like ?";
                         as = new String[3];
                         as[0] = "1";
                         as[1] = "2";
                         as[2] = s1;
-//					s2 = DatabaseConstants.VOPIUM_FIELD + "!=?";
-//					as = (new String[] { "2" });
                     }
                     updateAtmeCursor(s2, as);
                 } else {
@@ -327,6 +329,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                     String s2 = null;
                     if (i >= 1) {
                         s2 = DatabaseConstants.VOPIUM_FIELD + "=? AND "
+                                + DatabaseConstants.USER_SG + "='" + userCurrentSG + "' AND "
                                 + DatabaseConstants.CONTACT_NAMES_FIELD + " like ?";
                         as = new String[2];
                         as[0] = "1";
@@ -356,6 +359,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                 String s2 = null;
                 if (i >= 1) {
                     s2 = DatabaseConstants.VOPIUM_FIELD + "=? AND "
+                            + DatabaseConstants.USER_SG + "='" + userCurrentSG + "' AND "
                             + DatabaseConstants.CONTACT_NAMES_FIELD + " like ?";
                     as = new String[2];
                     as[0] = "1";
