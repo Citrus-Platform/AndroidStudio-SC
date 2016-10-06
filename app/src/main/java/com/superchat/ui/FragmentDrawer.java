@@ -39,6 +39,7 @@ import com.superchat.model.SGroupListObject;
 import com.superchat.model.SlidingMenuData;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
+import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.widgets.RoundedImageView;
 
@@ -92,10 +93,14 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
         String data = iPrefManager.getSgListData();
         ////////////////////////////////////////
+        if(data!=null){
+
         ArrayList<SGroupListObject> ownerDomainNameSet = new ArrayList<>();
         SGroupListObject sGroupListObject = new SGroupListObject();
         try {
-            json = new JSONObject(data);
+                json = new JSONObject(data);
+            Log.e("loginresponse" , "is : "+json.toString());
+
             //Get owner List
             if (json != null && json.has("ownerDomainName")) {
                 // ownerDomainNameSet.add(json.getString("ownerDomainName"));
@@ -161,7 +166,9 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
             }
         }
-
+        }else{
+            dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0"));
+        }
         return dataList;
     }
 
