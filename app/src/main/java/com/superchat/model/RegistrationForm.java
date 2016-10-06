@@ -47,7 +47,7 @@ public class RegistrationForm {
 	private Set<String> domainNameSet;
 
 	@SerializedName("activateAll")
-	public boolean activateAll = false;
+	public String activateAll;
 
 	public void setActiveDomainName(String activeDomainName) {
 		this.activeDomainName = activeDomainName;
@@ -57,11 +57,11 @@ public class RegistrationForm {
 		return activeDomainName;
 	}
 
-	public boolean isActivateAll() {
+	public String isActivateAll() {
 		return activateAll;
 	}
 
-	public void setActivateAll(boolean activateAll) {
+	public void setActivateAll(String activateAll) {
 		this.activateAll = activateAll;
 	}
 
@@ -104,7 +104,7 @@ public class RegistrationForm {
 	}
 
 	public RegistrationForm(String mobileNumber, String type, String imei,
-							String imsi, String clientVersion, Set<String> domainNameSet, boolean activateAll) {
+							String imsi, String clientVersion, Set<String> domainNameSet, String activateAll) {
 		this.iMobileNumber = mobileNumber;
 		this.type = type;
 		this.imei = imei;

@@ -93,82 +93,81 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
         String data = iPrefManager.getSgListData();
         ////////////////////////////////////////
-        if(data!=null){
-
         ArrayList<SGroupListObject> ownerDomainNameSet = new ArrayList<>();
-        SGroupListObject sGroupListObject = new SGroupListObject();
-        try {
-                json = new JSONObject(data);
-            Log.e("loginresponse" , "is : "+json.toString());
 
-            //Get owner List
-            if (json != null && json.has("ownerDomainName")) {
-                // ownerDomainNameSet.add(json.getString("ownerDomainName"));
-                sGroupListObject.setDomainName(json.getJSONObject("ownerDomainName").get("domainName").toString());
-                sGroupListObject.setAdminName(json.getJSONObject("ownerDomainName").get("adminName").toString());
-                sGroupListObject.setOrgName(json.getJSONObject("ownerDomainName").get("orgName").toString());
-                sGroupListObject.setPrivacyType(json.getJSONObject("ownerDomainName").get("privacyType").toString());
-                sGroupListObject.setDomainType(json.getJSONObject("ownerDomainName").get("domainType").toString());
-                sGroupListObject.setCreatedDate(json.getJSONObject("ownerDomainName").get("createdDate").toString());
-
-                ownerDomainNameSet.add(sGroupListObject);
-
-            }
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        //////////////////////////////////////////
-        SlidingMenuData gsonObject = new Gson().fromJson(data, SlidingMenuData.class);
-
-        ArrayList<SGroupListObject> joinedDomainNameSetTemp = new ArrayList<>();
-        joinedDomainNameSetTemp = gsonObject.getJoinedDomainNameSet();
-
-        ArrayList<SGroupListObject> invitedDomainNameSetTemp = new ArrayList<>();
-        invitedDomainNameSetTemp = gsonObject.getInvitedDomainNameSet();
-
-        dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0"));
-
-        if (ownerDomainNameSet != null && ownerDomainNameSet.size() > 0) {
-
-            for (int i = 0; i < ownerDomainNameSet.size(); i++) {
-
-                dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
-                        ownerDomainNameSet.get(i).getDomainName(),
-                        ownerDomainNameSet.get(i).getDomainCount(),
-                        ownerDomainNameSet.get(i).getDomainNotify()));
-            }
-        }
-        ///////////////////////////////////////////////
-        if (joinedDomainNameSetTemp != null && joinedDomainNameSetTemp.size() > 0) {
-
-            for (int i = 0; i < joinedDomainNameSetTemp.size(); i++) {
-
-                dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
-                        joinedDomainNameSetTemp.get(i).getDomainName(),
-                        joinedDomainNameSetTemp.get(i).getDomainCount(),
-                        joinedDomainNameSetTemp.get(i).getDomainNotify()));
-            }
-        }
-        /**
-         * Get Invited List Data in String Array
-         */
-        {
+        if (data != null) {
+            SGroupListObject sGroupListObject = new SGroupListObject();
             try {
-                JSONObject jsonTemp = new JSONObject(data);
-                //invitedDomainNameSet
-                JSONArray array = jsonTemp.getJSONArray("invitedDomainNameSet");
-                invitedDomainNameSet = new ArrayList<String>();
-                for (int i = 0; i < array.length(); i++) {
-                    invitedDomainNameSet.add(array.getString(i));
-                }
-            } catch (Exception e) {
+                json = new JSONObject(data);
+                //Get owner List
+                if (json != null && json.has("ownerDomainName")) {
+                    // ownerDomainNameSet.add(json.getString("ownerDomainName"));
+                    sGroupListObject.setDomainName(json.getJSONObject("ownerDomainName").get("domainName").toString());
+                    sGroupListObject.setAdminName(json.getJSONObject("ownerDomainName").get("adminName").toString());
+                    sGroupListObject.setOrgName(json.getJSONObject("ownerDomainName").get("orgName").toString());
+                    sGroupListObject.setPrivacyType(json.getJSONObject("ownerDomainName").get("privacyType").toString());
+                    sGroupListObject.setDomainType(json.getJSONObject("ownerDomainName").get("domainType").toString());
+                    sGroupListObject.setCreatedDate(json.getJSONObject("ownerDomainName").get("createdDate").toString());
 
+                    ownerDomainNameSet.add(sGroupListObject);
+
+                }
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
-        }
-        }else{
+            //////////////////////////////////////////
+            SlidingMenuData gsonObject = new Gson().fromJson(data, SlidingMenuData.class);
+
+            ArrayList<SGroupListObject> joinedDomainNameSetTemp = new ArrayList<>();
+            joinedDomainNameSetTemp = gsonObject.getJoinedDomainNameSet();
+
+            ArrayList<SGroupListObject> invitedDomainNameSetTemp = new ArrayList<>();
+            invitedDomainNameSetTemp = gsonObject.getInvitedDomainNameSet();
+
+            dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0"));
+
+            if (ownerDomainNameSet != null && ownerDomainNameSet.size() > 0) {
+
+                for (int i = 0; i < ownerDomainNameSet.size(); i++) {
+
+                    dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
+                            ownerDomainNameSet.get(i).getDomainName(),
+                            ownerDomainNameSet.get(i).getDomainCount(),
+                            ownerDomainNameSet.get(i).getDomainNotify()));
+                }
+            }
+            ///////////////////////////////////////////////
+            if (joinedDomainNameSetTemp != null && joinedDomainNameSetTemp.size() > 0) {
+
+                for (int i = 0; i < joinedDomainNameSetTemp.size(); i++) {
+
+                    dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
+                            joinedDomainNameSetTemp.get(i).getDomainName(),
+                            joinedDomainNameSetTemp.get(i).getDomainCount(),
+                            joinedDomainNameSetTemp.get(i).getDomainNotify()));
+                }
+            }
+            /**
+             * Get Invited List Data in String Array
+             */
+            {
+                try {
+                    JSONObject jsonTemp = new JSONObject(data);
+                    //invitedDomainNameSet
+                    JSONArray array = jsonTemp.getJSONArray("invitedDomainNameSet");
+                    invitedDomainNameSet = new ArrayList<String>();
+                    for (int i = 0; i < array.length(); i++) {
+                        invitedDomainNameSet.add(array.getString(i));
+                    }
+                } catch (Exception e) {
+
+                }
+            }
+        } else {
             dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0"));
         }
+
         return dataList;
     }
 
@@ -210,7 +209,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         notificationLayout = (RelativeLayout) layout.findViewById(R.id.notificationLayout);
         notificationLayout.setOnClickListener(this);
 
-        if (SharedPrefManager.getInstance().getOwnedDomain() == null) {
+        if (SharedPrefManager.getInstance().getOwnedDomain() != null) {
             llAddSuperGroup.setVisibility(View.GONE);
         }
 

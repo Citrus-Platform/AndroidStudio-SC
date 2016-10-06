@@ -757,7 +757,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
         }
         selectedSGDisplayName = sg_display_name;
         String clientVersion = "Android_" + version;
-        RegistrationForm registrationForm = new RegistrationForm(mobileNumber, "normal", imei, imsi, clientVersion, null, true);
+        RegistrationForm registrationForm = new RegistrationForm(mobileNumber, null, imei, null, clientVersion, null, "false");
         registrationForm.setToken(imei);
         registrationForm.countryCode = countryCode;
         if (super_group != null && super_group.trim().length() > 0)

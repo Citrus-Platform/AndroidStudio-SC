@@ -66,9 +66,14 @@ public class DBWrapper {
 			beginTransaction();
 			int i = sqlitedatabase.delete(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, null, null);
 			Log.i(TAG, (new StringBuilder()).append("Deleted from Data::").append(i).toString());
-
-//		int k = sqlitedatabase.delete(DatabaseConstants.TABLE_NAME_CONTACT_EMAILS, null, null);
-//		Log.i(TAG,(new StringBuilder()).append("Deleted from Names::").append(k).toString());
+			setTransaction();
+			endTransaction();
+		}
+		if(isTableExists(DatabaseConstants.TABLE_NAME_MULTIPLE_SG)) {
+			SQLiteDatabase sqlitedatabase = dbHelper.getWritableDatabase();
+			beginTransaction();
+			int i = sqlitedatabase.delete(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, null, null);
+			Log.i(TAG, (new StringBuilder()).append("Deleted from Data::").append(i).toString());
 			setTransaction();
 			endTransaction();
 		}
@@ -1868,6 +1873,7 @@ public boolean isContactModified(String rawId, int version){
 			contentvalues.put(DatabaseConstants.DOMAIN_USER_PASSWORD, sg_password);
 			contentvalues.put(DatabaseConstants.DOMAIN_ACTIVATE_STATUS, active);
 			contentvalues.put(DatabaseConstants.DOMAIN_USER_ID, user_id);
+			System.out.println("DBWrapper :: updateSGCredentials : "+contentvalues.toString());
 			int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
 					new String[] { sg_name });
 			if(row > 0)
