@@ -932,13 +932,13 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 //		}
 		RegistrationForm registrationForm = null;
 		if(isInvitedDomain(invitedDomainNameSet, super_group) && !backFromProfile){
-			registrationForm = new RegistrationForm(mobileNumber, "normal", imei, imsi, clientVersion , null ,false);
+			registrationForm = new RegistrationForm(mobileNumber, null, imei, null, clientVersion , null ,"false");
 		}else{
-			registrationForm = new RegistrationForm(mobileNumber, "normal", imei, imsi, clientVersion , domainNameSet ,true);
+			registrationForm = new RegistrationForm(mobileNumber, null, imei, null, clientVersion , domainNameSet , "false");
 		}
 		if(Constants.regid != null)
 			registrationForm.setToken(Constants.regid);
-		registrationForm.countryCode = countryCode;
+//		registrationForm.countryCode = countryCode;
 		if (super_group != null && super_group.trim().length() > 0){
 			registrationForm.setDomainName(super_group);
 			registrationForm.setiUserId(SharedPrefManager.getInstance().getUserId());
