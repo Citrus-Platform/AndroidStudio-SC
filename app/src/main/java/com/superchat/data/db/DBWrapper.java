@@ -2264,4 +2264,107 @@ public boolean isContactModified(String rawId, int version){
 			cursor.close();
 		return user_password;
 	}
+
+//	contentvalues.put(DatabaseConstants.DOMAIN_NAME, sg_data.getDomainName());
+//	contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDomainDisplayName());
+//	contentvalues.put(DatabaseConstants.DOMAIN_ADMIN_NAME, sg_data.getAdminName());
+//	contentvalues.put(DatabaseConstants.DOMAIN_ORG_NAME, sg_data.getOrgName());
+//	contentvalues.put(DatabaseConstants.DOMAIN_PRIVACY_TYPE, sg_data.getPrivacyType());
+//	contentvalues.put(DatabaseConstants.DOMAIN_TYPE, sg_data.getDomainType());
+//	contentvalues.put(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT, Integer.valueOf(sg_data.getUnreadCounter()));
+//	contentvalues.put(DatabaseConstants.DOMAIN_CREATED_DATE, sg_data.getCreatedDate());
+//	contentvalues.put(DatabaseConstants.DOMAIN_TYPE_VALUE, Integer.valueOf(2));
+//	contentvalues.put(DatabaseConstants.DOMAIN_ORG_URL, sg_data.getOrgUrl());
+//	contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
+//	contentvalues.put(DatabaseConstants.DOMAIN_MUTE_INFO, Integer.valueOf(0));
+
+	public ArrayList<JoinedDomainNameSet> getListOfJoinedSGs()
+	{
+		ArrayList<JoinedDomainNameSet> joined = new ArrayList<JoinedDomainNameSet>();
+		Cursor cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM " +DatabaseConstants.TABLE_NAME_MULTIPLE_SG + " WHERE "
+				+ DatabaseConstants.DOMAIN_TYPE_VALUE + "=2", null);
+		try {
+			if (cursor != null) {
+				while (cursor.moveToNext()){
+					JoinedDomainNameSet sgdata = new JoinedDomainNameSet();
+					sgdata.setDomainName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_NAME)));
+					sgdata.setDomainDisplayName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_DISPLAY_NAME)));
+					sgdata.setAdminName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_ADMIN_NAME)));
+					sgdata.setOrgName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_ORG_NAME)));
+					sgdata.setPrivacyType(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_PRIVACY_TYPE)));
+					sgdata.setUnreadCounter(cursor.getInt(cursor.getColumnIndex(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT)));
+					sgdata.setCreatedDate(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_CREATED_DATE)));
+					sgdata.setLogoFileId(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_LOGO_FILE_ID)));
+					sgdata.setDomainMuteInfo(cursor.getInt(cursor.getColumnIndex(DatabaseConstants.DOMAIN_MUTE_INFO)));
+					joined.add(sgdata);
+				}
+			}
+		} catch (Exception e) {
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+				cursor = null;
+			}
+		}
+		return joined;
+	}
+	public ArrayList<InvitedDomainNameSet> getListOfInvitedSGs()
+	{
+		ArrayList<InvitedDomainNameSet> invited = new ArrayList<InvitedDomainNameSet>();
+		Cursor cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM "+DatabaseConstants.TABLE_NAME_MULTIPLE_SG +" WHERE "
+				+ DatabaseConstants.DOMAIN_TYPE_VALUE + "=3", null);
+		try {
+			if (cursor != null) {
+				while (cursor.moveToNext()){
+					InvitedDomainNameSet sgdata = new InvitedDomainNameSet();
+					sgdata.setDomainName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_NAME)));
+					sgdata.setDomainDisplayName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_DISPLAY_NAME)));
+					sgdata.setAdminName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_ADMIN_NAME)));
+					sgdata.setOrgName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_ORG_NAME)));
+					sgdata.setPrivacyType(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_PRIVACY_TYPE)));
+					sgdata.setUnreadCounter(cursor.getInt(cursor.getColumnIndex(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT)));
+					sgdata.setCreatedDate(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_CREATED_DATE)));
+					sgdata.setLogoFileId(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_LOGO_FILE_ID)));
+					sgdata.setDomainMuteInfo(cursor.getInt(cursor.getColumnIndex(DatabaseConstants.DOMAIN_MUTE_INFO)));
+					invited.add(sgdata);
+				}
+			}
+		} catch (Exception e) {
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+				cursor = null;
+			}
+		}
+		return invited;
+	}
+	public OwnerDomainName getOwnedSG()
+	{
+		OwnerDomainName sgdata = new OwnerDomainName();
+		Cursor cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM "+DatabaseConstants.TABLE_NAME_MULTIPLE_SG+ " WHERE "
+				+ DatabaseConstants.DOMAIN_TYPE_VALUE + "=1", null);
+		try {
+			if (cursor != null) {
+				while (cursor.moveToNext()){
+					sgdata.setDomainName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_NAME)));
+					sgdata.setDomainDisplayName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_DISPLAY_NAME)));
+					sgdata.setAdminName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_ADMIN_NAME)));
+					sgdata.setOrgName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_ORG_NAME)));
+					sgdata.setPrivacyType(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_PRIVACY_TYPE)));
+					sgdata.setUnreadCounter(cursor.getInt(cursor.getColumnIndex(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT)));
+					sgdata.setCreatedDate(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_CREATED_DATE)));
+					sgdata.setLogoFileId(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_LOGO_FILE_ID)));
+					sgdata.setDomainMuteInfo(cursor.getInt(cursor.getColumnIndex(DatabaseConstants.DOMAIN_MUTE_INFO)));
+				}
+			}
+		} catch (Exception e) {
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+				cursor = null;
+			}
+		}
+		return sgdata;
+	}
+
 }

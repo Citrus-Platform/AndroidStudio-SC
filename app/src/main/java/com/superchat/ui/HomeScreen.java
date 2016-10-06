@@ -3281,6 +3281,12 @@ public void onComposeClick(View view){
 //------------------------- Clear Data to switch for another SG ------------------------------------------
 	boolean isSwitchSG;
 	public void switchSG(String sg){
+
+		//Testing
+//		ArrayList<JoinedDomainNameSet> joined = DBWrapper.getInstance().getListOfJoinedSGs();
+//		ArrayList<InvitedDomainNameSet> invited = DBWrapper.getInstance().getListOfInvitedSGs();
+//		OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
+
 		String sg_name = sg.substring(sg.indexOf("_") + 1);
 		String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
 		isSwitchSG = true;

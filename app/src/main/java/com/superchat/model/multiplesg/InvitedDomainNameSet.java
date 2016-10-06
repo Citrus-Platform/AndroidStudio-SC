@@ -8,6 +8,16 @@ public class InvitedDomainNameSet
 {
     private String domainName;
 
+    public int getDomainMuteInfo() {
+        return domainMuteInfo;
+    }
+
+    public void setDomainMuteInfo(int domainMuteInfo) {
+        this.domainMuteInfo = domainMuteInfo;
+    }
+
+    private int domainMuteInfo;
+
     public String getDomainName() { return this.domainName; }
 
     public void setDomainName(String domainName) { this.domainName = domainName; }

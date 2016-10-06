@@ -6,6 +6,15 @@ package com.superchat.model.multiplesg;
 
 public class OwnerDomainName
 {
+    public int getDomainMuteInfo() {
+        return domainMuteInfo;
+    }
+
+    public void setDomainMuteInfo(int domainMuteInfo) {
+        this.domainMuteInfo = domainMuteInfo;
+    }
+
+    private int domainMuteInfo;
     private String domainName;
 
     public String getDomainName() { return this.domainName; }
