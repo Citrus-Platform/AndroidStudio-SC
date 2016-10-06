@@ -203,7 +203,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         notificationLayout = (RelativeLayout) layout.findViewById(R.id.notificationLayout);
         notificationLayout.setOnClickListener(this);
 
-        if (SharedPrefManager.getInstance().getOwnedDomain() == null) {
+        if (SharedPrefManager.getInstance().getOwnedDomain() != null) {
             llAddSuperGroup.setVisibility(View.GONE);
         }
 
