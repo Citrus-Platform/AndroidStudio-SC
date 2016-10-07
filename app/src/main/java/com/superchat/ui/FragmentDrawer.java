@@ -280,20 +280,20 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                 SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
                 String mobileNumber = iPrefManager.getUserPhone();
 
-                Bundle bundle = new Bundle();
+//                Bundle bundle = new Bundle();
                 Intent intent = new Intent(getActivity(), ProfileScreen.class);
-                bundle.putString(Constants.KEY_SCREEN_USER_COMING_FROM, Constants.VAL_SCREEN_USER_COMING_FROM_NEW_USER_AFTER_LOGIN);
-                bundle.putBoolean(Constants.REG_TYPE, true);
-                bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
+                intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, true);
+                intent.putExtra("MANAGE_MEMBER_BY_ADMIN", true);
+                intent.putExtra("PROFILE_EDIT_REG_FLOW", true);
+                intent.putExtra(Constants.REG_TYPE, true);
                 //SPECIAL DATA FOR BACK
-                bundle.putBoolean("PROFILE_FIRST", true);
+                intent.putExtra("PROFILE_FIRST", true);
                 if (mobileNumber.indexOf('-') != -1)
                     intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber.substring(mobileNumber.indexOf('-') + 1));
                 else
                     intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber);
-                intent.putExtra(Constants.REG_TYPE, "ADMIN");
-                intent.putExtra("REGISTER_SG", true);
-                intent.putExtras(bundle);
+//                intent.putExtra(Constants.REG_TYPE, "ADMIN");
+//                intent.putExtra("REGISTER_SG", true);
                 startActivityForResult(intent, CODE_ADD_SUPERGROUP);
                 break;
             }

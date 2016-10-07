@@ -5,27 +5,24 @@ import android.graphics.Bitmap.CompressFormat;
 import java.util.regex.Pattern;
 
 public class Constants {
-	
 	public static final String BACKUP_FILEID = "backup_fileid";
 	public static final String LAST_BACKUP_DATE = "last_backup_date";
-	
-public static final String PROFILE_UPDATE = "profile_update";
-public static final String MOBILE_NUMBER_TXT = "mobile_number";
-public static final String COUNTRY_CODE_TXT = "country_code";
-public static final String DOMAIN_NAME = "domain_name";
-public static final String EMAIL = "email";
-public static final String NAME = "name";
-public static final String ORGNAME = "org_name";
+	public static final String PROFILE_UPDATE = "profile_update";
+	public static final String MOBILE_NUMBER_TXT = "mobile_number";
+	public static final String COUNTRY_CODE_TXT = "country_code";
+	public static final String DOMAIN_NAME = "domain_name";
+	public static final String EMAIL = "email";
+	public static final String NAME = "name";
+	public static final String ORGNAME = "org_name";
 	public static final String REG_TYPE = "reg_type";
+	public static final String contentTemp = "SuperChat/temp";
+	public static final String imageTempPath = "SuperChat/streem/tmp/SuperChat";
+	private static final String LOCAL_IP = "52.74.195.75";
+
 	public static final String KEY_SCREEN_USER_COMING_FROM = "reg_type";
+	public static final String SG_CREATE_AFTER_LOGIN = "sg_create_after_login";
 	public static final String VAL_SCREEN_USER_COMING_FROM_NEW_USER_AFTER_LOGIN = "newUserAfterLogin";
 	public static final String VAL_SCREEN_USER_COMING_FROM_NEW_USER_BEFORE_LOGIN = "newUserBeforeLogin";
-
-public static final String contentTemp = "SuperChat/temp";
-public static final String imageTempPath = "SuperChat/streem/tmp/SuperChat";
-
-
-private static final String LOCAL_IP = "52.74.195.75";
 
 //Ireland
 //private static final String PRODUCTION_IP = "52.208.65.253";

@@ -232,6 +232,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
     boolean isViewOnlyDisplayName;
     String userComingFromScreen;
     boolean backToPrevUI = false;
+    boolean sgCreationAfterLogin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -247,6 +248,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
         boolean reg_flow = false;
 
         if (bundle != null) {
+            sgCreationAfterLogin = bundle.getBoolean(Constants.SG_CREATE_AFTER_LOGIN);
             userComingFromScreen = bundle.getString(Constants.KEY_SCREEN_USER_COMING_FROM);
             userName = bundle.getString(Constants.CHAT_USER_NAME, userName);
             displayName = bundle.getString(Constants.CHAT_NAME, displayName);
@@ -1470,12 +1472,14 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                     if (isProfileValidForReg(true)) {
                         if (domainReg && mobForReg != null) {
                             // goto SG registration without finishing UI
-                            Bundle bundle = new Bundle();
-                            bundle.putString(Constants.KEY_SCREEN_USER_COMING_FROM, Constants.VAL_SCREEN_USER_COMING_FROM_NEW_USER_AFTER_LOGIN);
+//                            Bundle bundle = new Bundle();
+//                            bundle.putString(Constants.KEY_SCREEN_USER_COMING_FROM, Constants.VAL_SCREEN_USER_COMING_FROM_NEW_USER_AFTER_LOGIN);
 
                             Intent intent = new Intent(ProfileScreen.this, MainActivity.class);
-                            intent.putExtras(bundle);
+//                            intent.putExtras(bundle);
 
+                            if(sgCreationAfterLogin)
+                                intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, true);
                             if (mobForReg.indexOf('-') != -1)
                                 intent.putExtra(Constants.MOBILE_NUMBER_TXT,
                                         mobForReg.substring(mobForReg.indexOf('-') + 1));
