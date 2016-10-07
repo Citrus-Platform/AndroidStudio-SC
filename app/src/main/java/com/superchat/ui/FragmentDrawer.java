@@ -403,6 +403,9 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     public void fragmentClose() {
         mDrawerLayout.closeDrawer(containerView);
     }
+    public void fragmentOpen() {
+        mDrawerLayout.openDrawer(containerView);
+    }
 
     private boolean setProfilePic(ImageView picView, String groupPicId) {
 //		System.out.println("groupPicId : "+groupPicId);

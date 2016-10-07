@@ -1549,6 +1549,21 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		});
 		bteldialog.show();
 	}
+	public void showDeactiveDialog(String s) {
+		final Dialog dialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar);
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setCanceledOnTouchOutside(false);
+		dialog.setContentView(R.layout.deactivate_alert_dialog);
+		((ImageView)dialog.findViewById(R.id.id_menu_icon)).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				drawerFragment.fragmentOpen();
+				dialog.dismiss();
+			}
+		});
+		dialog.show();
+	}
+
 	public void onExistingSignInClick(View view) {
 	}
 
@@ -3280,23 +3295,35 @@ public void onComposeClick(View view){
 	}
 //------------------------- Clear Data to switch for another SG ------------------------------------------
 	boolean isSwitchSG;
+
+	/**
+	 * When next Supergroup is clicked to change
+	 * @param sg
+     */
 	public void switchSG(String sg){
 		//Testing
+		String sg_name = sg.substring(sg.indexOf("_") + 1);
 //		ArrayList<JoinedDomainNameSet> joined = DBWrapper.getInstance().getListOfJoinedSGs();
 //		ArrayList<InvitedDomainNameSet> invited = DBWrapper.getInstance().getListOfInvitedSGs();
 //		OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
-
-
-		String sg_name = sg.substring(sg.indexOf("_") + 1);
 //		activateSG(sg_name);
-		String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
-		isSwitchSG = true;
-		drawerFragment.fragmentClose();
-		updateUserData(sg);
-		System.out.println("<< mobileNumber :: Switch :: "+SharedPrefManager.getInstance().getUserPhone());
-		SharedPrefManager.getInstance().setProfileAdded(current_username, true);
-		progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
-		markSGActive(sg_name);
+
+
+		if(DBWrapper.getInstance().isSGActive(sg_name)) {
+			//Check if that group is deactivated then show alert
+			String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
+			isSwitchSG = true;
+			drawerFragment.fragmentClose();
+			updateUserData(sg);
+			System.out.println("<< mobileNumber :: Switch :: " + SharedPrefManager.getInstance().getUserPhone());
+			SharedPrefManager.getInstance().setProfileAdded(current_username, true);
+			progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
+			markSGActive(sg_name);
+		}else{
+			//Show Alert Screen to switch Screen.
+			drawerFragment.fragmentClose();
+			showDeactiveDialog("");
+		}
 	}
 	public void cleanDataAndSwitchSG(String sg_name){
 		try{
