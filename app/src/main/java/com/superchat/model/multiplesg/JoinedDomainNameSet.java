@@ -32,6 +32,26 @@ public class JoinedDomainNameSet
         this.domainDisplayName = domainDisplayName;
     }
 
+
+    private String domainCount;
+    private String domainNotify;
+
+    public void setDomainCount(String domainCount) {
+        this.domainCount = domainCount;
+    }
+
+    public void setDomainNotify(String domainNotify) {
+        this.domainNotify = domainNotify;
+    }
+
+    public String getDomainCount() {
+        return domainCount;
+    }
+
+    public String getDomainNotify() {
+        return domainNotify;
+    }
+    
     private String domainDisplayName;
 
     private String adminName;
