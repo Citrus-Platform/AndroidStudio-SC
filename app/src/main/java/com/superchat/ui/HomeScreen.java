@@ -3288,15 +3288,15 @@ public void onComposeClick(View view){
 
 
 		String sg_name = sg.substring(sg.indexOf("_") + 1);
-		activateSG(sg_name);
-//		String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
-//		isSwitchSG = true;
-//		drawerFragment.fragmentClose();
-//		updateUserData(sg);
-//		System.out.println("<< mobileNumber :: Switch :: "+SharedPrefManager.getInstance().getUserPhone());
-//		SharedPrefManager.getInstance().setProfileAdded(current_username, true);
-////		progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
-//		markSGActive(sg_name);
+//		activateSG(sg_name);
+		String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
+		isSwitchSG = true;
+		drawerFragment.fragmentClose();
+		updateUserData(sg);
+		System.out.println("<< mobileNumber :: Switch :: "+SharedPrefManager.getInstance().getUserPhone());
+		SharedPrefManager.getInstance().setProfileAdded(current_username, true);
+		progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
+		markSGActive(sg_name);
 	}
 	public void cleanDataAndSwitchSG(String sg_name){
 		try{
