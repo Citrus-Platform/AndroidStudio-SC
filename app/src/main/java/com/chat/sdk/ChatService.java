@@ -5,11 +5,13 @@ import android.app.ActivityManager.RunningServiceInfo;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -76,7 +78,12 @@ import com.superchat.data.db.DBWrapper;
 import com.superchat.data.db.DatabaseConstants;
 import com.superchat.interfaces.interfaceInstances;
 import com.superchat.model.BulletinMessageDataModel;
+import com.superchat.model.DomainSetObject;
+import com.superchat.model.LoginModel;
+import com.superchat.model.LoginResponseModel;
 import com.superchat.model.LoginResponseModel.UserResponseDetail;
+import com.superchat.model.RegistrationForm;
+import com.superchat.model.RegistrationFormResponse;
 import com.superchat.model.UserProfileModel;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.ui.ChatListScreen;
@@ -196,33 +203,8 @@ public class ChatService extends Service implements interfaceInstances {
 			// Judge for the account has been logged
 			boolean error = e.getMessage().equals("stream:error (conflict)");
 			if (error) {
-				// Close the connection and logout as another user has logged in
-				String mobileNumber = prefManager.getUserPhone();
-				if(mobileNumber!=null && !mobileNumber.equals("")){
-//					prefManager.saveUserLogedOut(false);
-//					prefManager.setMobileVerified(mobileNumber, false);
-					
-//					prefManager.setMobileRegistered(mobileNumber, false);
-					//Do not clean here - check at the login time,
-					//if number is same then don't delete - else delete.
-					prefManager.clearSharedPref();
-					ChatDBWrapper.getInstance().clearMessageDB();
-					DBWrapper.getInstance().clearAllDB();
-					
-				}
-				try{
-					Intent intent1 = new Intent(context, ChatService.class);
-					if(intent1!=null)
-						((SuperChatApplication)context).stopService(intent1);
-				}catch(Exception ex){
-					
-				}
-                Intent intent = new Intent(context, RegistrationOptions.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("CONFLICT_LOGOUT", true);
-				if(HomeScreen.sharedIDData != null && !HomeScreen.sharedIDData.isEmpty())
-					HomeScreen.sharedIDData.clear();
-        		startActivity(intent);
+//				logoutForConflict();
+				validateConflictLogout();
 			}
 		}
 
@@ -245,6 +227,38 @@ public class ChatService extends Service implements interfaceInstances {
 		}
 		
 	};
+
+	/**
+	 * This call will log you out
+	 */
+	public void logoutForConflict(){
+		try{
+			String mobileNumber = prefManager.getUserPhone();
+			if(mobileNumber!=null && !mobileNumber.equals("")){
+//					prefManager.setMobileRegistered(mobileNumber, false);
+				//Do not clean here - check at the login time,
+				//if number is same then don't delete - else delete.
+				prefManager.clearSharedPref();
+				ChatDBWrapper.getInstance().clearMessageDB();
+				DBWrapper.getInstance().clearAllDB();
+			}
+			try{
+				Intent intent1 = new Intent(context, ChatService.class);
+				if(intent1!=null)
+					((SuperChatApplication)context).stopService(intent1);
+			}catch(Exception ex){
+
+			}
+			Intent intent = new Intent(context, RegistrationOptions.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+			intent.putExtra("CONFLICT_LOGOUT", true);
+			if(HomeScreen.sharedIDData != null && !HomeScreen.sharedIDData.isEmpty())
+				HomeScreen.sharedIDData.clear();
+			startActivity(intent);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
 	
 	public static ConnectionStatusListener connectionStatusListener;
 	public static ConnectionStatusListener getConnectionStatusListener() {
@@ -5774,6 +5788,66 @@ public class ChatService extends Service implements interfaceInstances {
 //		System.out.println("+05:30 Millis = "+millis);
 		return millis;
 	}
+//-----------------------------------------------------------------------------------------
+
+	/**
+	 * This call will validate for the conflict, whether its genuine or fake.
+	 * Validity will be decided from the login - fail or success
+	 * Genuine - will logout, because same user may have logged in from some where else
+	 * Fake - Due to some reason system logged you out.
+	 */
+	private void validateConflictLogout(){
+		try{
+			LoginModel loginForm = new LoginModel();
+			loginForm.setUserName(prefManager.getUserName());
+			loginForm.setPassword(prefManager.getUserPassword());
+			if(prefManager.getDeviceToken() != null)
+				loginForm.setToken(prefManager.getDeviceToken());
+			String version = "";
+			try {
+				version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+				if(version!=null && version.contains("."))
+					version = version.replace(".", "_");
+				if(version==null)
+					version = "";
+			} catch (PackageManager.NameNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String clientVersion = "Android_"+version;
+			loginForm.setClientVersion(clientVersion);
+
+
+			Call call = objApi.getApi(this).validateAutoConflict(loginForm);
+			call.enqueue(new RetrofitRetrofitCallback<LoginResponseModel>(this) {
+				@Override
+				protected void onResponseVoidzResponse(Call call, Response response) {
+
+				}
+
+				@Override
+				protected void onResponseVoidzObject(Call call, LoginResponseModel loginObj) {
+					if (loginObj != null && loginObj.status!=null && loginObj.status.equals("success")) {
+						Log.e(TAG, "Received conflict somehow and trying to connect again");
+						chatLogin();
+					}else{
+						Log.e(TAG, "Received conflict and validated true - Some one else have logged in.");
+						logoutForConflict();
+					}
+
+				}
+
+				@Override
+				protected void common() {
+
+				}
+			});
+		} catch(Exception e){
+			objExceptione.printStackTrace(e);
+
+		}
+	}
+
     //]]]]]]]]]]]]
 //    private void getUserProfile(final String userName){
 //        try{

@@ -2954,6 +2954,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 				viewholder.sDateLayout.setVisibility(View.VISIBLE);
 				viewholder.senderMsgText.setVisibility(View.VISIBLE);
 				viewholder.rightImgProgressBar.setVisibility(View.GONE);
+				viewholder.rightImgProgressPercent.setVisibility(View.GONE);
 				if(viewholder.rightImgProgressIndeterminate != null)
 					viewholder.rightImgProgressIndeterminate.setVisibility(View.GONE);
 				viewholder.senderMsgText.setText(viewholder.message);

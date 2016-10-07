@@ -2,6 +2,8 @@ package com.superchat.retrofit.api;
 
 import com.superchat.model.BulletinGetMessageDataModel;
 import com.superchat.model.BulletinMessageDataModel;
+import com.superchat.model.LoginModel;
+import com.superchat.model.LoginResponseModel;
 import com.superchat.model.MarkSGActive;
 import com.superchat.model.RegistrationForm;
 import com.superchat.model.RegistrationFormResponse;
@@ -46,5 +48,8 @@ public interface RetrofitInterface {
 
     @POST(PREFIX_URL + "user/activatedomain/")
     Call<RegistrationFormResponse> activateBulkSGs(@Body RegistrationForm requestObject);
+
+    @POST(PREFIX_URL + "user/login/")
+    Call<LoginResponseModel> validateAutoConflict(@Body LoginModel requestObject);
 
 }
