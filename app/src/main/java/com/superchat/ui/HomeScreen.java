@@ -66,6 +66,7 @@ import com.superchat.interfaces.interfaceInstances;
 import com.superchat.model.BulletinGetMessageDataModel;
 import com.superchat.model.ContactUpDatedModel;
 import com.superchat.model.ContactUploadModel;
+import com.superchat.model.DomainSetObject;
 import com.superchat.model.ErrorModel;
 import com.superchat.model.LoginModel;
 import com.superchat.model.LoginResponseModel;
@@ -73,6 +74,7 @@ import com.superchat.model.LoginResponseModel.BroadcastGroupDetail;
 import com.superchat.model.LoginResponseModel.GroupDetail;
 import com.superchat.model.LoginResponseModel.UserResponseDetail;
 import com.superchat.model.MarkSGActive;
+import com.superchat.model.RegistrationForm;
 import com.superchat.model.RegistrationFormResponse;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.utils.BitmapDownloader;
@@ -716,8 +718,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			prefManager.setContactSynched(false);
 			prefManager.setGroupsLoaded(false);
 			isContactSync = false;
-			if(chatFragment != null)
-				chatFragment.refreshList();
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
@@ -3281,15 +3281,22 @@ public void onComposeClick(View view){
 //------------------------- Clear Data to switch for another SG ------------------------------------------
 	boolean isSwitchSG;
 	public void switchSG(String sg){
+		//Testing
+//		ArrayList<JoinedDomainNameSet> joined = DBWrapper.getInstance().getListOfJoinedSGs();
+//		ArrayList<InvitedDomainNameSet> invited = DBWrapper.getInstance().getListOfInvitedSGs();
+//		OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
+
+
 		String sg_name = sg.substring(sg.indexOf("_") + 1);
-		String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
-		isSwitchSG = true;
-		drawerFragment.fragmentClose();
-		updateUserData(sg);
-		System.out.println("<< mobileNumber :: Switch :: "+SharedPrefManager.getInstance().getUserPhone());
-		SharedPrefManager.getInstance().setProfileAdded(current_username, true);
-		progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
 		activateSG(sg_name);
+//		String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
+//		isSwitchSG = true;
+//		drawerFragment.fragmentClose();
+//		updateUserData(sg);
+//		System.out.println("<< mobileNumber :: Switch :: "+SharedPrefManager.getInstance().getUserPhone());
+//		SharedPrefManager.getInstance().setProfileAdded(current_username, true);
+////		progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
+//		markSGActive(sg_name);
 	}
 	public void cleanDataAndSwitchSG(String sg_name){
 		try{
@@ -3306,7 +3313,12 @@ public void onComposeClick(View view){
 		}
 	}
 //------------------------- Activate SG --------------------
-    private void activateSG(final String sgname){
+
+	/**
+	 * Maek a SG active
+	 * @param sgname
+     */
+    private void markSGActive(final String sgname){
         try{
             Call call = objApi.getApi(this).markSGActive(sgname);
             call.enqueue(new RetrofitRetrofitCallback<MarkSGActive>(this) {
@@ -3342,6 +3354,12 @@ public void onComposeClick(View view){
         }
     }
 //-------------------------------------------------------------------------
+
+	/**
+	 * Update the below items in left pannel
+	 * @param text
+	 * @param fileId
+     */
 	public void updateSlidingDrawer(String text , String fileId) {
 		drawerFragment.currentSGName.setText("" + text);
 		setProfilePic(drawerFragment.displayPictureCurrent , fileId);
@@ -3416,6 +3434,12 @@ public void onComposeClick(View view){
 		}
 	}
 
+	/**
+	 *
+	 * @param path
+	 * @param bm
+     * @return
+     */
 	public static Bitmap rotateImage(String path, Bitmap bm) {
 		int orientation = 1;
 		try {
@@ -3442,5 +3466,68 @@ public void onComposeClick(View view){
 
 		return bm;
 	}
+//--------------------------- Activate Single SG -------------------------
 
+	/**
+	 * Single deactivated SG will be activated
+	 * @param super_group - Name of the SG to Activate
+     */
+	private void activateSG(final String super_group){
+		try{
+			String imei = SuperChatApplication.getDeviceId();
+			String version = "";
+			try {
+				version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+				if (version != null && version.contains("."))
+					version = version.replace(".", "_");
+				if (version == null)
+					version = "";
+			} catch (NameNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String clientVersion = "Android_" + version;
+			String mobileNumber = iPrefManager.getUserPhone();
+			RegistrationForm registrationForm = new RegistrationForm(mobileNumber, null, imei, null, clientVersion , null , "false");
+			if(Constants.regid != null)
+				registrationForm.setToken(Constants.regid);
+			registrationForm.setDomainName(super_group);
+			registrationForm.setiUserId(SharedPrefManager.getInstance().getUserId());
+			registrationForm.setActiveDomainName(super_group);
+			Call call = objApi.getApi(this).activateBulkSGs(registrationForm);
+			call.enqueue(new RetrofitRetrofitCallback<RegistrationFormResponse>(this) {
+				@Override
+				protected void onResponseVoidzResponse(Call call, Response response) {
+
+				}
+
+				@Override
+				protected void onResponseVoidzObject(Call call, RegistrationFormResponse response) {
+					if(progressDialog != null){
+						progressDialog.dismiss();
+						progressDialog = null;
+					}
+					DomainSetObject regObj = response.getActivateDomainDataSet().get(0);
+					//Show Popup to switch or not - In case deactivated SG is clicked.
+					if(true){
+						iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
+						iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
+						iPrefManager.saveUserDomain(regObj.getDomainName());
+						iPrefManager.saveUserId(regObj.getUserId());
+						iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
+
+					}else
+						DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
+				}
+
+				@Override
+				protected void common() {
+
+				}
+			});
+		} catch(Exception e){
+			objExceptione.printStackTrace(e);
+
+		}
+	}
 }
