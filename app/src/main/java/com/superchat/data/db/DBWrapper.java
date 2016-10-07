@@ -1842,6 +1842,11 @@ public boolean isContactModified(String rawId, int version){
 		return l;
 	}
 //----------------------------------------------------------------------------
+
+	/**
+	 * Inserts an entry in DB for Owned SG/Domain
+	 * @param sg_data
+     */
 	public void updateOwnedSGData(OwnerDomainName sg_data){
 		try{
 			//Update Shared Preferences for owned Domain
@@ -1866,6 +1871,15 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+
+	/**
+	 * Updates below values for the sg_name in Database
+	 * @param sg_name
+	 * @param sg_username
+	 * @param sg_password
+	 * @param user_id
+     * @param active
+     */
 	public void updateSGCredentials(String sg_name, String sg_username, String sg_password, long user_id, boolean active){
 		try{
 			ContentValues contentvalues = new ContentValues();
@@ -1882,6 +1896,13 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+
+	/**
+	 * Updates the SG type in database
+	 * types are => 1 - Owned, 2 - Joined, 3 - Invited
+	 * @param sg_name
+	 * @param type
+     */
 	public void updateSGTypeValue(String sg_name, int type){
 		try{
 			ContentValues contentvalues = new ContentValues();
@@ -1894,6 +1915,12 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+
+	/**
+	 * Updates Profile picture for the SG in Database
+	 * @param sg_name
+	 * @param fileID
+     */
 	public void updateSGLogoFileID(String sg_name, String fileID){
 		try{
 			ContentValues contentvalues = new ContentValues();
@@ -1906,6 +1933,12 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+
+	/**
+	 * Updates SG mute information in Database
+	 * @param sg_name
+	 * @param value
+     */
 	public void updateSGMuteInfo(String sg_name, int value){
 		try{
 			ContentValues contentvalues = new ContentValues();
@@ -1918,6 +1951,12 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+
+	/**
+	 * Get Mute information for any SG
+	 * @param sg
+	 * @return 1 or 0 for Mute and unmute
+     */
 	public int getSGMuteInfo(String sg) {
 		int mute = 0;
 		Cursor cursor = DBWrapper.getInstance().query(
@@ -1933,6 +1972,12 @@ public boolean isContactModified(String rawId, int version){
 			cursor.close();
 		return mute;
 	}
+
+	/**
+	 * Updates whether SG is active or not in Database
+	 * @param sg_name
+	 * @param value
+     */
 	public void updateSGActiveStatus(String sg_name, String value){
 		try{
 			ContentValues contentvalues = new ContentValues();
@@ -1945,6 +1990,12 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+
+	/**
+	 * Updates whether contacts for that SG is loaded or not
+	 * @param sg_name
+	 * @param value
+     */
 	public void updateSGContactsLoaded(String sg_name, String value){
 		try{
 			ContentValues contentvalues = new ContentValues();
@@ -1957,6 +2008,12 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+
+	/**
+	 * Checks if contacts are loaded for that SG or not
+	 * @param sg
+	 * @return
+     */
 	public boolean isSGContactsLoaded(String sg) {
 		String loaded = null;
 		Cursor cursor = DBWrapper.getInstance().query(
@@ -1974,6 +2031,12 @@ public boolean isContactModified(String rawId, int version){
 			return true;
 		return false;
 	}
+
+	/**
+	 * Updates whether Groups and Broadcast has been loaded for that SG or not
+	 * @param sg_name
+	 * @param value
+     */
 	public void updateSGGroupsBroadcastLoaded(String sg_name, String value){
 		try{
 			ContentValues contentvalues = new ContentValues();
@@ -1986,6 +2049,12 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+
+	/**
+	 * Checks if Groups and Broadcasts has been loaded or not
+	 * @param sg
+	 * @return
+     */
 	public boolean isSGGroupsBroadcastLoaded(String sg) {
 		String loaded = null;
 		Cursor cursor = DBWrapper.getInstance().query(
@@ -2003,6 +2072,12 @@ public boolean isContactModified(String rawId, int version){
 			return true;
 		return false;
 	}
+
+	/**
+	 * Update the information that Official Id is loaded for that SG or not
+	 * @param sg_name
+	 * @param value
+     */
 	public void updateSGSharedIDLoaded(String sg_name, String value){
 		try{
 			ContentValues contentvalues = new ContentValues();
@@ -2015,6 +2090,12 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+
+	/**
+	 * Checks if Official ID has been loaded or not
+	 * @param sg
+	 * @return
+     */
 	public boolean isSGSharedIDLoaded(String sg) {
 		String loaded = null;
 		Cursor cursor = DBWrapper.getInstance().query(
@@ -2032,6 +2113,12 @@ public boolean isContactModified(String rawId, int version){
 			return true;
 		return false;
 	}
+
+	/**
+	 * Updates whether Bulletin has been loaded for that SG or not
+	 * @param sg_name
+	 * @param value
+     */
 	public void updateSGBulletinLoaded(String sg_name, String value){
 		try{
 			ContentValues contentvalues = new ContentValues();
@@ -2044,6 +2131,12 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+
+	/**
+	 * Checks if Bulletin has been loaded or not
+	 * @param sg
+	 * @return
+     */
 	public boolean isSGBulletinLoaded(String sg) {
 		String loaded = null;
 		Cursor cursor = DBWrapper.getInstance().query(
@@ -2061,6 +2154,12 @@ public boolean isContactModified(String rawId, int version){
 			return true;
 		return false;
 	}
+
+	/**
+	 * Checks if SG is active or not
+	 * @param sg
+	 * @return
+     */
 	public boolean isSGActive(String sg) {
 		String active = null;
 		Cursor cursor = DBWrapper.getInstance().query(
@@ -2079,6 +2178,10 @@ public boolean isContactModified(String rawId, int version){
 		return false;
 	}
 
+	/**
+	 * Updates Joined SG's in DB
+	 * @param list
+     */
 	public void updateJoinedSGData(ArrayList<JoinedDomainNameSet> list){
 		try{
 			for (JoinedDomainNameSet sg_data : list) {
@@ -2103,6 +2206,11 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+
+	/**
+	 * Updates Invited SG's in DB
+	 * @param list
+     */
 	public void updateInvitedSGData(ArrayList<InvitedDomainNameSet> list){
 		try{
 			for (InvitedDomainNameSet sg_data : list) {
@@ -2127,6 +2235,12 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+
+	/**
+	 * Returns SG Name
+	 * @param username
+	 * @return
+     */
 	public String getSGName(String username) {
 		String sg_name = null;
 		Cursor cursor = DBWrapper.getInstance().query(
@@ -2142,6 +2256,11 @@ public boolean isContactModified(String rawId, int version){
 			cursor.close();
 		return sg_name;
 	}
+	/**
+	 * Returns new Message count for that SG
+	 * @param sg
+	 * @return
+     */
 	public int getNewMessageCountForSG(String sg) {
 		int msg_count = 0;
 		Cursor cursor = DBWrapper.getInstance().query(
@@ -2158,22 +2277,11 @@ public boolean isContactModified(String rawId, int version){
 		return msg_count;
 	}
 
-
-	public String getDisplayName1(String userName) {
-		String contactPerson = "User-Name";
-		Cursor cursor = DBWrapper.getInstance().query(
-				DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,
-				new String[] { DatabaseConstants.CONTACT_NAMES_FIELD },
-				DatabaseConstants.USER_NAME_FIELD + "='" + userName+"'", null,
-				null);
-		if (cursor != null) {
-			while (cursor.moveToNext())
-				contactPerson = cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD));
-		}
-		if (cursor != null)
-			cursor.close();
-		return contactPerson;
-	}
+	/**
+	 * Returns username for that SG
+ 	 * @param sg
+	 * @return
+     */
 	public String getSGUserName(String sg) {
 		String sg_username = null;
 		Cursor cursor = DBWrapper.getInstance().query(
@@ -2189,6 +2297,12 @@ public boolean isContactModified(String rawId, int version){
 			cursor.close();
 		return sg_username;
 	}
+
+	/**
+	 * Returns SG profile pic ID
+	 * @param sg
+	 * @return
+     */
 	public String getSGLogoFileID(String sg) {
 		String sg_username = null;
 		Cursor cursor = DBWrapper.getInstance().query(
@@ -2204,6 +2318,12 @@ public boolean isContactModified(String rawId, int version){
 			cursor.close();
 		return sg_username;
 	}
+
+	/**
+	 * Returns Display name for SG
+	 * @param sg
+	 * @return
+     */
 	public String getSGDisplayName(String sg) {
 		String sg_username = null;
 		Cursor cursor = DBWrapper.getInstance().query(
@@ -2219,6 +2339,12 @@ public boolean isContactModified(String rawId, int version){
 			cursor.close();
 		return sg_username;
 	}
+
+	/**
+	 * Returns userid for SG
+	 * @param sg
+	 * @return
+     */
 	public long getSGUserID(String sg) {
 		long user_id = 0;
 		Cursor cursor = DBWrapper.getInstance().query(
@@ -2234,6 +2360,12 @@ public boolean isContactModified(String rawId, int version){
 			cursor.close();
 		return user_id;
 	}
+
+	/**
+	 * Returns type for the SG 1 - Owner, 2 - Member, 3 - Invited
+	 * @param sg
+	 * @return
+     */
 	public long getSGUserTypeValue(String sg) {
 		long user_id = 0;
 		Cursor cursor = DBWrapper.getInstance().query(
@@ -2249,6 +2381,12 @@ public boolean isContactModified(String rawId, int version){
 			cursor.close();
 		return user_id;
 	}
+
+	/**
+	 * Return password for SG
+	 * @param sg
+	 * @return
+     */
 	public String getSGPassword(String sg) {
 		String user_password = null;
 		Cursor cursor = DBWrapper.getInstance().query(
@@ -2265,19 +2403,10 @@ public boolean isContactModified(String rawId, int version){
 		return user_password;
 	}
 
-//	contentvalues.put(DatabaseConstants.DOMAIN_NAME, sg_data.getDomainName());
-//	contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDomainDisplayName());
-//	contentvalues.put(DatabaseConstants.DOMAIN_ADMIN_NAME, sg_data.getAdminName());
-//	contentvalues.put(DatabaseConstants.DOMAIN_ORG_NAME, sg_data.getOrgName());
-//	contentvalues.put(DatabaseConstants.DOMAIN_PRIVACY_TYPE, sg_data.getPrivacyType());
-//	contentvalues.put(DatabaseConstants.DOMAIN_TYPE, sg_data.getDomainType());
-//	contentvalues.put(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT, Integer.valueOf(sg_data.getUnreadCounter()));
-//	contentvalues.put(DatabaseConstants.DOMAIN_CREATED_DATE, sg_data.getCreatedDate());
-//	contentvalues.put(DatabaseConstants.DOMAIN_TYPE_VALUE, Integer.valueOf(2));
-//	contentvalues.put(DatabaseConstants.DOMAIN_ORG_URL, sg_data.getOrgUrl());
-//	contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
-//	contentvalues.put(DatabaseConstants.DOMAIN_MUTE_INFO, Integer.valueOf(0));
-
+	/**
+	 * Returns list of Joined SG's
+	 * @return
+     */
 	public ArrayList<JoinedDomainNameSet> getListOfJoinedSGs()
 	{
 		ArrayList<JoinedDomainNameSet> joined = new ArrayList<JoinedDomainNameSet>();
@@ -2308,6 +2437,11 @@ public boolean isContactModified(String rawId, int version){
 		}
 		return joined;
 	}
+
+	/**
+	 * Returns list of Invited SG's
+	 * @return
+     */
 	public ArrayList<InvitedDomainNameSet> getListOfInvitedSGs()
 	{
 		ArrayList<InvitedDomainNameSet> invited = new ArrayList<InvitedDomainNameSet>();
@@ -2338,6 +2472,11 @@ public boolean isContactModified(String rawId, int version){
 		}
 		return invited;
 	}
+
+	/**
+	 * Returns OwnerDomainName Data model object
+	 * @return
+     */
 	public OwnerDomainName getOwnedSG()
 	{
 		OwnerDomainName sgdata = new OwnerDomainName();

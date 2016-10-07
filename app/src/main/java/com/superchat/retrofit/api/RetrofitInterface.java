@@ -3,6 +3,8 @@ package com.superchat.retrofit.api;
 import com.superchat.model.BulletinGetMessageDataModel;
 import com.superchat.model.BulletinMessageDataModel;
 import com.superchat.model.MarkSGActive;
+import com.superchat.model.RegistrationForm;
+import com.superchat.model.RegistrationFormResponse;
 import com.superchat.model.UserProfileModel;
 import com.superchat.retrofit.request.model.UserAdminRequest;
 import com.superchat.retrofit.response.model.UserAdminResponse;
@@ -41,5 +43,8 @@ public interface RetrofitInterface {
 
     @GET(PREFIX_URL + "user/markactive")
     Call<MarkSGActive> markSGActive(@Query("domainName") String domainName);
+
+    @POST(PREFIX_URL + "user/activatedomain/")
+    Call<RegistrationFormResponse> activateBulkSGs(@Body RegistrationForm requestObject);
 
 }
