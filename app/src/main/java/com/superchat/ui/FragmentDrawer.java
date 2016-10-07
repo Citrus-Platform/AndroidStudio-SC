@@ -35,8 +35,12 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.superchat.R;
+import com.superchat.data.db.DBWrapper;
 import com.superchat.model.SGroupListObject;
 import com.superchat.model.SlidingMenuData;
+import com.superchat.model.multiplesg.InvitedDomainNameSet;
+import com.superchat.model.multiplesg.JoinedDomainNameSet;
+import com.superchat.model.multiplesg.OwnerDomainName;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
@@ -95,9 +99,20 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         ////////////////////////////////////////
         ArrayList<SGroupListObject> ownerDomainNameSet = new ArrayList<>();
 
+        ///////////////////////////////////////////////////////////////
+        ArrayList<JoinedDomainNameSet> joinedDomainNameSetTemp = DBWrapper.getInstance().getListOfJoinedSGs();
+        ArrayList<InvitedDomainNameSet> invitedDomainNameSetTemp = DBWrapper.getInstance().getListOfInvitedSGs();
+        OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
+
+
+        ArrayList<OwnerDomainName> ownerDomainNameSetTemp = new ArrayList<>();
+
+        ownerDomainNameSetTemp.add(owned);
+        ///////////////////////////////////////////////////////////////
+
         if (data != null) {
-            SGroupListObject sGroupListObject = new SGroupListObject();
-            try {
+            //SGroupListObject sGroupListObject = new SGroupListObject();
+            /*try {
                 json = new JSONObject(data);
                 //Get owner List
                 if (json != null && json.has("ownerDomainName")) {
@@ -115,15 +130,15 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-            }
+            }*/
             //////////////////////////////////////////
-            SlidingMenuData gsonObject = new Gson().fromJson(data, SlidingMenuData.class);
+            //SlidingMenuData gsonObject = new Gson().fromJson(data, SlidingMenuData.class);
 
-            ArrayList<SGroupListObject> joinedDomainNameSetTemp = new ArrayList<>();
+            /*ArrayList<SGroupListObject> joinedDomainNameSetTemp = new ArrayList<>();
             joinedDomainNameSetTemp = gsonObject.getJoinedDomainNameSet();
 
             ArrayList<SGroupListObject> invitedDomainNameSetTemp = new ArrayList<>();
-            invitedDomainNameSetTemp = gsonObject.getInvitedDomainNameSet();
+            invitedDomainNameSetTemp = gsonObject.getInvitedDomainNameSet();*/
 
             dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0"));
 
@@ -152,7 +167,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
              * Get Invited List Data in String Array
              */
             {
-                try {
+                /*try {
                     JSONObject jsonTemp = new JSONObject(data);
                     //invitedDomainNameSet
                     JSONArray array = jsonTemp.getJSONArray("invitedDomainNameSet");
@@ -162,7 +177,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                     }
                 } catch (Exception e) {
 
-                }
+                }*/
             }
         } else {
             dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0"));
