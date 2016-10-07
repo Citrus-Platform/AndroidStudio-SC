@@ -55,7 +55,7 @@
                 android:id="@+id/notifyCurrent"
                 android:layout_width="70dp"
                 android:layout_height="20dp"
-                android:src="@drawable/ic_icon_navigation_unmute" />
+                android:src="@drawable/ic_icon_navigation_mute" />
 
         </RelativeLayout>
     </RelativeLayout>

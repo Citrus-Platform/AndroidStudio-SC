@@ -48,6 +48,7 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -713,6 +714,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //			String sg_name = user.substring(user.indexOf("_") + 1);
 			prefManager.saveUserDomain(sg_name);
 			prefManager.saveCurrentSGDisplayName(sg_name);
+			prefManager.saveSGFileId("SG_FILE_ID",DBWrapper.getInstance().getSGLogoFileID(sg_name));
 			cleanDataAndSwitchSG(sg_name);
 			//Set contact and group synchs
 			prefManager.setContactSynched(false);
@@ -3309,7 +3311,7 @@ public void onComposeClick(View view){
 //		activateSG(sg_name);
 
 
-		if(DBWrapper.getInstance().isSGActive(sg_name)) {
+		//if(DBWrapper.getInstance().isSGActive(sg_name)) {
 			//Check if that group is deactivated then show alert
 			String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
 			isSwitchSG = true;
@@ -3319,11 +3321,11 @@ public void onComposeClick(View view){
 			SharedPrefManager.getInstance().setProfileAdded(current_username, true);
 			progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
 			markSGActive(sg_name);
-		}else{
+		/*}else{
 			//Show Alert Screen to switch Screen.
 			drawerFragment.fragmentClose();
 			showDeactiveDialog("");
-		}
+		}*/
 	}
 	public void cleanDataAndSwitchSG(String sg_name){
 		try{
@@ -3392,6 +3394,7 @@ public void onComposeClick(View view){
 		setProfilePic(drawerFragment.displayPictureCurrent , fileId);
 		drawerFragment.user.setText("" + SharedPrefManager.getInstance().getDisplayName() + "(You)");
 	}
+
 //-------------------------------------------------------------------------
 	private boolean setProfilePic(ImageView picView, String groupPicId) {
 	//		System.out.println("groupPicId : "+groupPicId);

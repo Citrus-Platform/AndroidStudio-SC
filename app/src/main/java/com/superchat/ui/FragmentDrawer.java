@@ -4,6 +4,7 @@ package com.superchat.ui;
  * Created by citrus on 9/15/2016.
  */
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -27,9 +28,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -101,7 +104,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
         ///////////////////////////////////////////////////////////////
         ArrayList<JoinedDomainNameSet> joinedDomainNameSetTemp = DBWrapper.getInstance().getListOfJoinedSGs();
-        ArrayList<InvitedDomainNameSet> invitedDomainNameSetTemp = DBWrapper.getInstance().getListOfInvitedSGs();
+        //ArrayList<InvitedDomainNameSet> invitedDomainNameSetTemp = DBWrapper.getInstance().getListOfInvitedSGs();
         OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
 
 
@@ -111,34 +114,6 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         ///////////////////////////////////////////////////////////////
 
         if (data != null) {
-            //SGroupListObject sGroupListObject = new SGroupListObject();
-            /*try {
-                json = new JSONObject(data);
-                //Get owner List
-                if (json != null && json.has("ownerDomainName")) {
-                    // ownerDomainNameSet.add(json.getString("ownerDomainName"));
-                    sGroupListObject.setDomainName(json.getJSONObject("ownerDomainName").get("domainName").toString());
-                    sGroupListObject.setAdminName(json.getJSONObject("ownerDomainName").get("adminName").toString());
-                    sGroupListObject.setOrgName(json.getJSONObject("ownerDomainName").get("orgName").toString());
-                    sGroupListObject.setPrivacyType(json.getJSONObject("ownerDomainName").get("privacyType").toString());
-                    sGroupListObject.setDomainType(json.getJSONObject("ownerDomainName").get("domainType").toString());
-                    sGroupListObject.setCreatedDate(json.getJSONObject("ownerDomainName").get("createdDate").toString());
-
-                    ownerDomainNameSet.add(sGroupListObject);
-
-                }
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }*/
-            //////////////////////////////////////////
-            //SlidingMenuData gsonObject = new Gson().fromJson(data, SlidingMenuData.class);
-
-            /*ArrayList<SGroupListObject> joinedDomainNameSetTemp = new ArrayList<>();
-            joinedDomainNameSetTemp = gsonObject.getJoinedDomainNameSet();
-
-            ArrayList<SGroupListObject> invitedDomainNameSetTemp = new ArrayList<>();
-            invitedDomainNameSetTemp = gsonObject.getInvitedDomainNameSet();*/
 
             dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0"));
 
@@ -163,22 +138,6 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                             joinedDomainNameSetTemp.get(i).getDomainNotify()));
                 }
             }
-            /**
-             * Get Invited List Data in String Array
-             */
-            {
-                /*try {
-                    JSONObject jsonTemp = new JSONObject(data);
-                    //invitedDomainNameSet
-                    JSONArray array = jsonTemp.getJSONArray("invitedDomainNameSet");
-                    invitedDomainNameSet = new ArrayList<String>();
-                    for (int i = 0; i < array.length(); i++) {
-                        invitedDomainNameSet.add(array.getString(i));
-                    }
-                } catch (Exception e) {
-
-                }*/
-            }
         } else {
             dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0"));
         }
@@ -191,6 +150,12 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        ArrayList<SGroupListObject> invitedList = new ArrayList<>();
+        if (invitedList != null && invitedList.size() > 0) {
+            for (int i = 0; i < invitedList.size(); i++) {
+                invitedDomainNameSet.add(invitedList.get(i).getDomainName());
+            }
+        }
     }
 
     @Override
@@ -204,6 +169,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         currentSGName = (TextView) layout.findViewById(R.id.currentSGName);
         displayPictureCurrent = (ImageView) layout.findViewById(R.id.displayPictureCurrent);
         notifyCurrent = (ImageView) layout.findViewById(R.id.notifyCurrent);
+        notifyCurrent.setOnClickListener(this);
         user = (TextView) layout.findViewById(R.id.user);
 
 
@@ -211,18 +177,14 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
         if (file_id != null && file_id.length() > 0) {
             setProfilePic(displayPictureCurrent, file_id);
-        } else {
-
         }
         user.setText("" + SharedPrefManager.getInstance().getDisplayName() + "(You)");
-
 
         ///////////////////////////////////////////////
 
         llAddSuperGroup = (LinearLayout) layout.findViewById(R.id.llAddSuperGroup);
         llInvited = (LinearLayout) layout.findViewById(R.id.llInvited);
         notificationLayout = (RelativeLayout) layout.findViewById(R.id.notificationLayout);
-        notificationLayout.setOnClickListener(this);
 
         if (SharedPrefManager.getInstance().getOwnedDomain() != null) {
             llAddSuperGroup.setVisibility(View.GONE);
@@ -230,6 +192,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
         llAddSuperGroup.setOnClickListener(this);
         llInvited.setOnClickListener(this);
+        notificationLayout.setOnClickListener(this);
         ////////////////////////////////////////////////////////////
         adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity());
         ////////////////////////////////////////////////////////////
@@ -247,6 +210,11 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         int viewID = v.getId();
         switch (viewID) {
+
+            case R.id.notifyCurrent: {
+                showSnoozeDialog();
+                break;
+            }
             case R.id.notificationLayout: {
                 if (flagNotify == true) {
                     flagNotify = false;
@@ -421,6 +389,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     public void fragmentClose() {
         mDrawerLayout.closeDrawer(containerView);
     }
+
     public void fragmentOpen() {
         mDrawerLayout.openDrawer(containerView);
     }
@@ -520,5 +489,43 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
         }
         return null;
+    }
+
+    public void showSnoozeDialog() {
+        final Dialog bteldialog = new Dialog(getActivity());
+        bteldialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        bteldialog.setCanceledOnTouchOutside(true);
+        bteldialog.setContentView(R.layout.snooze_settings);
+        TextView btn = ((TextView) bteldialog.findViewById(R.id.id_set_btn));
+        final Spinner spinner = (Spinner) bteldialog.findViewById(R.id.spinner);
+
+        final SharedPrefManager sharedPrefManager;
+        sharedPrefManager = SharedPrefManager.getInstance();
+
+        sharedPrefManager.isSnoozeExpired();
+        spinner.setSelection(sharedPrefManager.getSnoozeIndex());
+        btn.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                bteldialog.cancel();
+                sharedPrefManager.setSnoozeIndex(spinner.getSelectedItemPosition());
+                sharedPrefManager.setSnoozeStartTime(System.currentTimeMillis());
+                notifyCurrent.setImageResource(R.drawable.ic_icon_navigation_unmute);
+                Toast.makeText(getActivity(), String.valueOf(spinner.getSelectedItem()), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+        TextView cancelBtn = ((TextView) bteldialog.findViewById(R.id.id_cancel));
+        cancelBtn.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                bteldialog.cancel();
+                return false;
+            }
+        });
+        if (!bteldialog.isShowing())
+            bteldialog.show();
     }
 }
