@@ -101,10 +101,22 @@ public class SuperChatApplication extends MultiDexApplication {
 //        return (Tracker) mTrackers.get(appTracker);
 //    }
 
+	public Context getContextApplication(){
+		if(context == null){
+			context = getApplicationContext();
+		}
+		return context;
+	}
+
+	private static SuperChatApplication mInstance;
+	public static synchronized SuperChatApplication getInstance() {
+		return mInstance;
+	}
 	
 	public void onCreate() {
 		super.onCreate();
 		Fabric.with(this, new Crashlytics());
+		mInstance = this;
 		context = getApplicationContext();
 		 density = context.getResources().getDisplayMetrics().density;
 		 checkDisplaySize();

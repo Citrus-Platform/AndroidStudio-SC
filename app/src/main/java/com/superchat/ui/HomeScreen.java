@@ -48,7 +48,6 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -192,6 +191,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	public static boolean refreshContactList;
 
 	boolean isRWA = false;
+	boolean sgCreationAfterLogin;
 
 	public Set<GroupDetail> directoryGroupSet = null;
 	public Set<BroadcastGroupDetail> directoryBroadcastGroupSet;
@@ -431,15 +431,20 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		//Check if user is not logged
-		if(isServiceRunning("com.chat.sdk.ChatService")){
+		if (isServiceRunning("com.chat.sdk.ChatService")) {
 			System.out.println("[SERVICE RUNNING - SO STOPPING]");
 			stopService(new Intent(this, ChatService.class));
 		}
-    	if(SharedPrefManager.getInstance().getUserName() == null){
-    		startActivity(new Intent(this, RegistrationOptions.class));
-    		finish();
-    		return;
-    	}
+		if (SharedPrefManager.getInstance().getUserName() == null) {
+			startActivity(new Intent(this, RegistrationOptions.class));
+			finish();
+			return;
+		}
+		if (getIntent().getExtras() != null){
+			sgCreationAfterLogin = getIntent().getExtras().getBoolean(Constants.SG_CREATE_AFTER_LOGIN);
+			if(sgCreationAfterLogin)
+				updateSlidingDrawer(SharedPrefManager.getInstance().getCurrentSGDisplayName(), SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
+		}
 		if(SharedPrefManager.getInstance().getBackupSchedule() == -1)
 			SharedPrefManager.getInstance().setBackupSchedule(2);
 		String action = getIntent().getAction();
@@ -696,14 +701,18 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	}
 	public void updateUserData(String user){
 		try {
+			progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
 			SharedPrefManager prefManager = SharedPrefManager.getInstance();
 			long userID = prefManager.getSGUserID(user);
-			//update shared preference
+
 			System.out.println("[UserID - ] "+userID);
 			System.out.println("[Pass - ] "+prefManager.getSGPassword(user));
+			System.out.println("<< mobileNumber :: Switch :: " + prefManager.getUserPhone());
+
 			prefManager.saveUserId(userID);
 			prefManager.saveUserName(user);
 			prefManager.saveUserPassword(prefManager.getSGPassword(user));
+			SharedPrefManager.getInstance().setProfileAdded(user, true);
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
@@ -1735,8 +1744,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		}
 		@Override
 		protected void onPostExecute(String data) {
+			iPrefManager.setBackupCheckedForSG(iPrefManager.getUserDomain(), true);
 			if(data != null){
-				iPrefManager.setBackupCheckedForSG(iPrefManager.getUserDomain(), true);
 			}
 		}
 	}
@@ -3311,21 +3320,19 @@ public void onComposeClick(View view){
 //		activateSG(sg_name);
 
 
-		//if(DBWrapper.getInstance().isSGActive(sg_name)) {
+		if(DBWrapper.getInstance().isSGActive(sg_name)) {
 			//Check if that group is deactivated then show alert
 			String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
 			isSwitchSG = true;
 			drawerFragment.fragmentClose();
+//			updateUserData(sg);
 			updateUserData(sg);
-			System.out.println("<< mobileNumber :: Switch :: " + SharedPrefManager.getInstance().getUserPhone());
-			SharedPrefManager.getInstance().setProfileAdded(current_username, true);
-			progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
 			markSGActive(sg_name);
-		/*}else{
+		}else{
 			//Show Alert Screen to switch Screen.
 			drawerFragment.fragmentClose();
 			showDeactiveDialog("");
-		}*/
+		}
 	}
 	public void cleanDataAndSwitchSG(String sg_name){
 		try{

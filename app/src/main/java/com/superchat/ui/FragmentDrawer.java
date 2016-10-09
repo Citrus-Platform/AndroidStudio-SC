@@ -36,22 +36,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.superchat.R;
 import com.superchat.data.db.DBWrapper;
 import com.superchat.model.SGroupListObject;
-import com.superchat.model.SlidingMenuData;
-import com.superchat.model.multiplesg.InvitedDomainNameSet;
 import com.superchat.model.multiplesg.JoinedDomainNameSet;
 import com.superchat.model.multiplesg.OwnerDomainName;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
-import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.widgets.RoundedImageView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;

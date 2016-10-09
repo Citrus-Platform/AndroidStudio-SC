@@ -55,10 +55,14 @@ public class FileUploaderDownloader extends AsyncTask<String, Integer, String>{
 	@Override
 	protected void onPreExecute() {			
 		if(isLoading){
-			if(isUpload)
-				dialog = ProgressDialog.show(context, "","Uploading backup data. Please wait..", true);
-			else
-				dialog = ProgressDialog.show(context, "","Getting backup data. Please wait..", true);
+			try {
+				if (isUpload)
+					dialog = ProgressDialog.show(context, "", "Uploading backup data. Please wait..", true);
+				else
+					dialog = ProgressDialog.show(context, "", "Getting backup data. Please wait..", true);
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}
 		}
 		super.onPreExecute();
 	}

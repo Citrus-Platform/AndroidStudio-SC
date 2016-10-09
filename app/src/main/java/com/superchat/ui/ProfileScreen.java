@@ -64,6 +64,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.sinch.android.rtc.calling.Call;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
+import com.superchat.data.db.DBWrapper;
 import com.superchat.model.ErrorModel;
 import com.superchat.model.ProfileUpdateModel;
 import com.superchat.model.ProfileUpdateModelForAdmin;
@@ -477,8 +478,10 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
 
         }
 
-        if (userName != null)
-            getServerUserProfile(userName);
+        if (userName != null) {
+            if(!sgCreationAfterLogin)
+                getServerUserProfile(userName);
+        }
     }
 
     private boolean isRWA() {
@@ -1148,8 +1151,11 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
 
     @Override
     public void onBackPressed() {
-        if (purposeType == VIEWWING_AS_SELF_IN_REG)
+        if (purposeType == VIEWWING_AS_SELF_IN_REG) {
+            if(sgCreationAfterLogin)
+                finish();
             return;
+        }
         else
             finish();
     }
@@ -2297,6 +2303,11 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                         // InviteMemberScreen.class);
                         intent = new Intent(ProfileScreen.this, BulkInvitationScreen.class);
                         intent.putExtra(Constants.REG_TYPE, true);
+                        if(sgCreationAfterLogin) {
+                            intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, sgCreationAfterLogin);
+                            //Update Values in DB
+                            DBWrapper.getInstance().updateSGCredentials(iSharedPrefManager.getUserDomain(), iSharedPrefManager.getUserName(), iSharedPrefManager.getUserPassword(), iSharedPrefManager.getUserId(), true);
+                        }
                         startActivity(intent);
                     } else {
                         if(backToPrevUI) {
@@ -2304,6 +2315,11 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                             finish();
                         }else {
                             intent = new Intent(ProfileScreen.this, HomeScreen.class);
+//                            if(sgCreationAfterLogin) {
+//                                intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, sgCreationAfterLogin);
+//                                //Update Values in DB
+//                                DBWrapper.getInstance().updateSGCredentials(iSharedPrefManager.getUserDomain(), iSharedPrefManager.getUserName(), iSharedPrefManager.getUserPassword(), iSharedPrefManager.getUserId(), true);
+//                            }
                             startActivity(intent);
                         }
                     }

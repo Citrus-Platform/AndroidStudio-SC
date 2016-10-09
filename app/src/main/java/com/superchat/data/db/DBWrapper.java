@@ -2173,7 +2173,7 @@ public boolean isContactModified(String rawId, int version){
 		}
 		if (cursor != null)
 			cursor.close();
-		if(active != null && active.equalsIgnoreCase("true"))
+		if(active != null && (active.equalsIgnoreCase("true") || active.equalsIgnoreCase("1")))
 			return true;
 		return false;
 	}

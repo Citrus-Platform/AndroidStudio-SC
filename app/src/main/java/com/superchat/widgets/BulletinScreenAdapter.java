@@ -466,7 +466,12 @@ public class BulletinScreenAdapter extends SimpleCursorAdapter implements OnClic
                     groupMsgSenderName = "";
                 viewholder.id_last_msg_sender.setText(groupMsgSenderName);
             } else {
-                viewholder.id_last_msg_sender.setText(name + " : ");
+//                viewholder.id_last_msg_sender.setText(name + " : ");
+                String msgSenderName = groupMsgSenderName;
+                if(groupMsgSenderName!=null && groupMsgSenderName.contains("#786#")){
+                    msgSenderName = groupMsgSenderName.substring(0, groupMsgSenderName.indexOf("#786#"))+": ";
+                }
+                viewholder.id_last_msg_sender.setText(msgSenderName + " : ");
             }
 
             //🎤📷⛰�??📹📌📊📑📰📦🎫

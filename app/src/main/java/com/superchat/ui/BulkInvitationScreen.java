@@ -107,14 +107,19 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
     EditText numberEditText;
     TextView countryCodeEditText;
     ImageView countryFlagView;
+    boolean sgCreationAfterLogin;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.bulk_invitation_screen);
         Bundle bundle = getIntent().getExtras();
-        if (bundle != null && bundle.getBoolean(Constants.REG_TYPE))
-            inviteFromReg = true;
+        if (bundle != null) {
+            if(bundle.getBoolean(Constants.REG_TYPE))
+                inviteFromReg = true;
+            else if(bundle.getBoolean(Constants.SG_CREATE_AFTER_LOGIN))
+                sgCreationAfterLogin = getIntent().getExtras().getBoolean(Constants.SG_CREATE_AFTER_LOGIN);
+        }
         if (inviteFromReg) {
             ((TextView) findViewById(R.id.id_cancel)).setText(getString(R.string.done_caps));
             ((TextView) findViewById(R.id.id_back)).setVisibility(View.INVISIBLE);
@@ -371,6 +376,8 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
                 } else {
                     Intent intent = new Intent(BulkInvitationScreen.this, HomeScreen.class);
                     intent.putExtra("ADMIN_FIRST_TIME", true);
+                    if(sgCreationAfterLogin)
+                        intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, sgCreationAfterLogin);
                     startActivity(intent);
                     finish();
                 }

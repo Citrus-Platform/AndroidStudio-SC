@@ -12,6 +12,7 @@ import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.superchat.R;
+import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DatabaseConstants;
 import com.superchat.model.MessageDataModel;
 import com.superchat.model.MessageStatusModel;
@@ -56,6 +57,9 @@ public class ChatDBWrapper {
 	public static ChatDBWrapper getInstance(Context context) {
 		if (ChatDBWrapper.context == null) {
 			ChatDBWrapper.context = context;
+		}
+		if (ChatDBWrapper.context == null) {
+			ChatDBWrapper.context = SuperChatApplication.getInstance().getContextApplication();
 		}
 		 synchronized(ChatDBWrapper.class){
 			if (dbWrapper == null) {
