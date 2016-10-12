@@ -54,11 +54,15 @@ public class SinchService extends Service {
         super.onDestroy();
     }
     public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.d(TAG, "started");
-		if (mSinchServiceInterface != null && !mSinchServiceInterface.isStarted() && SharedPrefManager.getInstance().getUserName()!=null && !SharedPrefManager.getInstance().getUserName().equals("")) {
-			mSinchServiceInterface.startClient(SharedPrefManager.getInstance().getUserName());
-		}
-		return START_STICKY;
+        Log.d(TAG, "started");
+        try {
+            if (mSinchServiceInterface != null && !mSinchServiceInterface.isStarted() && SharedPrefManager.getInstance().getUserName() != null && !SharedPrefManager.getInstance().getUserName().equals("")) {
+                mSinchServiceInterface.startClient(SharedPrefManager.getInstance().getUserName());
+            }
+        } catch(Exception e){
+
+        }
+        return START_STICKY;
 	}
     private void start(String userName) {
         Log.d(TAG, "SinchClient start 1");

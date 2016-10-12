@@ -2963,7 +2963,9 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 if (viewholder.rightImgProgressIndeterminate != null)
                     viewholder.rightImgProgressIndeterminate.setVisibility(View.GONE);
                 viewholder.senderMsgText.setText(viewholder.message);
+                viewholder.senderMsgText.setTag("Y");
                 viewholder.senderLayout.setTag("Y");
+                viewholder.senderMsgText.setOnLongClickListener(viewholder.onLongPressListener);
                 viewholder.senderLayout.setOnLongClickListener(viewholder.onLongPressListener);
 
                 viewholder.sVideoPlayImageView.setVisibility(View.GONE);

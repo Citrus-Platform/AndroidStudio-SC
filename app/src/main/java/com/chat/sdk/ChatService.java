@@ -3348,9 +3348,14 @@ public class ChatService extends Service implements interfaceInstances {
 			}else if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal()){
 				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message.getStatusMessageType().ordinal());
 			}
-			if((message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeImage || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeVideo || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeAudio) 
+			if((message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeImage
+					|| message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeVideo
+					|| message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeAudio)
 					&& msg != null && !from.equals(SharedPrefManager.getInstance().getUserName()) && captionTag != null)
-				contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, msg);
+				if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal())
+					contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, captionTag);
+				else
+					contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, msg);
 			else if(captionTag!=null && !captionTag.equals(""))
 				contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, captionTag);
 			if(fileName != null && !fileName.equals("")){

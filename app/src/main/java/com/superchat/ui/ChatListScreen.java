@@ -3535,6 +3535,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         if (chatAdapter != null && chatAdapter.isEditableChat()) {
             chatAdapter.removeSelectedItems();
             onClick(okEditTextView);
+            return;
 
         } else {
             Intent intent = new Intent(this, HomeScreen.class);
@@ -4874,7 +4875,12 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 switch (requestCode) {
                     case PICK_CONTACT:
                         String contact_json = getVCard(data);
-                        sendContact(contact_json, XMPPMessageType.atMeXmppMessageTypeContact);
+                        if(contact_json != null) {
+                            sendContact(contact_json, XMPPMessageType.atMeXmppMessageTypeContact);
+                        } else {
+                            // Show Error to user
+                            Toast.makeText(this, "This contact has some error, Please try another one.", Toast.LENGTH_SHORT).show();
+                        }
                         break;
                     case REQUEST_PLACE_PICKER:
                         // The user has selected a place. Extract the name and
@@ -6819,7 +6825,13 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
     public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
         final int checkedCount = chatList.getCheckedItemCount();
 //        Cursor cursor = (Cursor) chatAdapter.getItem(position);
-        Cursor cursor = chatAdapter.getCursor();
+        Cursor cursor = null;
+        if(isBulletinBroadcast)
+            cursor = chatAdapter.getCursor();
+        else
+            cursor = (Cursor)chatAdapter.getItem(position);
+        if(cursor.isClosed())
+            cursor = (Cursor)chatAdapter.getItem(position);
         boolean isOwnSentMessage = false;
         boolean isAllTextMessages = true;
         if (cursor != null) {
