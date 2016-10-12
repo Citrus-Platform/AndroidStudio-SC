@@ -436,7 +436,7 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener{/
 		}
 		if(superGroupName != null)
 			superGroupName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
-		if(superGroupIcon != null)
+		if(superGroupIcon != null && SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID") != null)
 			setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
 	}
 	public void onPause(){

@@ -291,7 +291,7 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
 		}
 		if(superGroupName != null)
 			superGroupName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
-		if(superGroupIcon != null)
+		if(superGroupIcon != null && SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID") != null)
 			setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
 //		showAllContacts();
 	}
