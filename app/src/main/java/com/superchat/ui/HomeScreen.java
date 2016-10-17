@@ -3567,4 +3567,7 @@ public void onComposeClick(View view){
 
 		}
 	}
+	public void openDrawer(){
+		drawerFragment.fragmentOpen();
+	}
 }
