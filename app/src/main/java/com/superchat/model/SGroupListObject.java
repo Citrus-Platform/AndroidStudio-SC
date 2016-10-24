@@ -15,6 +15,15 @@ public class SGroupListObject {
     private String createdDate;
     private String domainCount;
     private String domainNotify;
+    private String domainDisplayName;
+
+    public void setDomainDisplayName(String domainDisplayName) {
+        this.domainDisplayName = domainDisplayName;
+    }
+
+    public String getDomainDisplayName() {
+        return domainDisplayName;
+    }
 
     public void setDomainCount(String domainCount) {
         this.domainCount = domainCount;

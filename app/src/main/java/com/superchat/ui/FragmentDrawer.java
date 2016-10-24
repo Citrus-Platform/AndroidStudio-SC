@@ -39,10 +39,12 @@ import android.widget.Toast;
 import com.superchat.R;
 import com.superchat.data.db.DBWrapper;
 import com.superchat.model.SGroupListObject;
+import com.superchat.model.multiplesg.InvitedDomainNameSet;
 import com.superchat.model.multiplesg.JoinedDomainNameSet;
 import com.superchat.model.multiplesg.OwnerDomainName;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
+import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.widgets.RoundedImageView;
 
@@ -63,6 +65,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     public ImageView notifyCurrent;
     public TextView user;
 
+    public TextView invitedNotificationCount;
     private RecyclerView recyclerView;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
@@ -109,16 +112,26 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
         if (data != null) {
 
-            dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0"));
+            //dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0" , ""));
 
             if (ownerDomainNameSet != null && ownerDomainNameSet.size() > 0) {
 
                 for (int i = 0; i < ownerDomainNameSet.size(); i++) {
 
+                    String ownerDisplayName = "";
+
+                    if(ownerDomainNameSet.get(i).getDomainDisplayName()!=null &&
+                            ownerDomainNameSet.get(i).getDomainDisplayName().trim().length()>0){
+                        ownerDisplayName = ownerDomainNameSet.get(i).getDomainDisplayName().trim();
+                    }else{
+                        ownerDisplayName = ownerDomainNameSet.get(i).getDomainName().trim();
+                    }
+
                     dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
-                            ownerDomainNameSet.get(i).getDomainName(),
+                            ownerDisplayName,
                             ownerDomainNameSet.get(i).getDomainCount(),
-                            ownerDomainNameSet.get(i).getDomainNotify()));
+                            ownerDomainNameSet.get(i).getDomainNotify(),
+                            ownerDomainNameSet.get(i).getDomainName()));
                 }
             }
             ///////////////////////////////////////////////
@@ -126,14 +139,24 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
                 for (int i = 0; i < joinedDomainNameSetTemp.size(); i++) {
 
+                    String joinedDisplayName = "";
+
+                    if(joinedDomainNameSetTemp.get(i).getDomainDisplayName()!=null &&
+                            joinedDomainNameSetTemp.get(i).getDomainDisplayName().trim().length()>0){
+                        joinedDisplayName = joinedDomainNameSetTemp.get(i).getDomainDisplayName().trim();
+                    }else{
+                        joinedDisplayName = joinedDomainNameSetTemp.get(i).getDomainName().trim();
+                    }
+
                     dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
-                            joinedDomainNameSetTemp.get(i).getDomainName(),
+                            joinedDisplayName,
                             joinedDomainNameSetTemp.get(i).getDomainCount(),
-                            joinedDomainNameSetTemp.get(i).getDomainNotify()));
+                            joinedDomainNameSetTemp.get(i).getDomainNotify(),
+                            joinedDomainNameSetTemp.get(i).getDomainName()));
                 }
             }
         } else {
-            dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0"));
+           // dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0" , ""));
         }
 
         return dataList;
@@ -144,9 +167,12 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ArrayList<SGroupListObject> invitedList = new ArrayList<>();
+        ArrayList<InvitedDomainNameSet> invitedList = new ArrayList<>();
+        invitedList = DBWrapper.getInstance().getListOfInvitedSGs();
+
         if (invitedList != null && invitedList.size() > 0) {
             for (int i = 0; i < invitedList.size(); i++) {
+
                 invitedDomainNameSet.add(invitedList.get(i).getDomainName());
             }
         }
@@ -166,6 +192,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         notifyCurrent.setOnClickListener(this);
         user = (TextView) layout.findViewById(R.id.user);
 
+        invitedNotificationCount = (TextView)layout.findViewById(R.id.invitedNotificationCount);
+        invitedNotificationCount.setText(""+DBWrapper.getInstance().getListOfInvitedSGs().size());
 
         String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());

@@ -1853,7 +1853,8 @@ public boolean isContactModified(String rawId, int version){
 			SharedPrefManager.getInstance().saveOwnedDomain(sg_data.getDomainName());
 			ContentValues contentvalues = new ContentValues();
 			contentvalues.put(DatabaseConstants.DOMAIN_NAME, sg_data.getDomainName());
-			contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDomainDisplayName());
+			//contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDomainDisplayName());
+			contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDisplayName());
 			contentvalues.put(DatabaseConstants.DOMAIN_ADMIN_NAME, sg_data.getAdminName());
 			contentvalues.put(DatabaseConstants.DOMAIN_ORG_NAME, sg_data.getOrgName());
 			contentvalues.put(DatabaseConstants.DOMAIN_PRIVACY_TYPE, sg_data.getPrivacyType());
@@ -2187,7 +2188,8 @@ public boolean isContactModified(String rawId, int version){
 			for (JoinedDomainNameSet sg_data : list) {
 				ContentValues contentvalues = new ContentValues();
 				contentvalues.put(DatabaseConstants.DOMAIN_NAME, sg_data.getDomainName());
-				contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDomainDisplayName());
+				//contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDomainDisplayName());
+				contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDisplayName());
 				contentvalues.put(DatabaseConstants.DOMAIN_ADMIN_NAME, sg_data.getAdminName());
 				contentvalues.put(DatabaseConstants.DOMAIN_ORG_NAME, sg_data.getOrgName());
 				contentvalues.put(DatabaseConstants.DOMAIN_PRIVACY_TYPE, sg_data.getPrivacyType());
@@ -2216,7 +2218,8 @@ public boolean isContactModified(String rawId, int version){
 			for (InvitedDomainNameSet sg_data : list) {
 				ContentValues contentvalues = new ContentValues();
 				contentvalues.put(DatabaseConstants.DOMAIN_NAME, sg_data.getDomainName());
-				contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDomainDisplayName());
+				//contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDomainDisplayName());
+				contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDisplayName());
 				contentvalues.put(DatabaseConstants.DOMAIN_ADMIN_NAME, sg_data.getAdminName());
 				contentvalues.put(DatabaseConstants.DOMAIN_ORG_NAME, sg_data.getOrgName());
 				contentvalues.put(DatabaseConstants.DOMAIN_PRIVACY_TYPE, sg_data.getPrivacyType());

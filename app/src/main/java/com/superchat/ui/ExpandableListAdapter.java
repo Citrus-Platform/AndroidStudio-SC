@@ -119,7 +119,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                 itemControllerChild.child_title.setText(item.text);
                 ///////////////////////////////////////////////////////
-                String fileId = DBWrapper.getInstance().getSGLogoFileID(item.text);
+                String fileId = DBWrapper.getInstance().getSGLogoFileID(item.actualName);
                 if (fileId != null && fileId.length() > 0) {
                     setProfilePic(itemControllerChild.displayPicture, fileId);
                 } else {
@@ -137,6 +137,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 int countId = DBWrapper.getInstance().getNewMessageCountForSG(item.text);
                 if (countId == 0) {
 //                    itemControllerChild.countContainer.setVisibility(View.GONE);
+                    itemControllerChild.child_notificationCount.setText("");
                 } else {
 //                    itemControllerChild.countContainer.setVisibility(View.VISIBLE);
                     itemControllerChild.child_notificationCount.setText("(" + countId + ")");
@@ -224,6 +225,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public static class Item {
         public int type;
+        public String actualName;
         public String text;
         public String count;
         public String notify;
@@ -232,9 +234,10 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         public Item() {
         }
 
-        public Item(int type, String text, String count, String notify) {
+        public Item(int type, String text, String count, String notify , String actualName) {
             this.type = type;
             this.text = text;
+            this.actualName = actualName;
 
             this.count = count;
             this.notify = notify;
