@@ -121,6 +121,8 @@ import ch.boye.httpclientandroidlib.entity.mime.content.FileBody;
 import ch.boye.httpclientandroidlib.entity.mime.content.StringBody;
 import ch.boye.httpclientandroidlib.impl.client.DefaultHttpClient;
 
+import static com.chatsdk.org.xbill.DNS.Type.A;
+
 //import com.superchat.utils.ImageDownloader;
 public class ChatListAdapter extends SimpleCursorAdapter {
     public class ViewHolder implements VoiceMediaHandler {

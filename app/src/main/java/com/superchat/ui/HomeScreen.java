@@ -3398,7 +3398,8 @@ public void onComposeClick(View view){
      */
 	public void updateSlidingDrawer(String text , String fileId) {
 		drawerFragment.currentSGName.setText("" + text);
-		setProfilePic(drawerFragment.displayPictureCurrent , fileId);
+		if(fileId != null && fileId.trim().length() > 0)
+			setProfilePic(drawerFragment.displayPictureCurrent , fileId);
 		drawerFragment.user.setText("" + SharedPrefManager.getInstance().getDisplayName() + "(You)");
 	}
 

@@ -167,9 +167,9 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         user = (TextView) layout.findViewById(R.id.user);
 
 
-        String file_id = SharedPrefManager.getInstance().getSGFileId("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
+        String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
-        if (file_id != null && file_id.length() > 0) {
+        if (file_id != null && file_id.trim().length() > 0) {
             setProfilePic(displayPictureCurrent, file_id);
         }
         user.setText("" + SharedPrefManager.getInstance().getDisplayName() + "(You)");

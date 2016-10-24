@@ -3,49 +3,8 @@ package com.superchat;
 
 //import com.crashlytics.android.Crashlytics;
 //import io.fabric.sdk.android.Fabric;
-import com.crashlytics.android.Crashlytics;
-import io.fabric.sdk.android.Fabric;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-//import com.crashlytics.android.Crashlytics;
-//import com.google.android.gms.analytics.GoogleAnalytics;
-//import com.google.android.gms.analytics.Tracker;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.loopj.android.http.AsyncHttpClient;
-import com.superchat.data.db.DBWrapper;
-import com.superchat.data.db.DatabaseConstants;
-import com.superchat.model.ContactUpDatedModel;
-import com.superchat.model.ContactUpDatedModel.UserDetail;
-import com.superchat.model.ContactUploadModel;
-import com.superchat.ui.ContactsScreen;
-import com.superchat.utils.BitmapDownloader;
-import com.superchat.utils.Constants;
-import com.superchat.utils.Countries;
-import com.superchat.utils.Countries.Country;
-import com.superchat.utils.HttpHeaderUtils;
-import com.superchat.utils.Log;
-import com.superchat.utils.SharedPrefManager;
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
-import android.app.Application;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -64,6 +23,45 @@ import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.loopj.android.http.AsyncHttpClient;
+import com.superchat.data.db.DBWrapper;
+import com.superchat.data.db.DatabaseConstants;
+import com.superchat.model.ContactUpDatedModel;
+import com.superchat.model.ContactUpDatedModel.UserDetail;
+import com.superchat.model.ContactUploadModel;
+import com.superchat.ui.ContactsScreen;
+import com.superchat.utils.BitmapDownloader;
+import com.superchat.utils.Constants;
+import com.superchat.utils.Countries;
+import com.superchat.utils.Countries.Country;
+import com.superchat.utils.HttpHeaderUtils;
+import com.superchat.utils.Log;
+import com.superchat.utils.SharedPrefManager;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+//import com.crashlytics.android.Crashlytics;
+//import com.google.android.gms.analytics.GoogleAnalytics;
+//import com.google.android.gms.analytics.Tracker;
 
 public class SuperChatApplication extends MultiDexApplication {
 	 protected static final String TAG = SuperChatApplication.class.getSimpleName();
@@ -115,7 +113,7 @@ public class SuperChatApplication extends MultiDexApplication {
 	
 	public void onCreate() {
 		super.onCreate();
-		Fabric.with(this, new Crashlytics());
+//		Fabric.with(this, new Crashlytics());
 		mInstance = this;
 		context = getApplicationContext();
 		 density = context.getResources().getDisplayMetrics().density;

@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.superchat"
     android:installLocation="preferExternal"
-    android:versionCode="89"
-    android:versionName="3.8.9">
+    android:versionCode="90"
+    android:versionName="3.9.0">
 
     <uses-sdk
         android:minSdkVersion="13"
@@ -32,7 +32,6 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />

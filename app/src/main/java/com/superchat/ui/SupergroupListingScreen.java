@@ -859,6 +859,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 		bteldialog.show();
 	}
 
+	boolean invitedDomainSelected = false;
 	private void registerUserOnServer(String super_group, String sg_display_name, View view) {
 		String imei = SuperChatApplication.getDeviceId();
 		String imsi = SuperChatApplication.getNetworkOperator();
@@ -878,40 +879,16 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 		/////////////////////////////////////////////
 		SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
 		String data = iPrefManager.getSgListData();
-		JSONObject json;
 		String number = iPrefManager.getUserPhone();
 		ArrayList<SGroupListObject> ownerDomainNameSet = new ArrayList<SGroupListObject>();
 		ArrayList<SGroupListObject> invitedDomainNameSet = new ArrayList<SGroupListObject>();
 		ArrayList<SGroupListObject> joinedDomainNameSet = new ArrayList<SGroupListObject>();
 
-		try {
-			json = new JSONObject(data);
-			//Get owner List
-            /*if (json != null && json.has("ownerDomainName")) {
-                ownerDomainNameSet.add(json.getString("ownerDomainName"));
-            }*/
-			//invitedDomainNameSet
-            /*JSONArray array = json.getJSONArray("invitedDomainNameSet");
-            invitedDomainNameSet = new ArrayList<String>();
-            for (int i = 0; i < array.length(); i++) {
-                invitedDomainNameSet.add(array.getString(i));
-            }
-            //joinedDomainNameSet
-            array = json.getJSONArray("joinedDomainNameSet");
-            joinedDomainNameSet = new ArrayList<String>();
-            for (int i = 0; i < array.length(); i++) {
-                joinedDomainNameSet.add(array.getString(i));
-            }*/
+		Gson gson = new Gson();
+		SlidingMenuData slidingMenuData =  gson.fromJson(data , SlidingMenuData.class);
+		joinedDomainNameSet = slidingMenuData.getJoinedDomainNameSet();
+		invitedDomainNameSet = slidingMenuData.getInvitedDomainNameSet();
 
-			Gson gson = new Gson();
-			SlidingMenuData slidingMenuData =  gson.fromJson(data , SlidingMenuData.class);
-			joinedDomainNameSet = slidingMenuData.getJoinedDomainNameSet();
-			invitedDomainNameSet = slidingMenuData.getInvitedDomainNameSet();
-
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		////////////////////////////////////////////
 		Set<String> domainNameSet = new HashSet<String>();
 		///////////////////////////////////////////////////////////////////
@@ -930,22 +907,29 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 //				domainNameSet.add("" + invitedDomainNameSet.get(i).getDomainName());
 //			}
 //		}
+
+		if(isInvitedDomain(invitedDomainNameSet, super_group))
+			invitedDomainSelected = true;
 		RegistrationForm registrationForm = null;
-		if(isInvitedDomain(invitedDomainNameSet, super_group) && !backFromProfile){
-			registrationForm = new RegistrationForm(mobileNumber, null, imei, null, clientVersion , null ,"false");
+		//RegistrationForm registrationForm = new RegistrationForm(mobileNumber, "normal",imei, imsi, clientVersion);
+		if(invitedDomainSelected && !backFromProfile){
+			registrationForm = new RegistrationForm(mobileNumber, "normal", imei, imsi, clientVersion , null ,"false");
 		}else{
 			registrationForm = new RegistrationForm(mobileNumber, null, imei, null, clientVersion , domainNameSet , "false");
 		}
 		if(Constants.regid != null)
 			registrationForm.setToken(Constants.regid);
-//		registrationForm.countryCode = countryCode;
 		if (super_group != null && super_group.trim().length() > 0){
+			if(invitedDomainSelected) {
+				registrationForm.countryCode = countryCode;
+			}else {
+				registrationForm.setActiveDomainName(super_group);
+			}
 			registrationForm.setDomainName(super_group);
 			registrationForm.setiUserId(SharedPrefManager.getInstance().getUserId());
-			registrationForm.setActiveDomainName(super_group);
 		}
 		SharedPrefManager.getInstance().saveUserPhone(mobileNumber);
-		if(isInvitedDomain(invitedDomainNameSet, super_group) && !backFromProfile){
+		if(invitedDomainSelected && !backFromProfile){
 			if (Build.VERSION.SDK_INT >= 11)
 				new SignupTaskOnServer(registrationForm, view).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			else
@@ -1233,10 +1217,11 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 								pendingProfile = regObj.pendingProfile;
 //											pendingProfile = true;
 								iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
-								//Save Domain DAta
+
+								//Save Domain Data
 //								iPrefManager.saveSGPassword(regObj.getDomainName(), regObj.getPassword()); 
 //								iPrefManager.saveSGUserID(iPrefManager.getUserName(), regObj.getiUserId()); 
-								iPrefManager.saveUserDomain(regObj.getDomainName());
+//								iPrefManager.saveUserDomain(regObj.getDomainName());
 							}
 							verifyUserSG(regObj.getiUserId());
 						}
@@ -1588,11 +1573,13 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 
 			@Override
 			public void onStart() {
-//				runOnUiThread(new Runnable() {
-//					public void run() {
-//						dialog = ProgressDialog.show(SupergroupListingScreen.this, "", "Loading. Please wait...", true);
-//					}
-//				});
+				if(invitedDomainSelected) {
+					runOnUiThread(new Runnable() {
+						public void run() {
+							dialog = ProgressDialog.show(SupergroupListingScreen.this, "", "Loading. Please wait...", true);
+						}
+					});
+				}
 				Log.d(TAG, "verifyUserSGonStart: ");
 			}
 
@@ -1603,15 +1590,6 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 				Log.i(TAG, "verifyUserSG :: reponse : " + arg1);
 				Gson gson = new GsonBuilder().create();
 				final RegMatchCodeModel objUserModel = gson.fromJson(arg1, RegMatchCodeModel.class);
-//				runOnUiThread(new Runnable() {
-//					@Override
-//					public void run() {
-//						if (dialog != null) {
-//							dialog.dismiss();
-//							dialog = null;
-//						}
-//					}
-//				});
 				if (objUserModel.iStatus != null
 						&& objUserModel.iStatus.equalsIgnoreCase("success")) {
 					SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance();
@@ -1655,16 +1633,6 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 					});
 
 				}
-//			runOnUiThread(new Runnable() {
-//
-//				@Override
-//				public void run() {
-//					if (dialog != null) {
-//						dialog.dismiss();
-//						dialog = null;
-//					}
-//				}
-//			});
 				super.onSuccess(arg0, arg1);
 			}
 
@@ -1673,41 +1641,11 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 				Log.i(TAG, "verifyCode method onFailure: " + arg1);
 				if (welcomeDialog != null)
 					welcomeDialog.cancel();
-//				runOnUiThread(new Runnable() {
-//
-//					@Override
-//					public void run() {
-//						if (dialog != null) {
-//							dialog.dismiss();
-//							dialog = null;
-//						}
-//					}
-//				});
 				showDialog(getString(R.string.network_not_responding));
 				super.onFailure(arg0, arg1);
 			}
 		});
 	}
-
-	//------------------------------------------------------
-//	public void onProfileImagePicClick(String file_id){
-//		String file_path = getImagePath(file_id);
-//		if(file_path == null || (file_path != null && file_path.trim().length() == 0))
-//			file_path = getImagePath(null);
-////		if(file_path == null)
-////			file_path = getThumbPath(fileName);
-//		if(file_path != null)
-//		{
-//			Intent intent = new Intent();
-//			intent.setAction(Intent.ACTION_VIEW);
-//			if(file_path.startsWith("http://"))
-//				intent.setDataAndType(Uri.parse(file_path), "image/*");
-//			else
-//				intent.setDataAndType(Uri.parse("file://" + file_path), "image/*");
-//			startActivity(intent);
-//		}
-//
-//	}
 //------------------------------------------------------
 	class ExpandableListAdapter extends BaseExpandableListAdapter {
 

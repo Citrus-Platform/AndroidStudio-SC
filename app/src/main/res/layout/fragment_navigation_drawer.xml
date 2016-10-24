@@ -10,37 +10,9 @@
     <RelativeLayout
         android:id="@+id/nav_header_container"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:scrollbars="vertical">
-
-        <LinearLayout
-            android:id="@+id/lldisplayPicture"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_margin="16dp">
-
-            <com.superchat.widgets.RoundedImageView
-                android:id="@+id/displayPictureCurrent"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_launcher" />
-
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/currentSGName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/lldisplayPicture"
-            android:ellipsize="end"
-            android:gravity="center|left"
-            android:singleLine="true"
-            android:textColor="@color/white"
-            android:textSize="22sp" />
 
         <RelativeLayout
             android:id="@+id/notificationLayout"
@@ -48,16 +20,38 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_margin="5dp"
-            android:padding="6dp">
+            android:layout_margin="10dp">
 
-            <ImageView
-                android:id="@+id/notifyCurrent"
-                android:layout_width="70dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_icon_navigation_mute" />
-
+        <ImageView
+            android:id="@+id/notifyCurrent"
+            android:layout_width="70dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_icon_navigation_mute" />
         </RelativeLayout>
+
+        <com.superchat.widgets.RoundedImageView
+            android:id="@+id/displayPictureCurrent"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/notificationLayout"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/logo_small"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/currentSGName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/displayPictureCurrent"
+            android:ellipsize="end"
+            android:gravity="center|left"
+            android:singleLine="true"
+            android:text="SuperGroup Name"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
     </RelativeLayout>
 
     <LinearLayout

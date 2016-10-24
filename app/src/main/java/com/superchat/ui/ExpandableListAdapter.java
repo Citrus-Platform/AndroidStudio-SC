@@ -136,21 +136,19 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 //notify or not////////////
                 int countId = DBWrapper.getInstance().getNewMessageCountForSG(item.text);
                 if (countId == 0) {
-                    itemControllerChild.countContainer.setVisibility(View.GONE);
+//                    itemControllerChild.countContainer.setVisibility(View.GONE);
                 } else {
-                    itemControllerChild.countContainer.setVisibility(View.VISIBLE);
-                    itemControllerChild.child_notificationCount.setText("" + countId);
+//                    itemControllerChild.countContainer.setVisibility(View.VISIBLE);
+                    itemControllerChild.child_notificationCount.setText("(" + countId + ")");
                 }
 
 
                 //activate or not////////////
-                int activeId = DBWrapper.getInstance().getNewMessageCountForSG(item.text);
-                if (activeId == 0) {
+                boolean active = DBWrapper.getInstance().isSGActive(item.text);
+                if (active) {
                     itemControllerChild.btn_active_toggle.setVisibility(View.GONE);
-                } else if(activeId == 1){
+                } else{
                     itemControllerChild.btn_active_toggle.setBackgroundResource(R.drawable.refresh);
-                }else {
-                    //itemControllerChild.btn_active_toggle.setBackgroundResource(R.drawable.error);
                 }
 
                 //DBWrapper.getInstance().getSGDisplayName(sg);
@@ -219,7 +217,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             child_notificationCount = (TextView) itemView.findViewById(R.id.child_notificationCount);
             btn_notify_toggle = (ImageView) itemView.findViewById(R.id.btn_notify_toggle);
             btn_active_toggle = (ImageView)itemView.findViewById(R.id.btn_active_toggle);
-            countContainer = (RelativeLayout) itemView.findViewById(R.id.countContainer);
+//            countContainer = (RelativeLayout) itemView.findViewById(R.id.countContainer);
             container = (RelativeLayout) itemView.findViewById(R.id.container);
         }
     }
