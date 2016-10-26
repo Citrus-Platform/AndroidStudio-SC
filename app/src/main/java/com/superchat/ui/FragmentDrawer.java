@@ -249,7 +249,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                 break;
             }
             case R.id.llInvited: {
-                if (invitedDomainNameSet != null && invitedDomainNameSet.size() > 0) {
+                //if (invitedDomainNameSet != null && invitedDomainNameSet.size() > 0) {
                     SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
                     String number = iPrefManager.getUserPhone();
 
@@ -261,9 +261,9 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                     Intent starter = new Intent(getActivity(), SupergroupListingScreenNew.class);
                     starter.putExtras(bundle);
                     startActivityForResult(starter, CODE_INVITE);
-                } else {
+                /*} else {
                     Toast.makeText(getActivity(), "Invited List is empty", Toast.LENGTH_SHORT).show();
-                }
+                }*/
                 break;
             }
             case R.id.llAddSuperGroup: {

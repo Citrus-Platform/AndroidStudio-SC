@@ -704,7 +704,7 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 		}
 		return cursor;
 	}
-		
+
 	public Cursor getRecentChatList(String searchKey) {
 		String sql = "";
 		String sg_name = SharedPrefManager.getInstance().getUserDomain();
@@ -740,8 +740,8 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 					+ ChatDBConstants.LAST_UPDATE_FIELD + ", MAX("
 					+ ChatDBConstants.LAST_UPDATE_FIELD + ") FROM "
 					+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO
-					+" WHERE "+ChatDBConstants.CONTACT_NAMES_FIELD + " like '"+searchKey + " AND " + ChatDBConstants.USER_SG+"='"+sg_name+"'"
-					+"' GROUP BY "
+					+" WHERE "+ChatDBConstants.CONTACT_NAMES_FIELD + " like '"+searchKey + "' AND " + ChatDBConstants.USER_SG+"='"+sg_name+"'"
+					+" GROUP BY "
 					+ ChatDBConstants.CONTACT_NAMES_FIELD + " ORDER BY "
 					+ ChatDBConstants.LAST_UPDATE_FIELD + " DESC";
 		Log.e("ChatDBWrapper", "getRecentChatList query: " + sql);
