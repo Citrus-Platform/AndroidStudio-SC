@@ -549,12 +549,14 @@ public boolean isContactModified(){
 		editor.putString(AUTH_STATUS, name);
 		editor.commit();
 	}
-	public void saveLastOnline(long time) { // new1
-		editor.putLong(LAST_ONLINE, time);
-		editor.commit();
+	public void saveLastOnline(String domain, long time) { // new1
+		if(domain != null && !domain.equals("")) {
+			editor.putLong(LAST_ONLINE + domain, time);
+			editor.commit();
+		}
 	}
-	public long getLastOnline() { // new1
-		long value = pref.getLong(LAST_ONLINE, 0);
+	public long getLastOnline(String domain) { // new1
+		long value = pref.getLong(LAST_ONLINE + domain, 0);
 		return value;
 	}
 	public void saveUserFileId(String userName,String fileId) {

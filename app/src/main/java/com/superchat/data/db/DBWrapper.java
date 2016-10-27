@@ -212,10 +212,11 @@ public class DBWrapper {
 	}
 	public int getAllNumbersCount() {
 		int totalContacts = 0;
+		String sg = SharedPrefManager.getInstance().getUserDomain();
 		Cursor cursor = dbHelper.getWritableDatabase().query(true,
 				DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,
-				new String[] { DatabaseConstants.CONTACT_NUMBERS_FIELD }, DatabaseConstants.VOPIUM_FIELD+"=?",
-				new String[] { "1" }, null, null, null, null);
+				new String[] { DatabaseConstants.CONTACT_NUMBERS_FIELD }, DatabaseConstants.VOPIUM_FIELD+"=?" + " AND " + DatabaseConstants.USER_SG + "=?",
+				new String[] { "1", sg }, null, null, null, null);
 		try {
 			if (cursor != null && cursor.getCount() > 0) {
 				totalContacts = cursor.getCount();
@@ -390,6 +391,7 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 }
 public HashMap<String,String> getUsersDisplayNameList(List<String> list){
 	HashMap<String,String> namesList = new HashMap<String,String>();
+	String sg = SharedPrefManager.getInstance().getUserDomain();
 	if(list.isEmpty())
 		return namesList;
 //		ArrayList<String> namesList = new ArrayList<String>();
@@ -400,7 +402,7 @@ public HashMap<String,String> getUsersDisplayNameList(List<String> list){
 
 			String sql = "SELECT "+DatabaseConstants.CONTACT_NAMES_FIELD+","+DatabaseConstants.USER_NAME_FIELD +" FROM "
 					+ DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS + " WHERE "
-					+ DatabaseConstants.USER_NAME_FIELD + " IN " + tags;
+					+ DatabaseConstants.USER_NAME_FIELD + " IN " + tags + " AND " + DatabaseConstants.USER_SG + "='"+sg+"'";
 			cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
 
 			try {
@@ -498,7 +500,8 @@ private String convertStringArrayToString1(List<String> strList) {
 				}
 			}
 		String contactPerson = userName;
-		String sql1 = "SELECT "+DatabaseConstants.CONTACT_NAMES_FIELD+" FROM "+ DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS+" WHERE "+DatabaseConstants.USER_NAME_FIELD + "='" + userName + "'";// UNION"+
+		String sg = SharedPrefManager.getInstance().getUserDomain();
+		String sql1 = "SELECT "+DatabaseConstants.CONTACT_NAMES_FIELD+" FROM "+ DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS+" WHERE "+DatabaseConstants.USER_NAME_FIELD + "='" + userName + "' AND " + DatabaseConstants.USER_SG + "='"+sg+"'";// UNION"+
 //				" SELECT "+DatabaseConstants.CONTACT_NAMES_FIELD+" FROM "+ DatabaseConstants.TABLE_NAME_CONTACT_EMAILS+" WHERE "+DatabaseConstants.USER_NAME_FIELD + "='" + userName + "'";
 		Cursor cursor = dbHelper.getWritableDatabase().rawQuery(sql1, null);
 		//		Cursor cursor = DBWrapper.getInstance().query(
@@ -604,10 +607,11 @@ private String convertStringArrayToString1(List<String> strList) {
 	}
 	public void updateUserDisplayName(String contactName, String userName) {
           ContentValues values = new ContentValues();
+		String sg = SharedPrefManager.getInstance().getUserDomain();
           //update in Contact DB
           values.put(DatabaseConstants.CONTACT_NAMES_FIELD, contactName);
           // updating row
-          int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, values, DatabaseConstants.USER_NAME_FIELD + " = ?",
+          int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, values, DatabaseConstants.USER_NAME_FIELD + " = ? AND " + DatabaseConstants.USER_SG + "='"+sg+"'",
         		  new String[] { userName });
           if(row > 0)
         	  Log.d("DBWrapper", "updateUserNameInContacts count " + row);
@@ -617,10 +621,11 @@ private String convertStringArrayToString1(List<String> strList) {
 	
 	public String getDisplayName(String userName) {
 		String contactPerson = "User-Name";
+		String sg = SharedPrefManager.getInstance().getUserDomain();
 		Cursor cursor = DBWrapper.getInstance().query(
 				DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,
 				new String[] { DatabaseConstants.CONTACT_NAMES_FIELD },
-				DatabaseConstants.USER_NAME_FIELD + "='" + userName+"'", null,
+				DatabaseConstants.USER_NAME_FIELD + "='" + userName+"' AND " + DatabaseConstants.USER_SG + "='"+sg+"'", null,
 				null);
 		if (cursor != null) {
 			while (cursor.moveToNext())
@@ -1193,6 +1198,7 @@ private String convertStringArrayToString1(List<String> strList) {
 		Cursor cursor = null;
 		String tags = "";
 		String sql = "";
+		String sg = SharedPrefManager.getInstance().getUserDomain();
 		if(previousUsers == null)
 			previousUsers = new ArrayList<String>();
 		try {
@@ -1201,14 +1207,14 @@ private String convertStringArrayToString1(List<String> strList) {
 			if(previousUsers!=null && !previousUsers.isEmpty()){
 				tags = convertStringArrayToString(previousUsers);
 				sql = "SELECT "+colmsOfContactNumbers + " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS
-						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND " + DatabaseConstants.CONTACT_COMPOSITE_FIELD + "!='9999999999'" + " AND " + DatabaseConstants.USER_NAME_FIELD + " NOT IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' UNION "+
+						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND " + DatabaseConstants.USER_SG + "=" + sg + " AND " + DatabaseConstants.CONTACT_COMPOSITE_FIELD + "!='9999999999'" + " AND " + DatabaseConstants.USER_NAME_FIELD + " NOT IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' UNION "+
 						"SELECT " +colmsOfContactEmails+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_EMAILS
 						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+ DatabaseConstants.USER_NAME_FIELD + " NOT IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
 						+ DatabaseConstants.CONTACT_NAMES_FIELD
 						+ " COLLATE NOCASE";
 			}else{
 				sql = "SELECT " +colmsOfContactNumbers+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS
-						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND " + DatabaseConstants.CONTACT_COMPOSITE_FIELD + "!='9999999999'" + " AND " +DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' UNION "+"SELECT " +colmsOfContactEmails+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_EMAILS
+						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND " + DatabaseConstants.USER_SG + "=" + sg + " AND " + DatabaseConstants.CONTACT_COMPOSITE_FIELD + "!='9999999999'" + " AND " +DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' UNION "+"SELECT " +colmsOfContactEmails+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_EMAILS
 						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
 						+ DatabaseConstants.CONTACT_NAMES_FIELD
 						+ " COLLATE NOCASE";
@@ -1232,13 +1238,14 @@ private String convertStringArrayToString1(List<String> strList) {
 		Cursor cursor = null;
 		String tags = "";
 		String sql = "";
+		String sg = SharedPrefManager.getInstance().getUserDomain();
 		try {
 			String colmsOfContactNumbers = DatabaseConstants._ID+", "+DatabaseConstants.NAME_CONTACT_ID_FIELD+", "+DatabaseConstants.CONTACT_NUMBERS_FIELD+", "+DatabaseConstants.CONTACT_NAMES_FIELD+", "+DatabaseConstants.CONTACT_COMPOSITE_FIELD+", "+DatabaseConstants.VOPIUM_FIELD+", "+DatabaseConstants.USER_NAME_FIELD+", "+DatabaseConstants.IS_FAVOURITE_FIELD;
 			String colmsOfContactEmails = DatabaseConstants._ID+", "+DatabaseConstants.NAME_CONTACT_ID_FIELD+", "+DatabaseConstants.PHONE_EMAILS_FIELD+", "+DatabaseConstants.CONTACT_NAMES_FIELD+", "+DatabaseConstants.CONTACT_COMPOSITE_FIELD+", "+DatabaseConstants.VOPIUM_FIELD+", "+DatabaseConstants.USER_NAME_FIELD+", "+DatabaseConstants.IS_FAVOURITE_FIELD;
 			if(previousUsers!=null && !previousUsers.isEmpty()){
 		       tags = convertStringArrayToString(previousUsers);
 		 sql = "SELECT "+colmsOfContactNumbers + " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS
-				+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+ DatabaseConstants.USER_NAME_FIELD + " IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' UNION "+
+				+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND " + DatabaseConstants.USER_SG + "='" + sg + "' " + DatabaseConstants.USER_NAME_FIELD + " IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' UNION "+
 				 "SELECT " +colmsOfContactEmails+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_EMAILS
 				+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+ DatabaseConstants.USER_NAME_FIELD + " IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
 						+ DatabaseConstants.CONTACT_NAMES_FIELD

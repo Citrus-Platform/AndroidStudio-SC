@@ -47,7 +47,7 @@ public class XmppStateReceiver  extends BroadcastReceiver  {
 						context.startService(new Intent(SuperChatApplication.context, SinchService.class));
 				}else{
 					if(!isConnectedCalled && !isConnectingOrConnected){
-						SharedPrefManager.getInstance().saveLastOnline(System.currentTimeMillis());
+						SharedPrefManager.getInstance().saveLastOnline(SharedPrefManager.getInstance().getUserDomain(), System.currentTimeMillis());
 					}
 //					ChatService.xmppConectionStatus = false;
 //					if(ChatService.connectionStatusListener!=null)

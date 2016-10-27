@@ -963,6 +963,10 @@ private void getServerGroupProfile(String groupName){
 		contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
 		contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
 		contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, mobile_number);
+
+		//Save USerID and SG in DB
+		contentvalues.put(DatabaseConstants.USER_ID, iChatPref.getUserId());
+		contentvalues.put(DatabaseConstants.USER_SG, iChatPref.getUserDomain());
 		if(!username.equalsIgnoreCase(SharedPrefManager.getInstance().getUserName()))
 			DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
 

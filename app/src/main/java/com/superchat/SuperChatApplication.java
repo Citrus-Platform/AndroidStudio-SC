@@ -724,6 +724,10 @@ public class SuperChatApplication extends MultiDexApplication {
 										contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
 										contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
 										contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
+
+										//Save USerID and SG in DB
+										contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
+										contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 										
 										DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues); // central
 										 

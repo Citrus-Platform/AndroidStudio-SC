@@ -1163,7 +1163,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             if (!iChatPref.isDomainAdminORSubAdmin() && HomeScreen.isAdminFromSharedID(userName, iChatPref.getUserName()))
                 isSharedIDAdmin = true;
             isSharedIDDeactivated = iChatPref.isSharedIDDeactivated(userName);
-            if (userName.equalsIgnoreCase(iChatPref.getUserDomain() + "-all"))
+            if (userName != null && userName.equalsIgnoreCase(iChatPref.getUserDomain() + "-all"))
                 isBulletinBroadcast = true;
             else if (isBulletinBroadcast && iChatPref.isDomainAdminORSubAdmin()) {
                 userName = iChatPref.getUserDomain() + "-all";
@@ -5576,6 +5576,10 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             id = -(id);
         contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD, Integer.valueOf(id));
         contentvalues.put(DatabaseConstants.RAW_CONTACT_ID, Integer.valueOf(id));
+        //Save USerID and SG in DB
+        contentvalues.put(DatabaseConstants.USER_ID, iChatPref.getUserId());
+        contentvalues.put(DatabaseConstants.USER_SG, iChatPref.getUserDomain());
+
         DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
     }
 

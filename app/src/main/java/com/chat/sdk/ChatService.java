@@ -428,7 +428,7 @@ public class ChatService extends Service implements interfaceInstances {
 			// sendMessage(groupName, userMe+" has joined "+" "+groupName+".");
 			// }
 			if(prefManager!=null) //new1
-				prefManager.saveLastOnline(System.currentTimeMillis()); //new1
+				prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
 		}
 	};
 	PacketListener groupPacketListener = new PacketListener() {
@@ -575,7 +575,7 @@ public class ChatService extends Service implements interfaceInstances {
 						boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message_ID);
 						if(isDuplicate){
 							if(prefManager!=null) //new1
-								prefManager.saveLastOnline(System.currentTimeMillis()); //new1
+								prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
 							return;
 						}
 						Log.d(TAG,
@@ -775,7 +775,7 @@ public class ChatService extends Service implements interfaceInstances {
 									boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message_ID);
 									if(isDuplicate){
 										if(prefManager!=null) //new1
-											prefManager.saveLastOnline(System.currentTimeMillis()); //new1
+											prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
 										return;
 									}
 									prefManager.removeUsersFromGroup(user,gp);
@@ -788,7 +788,7 @@ public class ChatService extends Service implements interfaceInstances {
 									boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message_ID);
 									if(isDuplicate){
 										if(prefManager!=null) //new1
-											prefManager.saveLastOnline(System.currentTimeMillis()); //new1
+											prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
 										return;
 									}
 									prefManager.removeUsersFromGroup(user,gp);
@@ -913,7 +913,7 @@ public class ChatService extends Service implements interfaceInstances {
 							boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message.getPacketID());
 							if(isDuplicate){
 								if(prefManager!=null) //new1
-									prefManager.saveLastOnline(System.currentTimeMillis()); //new1
+									prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
 								return;
 							}
 						}
@@ -935,7 +935,7 @@ public class ChatService extends Service implements interfaceInstances {
 								+ e.toString());
 			}
 			if(prefManager!=null) //new1
-				prefManager.saveLastOnline(System.currentTimeMillis()); //new1
+				prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
 		}
 	};
 	
@@ -967,7 +967,7 @@ public class ChatService extends Service implements interfaceInstances {
 					startUserTyping(msgFrom);
 			}
 			if(prefManager!=null) //new1
-				prefManager.saveLastOnline(System.currentTimeMillis()); //new1
+				prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
 		}
 		
 	};
@@ -1000,7 +1000,7 @@ public class ChatService extends Service implements interfaceInstances {
 				
 			}
 			if(prefManager!=null) //new1
-				prefManager.saveLastOnline(System.currentTimeMillis()); //new1
+				prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
 		}
 		
 	};
@@ -1082,7 +1082,7 @@ public class ChatService extends Service implements interfaceInstances {
 //				}
 			}
 			if(prefManager!=null) //new1
-				prefManager.saveLastOnline(System.currentTimeMillis()); //new1
+				prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
 		}
 		
 	};
@@ -1164,7 +1164,7 @@ public class ChatService extends Service implements interfaceInstances {
 //				}
 			}
 			if(prefManager!=null) //new1
-				prefManager.saveLastOnline(System.currentTimeMillis()); //new1
+				prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
 		}
 		
 	};
@@ -1612,6 +1612,9 @@ public class ChatService extends Service implements interfaceInstances {
 								contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
 								contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
 								contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
+								//Save USerID and SG in DB
+								contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
+								contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
 								contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, "9999999999");
 								DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
 								HomeScreen.refreshContactList = true;
@@ -1917,7 +1920,7 @@ public class ChatService extends Service implements interfaceInstances {
 			}
 			sendOffLineMessages1();
 			if(prefManager!=null) //new1
-				prefManager.saveLastOnline(System.currentTimeMillis()); //new1
+				prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
 		}
 	};
 
@@ -2123,6 +2126,9 @@ public class ChatService extends Service implements interfaceInstances {
 		contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, ""+type);
 		contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
 		contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, mobile_number);
+		//Save USerID and SG in DB
+		contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
+		contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
 		if(!username.equalsIgnoreCase(SharedPrefManager.getInstance().getUserName()))
 			DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
 
@@ -2541,8 +2547,8 @@ public class ChatService extends Service implements interfaceInstances {
 							// ProviderManager.getInstance().addExtensionProvider("status","androidpn:iq:status",
 							// new MUCUserProvider());
 							int last_online_time = 0;
-							if(prefManager.getLastOnline() > 0)
-							 	last_online_time = (int)((System.currentTimeMillis() - (prefManager.getLastOnline() - (5 * 1000)))/1000);
+							if(prefManager.getLastOnline(prefManager.getUserDomain()) > 0)
+							 	last_online_time = (int)((System.currentTimeMillis() - (prefManager.getLastOnline(prefManager.getUserDomain()) - (5 * 1000)))/1000);
 //							System.out.println("(last_online_time) - "+last_online_time);
 							if (!connection.isAuthenticated())
 								connection.login(userName, password);
@@ -2574,7 +2580,7 @@ public class ChatService extends Service implements interfaceInstances {
 								connectionStatusListener.notifyConnectionChange();
 //							System.out.println("Connected Successfully:: So cancelling Timer - cancel()");
 							if(prefManager!=null)
-								prefManager.saveLastOnline(System.currentTimeMillis());
+								prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis());
 							sendOffLineMessages1();
 							updateBlockedUserList(prefManager.getUserName());
 							cancel();
@@ -3085,6 +3091,9 @@ public class ChatService extends Service implements interfaceInstances {
 			id = -(id);
 		contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD,Integer.valueOf(id));
 		contentvalues.put(DatabaseConstants.RAW_CONTACT_ID,Integer.valueOf(id));
+		//Save USerID and SG in DB
+		contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
+		contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
 		DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
 		}catch(Exception e){
 			
@@ -5098,10 +5107,10 @@ public class ChatService extends Service implements interfaceInstances {
 		try {
 			//For testing, to join directly.
 //			joinMultiUserChat2(roomName);
-			int currentTime = (int)((System.currentTimeMillis() - (prefManager.getLastOnline() - (5 * 1000)))/1000);
+			int currentTime = (int)((System.currentTimeMillis() - (prefManager.getLastOnline(prefManager.getUserDomain()) - (5 * 1000)))/1000);
 //			System.out.println("prefManager.getLastOnline() => currentTime - "+prefManager.getLastOnline());
 //			System.out.println("sendGroupPresence :: currentTime - "+currentTime);
-			if(prefManager.getLastOnline() <= 0)
+			if(prefManager.getLastOnline(prefManager.getUserDomain()) <= 0)
 				currentTime = 0;
 			if(historySeconds > 0)
 				currentTime = historySeconds;

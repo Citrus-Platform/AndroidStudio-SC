@@ -859,6 +859,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 										contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
 										contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
 										contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
+										//Save USerID and SG in DB
+										contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
+										contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
+
 										DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
 
 										if(userDetail.currentStatus!=null)
@@ -1119,6 +1123,18 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					chatFragment.notifyChatRecieve("", "");
 //				loadFragments();
 //				chatFragment.refreshList();
+				//Switch to chat
+				if(frompush) {
+					Intent intent = new Intent(SuperChatApplication.context,
+							ChatListScreen.class);
+					if (switchUserName != null)
+						intent.putExtra(DatabaseConstants.CONTACT_NAMES_FIELD, switchUserName);
+					if (switchUserDisplayName != null)
+						intent.putExtra(DatabaseConstants.USER_NAME_FIELD, switchUserDisplayName);
+					intent.putExtra("is_vopium_user", true);
+					startActivity(intent);
+					frompush = false;
+				}
 			}
 			//Get all the shared ID's - This call is for everyone
 			String shared_id_data = sharedPrefManager.getSharedIDData();
@@ -1322,6 +1338,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 									contentvalues.put(DatabaseConstants.BUILDING_NUMBER, userDetail.buildingNumber);
 									contentvalues.put(DatabaseConstants.ADDRESS, userDetail.address);
 									contentvalues.put(DatabaseConstants.RESIDENCE_TYPE, userDetail.residenceType);
+
+									//Save USerID and SG in DB
+									contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
+									contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
 									contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
 									if(!userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName()))
@@ -1629,13 +1649,19 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		intent.putExtra(Constants.CHAT_TYPE, Constants.NARMAL_CHAT);
 		startActivity(intent);
 	}
+	String switchUserName;
+	String switchUserDisplayName;
+	boolean frompush = false;
 	@Override
 	protected void onNewIntent(Intent intent) {
+
 		super.onNewIntent(intent);
-		boolean frompush = false;
+		String user_name;
 		Bundle extras = intent.getExtras();
 		if (extras != null) {
 			frompush = extras.getBoolean("FROM_NOTIFICATION");
+			switchUserName = extras.getString(ChatDBConstants.USER_NAME_FIELD);
+			switchUserDisplayName = extras.getString(ChatDBConstants.CONTACT_NAMES_FIELD);
 			if(frompush) {
 				String user = iPrefManager.getUserPhone();
 				if(user != null && user.contains("-"))
@@ -2418,6 +2444,9 @@ public void onComposeClick(View view){
 								contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
 								contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
 								contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
+								//Save USerID and SG in DB
+								contentvalues.put(DatabaseConstants.USER_ID, sharedPrefManager.getUserId());
+								contentvalues.put(DatabaseConstants.USER_SG, sharedPrefManager.getUserDomain());
 								contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, "9999999999");
 								DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
 							}
@@ -2580,8 +2609,8 @@ public void onComposeClick(View view){
 
 										contentvalues.put(DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
 										//Save USerID and SG in DB
-										contentvalues.put(DatabaseConstants.USER_ID, SharedPrefManager.getInstance().getUserId());
-										contentvalues.put(DatabaseConstants.USER_SG, SharedPrefManager.getInstance().getUserDomain());
+										contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
+										contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
 										if(!userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
 											wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
