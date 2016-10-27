@@ -771,7 +771,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		}
 		@Override
 		protected void onPreExecute() {
-			if(!noLoadingNeeded && !isSwitchSG) {
+			if(!noLoadingNeeded) {
 				progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
 				noLoadingNeeded = false;
 			}
