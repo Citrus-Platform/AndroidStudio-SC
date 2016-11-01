@@ -29,6 +29,25 @@ public class OwnerDomainName
 
     private String domainDisplayName;
 
+    private String domainCount;
+    private String domainNotify;
+
+    public void setDomainCount(String domainCount) {
+        this.domainCount = domainCount;
+    }
+
+    public void setDomainNotify(String domainNotify) {
+        this.domainNotify = domainNotify;
+    }
+
+    public String getDomainCount() {
+        return domainCount;
+    }
+
+    public String getDomainNotify() {
+        return domainNotify;
+    }
+
     public void setDomainName(String domainName) { this.domainName = domainName; }
 
     private String adminName;

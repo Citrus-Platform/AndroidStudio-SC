@@ -97,7 +97,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
         String data = iPrefManager.getSgListData();
         ////////////////////////////////////////
-        ArrayList<SGroupListObject> ownerDomainNameSet = new ArrayList<>();
+        ArrayList<SGroupListObject> ownerDomainNameSetTemp = new ArrayList<>();
 
         ///////////////////////////////////////////////////////////////
         ArrayList<JoinedDomainNameSet> joinedDomainNameSetTemp = DBWrapper.getInstance().getListOfJoinedSGs();
@@ -105,9 +105,9 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
 
 
-        ArrayList<OwnerDomainName> ownerDomainNameSetTemp = new ArrayList<>();
+        ArrayList<OwnerDomainName> ownerDomainNameSet = new ArrayList<>();
 
-        ownerDomainNameSetTemp.add(owned);
+        ownerDomainNameSet.add(owned);
         ///////////////////////////////////////////////////////////////
 
         if (data != null) {
@@ -131,7 +131,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                             ownerDisplayName,
                             ownerDomainNameSet.get(i).getDomainCount(),
                             ownerDomainNameSet.get(i).getDomainNotify(),
-                            ownerDomainNameSet.get(i).getDomainName()));
+                            ownerDomainNameSet.get(i).getDomainName(),
+                            ownerDomainNameSet.get(i).getDomainType()));
                 }
             }
             ///////////////////////////////////////////////
@@ -152,7 +153,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                             joinedDisplayName,
                             joinedDomainNameSetTemp.get(i).getDomainCount(),
                             joinedDomainNameSetTemp.get(i).getDomainNotify(),
-                            joinedDomainNameSetTemp.get(i).getDomainName()));
+                            joinedDomainNameSetTemp.get(i).getDomainName(),
+                            joinedDomainNameSetTemp.get(i).getDomainType()));
                 }
             }
         } else {

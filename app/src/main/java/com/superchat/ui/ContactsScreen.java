@@ -58,7 +58,7 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
     private boolean onForeground;
     private ChatService service;
     private XMPPConnection connection;
-    ImageView superGroupIcon;
+//    ImageView superGroupIcon;
     TextView superGroupName;
     ImageView global_icon_white;
     ImageView searchIcon;
@@ -89,12 +89,12 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
                              ViewGroup viewgroup, Bundle bundle) {
         View view = layoutinflater.inflate(R.layout.contact_home, null);
         searchBoxView = (EditText) view.findViewById(R.id.id_search_field);
-        superGroupIcon = (ImageView) view.findViewById(R.id.id_sg_icon);
+//        superGroupIcon = (ImageView) view.findViewById(R.id.id_sg_icon);
         superGroupName = (TextView) view.findViewById(R.id.id_sg_name_label);
         global_icon_white = (ImageView) view.findViewById(R.id.global_icon_white);
         global_icon_white.setOnClickListener(this);
         searchIcon = (ImageView) view.findViewById(R.id.id_search_icon);
-        superGroupIcon.setOnClickListener(this);
+//        superGroupIcon.setOnClickListener(this);
         superGroupName.setOnClickListener(this);
 
         searchIcon.setOnClickListener(new OnClickListener() {
@@ -106,7 +106,7 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
                 searchBoxView.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(View.VISIBLE);
                 searchIcon.setVisibility(View.GONE);
-                superGroupIcon.setVisibility(View.GONE);
+//                superGroupIcon.setVisibility(View.GONE);
                 superGroupName.setVisibility(View.GONE);
 
                 searchBoxView.requestFocus();
@@ -154,7 +154,7 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
                 searchBoxView.setText("");
                 searchBoxView.setVisibility(View.GONE);
                 searchIcon.setVisibility(View.VISIBLE);
-                superGroupIcon.setVisibility(View.VISIBLE);
+//                superGroupIcon.setVisibility(View.VISIBLE);
                 superGroupName.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(View.GONE);
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -298,8 +298,8 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
         }
         if (superGroupName != null)
             superGroupName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
-        if (superGroupIcon != null && SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID") != null)
-            setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
+//        if (superGroupIcon != null && SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID") != null)
+//            setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
 //		showAllContacts();
     }
 

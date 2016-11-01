@@ -79,7 +79,7 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
     private ListView recentList = null;
     FragmentActivity fragmentactivity;
     String bulletinDomainName;
-    ImageView superGroupIcon;
+//    ImageView superGroupIcon;
     TextView superGroupName;
     ImageView global_icon_white;
     public static final byte BULLETIN_ADMIN = 1;
@@ -123,11 +123,11 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
         xmppStatusView = (ImageView) view.findViewById(R.id.id_xmpp_status);
         progressBarView = (ProgressBar) view.findViewById(R.id.id_loading);
         progressBarView.setVisibility(ProgressBar.VISIBLE);
-        superGroupIcon = (ImageView) view.findViewById(R.id.id_sg_icon);
+//        superGroupIcon = (ImageView) view.findViewById(R.id.id_sg_icon);
         superGroupName = (TextView) view.findViewById(R.id.id_sg_name_label);
         global_icon_white = (ImageView) view.findViewById(R.id.global_icon_white);
         global_icon_white.setOnClickListener(this);
-        superGroupIcon.setOnClickListener(this);
+//        superGroupIcon.setOnClickListener(this);
         superGroupName.setOnClickListener(this);
         ((ImageView) view.findViewById(R.id.id_compose_icon)).setVisibility(View.GONE);
         ((TextView) view.findViewById(R.id.id_all_tab1)).setText(getString(R.string.bulletin_board));
@@ -149,7 +149,7 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
                 searchBoxView.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(View.VISIBLE);
                 searchIcon.setVisibility(View.GONE);
-                superGroupIcon.setVisibility(View.GONE);
+//                superGroupIcon.setVisibility(View.GONE);
                 superGroupName.setVisibility(View.GONE);
 
                 searchBoxView.requestFocus();
@@ -164,7 +164,7 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
             public void onClick(View v) {
                 searchBoxView.setVisibility(View.GONE);
                 searchIcon.setVisibility(View.VISIBLE);
-                superGroupIcon.setVisibility(View.VISIBLE);
+//                superGroupIcon.setVisibility(View.VISIBLE);
                 superGroupName.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(View.GONE);
                 searchBoxView.setText("");
@@ -525,8 +525,8 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
         setProfileListener();
         if (superGroupName != null)
             superGroupName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
-        if (superGroupIcon != null && SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID") != null)
-            setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
+//        if (superGroupIcon != null && SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID") != null)
+//            setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
         super.onResume();
     }
 

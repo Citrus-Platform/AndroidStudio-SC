@@ -66,7 +66,7 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
     EditText searchBoxView;
     ImageView clearSearch;
     ImageView searchIcon;
-    ImageView superGroupIcon;
+//    ImageView superGroupIcon;
     TextView superGroupName;
     ImageView global_icon_white;
     private RelativeLayout searchViewLayout;
@@ -219,7 +219,7 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
         searchBoxView = (EditText) view.findViewById(R.id.id_search_field);
         searchIcon = (ImageView) view.findViewById(R.id.id_search_icon);
         clearSearch = (ImageView) view.findViewById(R.id.id_back_arrow);
-        superGroupIcon = (ImageView) view.findViewById(R.id.id_sg_icon);
+//        superGroupIcon = (ImageView) view.findViewById(R.id.id_sg_icon);
         superGroupName = (TextView) view.findViewById(R.id.id_sg_name_label);
         global_icon_white = (ImageView) view.findViewById(R.id.global_icon_white);
         global_icon_white.setOnClickListener(this);
@@ -237,7 +237,7 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
 //		headerBar.setBackgroundColor(R.color.header_color);
         searchBoxView.setVisibility(EditText.GONE);
         clearSearch.setVisibility(ImageView.GONE);
-        superGroupIcon.setOnClickListener(this);
+//        superGroupIcon.setOnClickListener(this);
         superGroupName.setOnClickListener(this);
 
         searchIcon.setOnClickListener(new OnClickListener() {
@@ -249,7 +249,7 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
                 searchBoxView.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(View.VISIBLE);
                 searchIcon.setVisibility(View.GONE);
-                superGroupIcon.setVisibility(View.GONE);
+//                superGroupIcon.setVisibility(View.GONE);
                 superGroupName.setVisibility(View.GONE);
 
                 searchBoxView.requestFocus();
@@ -272,7 +272,7 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
             public void onClick(View v) {
                 searchBoxView.setVisibility(View.GONE);
                 searchIcon.setVisibility(View.VISIBLE);
-                superGroupIcon.setVisibility(View.VISIBLE);
+//                superGroupIcon.setVisibility(View.VISIBLE);
                 superGroupName.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(View.GONE);
                 searchBoxView.setText("");
@@ -500,8 +500,8 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
         setProfileListener();
         if (superGroupName != null)
             superGroupName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
-        if (superGroupIcon != null && SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID") != null)
-            setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
+//        if (superGroupIcon != null && SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID") != null)
+//            setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
         ((HomeScreen) getActivity()).updateSlidingDrawer(SharedPrefManager.getInstance().getCurrentSGDisplayName(), SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
         super.onResume();
     }

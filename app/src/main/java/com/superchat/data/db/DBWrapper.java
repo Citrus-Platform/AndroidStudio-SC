@@ -2185,6 +2185,28 @@ public boolean isContactModified(String rawId, int version){
 			return true;
 		return false;
 	}
+	/**
+	 * Checks if SG Owner or not
+	 * @param sg
+	 * @return
+     */
+	public boolean isSGOwner(String sg) {
+		int owner = 0;
+		Cursor cursor = DBWrapper.getInstance().query(
+				DatabaseConstants.TABLE_NAME_MULTIPLE_SG,
+				new String[] { DatabaseConstants.DOMAIN_TYPE_VALUE },
+				DatabaseConstants.DOMAIN_NAME + "='" + sg+"'", null,
+				null);
+		if (cursor != null) {
+			while (cursor.moveToNext())
+				owner = cursor.getInt(cursor.getColumnIndex(DatabaseConstants.DOMAIN_TYPE_VALUE));
+		}
+		if (cursor != null)
+			cursor.close();
+		if(owner == 1)
+			return true;
+		return false;
+	}
 
 	/**
 	 * Updates Joined SG's in DB
@@ -2435,6 +2457,7 @@ public boolean isContactModified(String rawId, int version){
 					sgdata.setCreatedDate(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_CREATED_DATE)));
 					sgdata.setLogoFileId(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_LOGO_FILE_ID)));
 					sgdata.setDomainMuteInfo(cursor.getInt(cursor.getColumnIndex(DatabaseConstants.DOMAIN_MUTE_INFO)));
+					sgdata.setDomainType(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_TYPE)));
 					joined.add(sgdata);
 				}
 			}
@@ -2504,6 +2527,7 @@ public boolean isContactModified(String rawId, int version){
 					sgdata.setCreatedDate(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_CREATED_DATE)));
 					sgdata.setLogoFileId(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_LOGO_FILE_ID)));
 					sgdata.setDomainMuteInfo(cursor.getInt(cursor.getColumnIndex(DatabaseConstants.DOMAIN_MUTE_INFO)));
+					sgdata.setDomainType(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_TYPE)));
 				}
 			}
 		} catch (Exception e) {

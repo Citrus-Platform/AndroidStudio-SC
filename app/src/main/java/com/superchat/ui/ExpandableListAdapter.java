@@ -118,6 +118,15 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 itemControllerChild.refferalItem = item;
 
                 itemControllerChild.child_title.setText(item.text);
+
+                if(item.domainType != null) {
+                    if(DBWrapper.getInstance().isSGOwner(item.actualName))
+                     itemControllerChild.child_sg_type.setText("OWNER [ " + item.domainType + " ]");
+                    else
+                        itemControllerChild.child_sg_type.setText("[ " + item.domainType + " ]");
+                }
+//                else
+//                    itemControllerChild.child_sg_type.setText("[Owner]");
                 ///////////////////////////////////////////////////////
                 String fileId = DBWrapper.getInstance().getSGLogoFileID(item.actualName);
                 if (fileId != null && fileId.length() > 0) {
@@ -126,7 +135,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                 }
                 //count of child//////////////
-                int muteId = DBWrapper.getInstance().getSGMuteInfo(item.actualName);
+                int muteId = DBWrapper.getInstance().getSGMuteInfo(item.text);
                 if (muteId == 0) {
                     itemControllerChild.btn_notify_toggle.setVisibility(View.GONE);
                 } else {
@@ -204,6 +213,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private static class ListChildViewHolder extends RecyclerView.ViewHolder {
         public ImageView displayPicture;
         public TextView child_title;
+        public TextView child_sg_type;
         public ImageView btn_notify_toggle;
         public ImageView btn_active_toggle;
         public TextView child_notificationCount;
@@ -215,6 +225,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             super(itemView);
             displayPicture = (ImageView) itemView.findViewById(R.id.displayPicture);
             child_title = (TextView) itemView.findViewById(R.id.child_title);
+            child_sg_type = (TextView) itemView.findViewById(R.id.child_sg_type);
             child_notificationCount = (TextView) itemView.findViewById(R.id.child_notificationCount);
             btn_notify_toggle = (ImageView) itemView.findViewById(R.id.btn_notify_toggle);
             btn_active_toggle = (ImageView)itemView.findViewById(R.id.btn_active_toggle);
@@ -229,15 +240,17 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         public String text;
         public String count;
         public String notify;
+        public String domainType;
         public List<Item> invisibleChildren;
 
         public Item() {
         }
 
-        public Item(int type, String text, String count, String notify , String actualName) {
+        public Item(int type, String text, String count, String notify , String actualName, String domainType) {
             this.type = type;
             this.text = text;
             this.actualName = actualName;
+            this.domainType = domainType;
 
             this.count = count;
             this.notify = notify;
