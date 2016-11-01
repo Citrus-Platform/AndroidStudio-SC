@@ -1231,7 +1231,11 @@ public class Message extends Packet {
 		/**
 		 * Shared ID message to all
 		 */
-		sharedID;
+		sharedID,
+		/**
+		 * stateAllSGCounters for all SG's
+		 */
+		stateAllSGCounters;
 
 		public static StatusMessageType fromString(String name) {
 			try {

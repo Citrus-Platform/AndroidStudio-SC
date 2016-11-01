@@ -180,6 +180,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

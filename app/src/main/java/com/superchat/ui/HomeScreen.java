@@ -1125,12 +1125,12 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //				chatFragment.refreshList();
 				//Switch to chat
 				if(frompush) {
-					Intent intent = new Intent(SuperChatApplication.context,
-							ChatListScreen.class);
+					Intent intent = new Intent(SuperChatApplication.context, ChatListScreen.class);
 					if (switchUserName != null)
-						intent.putExtra(DatabaseConstants.CONTACT_NAMES_FIELD, switchUserName);
-					if (switchUserDisplayName != null)
-						intent.putExtra(DatabaseConstants.USER_NAME_FIELD, switchUserDisplayName);
+						intent.putExtra(DatabaseConstants.USER_NAME_FIELD, switchUserName);
+					if (switchUserDisplayName != null) {
+						intent.putExtra(DatabaseConstants.CONTACT_NAMES_FIELD, switchUserDisplayName);
+					}
 					intent.putExtra("is_vopium_user", true);
 					startActivity(intent);
 					frompush = false;

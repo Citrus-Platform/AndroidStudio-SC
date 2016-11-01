@@ -2310,6 +2310,24 @@ public boolean isContactModified(String rawId, int version){
 	}
 
 	/**
+	 * Updates New Message Count for this SG
+	 * @param sg_name
+	 * @param value
+	 */
+	public void updateSGNewMessageCount(String sg_name, int value){
+		try{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT, Integer.valueOf(value));
+			int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
+					new String[] { sg_name });
+			if(row > 0)
+				Log.e("DBWrapper", "updateSGMuteInfo count " + row);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+
+	/**
 	 * Returns username for that SG
  	 * @param sg
 	 * @return

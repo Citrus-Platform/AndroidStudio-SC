@@ -135,7 +135,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                 }
                 //count of child//////////////
-                int muteId = DBWrapper.getInstance().getSGMuteInfo(item.text);
+                int muteId = DBWrapper.getInstance().getSGMuteInfo(item.actualName);
                 if (muteId == 0) {
                     itemControllerChild.btn_notify_toggle.setVisibility(View.GONE);
                 } else {

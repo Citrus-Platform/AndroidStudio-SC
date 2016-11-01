@@ -85,6 +85,8 @@ import com.superchat.model.LoginResponseModel.UserResponseDetail;
 import com.superchat.model.RegistrationForm;
 import com.superchat.model.RegistrationFormResponse;
 import com.superchat.model.UserProfileModel;
+import com.superchat.model.multiplesg.JoinedDomainNameSet;
+import com.superchat.model.multiplesg.OwnerDomainName;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.ui.ChatListScreen;
 import com.superchat.ui.HomeScreen;
@@ -1830,6 +1832,29 @@ public class ChatService extends Service implements interfaceInstances {
 						}
 						return;
 					}
+					//Check here for
+					if(message.getStatusMessageType() == Message.StatusMessageType.stateAllSGCounters)//501
+					{
+						String all_counter  = message.getJsonBody();
+						if(all_counter != null && !all_counter.isEmpty()) {
+							JSONObject jsonobj = new JSONObject(all_counter.trim());
+							Iterator<?> keys = jsonobj.keys();
+							while( keys.hasNext() ) {
+								String key = (String)keys.next();
+								System.out.println("Key  - "+key);
+								try {
+									DBWrapper.getInstance().updateSGNewMessageCount(key, Integer.parseInt((String) jsonobj.get(key)));
+//								if ( jsonobj.get(key) instanceof JSONObject ) {
+//
+//								}
+								}catch(NumberFormatException ex){
+									ex.printStackTrace();
+								}
+							};
+
+						}
+						return;
+					}
 					fromName = StringUtils.parseBareAddress(message.getFrom());
 					// Log.d(TAG, "Got text [" + message.getBody()
 					// + "] from [" + fromName + "]");
@@ -2548,8 +2573,8 @@ public class ChatService extends Service implements interfaceInstances {
 							// new MUCUserProvider());
 							int last_online_time = 0;
 							if(prefManager.getLastOnline(prefManager.getUserDomain()) > 0)
-							 	last_online_time = (int)((System.currentTimeMillis() - (prefManager.getLastOnline(prefManager.getUserDomain()) - (5 * 1000)))/1000);
-//							System.out.println("(last_online_time) - "+last_online_time);
+							 	last_online_time = (int)((System.currentTimeMillis() - (prefManager.getLastOnline(prefManager.getUserDomain()) - (120 * 1000)))/1000);
+							System.out.println("(last_online_time) - "+last_online_time);
 							if (!connection.isAuthenticated())
 								connection.login(userName, password);
 							setConnection(packetListener);

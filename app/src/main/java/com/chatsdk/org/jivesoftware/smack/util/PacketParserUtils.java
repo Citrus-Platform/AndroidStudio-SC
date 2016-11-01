@@ -88,7 +88,11 @@ public class PacketParserUtils {
 			try{
 				if(state.ordinal()== Integer.parseInt(v))
 					return state;
-			}catch(NumberFormatException e){}
+                else if(501 == Integer.parseInt(v))//Check for all SG Messages.
+                    return Message.StatusMessageType.stateAllSGCounters;
+			}catch(NumberFormatException e){
+                e.printStackTrace();
+            }
 		}
 		return Message.StatusMessageType.normal;
 	}

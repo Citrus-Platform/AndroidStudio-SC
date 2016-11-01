@@ -312,6 +312,17 @@ public class ChatHomeAdapter extends SimpleCursorAdapter implements OnClickListe
 		}
 	}
 
+//	public void switchToUserChat(String display, String user){
+//		Intent intent = new Intent(SuperChatApplication.context,
+//				ChatListScreen.class);
+//		intent.putExtra(DatabaseConstants.CONTACT_NAMES_FIELD, display);
+//		intent.putExtra(DatabaseConstants.USER_NAME_FIELD, user);
+//		intent.putExtra("is_vopium_user", true);
+//		((HomeScreen) context).startActivity(intent);
+//		moreTab.setVisibility(TextView.GONE);
+//		deleteTab.setVisibility(TextView.GONE);
+//	}
+
 	int check;
 	private static HashMap<String, Boolean> checkedTagMap = new HashMap<String, Boolean>();
 	ChatCountListener connectListener;
