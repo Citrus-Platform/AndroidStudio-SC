@@ -1851,6 +1851,9 @@ public class ChatService extends Service implements interfaceInstances {
 									ex.printStackTrace();
 								}
 							};
+							if(HomeScreen.isforeGround){
+								HomeScreen.updateNavDrawer = true;
+							}
 
 						}
 						return;

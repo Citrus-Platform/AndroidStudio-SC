@@ -218,12 +218,10 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         llAddSuperGroup.setOnClickListener(this);
         llInvited.setOnClickListener(this);
         notificationLayout.setOnClickListener(this);
-        ////////////////////////////////////////////////////////////
+
         adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity());
-        ////////////////////////////////////////////////////////////
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
-
         return layout;
     }
 
@@ -416,6 +414,12 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     }
 
     public void fragmentOpen() {
+        if(HomeScreen.updateNavDrawer){
+            HomeScreen.updateNavDrawer = false;
+            adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity());
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+            recyclerView.setAdapter(adapter);
+        }
         mDrawerLayout.openDrawer(containerView);
     }
 

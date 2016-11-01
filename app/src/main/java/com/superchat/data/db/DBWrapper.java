@@ -1856,8 +1856,12 @@ public boolean isContactModified(String rawId, int version){
      */
 	public void updateOwnedSGData(OwnerDomainName sg_data){
 		try{
+			SharedPrefManager prefManager = SharedPrefManager.getInstance();
 			//Update Shared Preferences for owned Domain
-			SharedPrefManager.getInstance().saveOwnedDomain(sg_data.getDomainName());
+			prefManager.saveOwnedDomain(sg_data.getDomainName());
+			//Save Last Online time
+			prefManager.saveLastOnline(sg_data.getDomainName(), System.currentTimeMillis());
+
 			ContentValues contentvalues = new ContentValues();
 			contentvalues.put(DatabaseConstants.DOMAIN_NAME, sg_data.getDomainName());
 			//contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDomainDisplayName());
@@ -2213,6 +2217,9 @@ public boolean isContactModified(String rawId, int version){
 	 * @param list
      */
 	public void updateJoinedSGData(ArrayList<JoinedDomainNameSet> list){
+
+		SharedPrefManager prefManager = SharedPrefManager.getInstance();
+
 		try{
 			for (JoinedDomainNameSet sg_data : list) {
 				ContentValues contentvalues = new ContentValues();
@@ -2229,6 +2236,8 @@ public boolean isContactModified(String rawId, int version){
 				contentvalues.put(DatabaseConstants.DOMAIN_ORG_URL, sg_data.getOrgUrl());
 				contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
 				contentvalues.put(DatabaseConstants.DOMAIN_MUTE_INFO, Integer.valueOf(0));
+				//Save Last Online time
+				prefManager.saveLastOnline(sg_data.getDomainName(), System.currentTimeMillis());
 				long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
 				if(row > 0)
 					Log.e("DBWrapper", "updateJoinedSGData count " + row);

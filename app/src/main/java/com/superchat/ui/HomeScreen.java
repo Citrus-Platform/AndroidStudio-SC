@@ -155,7 +155,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	BulletinScreen bulletinFragment;
 //	MoreScreen moreFragment;
 //	XmppChatClient chatClient;
-	static boolean isforeGround = false;
+	public static boolean isforeGround = false;
+	public static boolean updateNavDrawer = false;
+
 	public MyriadRegularTextView totalCountView;
 	public MyriadRegularTextView unseenContactView;
 	public MyriadRegularTextView totalBulletinView;
