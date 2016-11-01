@@ -126,7 +126,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                 }
                 //count of child//////////////
-                int muteId = DBWrapper.getInstance().getSGMuteInfo(item.text);
+                int muteId = DBWrapper.getInstance().getSGMuteInfo(item.actualName);
                 if (muteId == 0) {
                     itemControllerChild.btn_notify_toggle.setVisibility(View.GONE);
                 } else {
@@ -134,7 +134,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 }
 
                 //notify or not////////////
-                int countId = DBWrapper.getInstance().getNewMessageCountForSG(item.text);
+                int countId = DBWrapper.getInstance().getNewMessageCountForSG(item.actualName);
                 if (countId == 0) {
 //                    itemControllerChild.countContainer.setVisibility(View.GONE);
                     itemControllerChild.child_notificationCount.setText("");
@@ -145,7 +145,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
 
                 //activate or not////////////
-                boolean active = DBWrapper.getInstance().isSGActive(item.text);
+                boolean active = DBWrapper.getInstance().isSGActive(item.actualName);
                 if (active) {
                     itemControllerChild.btn_active_toggle.setVisibility(View.GONE);
                 } else{
@@ -172,7 +172,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                         if (user != null && user.contains("-"))
                             user = user.replace("-", "");
                         if (context != null)
-                            ((HomeScreen) context).switchSG(user + "_" + item.text);
+                            ((HomeScreen) context).switchSG(user + "_" + item.actualName);
                     }
                 });
                 break;
