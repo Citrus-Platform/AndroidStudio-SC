@@ -131,8 +131,6 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 String fileId = DBWrapper.getInstance().getSGLogoFileID(item.actualName);
                 if (fileId != null && fileId.length() > 0) {
                     setProfilePic(itemControllerChild.displayPicture, fileId);
-                } else {
-
                 }
                 //count of child//////////////
                 int muteId = DBWrapper.getInstance().getSGMuteInfo(item.actualName);
@@ -152,10 +150,10 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     itemControllerChild.child_notificationCount.setText("(" + countId + ")");
                 }
 
-
                 //To make the current SG selected
+
                 if (item.text.equalsIgnoreCase(SharedPrefManager.getInstance().getCurrentSGDisplayName()) ||
-                        item.text.equalsIgnoreCase(SharedPrefManager.getInstance().getUserDomain())) {
+                        item.actualName.equalsIgnoreCase(SharedPrefManager.getInstance().getUserDomain())) {
                     itemControllerChild.container.setBackgroundColor(context.getResources().getColor(R.color.blue));
                 } else {
                     itemControllerChild.container.setBackgroundColor(context.getResources().getColor(R.color.md_grey_600));

@@ -814,6 +814,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				            }
 				            if(str!=null &&!str.equals("")){
 								System.out.println("HomeScreen :: SignInTaskOnServer : response : "+str);
+								Log.e("here" , "respo : "+str);
 				            	Gson gson = new GsonBuilder().create();
 				            	LoginResponseModel loginObj = gson.fromJson(str, LoginResponseModel.class);
 								if (loginObj != null && loginObj.status!=null && loginObj.status.equals("success")) {

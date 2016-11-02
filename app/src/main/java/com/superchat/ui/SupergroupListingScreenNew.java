@@ -327,7 +327,10 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
             expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
             expandableListAdapter = new ExpandableListAdapter(this, expandableListTitle, expandableListDetail);
             expandableListView.setAdapter(expandableListAdapter);
-            expandableListView.setOnGroupExpandListener(new OnGroupExpandListener() {
+
+            expandableListView.expandGroup(0);
+
+            /*expandableListView.setOnGroupExpandListener(new OnGroupExpandListener() {
 
                 @Override
                 public void onGroupExpand(int groupPosition) {
@@ -351,7 +354,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
 //		                        Toast.LENGTH_SHORT).show();
 
                 }
-            });
+            });*/
 
             expandableListView.setOnChildClickListener(new OnChildClickListener() {
                 @Override

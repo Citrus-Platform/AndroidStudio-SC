@@ -424,12 +424,14 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                adapter.notifyDataSetChanged();
                 getActivity().invalidateOptionsMenu();
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+                adapter.notifyDataSetChanged();
                 getActivity().invalidateOptionsMenu();
             }
 
