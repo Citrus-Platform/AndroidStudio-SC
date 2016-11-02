@@ -64,6 +64,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     public ImageView displayPictureCurrent;
     public ImageView notifyCurrent;
     public TextView user;
+    public TextView addSGTextView;
 
     public TextView invitedNotificationCount;
     private RecyclerView recyclerView;
@@ -194,6 +195,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         notifyCurrent = (ImageView) layout.findViewById(R.id.notifyCurrent);
         notifyCurrent.setOnClickListener(this);
         user = (TextView) layout.findViewById(R.id.user);
+        addSGTextView = (TextView) layout.findViewById(R.id.id_add_sg_txt);
 
         invitedNotificationCount = (TextView)layout.findViewById(R.id.invitedNotificationCount);
         invitedNotificationCount.setText(""+DBWrapper.getInstance().getListOfInvitedSGs().size());
@@ -212,6 +214,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         notificationLayout = (RelativeLayout) layout.findViewById(R.id.notificationLayout);
 
         if (SharedPrefManager.getInstance().getOwnedDomain() != null) {
+            addSGTextView.setVisibility(View.GONE);
             llAddSuperGroup.setVisibility(View.GONE);
         }
 

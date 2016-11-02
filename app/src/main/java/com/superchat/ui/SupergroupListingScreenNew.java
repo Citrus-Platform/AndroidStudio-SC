@@ -806,13 +806,17 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
             welcomeDialog = null;
             return;
         }
-
         finish();
     }
 
     @Override
     public void onBackPressed() {
-        return;
+        if (welcomeDialog != null) {
+            welcomeDialog.cancel();
+            welcomeDialog = null;
+            return;
+        }
+        finish();
     }
 
     //=======================================================================================
@@ -1101,6 +1105,8 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                             iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
                             //Do not show this dialog, Simply verify and get in
 //							verifyUserSG(errorModel.userId);
+                            //Update SG type in db
+                            DBWrapper.getInstance().updateSGTypeValue(superGroupName, 2);
                             showAlertDialog(citrusError.message, errorModel.userId);
                         } else
                             showDialog(citrusError.message);
@@ -1282,9 +1288,11 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                     sharedPrefManager.saveUserName(objUserModel.username);
                     sharedPrefManager.saveUserPassword(objUserModel.password);
                     sharedPrefManager.setOTPVerified(true);
-//                    showDialogWantToSwitchGroup(objUserModel.username);
 
-                    showDialogWithPositive(objUserModel.username, "Do you want to switch to new group ?");
+                    saveDataAndMove(objUserModel.username);
+
+//                    showDialogWantToSwitchGroup(objUserModel.username);
+//                    showDialogWithPositive(objUserModel.username, "Do you want to switch to new group ?");
 
                 } else {
                     runOnUiThread(new Runnable() {

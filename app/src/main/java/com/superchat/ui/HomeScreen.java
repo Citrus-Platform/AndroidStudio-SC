@@ -505,7 +505,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		}
 //		mViewPager.setOffscreenPageLimit(4);
 		mViewPager.setAdapter(mAdapter);
-		if(iPrefManager.isFirstTime() && iPrefManager.getAppMode().equals("VirginMode")){
+		if(iPrefManager.isFirstTime()
+				&& iPrefManager.getAppMode() != null && iPrefManager.getAppMode().equals("VirginMode")){
 //			if(firstTimeAdmin){
 //				mViewPager.setCurrentItem(2);
 //				chatMenuLayout.setSelected(false);
@@ -598,6 +599,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		 mViewPager.addOnPageChangeListener(mPageChangeListener);
 //		 titleIndicator.setOnPageChangeListener(mPageChangeListener);
 		 startService(new Intent(SuperChatApplication.context, SinchService.class));
+
+		//Chrck for backUp and upload.
+		checkForBackUpAndUploadBackup();
 	}
 	private boolean isVerifiedUser(String mobileNumber) {
 		if (mobileNumber == null)
@@ -1707,7 +1711,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			else
 				new GetVersionCode().execute();
 		}
-		checkForBackUpAndUploadBackup();
+//		checkForBackUpAndUploadBackup();
 	}
 	boolean backUpFound;
 		class CheckDataBackup extends AsyncTask<String, String, String> {

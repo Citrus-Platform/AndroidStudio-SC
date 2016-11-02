@@ -98,6 +98,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/id_add_sg_txt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="8"
