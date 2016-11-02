@@ -75,6 +75,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     private static String[] titles = null;
     private FragmentDrawerListener drawerListener;
 
+    LinearLayout userContainer;
     LinearLayout llInvited;
     LinearLayout llAddSuperGroup;
     RelativeLayout notificationLayout;
@@ -201,6 +202,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         invitedNotificationCount.setText(""+DBWrapper.getInstance().getListOfInvitedSGs().size());
 
         String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
+//        String file_id = DBWrapper.getInstance().getSGLogoFileID(SharedPrefManager.getInstance().getUserDomain());
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
         if (file_id != null && file_id.trim().length() > 0) {
             setProfilePic(displayPictureCurrent, file_id);
@@ -210,6 +212,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         ///////////////////////////////////////////////
 
         llAddSuperGroup = (LinearLayout) layout.findViewById(R.id.llAddSuperGroup);
+        userContainer = (LinearLayout) layout.findViewById(R.id.userContainer);
         llInvited = (LinearLayout) layout.findViewById(R.id.llInvited);
         notificationLayout = (RelativeLayout) layout.findViewById(R.id.notificationLayout);
 
@@ -220,6 +223,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
         llAddSuperGroup.setOnClickListener(this);
         llInvited.setOnClickListener(this);
+        userContainer.setOnClickListener(this);
         notificationLayout.setOnClickListener(this);
         displayPictureCurrent.setOnClickListener(this);
         currentSGName.setOnClickListener(this);
@@ -277,10 +281,17 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                 }*/
                 break;
             }
+            case R.id.userContainer:
+                intent = new Intent(getActivity(), ProfileScreen.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.CHAT_USER_NAME, SharedPrefManager.getInstance().getUserName());
+                bundle.putString(Constants.CHAT_NAME, SharedPrefManager.getInstance().getDisplayName());
+                intent.putExtras(bundle);
+                startActivity(intent);
+                break;
             case R.id.llAddSuperGroup: {
                 SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
                 String mobileNumber = iPrefManager.getUserPhone();
-
 //                Bundle bundle = new Bundle();
                 intent = new Intent(getActivity(), ProfileScreen.class);
                 intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, true);

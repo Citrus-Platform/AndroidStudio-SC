@@ -153,6 +153,14 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 }
 
 
+                //To make the current SG selected
+                if (item.text.equalsIgnoreCase(SharedPrefManager.getInstance().getCurrentSGDisplayName()) ||
+                        item.text.equalsIgnoreCase(SharedPrefManager.getInstance().getUserDomain())) {
+                    itemControllerChild.container.setBackgroundColor(context.getResources().getColor(R.color.blue));
+                } else {
+                    itemControllerChild.container.setBackgroundColor(context.getResources().getColor(R.color.md_grey_600));
+                }
+
                 //activate or not////////////
                 boolean active = DBWrapper.getInstance().isSGActive(item.actualName);
                 if (active) {
