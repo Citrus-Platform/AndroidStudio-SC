@@ -70,7 +70,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     private RecyclerView recyclerView;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
-    private ExpandableListAdapter adapter;
+    public ExpandableListAdapter adapter;
     private View containerView;
     private static String[] titles = null;
     private FragmentDrawerListener drawerListener;
@@ -201,13 +201,22 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         invitedNotificationCount = (TextView)layout.findViewById(R.id.invitedNotificationCount);
         invitedNotificationCount.setText(""+DBWrapper.getInstance().getListOfInvitedSGs().size());
 
+
+        int muteId = DBWrapper.getInstance().getSGMuteInfo(SharedPrefManager.getInstance().getUserDomain());
+
+        if (muteId == 0) {
+            notifyCurrent.setVisibility(View.GONE);
+        } else {
+            notifyCurrent.setVisibility(View.VISIBLE);
+        }
+
         String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
 //        String file_id = DBWrapper.getInstance().getSGLogoFileID(SharedPrefManager.getInstance().getUserDomain());
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
         if (file_id != null && file_id.trim().length() > 0) {
             setProfilePic(displayPictureCurrent, file_id);
         }
-        user.setText("" + SharedPrefManager.getInstance().getDisplayName() + "(You)");
+        user.setText("" + SharedPrefManager.getInstance().getDisplayName() + " (You)");
 
         ///////////////////////////////////////////////
 
@@ -232,6 +241,17 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
         return layout;
+    }
+
+
+    public void updateView() {
+        String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
+        currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
+        if (file_id != null && file_id.trim().length() > 0) {
+            setProfilePic(displayPictureCurrent, file_id);
+        }
+        user.setText("" + SharedPrefManager.getInstance().getDisplayName() + "(You)");
+        super.onResume();
     }
 
 
@@ -441,6 +461,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
             recyclerView.setAdapter(adapter);
         }
+        updateView();
         mDrawerLayout.openDrawer(containerView);
     }
 

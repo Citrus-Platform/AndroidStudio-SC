@@ -1051,6 +1051,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				if(isSwitchSG && messageService != null) {
 					messageService.chatLogout();
 					messageService.chatLogin();
+
+					//Reset Sinch Service
+					stopService(new Intent(SuperChatApplication.context, SinchService.class));
+					startService(new Intent(SuperChatApplication.context, SinchService.class));
 				}
 //				if(iPrefManager.isContactSynched() && iPrefManager.isGroupsLoaded()){
 				if(iPrefManager.isContactSynched(iPrefManager.getUserDomain()) && !DBWrapper.getInstance().isSGSharedIDLoaded(iPrefManager.getUserDomain())){
@@ -1695,7 +1699,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //		System.out.println("[ON-RESUME CALLED]");
 
 //		System.out.println("[ON-RESUME 1]");
-		startService(new Intent(SuperChatApplication.context, SinchService.class));
+//		startService(new Intent(SuperChatApplication.context, SinchService.class));
 //		System.out.println("[ON-RESUME 2]");
 
 		bindService(new Intent(this, ChatService.class), mConnection,Context.BIND_AUTO_CREATE);
@@ -3615,6 +3619,7 @@ public void onComposeClick(View view){
 		}
 	}
 	public void openDrawer(){
+		drawerFragment.adapter.notifyDataSetChanged();
 		drawerFragment.fragmentOpen();
 	}
 }
