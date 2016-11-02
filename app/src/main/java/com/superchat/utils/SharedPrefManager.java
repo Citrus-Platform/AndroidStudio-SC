@@ -177,8 +177,8 @@ public class SharedPrefManager {
 		editor.putBoolean(MUTE_GROUP_OR_USER+userNameOrGroupName, flag);
 		editor.commit();
 	}
-	public void setSnoozeIndex(int optionIndex){
-		editor.putInt(SNOOZE_INDEX, optionIndex);
+	public void setSnoozeIndex(String sg, int optionIndex){
+		editor.putInt(SNOOZE_INDEX + sg, optionIndex);
 		editor.commit();
 	}
 	public void setSnoozeStartTime(long snoozeStartTime){
@@ -266,18 +266,18 @@ public class SharedPrefManager {
 	public boolean isDNM(String userName){
 		return pref.getBoolean(DNM_ACTIVATION+userName, false);
 	}
-	public int getSnoozeIndex(){
-		return pref.getInt(SNOOZE_INDEX, SNOOZE_OFF);
+	public int getSnoozeIndex(String sg){
+		return pref.getInt(SNOOZE_INDEX + sg, SNOOZE_OFF);
 	}
 	public long getSnoozeStartTime(){
-		if(getSnoozeIndex()<=0)
+		if(getSnoozeIndex(SharedPrefManager.getInstance().getUserDomain())<=0)
 			return 0;
 		return pref.getLong(SNOOZE_START_TIME, System.currentTimeMillis());
 	}
 	public long getSnoozeExpiryTime(){
-		if(getSnoozeIndex()<=SNOOZE_OFF)
+		if(getSnoozeIndex(SharedPrefManager.getInstance().getUserDomain())<=SNOOZE_OFF)
 			return 0;
-		switch(getSnoozeIndex()){
+		switch(getSnoozeIndex(SharedPrefManager.getInstance().getUserDomain())){
 		case SNOOZE_20_MINUTES:
 			return getSnoozeStartTime()+SNOOZE_20_MINUTES_IN_MILLIS;
 		case SNOOZE_1_HOUR:
@@ -294,10 +294,10 @@ public class SharedPrefManager {
 		return 0;
 	}
 	public boolean isSnoozeExpired(){
-		if(getSnoozeIndex()<=SNOOZE_OFF)
+		if(getSnoozeIndex(SharedPrefManager.getInstance().getUserDomain())<=SNOOZE_OFF)
 			return true;
 		if(System.currentTimeMillis()>getSnoozeExpiryTime()){
-			setSnoozeIndex(SNOOZE_OFF);
+			setSnoozeIndex(sharedPrefManager.getUserDomain(), SNOOZE_OFF);
 			return true;
 		}
 		return false;

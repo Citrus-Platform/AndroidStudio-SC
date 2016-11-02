@@ -513,13 +513,13 @@ public void showSnoozeDialog() {
 	TextView btn = ((TextView) bteldialog.findViewById(R.id.id_set_btn));
 	final Spinner spinner = (Spinner) bteldialog.findViewById(R.id.spinner);
 	sharedPrefManager.isSnoozeExpired();
-	spinner.setSelection(sharedPrefManager.getSnoozeIndex());
+	spinner.setSelection(sharedPrefManager.getSnoozeIndex(sharedPrefManager.getUserDomain()));
 	btn.setOnTouchListener(new OnTouchListener() {
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			bteldialog.cancel();
-			sharedPrefManager.setSnoozeIndex(spinner.getSelectedItemPosition());
+			sharedPrefManager.setSnoozeIndex(sharedPrefManager.getUserDomain(), spinner.getSelectedItemPosition());
 			sharedPrefManager.setSnoozeStartTime(System.currentTimeMillis());
 			Toast.makeText(MoreScreen.this, String.valueOf(spinner.getSelectedItem()), Toast.LENGTH_SHORT).show();
 			return false;

@@ -1054,7 +1054,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					messageService.chatLogin();
 
 					//Reset Sinch Service
-					stopService(new Intent(SuperChatApplication.context, SinchService.class));
+//					stopService(new Intent(SuperChatApplication.context, SinchService.class));
 					startService(new Intent(SuperChatApplication.context, SinchService.class));
 				}
 //				if(iPrefManager.isContactSynched() && iPrefManager.isGroupsLoaded()){

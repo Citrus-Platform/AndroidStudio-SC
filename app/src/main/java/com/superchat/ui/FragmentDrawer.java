@@ -576,13 +576,13 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         sharedPrefManager = SharedPrefManager.getInstance();
 
         sharedPrefManager.isSnoozeExpired();
-        spinner.setSelection(sharedPrefManager.getSnoozeIndex());
+        spinner.setSelection(sharedPrefManager.getSnoozeIndex(sharedPrefManager.getUserDomain()));
         btn.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 bteldialog.cancel();
-                sharedPrefManager.setSnoozeIndex(spinner.getSelectedItemPosition());
+                sharedPrefManager.setSnoozeIndex(sharedPrefManager.getUserDomain(), spinner.getSelectedItemPosition());
                 sharedPrefManager.setSnoozeStartTime(System.currentTimeMillis());
                 notifyCurrent.setImageResource(R.drawable.ic_icon_navigation_unmute);
                 Toast.makeText(getActivity(), String.valueOf(spinner.getSelectedItem()), Toast.LENGTH_SHORT).show();

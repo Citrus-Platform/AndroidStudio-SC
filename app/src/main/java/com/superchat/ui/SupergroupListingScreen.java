@@ -915,7 +915,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 		if(invitedDomainSelected && !backFromProfile){
 			registrationForm = new RegistrationForm(mobileNumber, "normal", imei, imsi, clientVersion , null ,"false");
 		}else{
-			registrationForm = new RegistrationForm(mobileNumber, null, imei, null, clientVersion , domainNameSet , "false");
+			registrationForm = new RegistrationForm(mobileNumber, null, imei, null, clientVersion , null , "true");
 		}
 		if(Constants.regid != null)
 			registrationForm.setToken(Constants.regid);
