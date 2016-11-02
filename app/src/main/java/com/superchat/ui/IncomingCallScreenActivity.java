@@ -135,7 +135,7 @@ public class IncomingCallScreenActivity extends Activity {
         Button decline = (Button) findViewById(R.id.declineButton);
         decline.setOnClickListener(mClickListener);
         mAudioPlayer = new AudioPlayer(this);
-        if(SharedPrefManager.getInstance().isSnoozeExpired()){
+        if(SharedPrefManager.getInstance().isSnoozeExpired(SharedPrefManager.getInstance().getUserDomain())){
         	mAudioPlayer.playRingtone();
     	}
         mCallId = getIntent().getStringExtra(SinchService.CALL_ID);

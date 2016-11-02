@@ -22,11 +22,10 @@
             android:layout_alignParentTop="true"
             android:layout_margin="10dp">
 
-        <ImageView
-            android:id="@+id/notifyCurrent"
-            android:layout_width="70dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_icon_navigation_mute" />
+            <ImageView
+                android:id="@+id/notifyCurrent"
+                android:layout_width="70dp"
+                android:layout_height="20dp" />
         </RelativeLayout>
 
         <com.superchat.widgets.RoundedImageView

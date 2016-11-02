@@ -202,13 +202,13 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         invitedNotificationCount.setText(""+DBWrapper.getInstance().getListOfInvitedSGs().size());
 
 
-        int muteId = DBWrapper.getInstance().getSGMuteInfo(SharedPrefManager.getInstance().getUserDomain());
+        /*int muteId = DBWrapper.getInstance().getSGMuteInfo(SharedPrefManager.getInstance().getUserDomain());
 
         if (muteId == 0) {
             notifyCurrent.setVisibility(View.GONE);
         } else {
             notifyCurrent.setVisibility(View.VISIBLE);
-        }
+        }*/
 
         String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
 //        String file_id = DBWrapper.getInstance().getSGLogoFileID(SharedPrefManager.getInstance().getUserDomain());
@@ -272,7 +272,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                 showSnoozeDialog();
                 break;
             }
-            case R.id.notificationLayout: {
+            /*case R.id.notificationLayout: {
                 if (flagNotify == true) {
                     flagNotify = false;
                     notifyCurrent.setBackgroundResource(R.drawable.ic_icon_navigation_mute);
@@ -282,7 +282,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                 }
 
                 break;
-            }
+            }*/
             case R.id.llInvited: {
                 //if (invitedDomainNameSet != null && invitedDomainNameSet.size() > 0) {
                     SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
@@ -417,6 +417,22 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         public void onDrawerItemSelected(View view, int position);
     }
 
+    public void initialize(){
+        adapter.notifyDataSetChanged();
+        /////////////////////////////////////
+        boolean muteId = SharedPrefManager.getInstance().isSnoozeExpired(SharedPrefManager.getInstance().getUserDomain());
+        if (muteId) {
+            //flagNotify = false;
+            notifyCurrent.setBackgroundResource(R.drawable.ic_icon_navigation_mute);
+        } else {
+            //flagNotify = true;
+            notifyCurrent.setBackgroundResource(R.drawable.ic_icon_navigation_unmute);
+        }
+        /////////////////////////////////////
+
+
+    }
+
     public void setUp(int fragmentId, DrawerLayout drawerLayout, final Toolbar toolbar) {
         containerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
@@ -424,7 +440,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                adapter.notifyDataSetChanged();
+                initialize();
                 getActivity().invalidateOptionsMenu();
             }
 
@@ -575,7 +591,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         final SharedPrefManager sharedPrefManager;
         sharedPrefManager = SharedPrefManager.getInstance();
 
-        sharedPrefManager.isSnoozeExpired();
+        sharedPrefManager.isSnoozeExpired(sharedPrefManager.getUserDomain());
         spinner.setSelection(sharedPrefManager.getSnoozeIndex(sharedPrefManager.getUserDomain()));
         btn.setOnTouchListener(new View.OnTouchListener() {
 
@@ -583,8 +599,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             public boolean onTouch(View v, MotionEvent event) {
                 bteldialog.cancel();
                 sharedPrefManager.setSnoozeIndex(sharedPrefManager.getUserDomain(), spinner.getSelectedItemPosition());
-                sharedPrefManager.setSnoozeStartTime(System.currentTimeMillis());
-                notifyCurrent.setImageResource(R.drawable.ic_icon_navigation_unmute);
+                sharedPrefManager.setSnoozeStartTime(sharedPrefManager.getUserDomain(),System.currentTimeMillis());
+                //notifyCurrent.setImageResource(R.drawable.ic_icon_navigation_unmute);
                 Toast.makeText(getActivity(), String.valueOf(spinner.getSelectedItem()), Toast.LENGTH_SHORT).show();
                 return false;
             }

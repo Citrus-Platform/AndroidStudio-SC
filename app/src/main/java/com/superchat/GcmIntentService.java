@@ -317,7 +317,7 @@ public class GcmIntentService extends IntentService {
 		if (id < -1)
 			id = -(id);
 //		Log.d(TAG, "showNotificationForMessage1: "+from+" , "+currentUser+" , "+onForeground);
-		if(prefManager.isSnoozeExpired() && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
+		if(prefManager.isSnoozeExpired(prefManager.getUserDomain()) && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
 										.equals(groupID)) || !ChatListScreen.onForeground))
 		notificationManager.notify(id, notification);
 
@@ -433,7 +433,7 @@ public class GcmIntentService extends IntentService {
 		if (id < -1)
 			id = -(id);
 		Log.d(TAG, "showNotificationForMessage: "+from+" , "+currentUser+" , "+onForeground);
-		if(prefManager.isSnoozeExpired() && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
+		if(prefManager.isSnoozeExpired(prefManager.getUserDomain()) && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
 				.equals(from)) || !ChatListScreen.onForeground))
 		notificationManager.notify(id, notification);
 		previousUser = from;

@@ -133,12 +133,20 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     setProfilePic(itemControllerChild.displayPicture, fileId);
                 }
                 //count of child//////////////
-                int muteId = DBWrapper.getInstance().getSGMuteInfo(item.actualName);
+                boolean muteId = SharedPrefManager.getInstance().isSnoozeExpired(item.actualName);
+
+                Log.e("here" , "mute : "+muteId);
+                if (!muteId) {
+                    itemControllerChild.btn_notify_toggle.setVisibility(View.VISIBLE);
+                } else {
+                    itemControllerChild.btn_notify_toggle.setVisibility(View.GONE);
+                }
+                /*int muteId = DBWrapper.getInstance().getSGMuteInfo(item.actualName);
                 if (muteId == 0) {
                     itemControllerChild.btn_notify_toggle.setVisibility(View.GONE);
                 } else {
                     itemControllerChild.btn_notify_toggle.setVisibility(View.VISIBLE);
-                }
+                }*/
 
                 //notify or not////////////
                 int countId = DBWrapper.getInstance().getNewMessageCountForSG(item.actualName);
@@ -154,7 +162,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                 if (item.text.equalsIgnoreCase(SharedPrefManager.getInstance().getCurrentSGDisplayName()) ||
                         item.actualName.equalsIgnoreCase(SharedPrefManager.getInstance().getUserDomain())) {
-                    itemControllerChild.container.setBackgroundColor(context.getResources().getColor(R.color.blue));
+                    itemControllerChild.container.setBackgroundColor(context.getResources().getColor(R.color.header_footer_color));
                 } else {
                     itemControllerChild.container.setBackgroundColor(context.getResources().getColor(R.color.md_grey_600));
                 }

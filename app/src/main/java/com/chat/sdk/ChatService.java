@@ -2127,7 +2127,7 @@ public class ChatService extends Service implements interfaceInstances {
 		if (id < -1)
 			id = -(id);
 		Log.d(TAG, "showNotificationForMessage1: "+from+" , "+currentUser+" , "+onForeground);
-		if(!console_msg && prefManager.isSnoozeExpired() && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
+		if(!console_msg && prefManager.isSnoozeExpired(prefManager.getUserDomain()) && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
 										.equals(from) && !ChatListScreen.currentUser.endsWith("-all")) || !ChatListScreen.onForeground))
 		notificationManager.notify(id, notification);
 
@@ -2429,7 +2429,7 @@ public class ChatService extends Service implements interfaceInstances {
 			id = -(id);
 		Log.d(TAG, "showNotificationForMessage: "+from+" , "+currentUser+" , "+onForeground);
 		
-		if(!console_msg && prefManager.isSnoozeExpired() && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
+		if(!console_msg && prefManager.isSnoozeExpired(prefManager.getUserDomain()) && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
 				.equals(from) && !ChatListScreen.currentUser.endsWith("-all")) || !ChatListScreen.onForeground))
 			notificationManager.notify(id, notification);
 		previousUser = from;

@@ -181,8 +181,8 @@ public class SharedPrefManager {
 		editor.putInt(SNOOZE_INDEX + sg, optionIndex);
 		editor.commit();
 	}
-	public void setSnoozeStartTime(long snoozeStartTime){
-		editor.putLong(SNOOZE_START_TIME, snoozeStartTime);
+	public void setSnoozeStartTime(String sg,long snoozeStartTime){
+		editor.putLong(SNOOZE_START_TIME + sg, snoozeStartTime);
 		editor.commit();
 	}
 	public void setOTPVerified(boolean flag){
@@ -269,35 +269,35 @@ public class SharedPrefManager {
 	public int getSnoozeIndex(String sg){
 		return pref.getInt(SNOOZE_INDEX + sg, SNOOZE_OFF);
 	}
-	public long getSnoozeStartTime(){
-		if(getSnoozeIndex(SharedPrefManager.getInstance().getUserDomain())<=0)
+	public long getSnoozeStartTime(String sg){
+		if(getSnoozeIndex(sg)<=0)
 			return 0;
-		return pref.getLong(SNOOZE_START_TIME, System.currentTimeMillis());
+		return pref.getLong(SNOOZE_START_TIME + sg, System.currentTimeMillis());
 	}
-	public long getSnoozeExpiryTime(){
-		if(getSnoozeIndex(SharedPrefManager.getInstance().getUserDomain())<=SNOOZE_OFF)
+	public long getSnoozeExpiryTime(String sg){
+		if(getSnoozeIndex(sg)<=SNOOZE_OFF)
 			return 0;
-		switch(getSnoozeIndex(SharedPrefManager.getInstance().getUserDomain())){
+		switch(getSnoozeIndex(sg)){
 		case SNOOZE_20_MINUTES:
-			return getSnoozeStartTime()+SNOOZE_20_MINUTES_IN_MILLIS;
+			return getSnoozeStartTime(sg)+SNOOZE_20_MINUTES_IN_MILLIS;
 		case SNOOZE_1_HOUR:
-			return getSnoozeStartTime()+SNOOZE_1_HOUR_IN_MILLIS;
+			return getSnoozeStartTime(sg)+SNOOZE_1_HOUR_IN_MILLIS;
 		case SNOOZE_2_HOURS:
-			return getSnoozeStartTime()+SNOOZE_2_HOURS_IN_MILLIS;
+			return getSnoozeStartTime(sg)+SNOOZE_2_HOURS_IN_MILLIS;
 		case SNOOZE_4_HOURS:
-			return getSnoozeStartTime()+SNOOZE_4_HOURS_IN_MILLIS;
+			return getSnoozeStartTime(sg)+SNOOZE_4_HOURS_IN_MILLIS;
 		case SNOOZE_8_HOURS:
-			return getSnoozeStartTime()+SNOOZE_8_HOURS_IN_MILLIS;
+			return getSnoozeStartTime(sg)+SNOOZE_8_HOURS_IN_MILLIS;
 		case SNOOZE_24_HOURS:
-			return getSnoozeStartTime()+SNOOZE_24_HOURS_IN_MILLIS;
+			return getSnoozeStartTime(sg)+SNOOZE_24_HOURS_IN_MILLIS;
 		}
 		return 0;
 	}
-	public boolean isSnoozeExpired(){
-		if(getSnoozeIndex(SharedPrefManager.getInstance().getUserDomain())<=SNOOZE_OFF)
+	public boolean isSnoozeExpired(String sg){
+		if(getSnoozeIndex(sg)<=SNOOZE_OFF)
 			return true;
-		if(System.currentTimeMillis()>getSnoozeExpiryTime()){
-			setSnoozeIndex(sharedPrefManager.getUserDomain(), SNOOZE_OFF);
+		if(System.currentTimeMillis()>getSnoozeExpiryTime(sg)){
+			setSnoozeIndex(sg, SNOOZE_OFF);
 			return true;
 		}
 		return false;
