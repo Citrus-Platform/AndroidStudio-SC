@@ -221,6 +221,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         llAddSuperGroup.setOnClickListener(this);
         llInvited.setOnClickListener(this);
         notificationLayout.setOnClickListener(this);
+        displayPictureCurrent.setOnClickListener(this);
+        currentSGName.setOnClickListener(this);
 
         adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity());
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -236,6 +238,11 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         int viewID = v.getId();
         switch (viewID) {
+            case R.id.displayPictureCurrent:
+            case R.id.currentSGName:
+                Intent intent = new Intent(getActivity(), SuperGroupProfileActivity.class);
+                startActivity(intent);
+                break;
 
             case R.id.notifyCurrent: {
                 showSnoozeDialog();
@@ -275,7 +282,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                 String mobileNumber = iPrefManager.getUserPhone();
 
 //                Bundle bundle = new Bundle();
-                Intent intent = new Intent(getActivity(), ProfileScreen.class);
+                intent = new Intent(getActivity(), ProfileScreen.class);
                 intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, true);
                 intent.putExtra("MANAGE_MEMBER_BY_ADMIN", true);
                 intent.putExtra("PROFILE_EDIT_REG_FLOW", true);
