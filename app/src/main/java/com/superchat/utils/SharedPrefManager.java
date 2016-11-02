@@ -343,11 +343,11 @@ public class SharedPrefManager {
 		editor.commit();
 	}
 
-	public boolean isContactSynched(){
-		return pref.getBoolean(CONTACT_SYNCHED, false);
+	public boolean isContactSynched(String sg_name){
+		return pref.getBoolean(CONTACT_SYNCHED + sg_name, false);
 	}
-	public void setContactSynched(boolean bool){
-		editor.putBoolean(CONTACT_SYNCHED, bool);
+	public void setContactSynched(String sg_name, boolean bool){
+		editor.putBoolean(CONTACT_SYNCHED + sg_name, bool);
 		editor.commit();
 	}
 	public boolean isGroupsLoaded(){

@@ -437,7 +437,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			System.out.println("[SERVICE RUNNING - SO STOPPING]");
 			stopService(new Intent(this, ChatService.class));
 		}
-		if (SharedPrefManager.getInstance().getUserName() == null) {
+		iPrefManager = SharedPrefManager.getInstance();
+		if (iPrefManager.getUserName() == null) {
 			startActivity(new Intent(this, RegistrationOptions.class));
 			finish();
 			return;
@@ -445,12 +446,12 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		if (getIntent().getExtras() != null){
 			sgCreationAfterLogin = getIntent().getExtras().getBoolean(Constants.SG_CREATE_AFTER_LOGIN);
 			if(sgCreationAfterLogin)
-				updateSlidingDrawer(SharedPrefManager.getInstance().getCurrentSGDisplayName(), SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
+				updateSlidingDrawer(iPrefManager.getCurrentSGDisplayName(), iPrefManager.getSGFileId("SG_FILE_ID"));
 		}
 		if(SharedPrefManager.getInstance().getBackupSchedule() == -1)
 			SharedPrefManager.getInstance().setBackupSchedule(2);
 		String action = getIntent().getAction();
-		if((action != null && Intent.ACTION_SEND.equals(action)) || SharedPrefManager.getInstance().isContactSynched())
+		if((action != null && Intent.ACTION_SEND.equals(action)) || iPrefManager.isContactSynched(iPrefManager.getUserDomain()))
 			noLoadingNeeded = true;
 		setContentView(R.layout.home_screen);
 		Toolbar mToolbar;
@@ -727,8 +728,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			prefManager.saveCurrentSGDisplayName(sg_name);
 			prefManager.saveSGFileId("SG_FILE_ID",DBWrapper.getInstance().getSGLogoFileID(sg_name));
 			cleanDataAndSwitchSG(sg_name);
-			//Set contact and group synchs
-			prefManager.setContactSynched(false);
+			//Set contact and group synch's
+			prefManager.setContactSynched(sg_name, false);
 			prefManager.setGroupsLoaded(false);
 			isContactSync = false;
 		}catch(Exception ex){
@@ -845,27 +846,30 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 											if(number!=null && !number.equals(""))
 												continue;
 	//										UserResponseDetail userDetail = loginObj.directoryUserSet.get(st);
-										ContentValues contentvalues = new ContentValues();
-										contentvalues.put(DatabaseConstants.USER_NAME_FIELD,userDetail.userName);
-										contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(1));
-										contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,userDetail.mobileNumber);
-										int id = userDetail.userName.hashCode();
-										if (id < -1)
-											id = -(id);
-										contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD,Integer.valueOf(id));
-										contentvalues.put(DatabaseConstants.RAW_CONTACT_ID,Integer.valueOf(id));
-										contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, userDetail.name);
-										contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD,Integer.valueOf(0));
+											if(!sharedPrefManager.isContactSynched(sharedPrefManager.getUserDomain())) {
+												ContentValues contentvalues = new ContentValues();
+												contentvalues.put(DatabaseConstants.USER_NAME_FIELD, userDetail.userName);
+												contentvalues.put(DatabaseConstants.VOPIUM_FIELD, Integer.valueOf(1));
+												contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, userDetail.mobileNumber);
+												int id = userDetail.userName.hashCode();
+												if (id < -1)
+													id = -(id);
+												contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD, Integer.valueOf(id));
+												contentvalues.put(DatabaseConstants.RAW_CONTACT_ID, Integer.valueOf(id));
+												contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, userDetail.name);
+												contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD, Integer.valueOf(0));
 
-										contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-										contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
-										contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
-										contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
-										//Save USerID and SG in DB
-										contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
-										contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
+												contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
+												contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
+												contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
+												contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
+												//Save USerID and SG in DB
+												contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
+												contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
-										DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
+												System.out.println("TABLE_NAME_CONTACT_NUMBERS : " + contentvalues.toString());
+												DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
+											}
 
 										if(userDetail.currentStatus!=null)
 											sharedPrefManager.saveUserStatusMessage(userDetail.userName, userDetail.currentStatus);
@@ -890,6 +894,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 										}
 									}
 									DBWrapper.getInstance().updateSGContactsLoaded(iPrefManager.getUserDomain(), "true");
+									iPrefManager.setContactSynched(iPrefManager.getUserDomain(), true);
 								}
 									directoryGroupSet = loginObj.directoryGroupSet;
 									if(directoryGroupSet != null) {
@@ -1044,7 +1049,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					messageService.chatLogin();
 				}
 //				if(iPrefManager.isContactSynched() && iPrefManager.isGroupsLoaded()){
-				if(iPrefManager.isContactSynched() && !DBWrapper.getInstance().isSGSharedIDLoaded(iPrefManager.getUserDomain())){
+				if(iPrefManager.isContactSynched(iPrefManager.getUserDomain()) && !DBWrapper.getInstance().isSGSharedIDLoaded(iPrefManager.getUserDomain())){
 					//Get all the shared ID's - This call is for everyone
 					String shared_id_data = sharedPrefManager.getSharedIDData();
 					if(shared_id_data != null && shared_id_data.length() > 0)
@@ -1233,7 +1238,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				iPrefManager.setFirstTime(false);
 				isContactSync =false;
 				firstTimeAdmin = false;
-				iPrefManager.setContactSynched(true);
+				iPrefManager.setContactSynched(iPrefManager.getUserDomain(), true);
 				if(contactsFragment!=null)
 					contactsFragment.showAllContacts();
 				int contactsCount = DBWrapper.getInstance().getAllNumbersCount();
@@ -1318,23 +1323,24 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 							        //Alter Table for the values.
 //									wrapper.alterTable(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, new String[]{DatabaseConstants.FLAT_NUMBER, DatabaseConstants.BUILDING_NUMBER,
 //											DatabaseConstants.ADDRESS, DatabaseConstants.RESIDENCE_TYPE});
+								if(!sharedPrefManager.isContactSynched(sharedPrefManager.getUserDomain())) {
 									ContentValues contentvalues = new ContentValues();
-									contentvalues.put(DatabaseConstants.USER_NAME_FIELD,userDetail.userName);
-									contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(1));
-									contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,userDetail.mobileNumber);
+									contentvalues.put(DatabaseConstants.USER_NAME_FIELD, userDetail.userName);
+									contentvalues.put(DatabaseConstants.VOPIUM_FIELD, Integer.valueOf(1));
+									contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, userDetail.mobileNumber);
 									int id = userDetail.userName.hashCode();
 									if (id < -1)
 										id = -(id);
-									contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD,Integer.valueOf(id));
-									contentvalues.put(DatabaseConstants.RAW_CONTACT_ID,Integer.valueOf(id));
+									contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD, Integer.valueOf(id));
+									contentvalues.put(DatabaseConstants.RAW_CONTACT_ID, Integer.valueOf(id));
 									contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, userDetail.name);
-                                        if(userDetail.type != null && userDetail.type.equalsIgnoreCase("domainSubAdmin"))
-                                            sharedPrefManager.setUserSGSubAdmin(userDetail.userName, true);
+									if (userDetail.type != null && userDetail.type.equalsIgnoreCase("domainSubAdmin"))
+										sharedPrefManager.setUserSGSubAdmin(userDetail.userName, true);
 									contentvalues.put(DatabaseConstants.CONTACT_TYPE_FIELD, userDetail.type);
-									contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD,Integer.valueOf(0));
-									contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
+									contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD, Integer.valueOf(0));
+									contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
 									contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
-									contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
+									contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
 									//Add Address Details
 									contentvalues.put(DatabaseConstants.FLAT_NUMBER, userDetail.flatNumber);
 									contentvalues.put(DatabaseConstants.BUILDING_NUMBER, userDetail.buildingNumber);
@@ -1346,8 +1352,11 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 									contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
 									contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
-									if(!userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName()))
-										wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
+									System.out.println("TABLE_NAME_CONTACT_NUMBERS : " + contentvalues.toString());
+									if (!userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName()))
+										wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
+								}
+
 									if(userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName()))
 										sharedPrefManager.saveDisplayName(userDetail.name);
 									sharedPrefManager.saveUserServerName(userDetail.userName, userDetail.name);
@@ -1385,6 +1394,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 										}
 									}
 								}
+								iPrefManager.setContactSynched(iPrefManager.getUserDomain(), true);
 							}
 					     }
 				     }
@@ -1440,7 +1450,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				} else
 					showDialog("Please try again later.", null);
 			}else{
-				iPrefManager.setContactSynched(true);
+				iPrefManager.setContactSynched(iPrefManager.getUserDomain(), true);
 				if(mViewPager != null && mAdapter != null && isforeGround){
 					if(firstTimeAdmin){
 						firstTimeAdmin = false;
@@ -2614,6 +2624,7 @@ public void onComposeClick(View view){
 										contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
 										contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
+										System.out.println("TABLE_NAME_CONTACT_NUMBERS : "+contentvalues.toString());
 										if(!userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
 											wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
 										if(userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))

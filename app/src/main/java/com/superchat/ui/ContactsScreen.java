@@ -366,12 +366,14 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
 
 //		cursor = DBWrapper.getInstance().query(DatabaseConstants.TABLE_NAME_CONTACT_NAMES, null, s, as,
 //				DatabaseConstants.VOPIUM_FIELD+" DESC, "+DatabaseConstants.CONTACT_NAMES_FIELD +" COLLATE NOCASE");
-        if (s == null) {
-            s = DatabaseConstants.VOPIUM_FIELD + "!=?" + " AND " + DatabaseConstants.USER_SG + "=?";
-            as = (new String[]{"2", sg});
-        }
-        cursor = DBWrapper.getInstance().query(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, null, s, as,
-                DatabaseConstants.VOPIUM_FIELD + " ASC, " + DatabaseConstants.CONTACT_NAMES_FIELD + " COLLATE NOCASE");
+
+//        if (s == null) {
+//            s = DatabaseConstants.VOPIUM_FIELD + "!=?" + " AND " + DatabaseConstants.USER_SG + "='?'";
+//            as = (new String[]{"2", sg});
+//        }
+//        cursor = DBWrapper.getInstance().query(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, null, s, as,
+//                DatabaseConstants.VOPIUM_FIELD + " ASC, " + DatabaseConstants.CONTACT_NAMES_FIELD + " COLLATE NOCASE");
+        cursor = DBWrapper.getInstance().getContactsCursor(sg);
         System.out.println("Cursor size = "+cursor.getCount());
         if (cursor != null && adapter != null) {
             adapter.changeCursor(cursor);

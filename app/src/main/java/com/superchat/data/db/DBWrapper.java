@@ -1850,6 +1850,17 @@ public boolean isContactModified(String rawId, int version){
 	}
 //----------------------------------------------------------------------------
 
+	public Cursor getContactsCursor(String sg){
+		Cursor cursor = null;
+		try{
+			cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM " +DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS + " WHERE "
+                + DatabaseConstants.VOPIUM_FIELD + "!=2 AND "+ DatabaseConstants.USER_SG + "='"+ sg + "'", null);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+		return cursor;
+	}
+
 	/**
 	 * Inserts an entry in DB for Owned SG/Domain
 	 * @param sg_data
@@ -2464,7 +2475,7 @@ public boolean isContactModified(String rawId, int version){
 
 	/**
 	 * Returns list of Joined SG's
-	 * @return
+	 * @returnh
      */
 	public ArrayList<JoinedDomainNameSet> getListOfJoinedSGs()
 	{
