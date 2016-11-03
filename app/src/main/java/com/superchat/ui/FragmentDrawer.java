@@ -39,6 +39,7 @@ import android.widget.Toast;
 import com.superchat.R;
 import com.superchat.data.db.DBWrapper;
 import com.superchat.model.SGroupListObject;
+import com.superchat.model.multiplesg.InviteJoinDataModel;
 import com.superchat.model.multiplesg.InvitedDomainNameSet;
 import com.superchat.model.multiplesg.JoinedDomainNameSet;
 import com.superchat.model.multiplesg.OwnerDomainName;
@@ -93,40 +94,24 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
     public List<ExpandableListAdapter.Item> getSuperGroupList() {
         List<ExpandableListAdapter.Item> dataList = new ArrayList<>();
-
-        //////////////////////////////////////////
-        JSONObject json;
         SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
         String data = iPrefManager.getSgListData();
-        ////////////////////////////////////////
-        ArrayList<SGroupListObject> ownerDomainNameSetTemp = new ArrayList<>();
-
-        ///////////////////////////////////////////////////////////////
-        ArrayList<JoinedDomainNameSet> joinedDomainNameSetTemp = DBWrapper.getInstance().getListOfJoinedSGs();
-        //ArrayList<InvitedDomainNameSet> invitedDomainNameSetTemp = DBWrapper.getInstance().getListOfInvitedSGs();
         OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
-
 
         ArrayList<OwnerDomainName> ownerDomainNameSet = new ArrayList<>();
 
-        ownerDomainNameSet.add(owned);
-        ///////////////////////////////////////////////////////////////
-
+        if(owned != null)
+            ownerDomainNameSet.add(owned);
         if (data != null) {
-
-            //dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0" , ""));
-
             if (ownerDomainNameSet != null && ownerDomainNameSet.size() > 0) {
-
                 for (int i = 0; i < ownerDomainNameSet.size(); i++) {
-
                     String ownerDisplayName = "";
-
                     if(ownerDomainNameSet.get(i).getDomainDisplayName()!=null &&
-                            ownerDomainNameSet.get(i).getDomainDisplayName().trim().length()>0){
+                            ownerDomainNameSet.get(i).getDomainDisplayName().trim().length() > 0){
                         ownerDisplayName = ownerDomainNameSet.get(i).getDomainDisplayName().trim();
                     }else{
-                        ownerDisplayName = ownerDomainNameSet.get(i).getDomainName().trim();
+                        if(ownerDomainNameSet.get(i).getDomainName() != null)
+                            ownerDisplayName = ownerDomainNameSet.get(i).getDomainName().trim();
                     }
 
                     dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
@@ -137,20 +122,16 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                             ownerDomainNameSet.get(i).getDomainType()));
                 }
             }
-            ///////////////////////////////////////////////
+            ArrayList<JoinedDomainNameSet> joinedDomainNameSetTemp = DBWrapper.getInstance().getListOfJoinedSGs();
             if (joinedDomainNameSetTemp != null && joinedDomainNameSetTemp.size() > 0) {
-
                 for (int i = 0; i < joinedDomainNameSetTemp.size(); i++) {
-
                     String joinedDisplayName = "";
-
                     if(joinedDomainNameSetTemp.get(i).getDomainDisplayName()!=null &&
                             joinedDomainNameSetTemp.get(i).getDomainDisplayName().trim().length()>0){
                         joinedDisplayName = joinedDomainNameSetTemp.get(i).getDomainDisplayName().trim();
                     }else{
                         joinedDisplayName = joinedDomainNameSetTemp.get(i).getDomainName().trim();
                     }
-
                     dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
                             joinedDisplayName,
                             joinedDomainNameSetTemp.get(i).getDomainCount(),
@@ -159,6 +140,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                             joinedDomainNameSetTemp.get(i).getDomainType()));
                 }
             }
+
         } else {
            // dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0" , ""));
         }
@@ -342,22 +324,40 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         switch (requestCode) {
             case CODE_INVITE: {
                 try {
+
+//                    data.putExtra("SG_MOBILE", ""+inviteMobileNumber);
+//                    data.putExtra("SG_NAME", ""+inviteSGName);
+//                    data.putExtra("SG_DISPLAY_NAME", ""+inviteSGDisplayName);
+//                    data.putExtra("SG_FILE_ID", ""+inviteSGFileID);
+//                    data.putExtra("SG_USER_NAME", ""+inviteUserName);
+//                    data.putExtra("SG_USER_ID", inviteUserID);
+//                    data.putExtra("SG_USER_PASSWORD", ""+inviteUserPassword);
+
+                    InviteJoinDataModel model = new InviteJoinDataModel();
                     String SG_NAME = data.getStringExtra("SG_NAME");
+                    model.setInviteMobileNumber(data.getStringExtra("SG_MOBILE"));
+                    model.setInviteSGName(data.getStringExtra("SG_NAME"));
+                    model.setInviteSGDisplayName(data.getStringExtra("SG_DISPLAY_NAME"));
+                    model.setInviteSGFileID(data.getStringExtra("SG_FILE_ID"));
+                    model.setInviteSGDisplayName(data.getStringExtra("SG_USER_NAME"));
+                    model.setInviteUserID(data.getLongExtra("SG_USER_ID", -1));
+                    model.setInviteUserPassword(data.getStringExtra("SG_USER_PASSWORD"));
+
                     String user = SharedPrefManager.getInstance().getUserPhone();
                     if(user != null && user.contains("-"))
                         user = user.replace("-", "");
-                    DBWrapper.getInstance().updateSGTypeValue(SG_NAME, 2);//Joined
+                    DBWrapper.getInstance().updateSGTypeValue(SG_NAME, 2);
                     DBWrapper.getInstance().updateSGActiveStatus(SG_NAME, "true");
-                    ((HomeScreen) getActivity()).switchSG(user + "_" + SG_NAME, true);
+                    ((HomeScreen) getActivity()).switchSG(user + "_" + SG_NAME, true, model);
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
                 break;
             }
             case CODE_ADD_SUPERGROUP: {
                 try {
                     String SG_NAME = data.getStringExtra("SG_NAME");
-                    ((HomeScreen) getActivity()).switchSG(SG_NAME, false);
+                    ((HomeScreen) getActivity()).switchSG(SG_NAME, false, null);
                 } catch (Exception e) {
 
                 }

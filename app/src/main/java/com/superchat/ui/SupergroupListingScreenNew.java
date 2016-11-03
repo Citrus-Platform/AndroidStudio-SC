@@ -483,6 +483,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
+                inviteSGFileID = file_id;
                 if (type != 2 && type != 3)
                     showNameDialog(sg_display_name);
                 else
@@ -969,8 +970,10 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
     //---------------------------------------
     String inviteMobileNumber;
     String inviteSGName;
-    String inviteSelectedSGDisplayName;
+    String inviteSGDisplayName;
+    String inviteSGFileID;
     String inviteUserName;
+    String inviteUserPassword;
     long inviteUserID;
 
     public class SignupTaskOnServer extends AsyncTask<String, String, String> {
@@ -1042,9 +1045,9 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                                 inviteSGName = superGroupName;
                                 if (selectedSGDisplayName != null) {
 //                                    iPrefManager.saveCurrentSGDisplayName(selectedSGDisplayName);
-                                    inviteSelectedSGDisplayName = selectedSGDisplayName;
+                                    inviteSGDisplayName = selectedSGDisplayName;
                                 }else
-                                    inviteSelectedSGDisplayName = inviteSGName;
+                                    inviteSGDisplayName = inviteSGName;
 
 //                                iPrefManager.saveAuthStatus(regObj.iStatus);
 //                                if (regObj.token != null)
@@ -1053,8 +1056,8 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
 //                                iPrefManager.saveUserId(regObj.iUserId);
                                 inviteUserID = regObj.iUserId;
 
-                                iPrefManager.setAppMode("VirginMode");
-                                iPrefManager.saveUserPhone(regObj.iMobileNumber);
+//                                iPrefManager.setAppMode("VirginMode");
+//                                iPrefManager.saveUserPhone(regObj.iMobileNumber);
 //											iPrefManager.saveUserPassword(regObj.getPassword());
 //                                iPrefManager.saveUserLogedOut(false);
                                 pendingProfile = regObj.pendingProfile;
@@ -1118,36 +1121,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
             super.onPostExecute(str);
         }
     }
-
     //--------------------------------------------------------------------------------------------------------
-    public void showDialogWithPositive(final String userName, String s) {
-        final Dialog bteldialog = new Dialog(this);
-        bteldialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        bteldialog.setCanceledOnTouchOutside(false);
-        bteldialog.setContentView(R.layout.custom_dialog);
-        ((TextView) bteldialog.findViewById(R.id.id_dialog_message)).setText(s);
-        ((TextView) bteldialog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                bteldialog.cancel();
-//
-//                Intent intent = new Intent(SupergroupListingScreenNew.this, MobileVerificationScreen.class);
-//                intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber);
-//                intent.putExtra(Constants.COUNTRY_CODE_TXT, countryCode);
-//                if (superGroupName != null)
-//                    intent.putExtra(Constants.DOMAIN_NAME, superGroupName);
-//                intent.putExtra(Constants.REG_TYPE, "USER");
-//                startActivity(intent);
-//                finish();
-                saveDataAndMove(userName);
-
-                return false;
-            }
-        });
-        bteldialog.show();
-    }
-
     public void showDialog(String s) {
         try {
             final Dialog bteldialog = new Dialog(this);
@@ -1283,16 +1257,29 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                 if (objUserModel.iStatus != null
                         && objUserModel.iStatus.equalsIgnoreCase("success")) {
                     SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance();
-                    sharedPrefManager.saveUserVarified(true);
-                    sharedPrefManager.setMobileVerified(sharedPrefManager.getUserPhone(), true);
-                    sharedPrefManager.saveUserName(objUserModel.username);
-                    sharedPrefManager.saveUserPassword(objUserModel.password);
-                    sharedPrefManager.setOTPVerified(true);
 
-                    saveDataAndMove(objUserModel.username);
+//                    sharedPrefManager.saveUserVarified(true);
+//                    sharedPrefManager.setMobileVerified(sharedPrefManager.getUserPhone(), true);
+//                    sharedPrefManager.saveUserName(objUserModel.username);
+//                    sharedPrefManager.saveUserPassword(objUserModel.password);
+//                    sharedPrefManager.setOTPVerified(true);
 
-//                    showDialogWantToSwitchGroup(objUserModel.username);
-//                    showDialogWithPositive(objUserModel.username, "Do you want to switch to new group ?");
+                    inviteUserName = objUserModel.username;
+                    inviteUserPassword = objUserModel.password;
+
+//                    saveDataAndMove();
+
+
+                    Intent data = new Intent();
+                    data.putExtra("SG_MOBILE", ""+inviteMobileNumber);
+                    data.putExtra("SG_NAME", ""+inviteSGName);
+                    data.putExtra("SG_DISPLAY_NAME", ""+inviteSGDisplayName);
+                    data.putExtra("SG_FILE_ID", ""+inviteSGFileID);
+                    data.putExtra("SG_USER_NAME", ""+inviteUserName);
+                    data.putExtra("SG_USER_ID", inviteUserID);
+                    data.putExtra("SG_USER_PASSWORD", ""+inviteUserPassword);
+                    setResult(RESULT_OK, data);
+                    finish();
 
                 } else {
                     runOnUiThread(new Runnable() {
@@ -1336,43 +1323,43 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
         });
     }
 
-    private void showDialogWantToSwitchGroup(final String userName) {
+//    private void showDialogWantToSwitchGroup(final String userName) {
+//
+//        new MaterialDialog.Builder(this)
+//                .title("Want to Switch")
+//                .content("Do you want to switch to new group ?")
+//                .positiveText("Switch")
+//                .negativeText("Cancel")
+//                .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                    @Override
+//                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                        saveDataAndMove(userName);
+//                    }
+//                })
+//                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+//                    @Override
+//                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                        // TODO
+//                    }
+//                })
+//                .onNegative(new MaterialDialog.SingleButtonCallback() {
+//                    @Override
+//                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                        // TODO
+//                        saveDataAndMove(userName);
+//                    }
+//                })
+//                .onAny(new MaterialDialog.SingleButtonCallback() {
+//                    @Override
+//                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                        // TODO
+//                    }
+//                })
+//                .show();
+//
+//    }
 
-        new MaterialDialog.Builder(this)
-                .title("Want to Switch")
-                .content("Do you want to switch to new group ?")
-                .positiveText("Switch")
-                .negativeText("Cancel")
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        saveDataAndMove(userName);
-                    }
-                })
-                .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        // TODO
-                    }
-                })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        // TODO
-                        saveDataAndMove(userName);
-                    }
-                })
-                .onAny(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        // TODO
-                    }
-                })
-                .show();
-
-    }
-
-    private void saveDataAndMove(final String userName) {
+    private void saveDataAndMove() {
         SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance();
         if (newUser || pendingProfile) {
             sharedPrefManager.setFirstTime(true);

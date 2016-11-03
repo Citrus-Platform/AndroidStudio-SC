@@ -76,6 +76,7 @@ import com.superchat.model.LoginResponseModel.UserResponseDetail;
 import com.superchat.model.MarkSGActive;
 import com.superchat.model.RegistrationForm;
 import com.superchat.model.RegistrationFormResponse;
+import com.superchat.model.multiplesg.InviteJoinDataModel;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
@@ -709,20 +710,34 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	public void onFileDownloadResposne(View view, int[] type, String[] file_urls, String[] file_paths) {
 
 	}
-	public void updateUserData(String user){
+	public void updateUserData(String user, InviteJoinDataModel model){
 		try {
 			progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
 			SharedPrefManager prefManager = SharedPrefManager.getInstance();
-			long userID = prefManager.getSGUserID(user);
+			long userID = 0;
+			if(model != null){
+				user = model.getInviteUserName();
+				String pass = model.getInviteUserPassword();
+				userID = model.getInviteUserID();
 
-			System.out.println("[UserID - ] "+userID);
-			System.out.println("[Pass - ] "+prefManager.getSGPassword(user));
-			System.out.println("<< mobileNumber :: Switch :: " + prefManager.getUserPhone());
+				System.out.println("[UserID - ] "+userID);
+				System.out.println("[Pass - ] "+pass);
+				System.out.println("<< mobileNumber :: Switch :: " + model.getInviteMobileNumber());
 
-			prefManager.saveUserId(userID);
-			prefManager.saveUserName(user);
-			prefManager.saveUserPassword(prefManager.getSGPassword(user));
-			SharedPrefManager.getInstance().setProfileAdded(user, true);
+				prefManager.saveUserId(userID);
+				prefManager.saveUserName(user);
+				prefManager.saveUserPassword(pass);
+				prefManager.setProfileAdded(user, true);
+			}else {
+				userID = prefManager.getSGUserID(user);
+				System.out.println("[UserID - ] " + userID);
+				System.out.println("[Pass - ] " + prefManager.getSGPassword(user));
+				System.out.println("<< mobileNumber :: Switch :: " + prefManager.getUserPhone());
+				prefManager.saveUserId(userID);
+				prefManager.saveUserName(user);
+				prefManager.saveUserPassword(prefManager.getSGPassword(user));
+				prefManager.setProfileAdded(user, true);
+			}
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
@@ -1542,9 +1557,12 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			super.onPostExecute(str);
 		}
 	}
-	public void showCustomDialogWith2Buttons(final String sg, String message) {
+	public void showCustomDialogWith2Buttons(final InviteJoinDataModel model, String message) {
 		final Dialog bteldialog = new Dialog(this);
-		final String sg_name = sg.substring(sg.indexOf("_") + 1);
+
+//		final String sg_name = sg.substring(sg.indexOf("_") + 1);
+		final String sg_name = model.getInviteSGName();
+		final String sg = model.getInviteUserName();
 		bteldialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		bteldialog.setCanceledOnTouchOutside(false);
 		bteldialog.setContentView(R.layout.custom_dialog);
@@ -1565,7 +1583,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				isSwitchSG = true;
 				selectedTab = mViewPager.getCurrentItem();
 				drawerFragment.fragmentClose();
-				updateUserData(sg);
+				updateUserData(sg, model);
 				markSGActive(sg_name);
 				return false;
 			}
@@ -1733,7 +1751,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				String user = iPrefManager.getUserPhone();
 				if(user != null && user.contains("-"))
 					user = user.replace("-", "");
-				switchSG(user + "_" + extras.getString("DOMAIN_NAME"), false);
+				switchSG(user + "_" + extras.getString("DOMAIN_NAME"), false, null);
 				return;
 			}
 		}
@@ -3409,7 +3427,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	 * When next Supergroup is clicked to change
 	 * @param sg
 	 */
-	public void switchSG(String sg, boolean confirmation){
+	public void switchSG(String sg, boolean confirmation, InviteJoinDataModel model){
 		//Testing
 		String sg_name = sg.substring(sg.indexOf("_") + 1);
 //		ArrayList<JoinedDomainNameSet> joined = DBWrapper.getInstance().getListOfJoinedSGs();
@@ -3423,12 +3441,12 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			//Check if that group is deactivated then show alert
 //			String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
 			if(confirmation){
-				showCustomDialogWith2Buttons(sg, "Do you want to switch?");
+				showCustomDialogWith2Buttons(model, "Do you want to switch?");
 			}else {
 				isSwitchSG = true;
 				selectedTab = mViewPager.getCurrentItem();
 				drawerFragment.fragmentClose();
-				updateUserData(sg);
+				updateUserData(sg, null);
 				markSGActive(sg_name);
 			}
 		}else{

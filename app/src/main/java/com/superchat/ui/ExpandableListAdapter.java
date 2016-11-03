@@ -195,7 +195,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                         if (user != null && user.contains("-"))
                             user = user.replace("-", "");
                         if (context != null)
-                            ((HomeScreen) context).switchSG(user + "_" + item.actualName, false);
+                            ((HomeScreen) context).switchSG(user + "_" + item.actualName, false, null);
                     }
                 });
                 break;

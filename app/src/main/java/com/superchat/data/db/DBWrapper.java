@@ -2479,11 +2479,12 @@ public boolean isContactModified(String rawId, int version){
      */
 	public ArrayList<JoinedDomainNameSet> getListOfJoinedSGs()
 	{
-		ArrayList<JoinedDomainNameSet> joined = new ArrayList<JoinedDomainNameSet>();
+		ArrayList<JoinedDomainNameSet> joined = null;
 		Cursor cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM " +DatabaseConstants.TABLE_NAME_MULTIPLE_SG + " WHERE "
 				+ DatabaseConstants.DOMAIN_TYPE_VALUE + "=2", null);
 		try {
-			if (cursor != null) {
+			if (cursor != null && cursor.getCount() > 0) {
+				joined = new ArrayList<JoinedDomainNameSet>();
 				while (cursor.moveToNext()){
 					JoinedDomainNameSet sgdata = new JoinedDomainNameSet();
 					sgdata.setDomainName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_NAME)));
@@ -2515,11 +2516,12 @@ public boolean isContactModified(String rawId, int version){
      */
 	public ArrayList<InvitedDomainNameSet> getListOfInvitedSGs()
 	{
-		ArrayList<InvitedDomainNameSet> invited = new ArrayList<InvitedDomainNameSet>();
+		ArrayList<InvitedDomainNameSet> invited = null;
 		Cursor cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM "+DatabaseConstants.TABLE_NAME_MULTIPLE_SG +" WHERE "
 				+ DatabaseConstants.DOMAIN_TYPE_VALUE + "=3", null);
 		try {
-			if (cursor != null) {
+			if (cursor != null && cursor.getCount() > 0) {
+				invited = new ArrayList<InvitedDomainNameSet>();
 				while (cursor.moveToNext()){
 					InvitedDomainNameSet sgdata = new InvitedDomainNameSet();
 					sgdata.setDomainName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_NAME)));
@@ -2550,11 +2552,12 @@ public boolean isContactModified(String rawId, int version){
      */
 	public OwnerDomainName getOwnedSG()
 	{
-		OwnerDomainName sgdata = new OwnerDomainName();
+		OwnerDomainName sgdata = null;
 		Cursor cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM "+DatabaseConstants.TABLE_NAME_MULTIPLE_SG+ " WHERE "
 				+ DatabaseConstants.DOMAIN_TYPE_VALUE + "=1", null);
 		try {
-			if (cursor != null) {
+			if (cursor != null && cursor.getCount() > 0) {
+				sgdata = new OwnerDomainName();
 				while (cursor.moveToNext()){
 					sgdata.setDomainName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_NAME)));
 					sgdata.setDomainDisplayName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_DISPLAY_NAME)));
