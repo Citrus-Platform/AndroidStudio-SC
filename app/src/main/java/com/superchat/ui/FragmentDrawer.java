@@ -36,6 +36,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.internal.zzip;
 import com.superchat.R;
 import com.superchat.data.db.DBWrapper;
 import com.superchat.model.SGroupListObject;
@@ -449,8 +450,10 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             notifyCurrent.setBackgroundResource(R.drawable.ic_icon_navigation_unmute);
         }
         /////////////////////////////////////
-
-
+        ArrayList<InvitedDomainNameSet> invitedList = new ArrayList<>();
+        invitedList = DBWrapper.getInstance().getListOfInvitedSGs();
+        if(invitedList != null && invitedNotificationCount != null && invitedList.size() > 0)
+            invitedNotificationCount.setText(""+invitedList.size());
     }
 
     public void setUp(int fragmentId, DrawerLayout drawerLayout, final Toolbar toolbar) {
