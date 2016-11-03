@@ -2331,10 +2331,13 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                     else {
                         Intent intent = new Intent(ProfileScreen.this, EsiaChatContactsScreen.class);
                         intent.putExtra(Constants.CHAT_TYPE, Constants.MEMBER_DELETE);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
                         startActivity(intent);
+                        finish();
                     }
+                    return;
                 } else if (purposeType == EDIT_BY_SELF || purposeType == EDIT_SG_OWNER) {
                     Intent intent = new Intent(ProfileScreen.this, MoreScreen.class);
                     startActivity(intent);

@@ -29,6 +29,8 @@ import com.superchat.ui.HomeScreen;
 import com.superchat.utils.Constants;
 import com.superchat.utils.SharedPrefManager;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -60,6 +62,7 @@ public class GcmIntentService extends IntentService {
 	static String notificationPackage = "";
 //	static String notificationActivity = ".ui.ChatListScreen";
 	static String notificationActivity = ".ui.HomeScreen";
+	static String homeScreen = ".ui.HomeScreen";
 
     public GcmIntentService() {
         super("GcmIntentService");
@@ -123,6 +126,19 @@ public class GcmIntentService extends IntentService {
 //            		else
 //            			showNotificationForP2PMessage(senderUserName, senderDisplayName, message, (byte)0, 0);
                 Log.e(TAG, "GCM - Push Message Received: " + extras.toString());
+
+					//Check For special Message type
+					if(senderUserName == null && groupName ==  null){
+						if(HomeScreen.isforeGround){
+							EventBus.getDefault().post(message);
+						} else {
+							EventBus.getDefault().post(message);
+							showSystemMessage(message);
+							GcmBroadcastReceiver.completeWakefulIntent(intent);
+						}
+						return;
+					}
+
 				if(domainName != null && !domainName.equals(currentDomain)){
 					if(screen != null && screen.equalsIgnoreCase("group"))
             			showNotificationForGroupMessage(domainName, senderUserName, groupName, senderDisplayName, message, 0, 0, true);
@@ -439,6 +455,68 @@ public class GcmIntentService extends IntentService {
 		previousUser = from;
 		isFirstMessage = false;
 		startService(new Intent(SuperChatApplication.context, ChatService.class));
+	}
+	//============================================================================================================
+	public void showSystemMessage(String msg) {
+		SharedPrefManager sharedPref = SharedPrefManager.getInstance();
+		CharSequence tickerText = msg;
+		String user = "SuperChat";
+		String displayName = user;
+
+		if (messageNotification == null) {
+			messageNotification = new NotificationCompat.Builder(context);
+			messageNotification.setSmallIcon(R.drawable.chatgreen);
+			messageNotification.setAutoCancel(true);
+			messageNotification.setLights(Color.RED, 3000, 3000);
+
+		}
+		Notification note = messageNotification.build();
+
+		note.defaults |= Notification.DEFAULT_SOUND;
+		note.defaults |= Notification.DEFAULT_LIGHTS;
+		Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+		messageNotification.setSound(alarmSound);
+		tickerText = "Message from " + displayName;
+		messageNotification.setWhen(System.currentTimeMillis());
+		messageNotification.setTicker(tickerText);
+		Intent notificationIntent = new Intent();
+		Log.d(TAG, "notificationPackage: "+notificationPackage+" , "+notificationActivity);
+		notificationIntent.setClassName(notificationPackage, notificationPackage + homeScreen);
+		notificationIntent.putExtra(ChatDBConstants.CONTACT_NAMES_FIELD, displayName);
+		notificationIntent.putExtra(ChatDBConstants.USER_NAME_FIELD, user);
+		notificationIntent.putExtra("FROM_NOTIFICATION", true);
+		notificationIntent.putExtra("SYSTEM_MESSAGE", true);
+		notificationIntent.putExtra("SYSTEM_MESSAGE_TEXT", msg);
+		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+		notificationIntent.setAction(Long.toString(System.currentTimeMillis()));
+		PendingIntent contentIntent = PendingIntent.getActivity(
+				context, 0, notificationIntent, PendingIntent.FLAG_ONE_SHOT);
+		messageNotification.setContentTitle(displayName);
+		messageNotification.setContentText(msg);
+		messageNotification.setContentIntent(contentIntent);
+		int count = prefManager.getChatCountOfUser(user);
+		Notification notification = messageNotification.build();
+		if(R.layout.message_notifier != -1){
+			RemoteViews contentView = new RemoteViews(
+					context.getPackageName(),
+					R.layout.system_push_layout);
+			contentView.setTextViewText(R.id.chat_person_name, displayName);
+			Uri uri = getPicUri(user);
+			if(uri!=null)
+				contentView.setImageViewUri(R.id.imagenotileft, uri);
+			contentView.setTextViewText(R.id.chat_message, msg);
+			if (count > 0) {
+				contentView.setTextViewText(R.id.chat_notification_bubble_text, String.valueOf(count));
+			}
+			notification.contentView = contentView;
+		}
+		int id = user.hashCode();
+		if (id < -1)
+			id = -(id);
+		Log.d(TAG, "showSpecialMessage: "+user+" , "+currentUser+" , "+onForeground);
+		notificationManager.notify(id, notification);
+		previousUser = user;
+		isFirstMessage = false;
 	}
     //========================================
     private Uri getPicUri(String userName){

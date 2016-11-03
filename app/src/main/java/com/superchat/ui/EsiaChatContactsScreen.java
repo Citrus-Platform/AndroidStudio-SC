@@ -894,6 +894,8 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                                 new GroupAndBroadcastTaskOnServer(groupName, SharedPrefManager.getInstance().getSharedIDDisplayName(groupName), inviters, groupDiscription, Constants.BROADCAST_LIST_UPDATE).execute(groupFileId);
                                 break;
                             } else if (isGroupInvitation) {
+                                if(inviters.contains(SharedPrefManager.getInstance().getUserName()))
+                                    inviters.remove(SharedPrefManager.getInstance().getUserName());
                                 new GroupAndBroadcastTaskOnServer(groupName, SharedPrefManager.getInstance().getGroupDisplayName(groupName), inviters, groupDiscription, Constants.GROUP_USER_CHAT_INVITE).execute();
                                 break;
                             }
@@ -1601,6 +1603,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                             | Intent.FLAG_ACTIVITY_CLEAR_TASK
                             | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
+                    return;
                 } else if (requestType == Constants.SHARED_ID_CREATE) {
                     //Update shared ID data.
                     SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
@@ -1775,9 +1778,18 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                         }
                         String json = finalJSONbject.toString();
 //						 json = json.replace("\"", "&quot;");
-                        for (String addedUser : usersList) {
-                            if (!SharedPrefManager.getInstance().isUserInvited(addedUser) || !SharedPrefManager.getInstance().isDomainAdminORSubAdmin())
+                        //User Set so that duplicate entries can be removed.
+                        List<String> final_user = new ArrayList<String>();
+                        for (String user : usersList){
+                            if(!final_user.contains(user))
+                                final_user.add(user);
+                        }
+                        for (String addedUser : final_user) {
+                            if (!SharedPrefManager.getInstance().isUserInvited(addedUser) || !SharedPrefManager.getInstance().isDomainAdminORSubAdmin()) {
+                                service.sendGroupOwnerTaskMessage(SharedPrefManager.getInstance().getUserServerName(addedUser),
+                                        SharedPrefManager.getInstance().getUserFileId(addedUser), addedUser, groupUUID, displayName, groupDiscription, fileId, "0", XMPPMessageType.atMeXmppMessageTypeNewCreateGroup);
                                 service.inviteUserInRoom(groupUUID, displayName, "", addedUser, json);
+                            }
                         }
                         json = null;
                     }

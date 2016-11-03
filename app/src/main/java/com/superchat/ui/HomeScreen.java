@@ -95,6 +95,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -1701,7 +1704,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //		System.out.println("[ON-RESUME CALLED]");
 
 //		System.out.println("[ON-RESUME 1]");
-//		startService(new Intent(SuperChatApplication.context, SinchService.class));
+		startService(new Intent(SuperChatApplication.context, SinchService.class));
 //		System.out.println("[ON-RESUME 2]");
 
 		bindService(new Intent(this, ChatService.class), mConnection,Context.BIND_AUTO_CREATE);
@@ -3626,5 +3629,24 @@ public void onComposeClick(View view){
 	public void openDrawer(){
 		drawerFragment.adapter.notifyDataSetChanged();
 		drawerFragment.fragmentOpen();
+	}
+	//----------------------------------------------------
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		EventBus.getDefault().register(this);
+	}
+	@Override
+	public void onStop() {
+		super.onStop();
+		EventBus.getDefault().unregister(this);
+	}
+
+	// Called in Android UI's main thread
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void onMessage(String message) {
+		showDialogWithPositive(message);
+//        showAlertDialog(message);
 	}
 }

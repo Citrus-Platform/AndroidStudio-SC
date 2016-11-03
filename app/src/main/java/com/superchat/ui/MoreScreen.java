@@ -35,6 +35,10 @@ import com.superchat.utils.Constants;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.utils.Utilities;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -291,6 +295,8 @@ public class MoreScreen extends Activity implements OnClickListener {
 		// TODO Auto-generated method stub
 		super.onResume();
 //		setProfilePic();
+		if(myNameView != null)
+			myNameView.setText(sharedPrefManager.getDisplayName());
 		setProfilePic(sharedPrefManager.getUserName());
 		if(aboutSuperGroupView != null)
 			aboutSuperGroupView.setText("About "+sharedPrefManager.getCurrentSGDisplayName());
@@ -711,5 +717,44 @@ public void showSnoozeDialog() {
 			e.printStackTrace();
 		}
 		return version;
+	}
+	//-------------------------------------------------
+	@Override
+	public void onStart() {
+		super.onStart();
+		EventBus.getDefault().register(this);
+	}
+	@Override
+	public void onStop() {
+		super.onStop();
+		EventBus.getDefault().unregister(this);
+	}
+
+	// Called in Android UI's main thread
+	@Subscribe(threadMode = ThreadMode.MAIN)
+	public void onMessage(String message) {
+		showDialogWithPositive(message);
+//        showAlertDialog(message);
+	}
+	public void showDialogWithPositive(String s) {
+		final Dialog dailog = new Dialog(MoreScreen.this);
+		try {
+			dailog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			dailog.setCanceledOnTouchOutside(false);
+//            dailog.setContentView(R.layout.custom_dialog);
+			dailog.setContentView(R.layout.system_message_dialog);
+			((TextView) dailog.findViewById(R.id.id_dialog_message)).setText(s);
+			((TextView) dailog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
+
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					dailog.cancel();
+					return false;
+				}
+			});
+			dailog.show();
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
 	}
 }

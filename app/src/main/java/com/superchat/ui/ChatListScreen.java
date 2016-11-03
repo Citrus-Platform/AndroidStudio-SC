@@ -145,6 +145,9 @@ import com.superchat.utils.VoiceMedia;
 import com.superchat.utils.VoiceMediaHandler;
 import com.superchat.widgets.RoundedImageView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7127,5 +7130,44 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         }
         System.out.println("+05:30 Millis = " + millis);
         return millis;
+    }
+    //-------------------------------------------------------
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    // Called in Android UI's main thread
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessage(String message) {
+        showDialogWithPositive(message);
+//        showAlertDialog(message);
+    }
+    public void showDialogWithPositive(String s) {
+        final Dialog dailog = new Dialog(ChatListScreen.this);
+        try {
+            dailog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dailog.setCanceledOnTouchOutside(false);
+//            dailog.setContentView(R.layout.custom_dialog);
+            dailog.setContentView(R.layout.system_message_dialog);
+            ((TextView) dailog.findViewById(R.id.id_dialog_message)).setText(s);
+            ((TextView) dailog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    dailog.cancel();
+                    return false;
+                }
+            });
+            dailog.show();
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
     }
 }
