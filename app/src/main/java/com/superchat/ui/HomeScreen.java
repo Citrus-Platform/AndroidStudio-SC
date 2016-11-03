@@ -579,7 +579,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //						syncView.setVisibility(View.GONE);
 
 						publicGroupTab.setSelected(true);
-						publicGroupFragment.refreshList();
+						PublicGroupScreen.refreshList();
 						publicGroupFragment.restScreen();
 						break;
 					case 3:
@@ -662,7 +662,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			}else
 				unseenContactView.setVisibility(View.GONE);
 			if(publicGroupFragment!=null)
-				publicGroupFragment.refreshList();
+				PublicGroupScreen.refreshList();
 			}
 		};
 	ProgressDialog progressDialog = null;
@@ -680,7 +680,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						"Loading. Please wait...", true);
 				break;
 			}
-		};
+		}
 	};
 	Handler mainTask = new Handler(){
 		@Override
@@ -732,7 +732,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			SharedPrefManager prefManager = SharedPrefManager.getInstance();
 //			String sg_name = user.substring(user.indexOf("_") + 1);
 			prefManager.saveUserDomain(sg_name);
-			prefManager.saveCurrentSGDisplayName(sg_name);
+
+			if(DBWrapper.getInstance().getSGDisplayName(sg_name)!=null &&
+					DBWrapper.getInstance().getSGDisplayName(sg_name).trim().length()>0){
+				prefManager.saveCurrentSGDisplayName(DBWrapper.getInstance().getSGDisplayName(sg_name));
+			}else{
+				prefManager.saveCurrentSGDisplayName(sg_name);
+			}
+
 			prefManager.saveSGFileId("SG_FILE_ID",DBWrapper.getInstance().getSGLogoFileID(sg_name));
 			cleanDataAndSwitchSG(sg_name);
 			//Set contact and group synch's
@@ -1536,7 +1543,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		bteldialog.setCanceledOnTouchOutside(false);
 		bteldialog.setContentView(R.layout.custom_dialog);
 		((TextView)bteldialog.findViewById(R.id.id_dialog_message)).setText(s);
-		((TextView)bteldialog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
+		bteldialog.findViewById(R.id.id_ok).setOnTouchListener(new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -1552,7 +1559,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		bteldialog.setCanceledOnTouchOutside(false);
 		bteldialog.setContentView(R.layout.custom_dialog);
 		((TextView)bteldialog.findViewById(R.id.id_dialog_message)).setText(s);
-		((TextView)bteldialog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
+		bteldialog.findViewById(R.id.id_ok).setOnTouchListener(new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -1589,7 +1596,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		bteldialog.setContentView(R.layout.custom_dialog);
 		((TextView)bteldialog.findViewById(R.id.id_dialog_message)).setText(s);
 		((TextView)bteldialog.findViewById(R.id.id_ok)).setText("Exit");
-		((TextView)bteldialog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
+		bteldialog.findViewById(R.id.id_ok).setOnTouchListener(new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -1610,7 +1617,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setCanceledOnTouchOutside(false);
 		dialog.setContentView(R.layout.deactivate_alert_dialog);
-		((ImageView)dialog.findViewById(R.id.id_menu_icon)).setOnClickListener(new OnClickListener() {
+		dialog.findViewById(R.id.id_menu_icon).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				drawerFragment.fragmentOpen();
@@ -1840,7 +1847,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			    	sharingType = 0;
 
 				if(sharingType!=0){
-				    	Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+				    	Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
 			    		if (imageUri != null) {
 							if(imageUri.toString().contains("com.google.android.apps"))
 							{
@@ -2710,7 +2717,7 @@ public void onComposeClick(View view){
 					}
 
 
-			boolean isPlus = str.contains("+")?true:false;
+			boolean isPlus = str.contains("+");
 			if(isPlus)
 				isCountryCheckingNeeded = true;
 
@@ -2887,7 +2894,7 @@ public void onComposeClick(View view){
 			((TextView)bteldialog.findViewById(R.id.id_dialog_message)).setText(s);
 			((TextView)bteldialog.findViewById(R.id.id_send)).setText("Update Now");
 			((TextView)bteldialog.findViewById(R.id.id_cancel)).setText("Later");
-			((TextView)bteldialog.findViewById(R.id.id_send)).setOnTouchListener(new OnTouchListener() {
+			bteldialog.findViewById(R.id.id_send).setOnTouchListener(new OnTouchListener() {
 
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
@@ -2911,7 +2918,7 @@ public void onComposeClick(View view){
 					return false;
 				}
 			});
-	((TextView)bteldialog.findViewById(R.id.id_cancel)).setOnTouchListener(new OnTouchListener() {
+	bteldialog.findViewById(R.id.id_cancel).setOnTouchListener(new OnTouchListener() {
 
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
@@ -3474,7 +3481,7 @@ public void onComposeClick(View view){
 			if (file1.exists()) {
 				picView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 	//				picView.setImageURI(Uri.parse(img_path));
-				setThumb((ImageView) picView, img_path, groupPicId);
+				setThumb(picView, img_path, groupPicId);
 				return true;
 			} else {
 				if (Build.VERSION.SDK_INT >= 11)
