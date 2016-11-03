@@ -95,14 +95,15 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     public List<ExpandableListAdapter.Item> getSuperGroupList() {
         List<ExpandableListAdapter.Item> dataList = new ArrayList<>();
         SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
-        String data = iPrefManager.getSgListData();
+//        String data = iPrefManager.getSgListData();
         OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
 
         ArrayList<OwnerDomainName> ownerDomainNameSet = new ArrayList<>();
 
         if(owned != null)
             ownerDomainNameSet.add(owned);
-        if (data != null) {
+//        if (data != null) {
+
             if (ownerDomainNameSet != null && ownerDomainNameSet.size() > 0) {
                 for (int i = 0; i < ownerDomainNameSet.size(); i++) {
                     String ownerDisplayName = "";
@@ -141,9 +142,9 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                 }
             }
 
-        } else {
-           // dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0" , ""));
-        }
+//        } else {
+//           // dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0" , ""));
+//        }
 
         return dataList;
     }

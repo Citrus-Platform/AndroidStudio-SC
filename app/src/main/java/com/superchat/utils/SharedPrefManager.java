@@ -440,7 +440,7 @@ public boolean isContactModified(){
 	}
 
 	public String getAppMode() {
-		String value = pref.getString(FIRST_TIME_APP, null);
+		String value = pref.getString(FIRST_TIME_APP, "");
 		return value;
 	}
 	public String getRecentDomains(){
