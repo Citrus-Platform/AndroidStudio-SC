@@ -54,6 +54,8 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class FragmentDrawer extends Fragment implements View.OnClickListener {
@@ -94,16 +96,10 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
     public List<ExpandableListAdapter.Item> getSuperGroupList() {
         List<ExpandableListAdapter.Item> dataList = new ArrayList<>();
-        SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
-//        String data = iPrefManager.getSgListData();
         OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
-
         ArrayList<OwnerDomainName> ownerDomainNameSet = new ArrayList<>();
-
         if(owned != null)
             ownerDomainNameSet.add(owned);
-//        if (data != null) {
-
             if (ownerDomainNameSet != null && ownerDomainNameSet.size() > 0) {
                 for (int i = 0; i < ownerDomainNameSet.size(); i++) {
                     String ownerDisplayName = "";
@@ -123,8 +119,29 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                             ownerDomainNameSet.get(i).getDomainType()));
                 }
             }
-            ArrayList<JoinedDomainNameSet> joinedDomainNameSetTemp = DBWrapper.getInstance().getListOfJoinedSGs();
-            if (joinedDomainNameSetTemp != null && joinedDomainNameSetTemp.size() > 0) {
+        ArrayList<JoinedDomainNameSet> joinedDomainNameSetTemp = DBWrapper.getInstance().getListOfJoinedSGs();
+        Collections.sort(joinedDomainNameSetTemp, new Comparator<JoinedDomainNameSet>() {
+            @Override
+            public int compare(final JoinedDomainNameSet object1, final JoinedDomainNameSet object2) {
+
+                String itemOne = "";
+                String itemTwo = "";
+                //////////////////////////
+                if(object1.getDomainDisplayName()!=null && object1.getDomainDisplayName().trim().length()>0){
+                    itemOne = object1.getDomainDisplayName().toUpperCase();
+                }else{
+                    itemOne = object1.getDomainName().toUpperCase();
+                }
+                //////////////////////////
+                if(object2.getDomainDisplayName()!=null && object2.getDomainDisplayName().trim().length()>0){
+                    itemTwo = object2.getDomainDisplayName().toUpperCase();
+                }else{
+                    itemTwo = object2.getDomainName().toUpperCase();
+                }
+                return itemOne.compareTo(itemTwo);
+            }
+        });
+        if (joinedDomainNameSetTemp != null && joinedDomainNameSetTemp.size() > 0) {
                 for (int i = 0; i < joinedDomainNameSetTemp.size(); i++) {
                     String joinedDisplayName = "";
                     if(joinedDomainNameSetTemp.get(i).getDomainDisplayName()!=null &&
@@ -141,11 +158,6 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                             joinedDomainNameSetTemp.get(i).getDomainType()));
                 }
             }
-
-//        } else {
-//           // dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, "Super Group", "0", "0" , ""));
-//        }
-
         return dataList;
     }
 
