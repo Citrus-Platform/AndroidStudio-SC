@@ -347,7 +347,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                     if(user != null && user.contains("-"))
                         user = user.replace("-", "");
                     DBWrapper.getInstance().updateSGTypeValue(SG_NAME, 2);//Joined
-                    ((HomeScreen) getActivity()).switchSG(user + "_" + SG_NAME);
+                    DBWrapper.getInstance().updateSGActiveStatus(SG_NAME, "true");
+                    ((HomeScreen) getActivity()).switchSG(user + "_" + SG_NAME, true);
                 } catch (Exception e) {
 
                 }
@@ -356,7 +357,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             case CODE_ADD_SUPERGROUP: {
                 try {
                     String SG_NAME = data.getStringExtra("SG_NAME");
-                    ((HomeScreen) getActivity()).switchSG(SG_NAME);
+                    ((HomeScreen) getActivity()).switchSG(SG_NAME, false);
                 } catch (Exception e) {
 
                 }

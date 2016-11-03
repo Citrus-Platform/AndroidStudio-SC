@@ -163,19 +163,6 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
             if (size == 1) {
                 newUser = true;
                 superGroupName = invitedDomainNameSet.get(0);
-//                String sg_name = superGroupName;
-//                JSONObject json;
-//                try {
-//                    json = new JSONObject(superGroupName);
-//                    if (json != null && json.has("domainName")) {
-//                        sg_name = json.getString("domainName");
-//                        superGroupName = sg_name;
-//                    } else
-//                        sg_name = superGroupName;
-//                } catch (JSONException e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
             }
             if (size > 0) {
                 //This is new member, show him different view
@@ -203,12 +190,6 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
 
         }
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
-//         if(Build.VERSION.SDK_INT >= 11)
-//			new GetRegisteredSGList().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-//		 else
-//			new GetRegisteredSGList().execute();
-
 
         final EditText domaine_name = ((EditText) findViewById(R.id.id_sg_name_field));
         domaine_name.setOnEditorActionListener(new OnEditorActionListener() {
@@ -787,7 +768,8 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
         registrationForm.countryCode = countryCode;
         if (super_group != null && super_group.trim().length() > 0)
             registrationForm.setDomainName(super_group);
-        SharedPrefManager.getInstance().saveUserPhone(mobileNumber);
+//        SharedPrefManager.getInstance().saveUserPhone(mobileNumber);
+        inviteMobileNumber = mobileNumber;
         if (Build.VERSION.SDK_INT >= 11)
             new SignupTaskOnServer(registrationForm, view).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         else
@@ -985,6 +967,12 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
     }
 
     //---------------------------------------
+    String inviteMobileNumber;
+    String inviteSGName;
+    String inviteSelectedSGDisplayName;
+    String inviteUserName;
+    long inviteUserID;
+
     public class SignupTaskOnServer extends AsyncTask<String, String, String> {
         RegistrationForm registrationForm;
         ProgressDialog progressDialog = null;
@@ -1039,30 +1027,39 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                             RegistrationForm regObj = gson.fromJson(str, RegistrationForm.class);
                             if (regObj != null) {
                                 SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
-                                if (iPrefManager != null && iPrefManager.getUserId() != 0) {
-                                    if (iPrefManager.getUserId() != regObj.iUserId) {
-                                        try {
-                                            DBWrapper.getInstance().clearMessageDB();
-//														iPrefManager.clearSharedPref();
-                                        } catch (Exception e) {
-                                        }
-                                    }
-                                }
+//                                if (iPrefManager != null && iPrefManager.getUserId() != 0) {
+//                                    if (iPrefManager.getUserId() != regObj.iUserId) {
+//                                        try {
+//                                            DBWrapper.getInstance().clearMessageDB();
+////														iPrefManager.clearSharedPref();
+//                                        } catch (Exception e) {
+//                                        }
+//                                    }
+//                                }
                                 Log.i(TAG, "SignupTaskOnServer :: password, mobileNumber: " + regObj.getPassword() + " , " + regObj.iMobileNumber);
-                                iPrefManager.saveUserDomain(superGroupName);
-                                if (selectedSGDisplayName != null)
-                                    iPrefManager.saveCurrentSGDisplayName(selectedSGDisplayName);
-                                iPrefManager.saveAuthStatus(regObj.iStatus);
-                                if (regObj.token != null)
-                                    iPrefManager.saveDeviceToken(regObj.token);
-                                iPrefManager.saveUserId(regObj.iUserId);
+
+//                                iPrefManager.saveUserDomain(superGroupName);
+                                inviteSGName = superGroupName;
+                                if (selectedSGDisplayName != null) {
+//                                    iPrefManager.saveCurrentSGDisplayName(selectedSGDisplayName);
+                                    inviteSelectedSGDisplayName = selectedSGDisplayName;
+                                }else
+                                    inviteSelectedSGDisplayName = inviteSGName;
+
+//                                iPrefManager.saveAuthStatus(regObj.iStatus);
+//                                if (regObj.token != null)
+//                                    iPrefManager.saveDeviceToken(regObj.token);
+
+//                                iPrefManager.saveUserId(regObj.iUserId);
+                                inviteUserID = regObj.iUserId;
+
                                 iPrefManager.setAppMode("VirginMode");
                                 iPrefManager.saveUserPhone(regObj.iMobileNumber);
 //											iPrefManager.saveUserPassword(regObj.getPassword());
-                                iPrefManager.saveUserLogedOut(false);
+//                                iPrefManager.saveUserLogedOut(false);
                                 pendingProfile = regObj.pendingProfile;
 //											pendingProfile = true;
-                                iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
+//                                iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
                             }
                             verifyUserSG(regObj.iUserId);
                         }
@@ -1271,7 +1268,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
             public void onSuccess(int arg0, String arg1) {
 //				if(welcomeDialog != null)
 //					welcomeDialog.cancel();
-                Log.i(TAG, "verifyUserSG :: reponse : " + arg1);
+                Log.i(TAG, "verifyUserSG :: response : " + arg1);
                 Gson gson = new GsonBuilder().create();
                 final RegMatchCodeModel objUserModel = gson.fromJson(arg1, RegMatchCodeModel.class);
 				runOnUiThread(new Runnable() {

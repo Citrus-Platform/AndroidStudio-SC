@@ -156,7 +156,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	PublicGroupScreen publicGroupFragment;
 	ChatHome chatFragment;
 	BulletinScreen bulletinFragment;
-//	MoreScreen moreFragment;
+	//	MoreScreen moreFragment;
 //	XmppChatClient chatClient;
 	public static boolean isforeGround = false;
 	public static boolean updateNavDrawer = false;
@@ -181,7 +181,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	public static final int PPT_SHARING = 7;
 	static boolean isContactRefreshed;
 	public static boolean isLaunched = false;
-//	ImageView syncView;
+	//	ImageView syncView;
 	public static File cacheDirImage;
 	public static String cacheDir = "";
 	public static Map<String, String> cameraSettingMap = new HashMap<String,String>();
@@ -345,28 +345,28 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			if(syncAnimation.isRunning()){
 				syncAnimation.cancel();
 				syncAnimation = null;
-				}
+			}
 		}
 	}
 	private void chkSyncProcess(){
 		if(syncTimer==null){
-		syncTimer = new Timer();
-		syncTimer.schedule(new TimerTask() {
+			syncTimer = new Timer();
+			syncTimer.schedule(new TimerTask() {
 
-			@Override
-			public void run() {
-				if(syncAnimation!=null)
-				{
-					if(!syncAnimation.isRunning()){
-						runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					if(syncAnimation!=null)
+					{
+						if(!syncAnimation.isRunning()){
+							runOnUiThread(new Runnable() {
 
-							@Override
-							public void run() {
-								syncAnimation.start();
-							}
-						});
+								@Override
+								public void run() {
+									syncAnimation.start();
+								}
+							});
 
-					}
+						}
 //			}else if(syncAnimation!=null && syncAnimation.isRunning()){
 //				runOnUiThread(new Runnable() {
 //
@@ -381,14 +381,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					}else
 						cancel();
 
-			}
-		}, 500,2000);
+				}
+			}, 500,2000);
 		}
 	}
 
 	public void OnSyncClick(View view){
 		if(syncAnimation==null){
-		 	syncAnimation = ObjectAnimator.ofFloat(view, "rotation", 360);
+			syncAnimation = ObjectAnimator.ofFloat(view, "rotation", 360);
 			syncAnimation.setDuration(1000);
 //			syncAnimation.setRepeatMode(ValueAnimator.REVERSE);
 			syncAnimation.setRepeatCount(Animation.INFINITE);
@@ -420,11 +420,11 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		isContactSync = true;
 		syncProcessStart(true);
 //		if(!isLoginProcessing){
-			isLoginProcessing = true;
-			if(Build.VERSION.SDK_INT >= 11)
-				new DomainsUserTaskOnServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-			else
-				new DomainsUserTaskOnServer().execute();
+		isLoginProcessing = true;
+		if(Build.VERSION.SDK_INT >= 11)
+			new DomainsUserTaskOnServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		else
+			new DomainsUserTaskOnServer().execute();
 //			if(Build.VERSION.SDK_INT >= 11)
 //				new SignInTaskOnServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 //			else
@@ -454,7 +454,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		if(SharedPrefManager.getInstance().getBackupSchedule() == -1)
 			SharedPrefManager.getInstance().setBackupSchedule(2);
 		String action = getIntent().getAction();
-		if((action != null && Intent.ACTION_SEND.equals(action)) || iPrefManager.isContactSynched(iPrefManager.getUserDomain()))
+		if((action != null && Intent.ACTION_SEND.equals(action))/* || iPrefManager.isContactSynched(iPrefManager.getUserDomain())*/)
 			noLoadingNeeded = true;
 		setContentView(R.layout.home_screen);
 		Toolbar mToolbar;
@@ -500,8 +500,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //        t.setScreenName("Home Screen");
 //        t.send(new HitBuilders.AppViewBuilder().build());
 
-        mAdapter = new HomePagerAdapter(getSupportFragmentManager(),getApplicationContext());
-        mViewPager = (CustomViewPager) findViewById(R.id.view_pager);
+		mAdapter = new HomePagerAdapter(getSupportFragmentManager(),getApplicationContext());
+		mViewPager = (CustomViewPager) findViewById(R.id.view_pager);
 		mViewPager.setPagingEnabled(true);
 		if(getIntent().getExtras() != null) {
 			firstTimeAdmin = getIntent().getExtras().getBoolean("ADMIN_FIRST_TIME");
@@ -537,40 +537,40 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //		syncView.setVisibility(View.GONE);
 //		TabPageIndicator titleIndicator = (TabPageIndicator)findViewById(R.id.titles);
 //		 titleIndicator.setViewPager(mViewPager);
-		 OnPageChangeListener mPageChangeListener = new ViewPager.OnPageChangeListener() {
-				@Override
-				public void onPageScrolled(int position,
-						float possitionOffset, int positionOffsetPixels) {
-				}
+		OnPageChangeListener mPageChangeListener = new ViewPager.OnPageChangeListener() {
+			@Override
+			public void onPageScrolled(int position,
+									   float possitionOffset, int positionOffsetPixels) {
+			}
 
-				@Override
-				public void onPageSelected(int position) {
-					// actions
-					switch(position) {
+			@Override
+			public void onPageSelected(int position) {
+				// actions
+				switch(position) {
 					case 0:
-							contactMenuLayout.setSelected(false);
-							bulletinMenuLayout.setSelected(false);
-							publicGroupTab.setSelected(false);
+						contactMenuLayout.setSelected(false);
+						bulletinMenuLayout.setSelected(false);
+						publicGroupTab.setSelected(false);
 //							syncView.setVisibility(View.GONE);
 
-							chatMenuLayout.setSelected(true);
-							break;
+						chatMenuLayout.setSelected(true);
+						break;
 					case 2:
-							chatMenuLayout.setSelected(false);
-							bulletinMenuLayout.setSelected(false);
-							publicGroupTab.setSelected(false);
+						chatMenuLayout.setSelected(false);
+						bulletinMenuLayout.setSelected(false);
+						publicGroupTab.setSelected(false);
 //							syncView.setVisibility(View.INVISIBLE);
 
-							if(contactsFragment!=null && contactsFragment.adapter!=null && isContactRefreshed){
-								contactsFragment.showAllContacts();
-								contactsFragment.setPorfileListener();
+						if(contactsFragment!=null && contactsFragment.adapter!=null && isContactRefreshed){
+							contactsFragment.showAllContacts();
+							contactsFragment.setPorfileListener();
 //								contactsFragment.adapter.notifyDataSetChanged();
-								isContactRefreshed = false;
-							}
-							contactMenuLayout.setSelected(true);
-							int contactsCount = DBWrapper.getInstance().getAllNumbersCount();
-							iPrefManager.saveNewContactsCounter(contactsCount);
-							notificationHandler.sendEmptyMessage(0);
+							isContactRefreshed = false;
+						}
+						contactMenuLayout.setSelected(true);
+						int contactsCount = DBWrapper.getInstance().getAllNumbersCount();
+						iPrefManager.saveNewContactsCounter(contactsCount);
+						notificationHandler.sendEmptyMessage(0);
 						break;
 					case 1:
 						chatMenuLayout.setSelected(false);
@@ -579,29 +579,29 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //						syncView.setVisibility(View.GONE);
 
 						publicGroupTab.setSelected(true);
-						PublicGroupScreen.refreshList();
+						publicGroupFragment.refreshList();
 						publicGroupFragment.restScreen();
 						break;
 					case 3:
-							contactMenuLayout.setSelected(false);
-							publicGroupTab.setSelected(false);
-							chatMenuLayout.setSelected(false);
+						contactMenuLayout.setSelected(false);
+						publicGroupTab.setSelected(false);
+						chatMenuLayout.setSelected(false);
 //							syncView.setVisibility(View.GONE);
 
-							bulletinMenuLayout.setSelected(true);
+						bulletinMenuLayout.setSelected(true);
 						break;
-					}
-					publicGroupFragment.setPageNumber(position);
 				}
+				publicGroupFragment.setPageNumber(position);
+			}
 
-				@Override
-				public void onPageScrollStateChanged(int state) {
-					// actions
-				}
-			};
-		 mViewPager.addOnPageChangeListener(mPageChangeListener);
+			@Override
+			public void onPageScrollStateChanged(int state) {
+				// actions
+			}
+		};
+		mViewPager.addOnPageChangeListener(mPageChangeListener);
 //		 titleIndicator.setOnPageChangeListener(mPageChangeListener);
-		 startService(new Intent(SuperChatApplication.context, SinchService.class));
+		startService(new Intent(SuperChatApplication.context, SinchService.class));
 
 		//Chrck for backUp and upload.
 		checkForBackUpAndUploadBackup();
@@ -662,25 +662,25 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			}else
 				unseenContactView.setVisibility(View.GONE);
 			if(publicGroupFragment!=null)
-				PublicGroupScreen.refreshList();
-			}
-		};
+				publicGroupFragment.refreshList();
+		}
+	};
 	ProgressDialog progressDialog = null;
 	Handler dialogHandler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
 			switch(msg.what){
-			case 0:
-				if (progressDialog != null) {
-					progressDialog.dismiss();
-					progressDialog = null;
-				}
-				break;
-			case 1:
-				progressDialog = ProgressDialog.show(HomeScreen.this, "",
-						"Loading. Please wait...", true);
-				break;
+				case 0:
+					if (progressDialog != null) {
+						progressDialog.dismiss();
+						progressDialog = null;
+					}
+					break;
+				case 1:
+					progressDialog = ProgressDialog.show(HomeScreen.this, "",
+							"Loading. Please wait...", true);
+					break;
 			}
-		}
+		};
 	};
 	Handler mainTask = new Handler(){
 		@Override
@@ -732,9 +732,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			SharedPrefManager prefManager = SharedPrefManager.getInstance();
 //			String sg_name = user.substring(user.indexOf("_") + 1);
 			prefManager.saveUserDomain(sg_name);
+//			prefManager.saveCurrentSGDisplayName(sg_name);
 
-			if(DBWrapper.getInstance().getSGDisplayName(sg_name)!=null &&
-					DBWrapper.getInstance().getSGDisplayName(sg_name).trim().length()>0){
+			if(DBWrapper.getInstance().getSGDisplayName(sg_name) != null &&
+					DBWrapper.getInstance().getSGDisplayName(sg_name).trim().length() > 0){
 				prefManager.saveCurrentSGDisplayName(DBWrapper.getInstance().getSGDisplayName(sg_name));
 			}else{
 				prefManager.saveCurrentSGDisplayName(sg_name);
@@ -758,8 +759,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		SharedPrefManager sharedPrefManager;
 		String sg_name = null;
 		public SignInTaskOnServer(String sg_name){
-			 sharedPrefManager = SharedPrefManager.getInstance();
-			 loginForm = new LoginModel();
+			sharedPrefManager = SharedPrefManager.getInstance();
+			loginForm = new LoginModel();
 			this.sg_name = sg_name;
 			if(sg_name != null) {
 				loginForm.setUserName(sharedPrefManager.getUserName());
@@ -788,103 +789,107 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		}
 		@Override
 		protected void onPreExecute() {
-			if(!noLoadingNeeded) {
-				progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
-				noLoadingNeeded = false;
+			try {
+				if (!noLoadingNeeded) {
+					progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
+					noLoadingNeeded = false;
+				}
+			}catch(Exception ex){
+				ex.printStackTrace();
 			}
-				if(isLoginProcessing)
-					syncProcessStart(true);
+			if(isLoginProcessing)
+				syncProcessStart(true);
 			super.onPreExecute();
 		}
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			String JSONstring = new Gson().toJson(loginForm);
-		    DefaultHttpClient client1 = new DefaultHttpClient();
+			DefaultHttpClient client1 = new DefaultHttpClient();
 
 			System.out.println("HomeScreen :: SignInTaskOnServer : URL : "+(Constants.SERVER_URL+ "/tiger/rest/user/login"));
 			System.out.println("HomeScreen :: SignInTaskOnServer : serverUpdateCreateGroupInfo request: "+JSONstring);
 
-			 HttpPost httpPost = new HttpPost(Constants.SERVER_URL+ "/tiger/rest/user/login");
-			 HttpResponse response = null;
-			 String str = "";
-	         try {
-	        	 httpPost = SuperChatApplication.addHeaderInfo(httpPost,false);
+			HttpPost httpPost = new HttpPost(Constants.SERVER_URL+ "/tiger/rest/user/login");
+			HttpResponse response = null;
+			String str = "";
+			try {
+				httpPost = SuperChatApplication.addHeaderInfo(httpPost,false);
 
 				httpPost.setEntity(new StringEntity(JSONstring));
-				 try {
-					 response = client1.execute(httpPost);
-					 final int statusCode=response.getStatusLine().getStatusCode();
-					 if (statusCode == HttpStatus.SC_OK){
-						 HttpEntity entity = response.getEntity();
-						    BufferedReader rd = new BufferedReader(new InputStreamReader(entity.getContent()));
-						    String line = "";
-				            while ((line = rd.readLine()) != null) {
-				            	str+=line;
-				            }
-				            if(str!=null &&!str.equals("")){
-								System.out.println("HomeScreen :: SignInTaskOnServer : response : "+str);
-								Log.e("here" , "respo : "+str);
-				            	Gson gson = new GsonBuilder().create();
-				            	LoginResponseModel loginObj = gson.fromJson(str, LoginResponseModel.class);
-								if (loginObj != null && loginObj.status!=null && loginObj.status.equals("success")) {
-									if(isSwitchSG){
-										//Important lines, this will remove all the groups of previous SG from Shared - Otherwise that will be joined.
-										System.out.println("(Removing all groups from Shared Pref.)");
-										sharedPrefManager.removeAllGroups();
-									}
-									if(loginObj.getDomainType()!=null && !loginObj.getDomainType().equals(""))
-										sharedPrefManager.setDomainType(loginObj.getDomainType());
-									if(loginObj.domainPrivacyType!=null && loginObj.domainPrivacyType.equals("open"))
-										sharedPrefManager.setDomainAsPublic(true);
-									else
-										sharedPrefManager.setDomainAsPublic(false);
-									if(loginObj.type!=null && loginObj.type.equals("domainAdmin")){
-										sharedPrefManager.setAsDomainAdmin(true);
-										if(loginObj.joinedUserCount!=null && !loginObj.joinedUserCount.equals(""))
+				try {
+					response = client1.execute(httpPost);
+					final int statusCode=response.getStatusLine().getStatusCode();
+					if (statusCode == HttpStatus.SC_OK){
+						HttpEntity entity = response.getEntity();
+						BufferedReader rd = new BufferedReader(new InputStreamReader(entity.getContent()));
+						String line = "";
+						while ((line = rd.readLine()) != null) {
+							str+=line;
+						}
+						if(str!=null &&!str.equals("")){
+							System.out.println("HomeScreen :: SignInTaskOnServer : response : "+str);
+							Log.e("here" , "respo : "+str);
+							Gson gson = new GsonBuilder().create();
+							LoginResponseModel loginObj = gson.fromJson(str, LoginResponseModel.class);
+							if (loginObj != null && loginObj.status!=null && loginObj.status.equals("success")) {
+								if(isSwitchSG){
+									//Important lines, this will remove all the groups of previous SG from Shared - Otherwise that will be joined.
+									System.out.println("(Removing all groups from Shared Pref.)");
+									sharedPrefManager.removeAllGroups();
+								}
+								if(loginObj.getDomainType()!=null && !loginObj.getDomainType().equals(""))
+									sharedPrefManager.setDomainType(loginObj.getDomainType());
+								if(loginObj.domainPrivacyType!=null && loginObj.domainPrivacyType.equals("open"))
+									sharedPrefManager.setDomainAsPublic(true);
+								else
+									sharedPrefManager.setDomainAsPublic(false);
+								if(loginObj.type!=null && loginObj.type.equals("domainAdmin")){
+									sharedPrefManager.setAsDomainAdmin(true);
+									if(loginObj.joinedUserCount!=null && !loginObj.joinedUserCount.equals(""))
 										sharedPrefManager.saveDomainJoinedCount(loginObj.joinedUserCount);
-										if(loginObj.unJoinedUserCount!=null && !loginObj.unJoinedUserCount.equals(""))
-											sharedPrefManager.saveDomainUnjoinedCount(loginObj.unJoinedUserCount);
-									}else if(loginObj.type!=null && loginObj.type.equals("domainSubAdmin")){
-										sharedPrefManager.setAsDomainSubAdmin(true);
-										if(loginObj.joinedUserCount!=null && !loginObj.joinedUserCount.equals(""))
-											sharedPrefManager.saveDomainJoinedCount(loginObj.joinedUserCount);
-										if(loginObj.unJoinedUserCount!=null && !loginObj.unJoinedUserCount.equals(""))
-											sharedPrefManager.saveDomainUnjoinedCount(loginObj.unJoinedUserCount);
-									} else
-										sharedPrefManager.setAsDomainAdmin(false);
+									if(loginObj.unJoinedUserCount!=null && !loginObj.unJoinedUserCount.equals(""))
+										sharedPrefManager.saveDomainUnjoinedCount(loginObj.unJoinedUserCount);
+								}else if(loginObj.type!=null && loginObj.type.equals("domainSubAdmin")){
+									sharedPrefManager.setAsDomainSubAdmin(true);
+									if(loginObj.joinedUserCount!=null && !loginObj.joinedUserCount.equals(""))
+										sharedPrefManager.saveDomainJoinedCount(loginObj.joinedUserCount);
+									if(loginObj.unJoinedUserCount!=null && !loginObj.unJoinedUserCount.equals(""))
+										sharedPrefManager.saveDomainUnjoinedCount(loginObj.unJoinedUserCount);
+								} else
+									sharedPrefManager.setAsDomainAdmin(false);
 
-									if(loginObj.directoryUserSet != null){
-										System.out.println("HomeScreen :: SignInTaskOnServer : Writing in TABLE_NAME_CONTACT_NUMBERS.");
-										for (UserResponseDetail userDetail : loginObj.directoryUserSet) {
-											String number = DBWrapper.getInstance().getContactNumber(userDetail.userName);
-											if(number!=null && !number.equals(""))
-												continue;
-	//										UserResponseDetail userDetail = loginObj.directoryUserSet.get(st);
-											if(!sharedPrefManager.isContactSynched(sharedPrefManager.getUserDomain())) {
-												ContentValues contentvalues = new ContentValues();
-												contentvalues.put(DatabaseConstants.USER_NAME_FIELD, userDetail.userName);
-												contentvalues.put(DatabaseConstants.VOPIUM_FIELD, Integer.valueOf(1));
-												contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, userDetail.mobileNumber);
-												int id = userDetail.userName.hashCode();
-												if (id < -1)
-													id = -(id);
-												contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD, Integer.valueOf(id));
-												contentvalues.put(DatabaseConstants.RAW_CONTACT_ID, Integer.valueOf(id));
-												contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, userDetail.name);
-												contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD, Integer.valueOf(0));
+								if(loginObj.directoryUserSet != null){
+									System.out.println("HomeScreen :: SignInTaskOnServer : Writing in TABLE_NAME_CONTACT_NUMBERS.");
+									for (UserResponseDetail userDetail : loginObj.directoryUserSet) {
+										String number = DBWrapper.getInstance().getContactNumber(userDetail.userName);
+										if(number!=null && !number.equals(""))
+											continue;
+										//										UserResponseDetail userDetail = loginObj.directoryUserSet.get(st);
+										if(!sharedPrefManager.isContactSynched(sharedPrefManager.getUserDomain())) {
+											ContentValues contentvalues = new ContentValues();
+											contentvalues.put(DatabaseConstants.USER_NAME_FIELD, userDetail.userName);
+											contentvalues.put(DatabaseConstants.VOPIUM_FIELD, Integer.valueOf(1));
+											contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, userDetail.mobileNumber);
+											int id = userDetail.userName.hashCode();
+											if (id < -1)
+												id = -(id);
+											contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD, Integer.valueOf(id));
+											contentvalues.put(DatabaseConstants.RAW_CONTACT_ID, Integer.valueOf(id));
+											contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, userDetail.name);
+											contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD, Integer.valueOf(0));
 
-												contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
-												contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
-												contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
-												contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
-												//Save USerID and SG in DB
-												contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
-												contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
+											contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
+											contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
+											contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
+											contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
+											//Save USerID and SG in DB
+											contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
+											contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
-												System.out.println("TABLE_NAME_CONTACT_NUMBERS : " + contentvalues.toString());
-												DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
-											}
+											System.out.println("TABLE_NAME_CONTACT_NUMBERS : " + contentvalues.toString());
+											DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
+										}
 
 										if(userDetail.currentStatus!=null)
 											sharedPrefManager.saveUserStatusMessage(userDetail.userName, userDetail.currentStatus);
@@ -904,26 +909,26 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 												data.putString("TaskMessage", userDetail.imageFileId);
 												msg.setData(data);
 												mainTask.sendMessage(msg);
-	//											new BitmapDownloader().execute(userDetail.imageFileId);
+												//											new BitmapDownloader().execute(userDetail.imageFileId);
 											}
 										}
 									}
 									DBWrapper.getInstance().updateSGContactsLoaded(iPrefManager.getUserDomain(), "true");
 									iPrefManager.setContactSynched(iPrefManager.getUserDomain(), true);
 								}
-									directoryGroupSet = loginObj.directoryGroupSet;
-									if(directoryGroupSet != null) {
-										System.out.println("HomeScreen :: SignInTaskOnServer : Writing Groups..");
-									}
-									for (GroupDetail groupDetail : loginObj.directoryGroupSet) {
+								directoryGroupSet = loginObj.directoryGroupSet;
+								if(directoryGroupSet != null) {
+									System.out.println("HomeScreen :: SignInTaskOnServer : Writing Groups..");
+								}
+								for (GroupDetail groupDetail : loginObj.directoryGroupSet) {
 //										Log.d(TAG, "counter check  Login response : "+groupDetail.type+""+groupDetail.displayName+" , "+groupDetail.numberOfMembers);
 //										writeLogsToFile(groupDetail.groupName+" - "+groupDetail.displayName);
-										sharedPrefManager.saveGroupInfo(groupDetail.groupName,SharedPrefManager.GROUP_ACTIVE_INFO,true);
-										sharedPrefManager.saveGroupName(groupDetail.groupName, groupDetail.displayName);
-										sharedPrefManager.saveGroupDisplayName(groupDetail.groupName, groupDetail.displayName);
-										if(groupDetail.type!=null && groupDetail.type.equalsIgnoreCase("public"))
-											sharedPrefManager.saveGroupTypeAsPublic(groupDetail.groupName,true);
-										if(groupDetail.activatedUserSet!=null)
+									sharedPrefManager.saveGroupInfo(groupDetail.groupName,SharedPrefManager.GROUP_ACTIVE_INFO,true);
+									sharedPrefManager.saveGroupName(groupDetail.groupName, groupDetail.displayName);
+									sharedPrefManager.saveGroupDisplayName(groupDetail.groupName, groupDetail.displayName);
+									if(groupDetail.type!=null && groupDetail.type.equalsIgnoreCase("public"))
+										sharedPrefManager.saveGroupTypeAsPublic(groupDetail.groupName,true);
+									if(groupDetail.activatedUserSet!=null)
 //										for (String activatedUser : groupDetail.activatedUserSet) {
 //											boolean isNewAdded =  sharedPrefManager.saveUsersOfGroup(groupDetail.groupName, activatedUser);
 //											if(isNewAdded)
@@ -936,76 +941,76 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 											sharedPrefManager.saveUserGroupInfo(groupDetail.groupName,groupDetail.userName,SharedPrefManager.PUBLIC_CHANNEL,true);
 											sharedPrefManager.saveGroupOwnerName(groupDetail.groupName, groupDetail.userName);
 										}
-										if(groupDetail.description!=null)
-											sharedPrefManager.saveUserStatusMessage(groupDetail.groupName, groupDetail.description);
-										if(groupDetail.numberOfMembers!=null)
-											sharedPrefManager.saveGroupMemberCount(groupDetail.groupName, groupDetail.numberOfMembers);
+									if(groupDetail.description!=null)
+										sharedPrefManager.saveUserStatusMessage(groupDetail.groupName, groupDetail.description);
+									if(groupDetail.numberOfMembers!=null)
+										sharedPrefManager.saveGroupMemberCount(groupDetail.groupName, groupDetail.numberOfMembers);
 //										boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(groupDetail.groupName);
-										//Update Time if Single Message
-										ChatDBWrapper.getInstance(SuperChatApplication.context).updateTimeIfSingleMessageOnly(groupDetail.groupName);
+									//Update Time if Single Message
+									ChatDBWrapper.getInstance(SuperChatApplication.context).updateTimeIfSingleMessageOnly(groupDetail.groupName);
 //											saveMessage(groupDetail.displayName, groupDetail.groupName,"Group created by "+groupDetail.userDisplayName);//saveMessage(groupDetail.displayName, groupDetail.groupName,"You are welcome.");
-										String oldFileId = sharedPrefManager.getUserFileId(groupDetail.fileId);
-										sharedPrefManager.saveUserFileId(groupDetail.groupName, groupDetail.fileId);
+									String oldFileId = sharedPrefManager.getUserFileId(groupDetail.fileId);
+									sharedPrefManager.saveUserFileId(groupDetail.groupName, groupDetail.fileId);
 //										DBWrapper.getInstance().updateSGGroupsBroadcastLoaded(iPrefManager.getUserDomain(), "true");
-									}
-									directoryBroadcastGroupSet = loginObj.directoryBroadcastGroupSet;
-									if(directoryBroadcastGroupSet != null) {
-										System.out.println("HomeScreen :: SignInTaskOnServer : Writing Broadcast..");
-									}
-									for (BroadcastGroupDetail broadcastGroupDetail : loginObj.directoryBroadcastGroupSet) {
-										sharedPrefManager.saveBroadCastName(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.displayName);
-										sharedPrefManager.saveBroadCastDisplayName(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.displayName);
-										if(broadcastGroupDetail.activatedUserSet!=null)
+								}
+								directoryBroadcastGroupSet = loginObj.directoryBroadcastGroupSet;
+								if(directoryBroadcastGroupSet != null) {
+									System.out.println("HomeScreen :: SignInTaskOnServer : Writing Broadcast..");
+								}
+								for (BroadcastGroupDetail broadcastGroupDetail : loginObj.directoryBroadcastGroupSet) {
+									sharedPrefManager.saveBroadCastName(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.displayName);
+									sharedPrefManager.saveBroadCastDisplayName(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.displayName);
+									if(broadcastGroupDetail.activatedUserSet!=null)
 										for (String activatedUser : broadcastGroupDetail.activatedUserSet) {
 											boolean isNewAdded =  sharedPrefManager.saveUsersOfBroadCast(broadcastGroupDetail.broadcastGroupName, activatedUser);
 											if(isNewAdded)
 												sharedPrefManager.saveUseBroadCastInfo(broadcastGroupDetail.broadcastGroupName,activatedUser,SharedPrefManager.BROADCAST_ACTIVE_INFO,true);
 										}
-										if(broadcastGroupDetail.userName!=null && !broadcastGroupDetail.userName.equals("")){
-											sharedPrefManager.saveUseBroadCastInfo(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.userName, SharedPrefManager.BROADCAST_OWNER_INFO, true);
-											sharedPrefManager.saveUseBroadCastInfo(broadcastGroupDetail.broadcastGroupName,broadcastGroupDetail.userName,SharedPrefManager.BROADCAST_ACTIVE_INFO,true);
-										}
-										if(broadcastGroupDetail.description!=null)
-											sharedPrefManager.saveUserStatusMessage(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.description);
+									if(broadcastGroupDetail.userName!=null && !broadcastGroupDetail.userName.equals("")){
+										sharedPrefManager.saveUseBroadCastInfo(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.userName, SharedPrefManager.BROADCAST_OWNER_INFO, true);
+										sharedPrefManager.saveUseBroadCastInfo(broadcastGroupDetail.broadcastGroupName,broadcastGroupDetail.userName,SharedPrefManager.BROADCAST_ACTIVE_INFO,true);
+									}
+									if(broadcastGroupDetail.description!=null)
+										sharedPrefManager.saveUserStatusMessage(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.description);
 //										boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(broadcastGroupDetail.broadcastGroupName);
 //										if(isFirstChat)
 //											saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName,"Broadcast created by "+broadcastGroupDetail.userDisplayName);//saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName,"You are welcome.");
 //										ChatDBWrapper.getInstance(SuperChatApplication.context).updateTimeIfSingleMessageOnly(broadcastGroupDetail.broadcastGroupName);
-										String oldFileId = sharedPrefManager.getUserFileId(broadcastGroupDetail.fileId);
-										if(broadcastGroupDetail.fileId!=null && !broadcastGroupDetail.fileId.equals("") && (oldFileId == null || !oldFileId.equals(broadcastGroupDetail.fileId)))
-										{
+									String oldFileId = sharedPrefManager.getUserFileId(broadcastGroupDetail.fileId);
+									if(broadcastGroupDetail.fileId!=null && !broadcastGroupDetail.fileId.equals("") && (oldFileId == null || !oldFileId.equals(broadcastGroupDetail.fileId)))
+									{
+										Message msg = new Message();
+										Bundle data = new Bundle();
+										data.putString("TaskMessage",broadcastGroupDetail.fileId);
+										msg.setData(data);
+										mainTask.sendMessage(msg);
+									}
+									sharedPrefManager.saveUserFileId(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.fileId);
+								}
+								if(loginObj.loggedInDirectoryUser!=null){
+									if(loginObj.loggedInDirectoryUser.name!=null)
+										sharedPrefManager.saveDisplayName(loginObj.loggedInDirectoryUser.name);
+									if(loginObj.loggedInDirectoryUser.currentStatus!=null)
+										sharedPrefManager.saveUserStatusMessage(loginObj.loggedInDirectoryUser.userName, loginObj.loggedInDirectoryUser.currentStatus);
+									if(loginObj.loggedInDirectoryUser.department!=null)
+										sharedPrefManager.saveUserDepartment(loginObj.loggedInDirectoryUser.userName, loginObj.loggedInDirectoryUser.department);
+									if(loginObj.loggedInDirectoryUser.designation!=null)
+										sharedPrefManager.saveUserDesignation(loginObj.loggedInDirectoryUser.userName, loginObj.loggedInDirectoryUser.designation);
+									if(loginObj.loggedInDirectoryUser.imageFileId!=null){
+										sharedPrefManager.saveUserFileId(loginObj.loggedInDirectoryUser.userName, loginObj.loggedInDirectoryUser.imageFileId);
+										if(loginObj.loggedInDirectoryUser.imageFileId!=null && !loginObj.loggedInDirectoryUser.imageFileId.equals("")){
+//													new BitmapDownloader().execute(loginObj.loggedInDirectoryUser.imageFileId);
 											Message msg = new Message();
 											Bundle data = new Bundle();
-											data.putString("TaskMessage",broadcastGroupDetail.fileId);
+											data.putString("TaskMessage",loginObj.loggedInDirectoryUser.imageFileId);
 											msg.setData(data);
 											mainTask.sendMessage(msg);
 										}
-										sharedPrefManager.saveUserFileId(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.fileId);
 									}
-									if(loginObj.loggedInDirectoryUser!=null){
-										if(loginObj.loggedInDirectoryUser.name!=null)
-											sharedPrefManager.saveDisplayName(loginObj.loggedInDirectoryUser.name);
-										if(loginObj.loggedInDirectoryUser.currentStatus!=null)
-											sharedPrefManager.saveUserStatusMessage(loginObj.loggedInDirectoryUser.userName, loginObj.loggedInDirectoryUser.currentStatus);
-										if(loginObj.loggedInDirectoryUser.department!=null)
-											sharedPrefManager.saveUserDepartment(loginObj.loggedInDirectoryUser.userName, loginObj.loggedInDirectoryUser.department);
-										if(loginObj.loggedInDirectoryUser.designation!=null)
-											sharedPrefManager.saveUserDesignation(loginObj.loggedInDirectoryUser.userName, loginObj.loggedInDirectoryUser.designation);
-										if(loginObj.loggedInDirectoryUser.imageFileId!=null){
-											sharedPrefManager.saveUserFileId(loginObj.loggedInDirectoryUser.userName, loginObj.loggedInDirectoryUser.imageFileId);
-											if(loginObj.loggedInDirectoryUser.imageFileId!=null && !loginObj.loggedInDirectoryUser.imageFileId.equals("")){
-//													new BitmapDownloader().execute(loginObj.loggedInDirectoryUser.imageFileId);
-												Message msg = new Message();
-												Bundle data = new Bundle();
-												data.putString("TaskMessage",loginObj.loggedInDirectoryUser.imageFileId);
-												msg.setData(data);
-												mainTask.sendMessage(msg);
-												}
-										}
-									}
-					            }
-				            }
-					 }
+								}
+							}
+						}
+					}
 				} catch (ClientProtocolException e) {
 					Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
 				} catch (IOException e) {
@@ -1042,7 +1047,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 							//below code should be only, in case of brand new user - "First time SC user"
 							iPrefManager.setAppMode("SecondMode");
 //							iPrefManager.saveUserPhone(regObj.iMobileNumber);
-	//						iPrefManager.saveUserPassword(regObj.getPassword());
+							//						iPrefManager.saveUserPassword(regObj.getPassword());
 							iPrefManager.saveUserLogedOut(false);
 							iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
 							showDialog(citrusError.message, null);
@@ -1054,7 +1059,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						}else
 							showDialog(citrusError.message, null);
 					} else if (errorModel.message != null){
-						}
+					}
 				} else
 					showDialog("Please try again later.", null);
 			}else{
@@ -1299,36 +1304,36 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
-		    DefaultHttpClient client1 = new DefaultHttpClient();
-			 HttpPost httpPost = new HttpPost(Constants.SERVER_URL+ "/tiger/rest/user/directory?domainName="+sharedPrefManager.getUserDomain()+"&pg=1&limit=1000");
-			 httpPost = SuperChatApplication.addHeaderInfo(httpPost,true);
-			 HttpResponse response = null;
+			DefaultHttpClient client1 = new DefaultHttpClient();
+			HttpPost httpPost = new HttpPost(Constants.SERVER_URL+ "/tiger/rest/user/directory?domainName="+sharedPrefManager.getUserDomain()+"&pg=1&limit=1000");
+			httpPost = SuperChatApplication.addHeaderInfo(httpPost,true);
+			HttpResponse response = null;
 
-	         try {
-				 try {
-					 response = client1.execute(httpPost);
-					 final int statusCode=response.getStatusLine().getStatusCode();
-					 if (statusCode == HttpStatus.SC_OK){ //new1
-						 HttpEntity entity = response.getEntity();
-						    BufferedReader rd = new BufferedReader(new InputStreamReader(entity.getContent()));
-						    String line = "";
-				            String str = "";
-				            while ((line = rd.readLine()) != null) {
+			try {
+				try {
+					response = client1.execute(httpPost);
+					final int statusCode=response.getStatusLine().getStatusCode();
+					if (statusCode == HttpStatus.SC_OK){ //new1
+						HttpEntity entity = response.getEntity();
+						BufferedReader rd = new BufferedReader(new InputStreamReader(entity.getContent()));
+						String line = "";
+						String str = "";
+						while ((line = rd.readLine()) != null) {
 
-				            	str+=line;
-				            }
-				            if(str!=null &&!str.equals("")){
-				            	Gson gson = new GsonBuilder().create();
-				            	LoginResponseModel loginObj = gson.fromJson(str,LoginResponseModel.class);
-								if (loginObj != null) {
-									DBWrapper wrapper = DBWrapper.getInstance();
-									if(loginObj.directoryUserSet!=null){
+							str+=line;
+						}
+						if(str!=null &&!str.equals("")){
+							Gson gson = new GsonBuilder().create();
+							LoginResponseModel loginObj = gson.fromJson(str,LoginResponseModel.class);
+							if (loginObj != null) {
+								DBWrapper wrapper = DBWrapper.getInstance();
+								if(loginObj.directoryUserSet!=null){
 									for (UserResponseDetail userDetail : loginObj.directoryUserSet) {
 										if(userDetail.userState!=null){
 											if(userDetail.userState.equals("inactive"))
 												sharedPrefManager.saveUserExistence(userDetail.userName,false);
-				                        	 else if(userDetail.userState.equals("active"))
-				                        		 sharedPrefManager.saveUserExistence(userDetail.userName,true);
+											else if(userDetail.userState.equals("active"))
+												sharedPrefManager.saveUserExistence(userDetail.userName,true);
 										}
 										String number = wrapper.getContactNumber(userDetail.userName);
 										if(number != null && !number.equals("")){
@@ -1338,87 +1343,87 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 												wrapper.updateAtMeContactStatus(number);
 											firstTimeAdmin = true;
 											continue;
-											}
+										}
 
-							        //Alter Table for the values.
+										//Alter Table for the values.
 //									wrapper.alterTable(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, new String[]{DatabaseConstants.FLAT_NUMBER, DatabaseConstants.BUILDING_NUMBER,
 //											DatabaseConstants.ADDRESS, DatabaseConstants.RESIDENCE_TYPE});
-								if(!sharedPrefManager.isContactSynched(sharedPrefManager.getUserDomain())) {
-									ContentValues contentvalues = new ContentValues();
-									contentvalues.put(DatabaseConstants.USER_NAME_FIELD, userDetail.userName);
-									contentvalues.put(DatabaseConstants.VOPIUM_FIELD, Integer.valueOf(1));
-									contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, userDetail.mobileNumber);
-									int id = userDetail.userName.hashCode();
-									if (id < -1)
-										id = -(id);
-									contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD, Integer.valueOf(id));
-									contentvalues.put(DatabaseConstants.RAW_CONTACT_ID, Integer.valueOf(id));
-									contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, userDetail.name);
-									if (userDetail.type != null && userDetail.type.equalsIgnoreCase("domainSubAdmin"))
-										sharedPrefManager.setUserSGSubAdmin(userDetail.userName, true);
-									contentvalues.put(DatabaseConstants.CONTACT_TYPE_FIELD, userDetail.type);
-									contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD, Integer.valueOf(0));
-									contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
-									contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
-									contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
-									//Add Address Details
-									contentvalues.put(DatabaseConstants.FLAT_NUMBER, userDetail.flatNumber);
-									contentvalues.put(DatabaseConstants.BUILDING_NUMBER, userDetail.buildingNumber);
-									contentvalues.put(DatabaseConstants.ADDRESS, userDetail.address);
-									contentvalues.put(DatabaseConstants.RESIDENCE_TYPE, userDetail.residenceType);
+										if(!sharedPrefManager.isContactSynched(sharedPrefManager.getUserDomain())) {
+											ContentValues contentvalues = new ContentValues();
+											contentvalues.put(DatabaseConstants.USER_NAME_FIELD, userDetail.userName);
+											contentvalues.put(DatabaseConstants.VOPIUM_FIELD, Integer.valueOf(1));
+											contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, userDetail.mobileNumber);
+											int id = userDetail.userName.hashCode();
+											if (id < -1)
+												id = -(id);
+											contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD, Integer.valueOf(id));
+											contentvalues.put(DatabaseConstants.RAW_CONTACT_ID, Integer.valueOf(id));
+											contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, userDetail.name);
+											if (userDetail.type != null && userDetail.type.equalsIgnoreCase("domainSubAdmin"))
+												sharedPrefManager.setUserSGSubAdmin(userDetail.userName, true);
+											contentvalues.put(DatabaseConstants.CONTACT_TYPE_FIELD, userDetail.type);
+											contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD, Integer.valueOf(0));
+											contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
+											contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
+											contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
+											//Add Address Details
+											contentvalues.put(DatabaseConstants.FLAT_NUMBER, userDetail.flatNumber);
+											contentvalues.put(DatabaseConstants.BUILDING_NUMBER, userDetail.buildingNumber);
+											contentvalues.put(DatabaseConstants.ADDRESS, userDetail.address);
+											contentvalues.put(DatabaseConstants.RESIDENCE_TYPE, userDetail.residenceType);
 
-									//Save USerID and SG in DB
-									contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
-									contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
+											//Save USerID and SG in DB
+											contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
+											contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
-									contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
-									System.out.println("TABLE_NAME_CONTACT_NUMBERS : " + contentvalues.toString());
-									if (!userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName()))
-										wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
-								}
+											contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
+											System.out.println("TABLE_NAME_CONTACT_NUMBERS : " + contentvalues.toString());
+											if (!userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName()))
+												wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
+										}
 
-									if(userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName()))
-										sharedPrefManager.saveDisplayName(userDetail.name);
-									sharedPrefManager.saveUserServerName(userDetail.userName, userDetail.name);
+										if(userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName()))
+											sharedPrefManager.saveDisplayName(userDetail.name);
+										sharedPrefManager.saveUserServerName(userDetail.userName, userDetail.name);
 //									UserResponseDetail.PrivacyStatusMap privacyStatusMap= new UserResponseDetail.PrivacyStatusMap();
 //									userDetail.setPrivacyStatusMap(privacyStatusMap);
-									UserResponseDetail.PrivacyStatusMap privacyStatusMap = userDetail.getPrivacyStatusMap();
-									if(privacyStatusMap!=null){
-										if(privacyStatusMap.dnc == 1)
-											sharedPrefManager.saveStatusDNC(userDetail.userName, true);
-										else
-											sharedPrefManager.saveStatusDNC(userDetail.userName, false);
-										if(privacyStatusMap.dnm == 1)
-											sharedPrefManager.saveStatusDNM(userDetail.userName, true);
-										else
-											sharedPrefManager.saveStatusDNM(userDetail.userName, false);
-									}
-									if(userDetail.currentStatus!=null)
-										sharedPrefManager.saveUserStatusMessage(userDetail.userName, userDetail.currentStatus);
-									if(userDetail.department!=null)
-										sharedPrefManager.saveUserDepartment(userDetail.userName, userDetail.department);
-									if(userDetail.designation!=null)
-										sharedPrefManager.saveUserDesignation(userDetail.userName, userDetail.designation);
-									if(userDetail.gender!=null){
-										sharedPrefManager.saveUserGender(userDetail.userName, userDetail.gender);
+										UserResponseDetail.PrivacyStatusMap privacyStatusMap = userDetail.getPrivacyStatusMap();
+										if(privacyStatusMap!=null){
+											if(privacyStatusMap.dnc == 1)
+												sharedPrefManager.saveStatusDNC(userDetail.userName, true);
+											else
+												sharedPrefManager.saveStatusDNC(userDetail.userName, false);
+											if(privacyStatusMap.dnm == 1)
+												sharedPrefManager.saveStatusDNM(userDetail.userName, true);
+											else
+												sharedPrefManager.saveStatusDNM(userDetail.userName, false);
+										}
+										if(userDetail.currentStatus!=null)
+											sharedPrefManager.saveUserStatusMessage(userDetail.userName, userDetail.currentStatus);
+										if(userDetail.department!=null)
+											sharedPrefManager.saveUserDepartment(userDetail.userName, userDetail.department);
+										if(userDetail.designation!=null)
+											sharedPrefManager.saveUserDesignation(userDetail.userName, userDetail.designation);
+										if(userDetail.gender!=null){
+											sharedPrefManager.saveUserGender(userDetail.userName, userDetail.gender);
 //										Log.i(TAG, "userName : "+userDetail.userName+", gender : "+userDetail.gender);
-									}
-									if(userDetail.imageFileId!=null){
-										sharedPrefManager.saveUserFileId(userDetail.userName, userDetail.imageFileId);
-										if(userDetail.imageFileId!=null && !userDetail.imageFileId.equals("")){
-											Message msg = new Message();
-											Bundle data = new Bundle();
-											data.putString("TaskMessage",userDetail.imageFileId);
-											msg.setData(data);
-											mainTask.sendMessage(msg);
+										}
+										if(userDetail.imageFileId!=null){
+											sharedPrefManager.saveUserFileId(userDetail.userName, userDetail.imageFileId);
+											if(userDetail.imageFileId!=null && !userDetail.imageFileId.equals("")){
+												Message msg = new Message();
+												Bundle data = new Bundle();
+												data.putString("TaskMessage",userDetail.imageFileId);
+												msg.setData(data);
+												mainTask.sendMessage(msg);
+											}
 										}
 									}
+									iPrefManager.setContactSynched(iPrefManager.getUserDomain(), true);
 								}
-								iPrefManager.setContactSynched(iPrefManager.getUserDomain(), true);
 							}
-					     }
-				     }
-				  }
+						}
+					}
 				} catch (ClientProtocolException e) {
 					Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
 				} catch (IOException e) {
@@ -1457,7 +1462,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 							//below code should be only, in case of brand new user - "First time SC user"
 							iPrefManager.setAppMode("SecondMode");
 //							iPrefManager.saveUserPhone(regObj.iMobileNumber);
-	//						iPrefManager.saveUserPassword(regObj.getPassword());
+							//						iPrefManager.saveUserPassword(regObj.getPassword());
 							iPrefManager.saveUserLogedOut(false);
 							iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
 							showDialog(citrusError.message, null);
@@ -1496,8 +1501,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 								members.append(addedUser);
 							}
 							//Create Json here for group update info.
-							 JSONObject finalJSONbject = new JSONObject();
-							 try {
+							JSONObject finalJSONbject = new JSONObject();
+							try {
 								finalJSONbject.put("displayName", EsiaChatContactsScreen.inviteDisplayName);
 //								if(groupDiscription != null)
 //									finalJSONbject.put("description", groupDiscription);
@@ -1507,11 +1512,11 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 								{
 									finalJSONbject.put("Members", members.toString());
 								}
-							 }catch (JSONException e) {
-									// TODO Auto-generated catch block
+							}catch (JSONException e) {
+								// TODO Auto-generated catch block
 //									e.printStackTrace();
-								}
-							 String json = finalJSONbject.toString();
+							}
+							String json = finalJSONbject.toString();
 //							 json = json.replace("\"", "&quot;");
 							for(String addedUser : EsiaChatContactsScreen.inviteUsersList)
 								EsiaChatContactsScreen.inviteService.inviteUserInRoom(EsiaChatContactsScreen.inviteRoomName, EsiaChatContactsScreen.inviteDisplayName, "", addedUser, json);
@@ -1537,13 +1542,43 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			super.onPostExecute(str);
 		}
 	}
+	public void showCustomDialogWith2Buttons(final String sg, String message) {
+		final Dialog bteldialog = new Dialog(this);
+		final String sg_name = sg.substring(sg.indexOf("_") + 1);
+		bteldialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		bteldialog.setCanceledOnTouchOutside(false);
+		bteldialog.setContentView(R.layout.custom_dialog);
+		((TextView)bteldialog.findViewById(R.id.id_dialog_message)).setText(message);
+		((TextView)bteldialog.findViewById(R.id.id_cancel)).setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				bteldialog.cancel();
+				return false;
+			}
+		});
+		((TextView)bteldialog.findViewById(R.id.id_switch)).setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				bteldialog.cancel();
+				isSwitchSG = true;
+				selectedTab = mViewPager.getCurrentItem();
+				drawerFragment.fragmentClose();
+				updateUserData(sg);
+				markSGActive(sg_name);
+				return false;
+			}
+		});
+		bteldialog.show();
+	}
 	public void showDialogWithPositive(String s) {
 		final Dialog bteldialog = new Dialog(this);
 		bteldialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		bteldialog.setCanceledOnTouchOutside(false);
 		bteldialog.setContentView(R.layout.custom_dialog);
 		((TextView)bteldialog.findViewById(R.id.id_dialog_message)).setText(s);
-		bteldialog.findViewById(R.id.id_ok).setOnTouchListener(new OnTouchListener() {
+		((TextView)bteldialog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -1559,7 +1594,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		bteldialog.setCanceledOnTouchOutside(false);
 		bteldialog.setContentView(R.layout.custom_dialog);
 		((TextView)bteldialog.findViewById(R.id.id_dialog_message)).setText(s);
-		bteldialog.findViewById(R.id.id_ok).setOnTouchListener(new OnTouchListener() {
+		((TextView)bteldialog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -1578,10 +1613,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					}catch(Exception ex){
 						ex.printStackTrace();
 					}
-	                Intent intent = new Intent(HomeScreen.this, RegistrationOptions.class);
-	                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-	                intent.putExtra("CONFLICT_LOGOUT", true);
-	        		startActivity(intent);
+					Intent intent = new Intent(HomeScreen.this, RegistrationOptions.class);
+					intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+					intent.putExtra("CONFLICT_LOGOUT", true);
+					startActivity(intent);
 				}
 				bteldialog.cancel();
 				return false;
@@ -1596,7 +1631,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		bteldialog.setContentView(R.layout.custom_dialog);
 		((TextView)bteldialog.findViewById(R.id.id_dialog_message)).setText(s);
 		((TextView)bteldialog.findViewById(R.id.id_ok)).setText("Exit");
-		bteldialog.findViewById(R.id.id_ok).setOnTouchListener(new OnTouchListener() {
+		((TextView)bteldialog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -1617,7 +1652,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setCanceledOnTouchOutside(false);
 		dialog.setContentView(R.layout.deactivate_alert_dialog);
-		dialog.findViewById(R.id.id_menu_icon).setOnClickListener(new OnClickListener() {
+		((ImageView)dialog.findViewById(R.id.id_menu_icon)).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				drawerFragment.fragmentOpen();
@@ -1698,7 +1733,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				String user = iPrefManager.getUserPhone();
 				if(user != null && user.contains("-"))
 					user = user.replace("-", "");
-				switchSG(user + "_" + extras.getString("DOMAIN_NAME"));
+				switchSG(user + "_" + extras.getString("DOMAIN_NAME"), false);
 				return;
 			}
 		}
@@ -1730,44 +1765,44 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //		checkForBackUpAndUploadBackup();
 	}
 	boolean backUpFound;
-		class CheckDataBackup extends AsyncTask<String, String, String> {
+	class CheckDataBackup extends AsyncTask<String, String, String> {
 
 		public CheckDataBackup(){
 		}
 		@Override
 		protected void onPreExecute() {
-		    super.onPreExecute();
+			super.onPreExecute();
 		}
 
 		@Override
 		protected String doInBackground(String... urls) {
-			 String data = null;
-		    try {
+			String data = null;
+			try {
 //		    	String url = Constants.SERVER_URL + "/tiger/rest/admin/domain/check?domainName="+URLEncoder.encode(domain_name, "UTF-8");
-		    	String url = Constants.SERVER_URL + "/tiger/rest/user/profile/getbackup";
-		    	Log.i(TAG, "CheckAvailability :: doInBackground : URL - "+url);
-		        HttpPost httppost = new HttpPost(url);
-		        httppost = SuperChatApplication.addHeaderInfo(httppost,true);
-		        HttpClient httpclient = new DefaultHttpClient();
-		        HttpResponse response = httpclient.execute(httppost);
-		        // StatusLine stat = response.getStatusLine();
-		        int status = response.getStatusLine().getStatusCode();
-		        if (status == 200) {
-		            HttpEntity entity = response.getEntity();
-		            data = EntityUtils.toString(entity);
+				String url = Constants.SERVER_URL + "/tiger/rest/user/profile/getbackup";
+				Log.i(TAG, "CheckAvailability :: doInBackground : URL - "+url);
+				HttpPost httppost = new HttpPost(url);
+				httppost = SuperChatApplication.addHeaderInfo(httppost,true);
+				HttpClient httpclient = new DefaultHttpClient();
+				HttpResponse response = httpclient.execute(httppost);
+				// StatusLine stat = response.getStatusLine();
+				int status = response.getStatusLine().getStatusCode();
+				if (status == 200) {
+					HttpEntity entity = response.getEntity();
+					data = EntityUtils.toString(entity);
 //		            return data;
-		        }
-		    } catch (IOException e) {
-		        e.printStackTrace();
-		    } catch (Exception e) {
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
 
-		        e.printStackTrace();
-		    }
-		    String fileid = null;
-		    String lastdate = null;
-		    if(data != null){
-		    	System.out.println("Response======>"+data);
-		    	try {
+				e.printStackTrace();
+			}
+			String fileid = null;
+			String lastdate = null;
+			if(data != null){
+				System.out.println("Response======>"+data);
+				try {
 					JSONObject jsonobj = new JSONObject(data);
 					if (jsonobj != null && jsonobj.getString("status") != null
 							&& jsonobj.getString("status").equalsIgnoreCase("success")){
@@ -1782,23 +1817,23 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						Date date = new Date(time);
 						SimpleDateFormat dateformat = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.US);
 //						System.out.println("[lastdate - ] "+lastdate);
-						 Intent intent = new Intent(HomeScreen.this, ChatBackupRestoreScreen.class);
-						 if(fileid != null)
-						    intent.putExtra(Constants.BACKUP_FILEID, fileid);
-						 if(lastdate != null)
-						   	intent.putExtra(Constants.LAST_BACKUP_DATE, dateformat.format(date));
+						Intent intent = new Intent(HomeScreen.this, ChatBackupRestoreScreen.class);
+						if(fileid != null)
+							intent.putExtra(Constants.BACKUP_FILEID, fileid);
+						if(lastdate != null)
+							intent.putExtra(Constants.LAST_BACKUP_DATE, dateformat.format(date));
 //					    startActivity(intent);
 						backUpFound = true;
 						startActivityForResult(intent, 111);
 					}else
 						addNewGroupsAndBroadcastsToDB();
-			} catch (JSONException e) {
+				} catch (JSONException e) {
 
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-		   }
-		   return data;
+			return data;
 		}
 		@Override
 		protected void onPostExecute(String data) {
@@ -1811,72 +1846,72 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
 	@Override
 	public void onBackPressed() {
-	    int count = getFragmentManager().getBackStackEntryCount();
-	    if (count == 0) {
+		int count = getFragmentManager().getBackStackEntryCount();
+		if (count == 0) {
 //	        super.onBackPressed();
-	        moveTaskToBack(true);
-	        //additional code
-	    } else {
-	        getFragmentManager().popBackStack();
-	    }
+			moveTaskToBack(true);
+			//additional code
+		} else {
+			getFragmentManager().popBackStack();
+		}
 
 	}
 	public void getShareInfo(){
 		// Get intent, action and MIME type
 
-		    Intent intent = getIntent();
-		    String action = intent.getAction();
-		    String type = intent.getType();
+		Intent intent = getIntent();
+		String action = intent.getAction();
+		String type = intent.getType();
 
-		    if (intent!=null && type != null && action != null && Intent.ACTION_SEND.equals(action)) {
-			    if (type.startsWith("image/"))
-			    	sharingType = IMAGE_SHARING;
-			    else if (type.startsWith("application/pdf"))
-			    	sharingType = PDF_SHARING;
-			    else if (type.startsWith("application/msword") || type.startsWith("application/doc")|| type.endsWith("document"))
+		if (intent!=null && type != null && action != null && Intent.ACTION_SEND.equals(action)) {
+			if (type.startsWith("image/"))
+				sharingType = IMAGE_SHARING;
+			else if (type.startsWith("application/pdf"))
+				sharingType = PDF_SHARING;
+			else if (type.startsWith("application/msword") || type.startsWith("application/doc")|| type.endsWith("document"))
 				sharingType = DOC_SHARING;
-				else if (type.startsWith("application/vnd.ms-excel") || type.startsWith("application/xls") || type.endsWith(".sheet"))
-			    	sharingType = XLS_SHARING;
-			    else if (type.startsWith("audio/"))
-			    	sharingType = VOICE_SHARING;
-			    else if (type.startsWith("video/"))
-			    	sharingType = VIDEO_SHARING;
-				else if (type.startsWith("application/ppt") || type.equalsIgnoreCase("application/*") || type.contains(".presentation") || type.endsWith("powerpoint"))
-					sharingType = PPT_SHARING;
-			    else
-			    	sharingType = 0;
+			else if (type.startsWith("application/vnd.ms-excel") || type.startsWith("application/xls") || type.endsWith(".sheet"))
+				sharingType = XLS_SHARING;
+			else if (type.startsWith("audio/"))
+				sharingType = VOICE_SHARING;
+			else if (type.startsWith("video/"))
+				sharingType = VIDEO_SHARING;
+			else if (type.startsWith("application/ppt") || type.equalsIgnoreCase("application/*") || type.contains(".presentation") || type.endsWith("powerpoint"))
+				sharingType = PPT_SHARING;
+			else
+				sharingType = 0;
 
-				if(sharingType!=0){
-				    	Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-			    		if (imageUri != null) {
-							if(imageUri.toString().contains("com.google.android.apps"))
-							{
+			if(sharingType!=0){
+				Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+				if (imageUri != null) {
+					if(imageUri.toString().contains("com.google.android.apps"))
+					{
 //								intent.setAction(null);
 //								Toast.makeText(this, "Link sharing is not supported for now. Will update with the new version.", Toast.LENGTH_LONG).show();
 //								return;
-								shareUri = getRealPathFromURIForFile(this, imageUri);
-							}else if (imageUri.toString().startsWith("content://")){
-								if (imageUri.toString().startsWith("content://gmail"))
-									shareUri = getRealPathFromURIForFile(this, imageUri);
-								else
-									shareUri = getRealPathFromURI(this, imageUri);
-			    			}else if (imageUri.toString().startsWith("file:///storage/")){
-			    				shareUri = imageUri.getPath();
-			    			}else
-			    				shareUri = imageUri.toString();
-			    		}else{
-							Toast.makeText(this, "This file sharing is not supported", Toast.LENGTH_LONG).show();
-						}
-			    		if(shareUri != null){
-				    		intent.setAction(null);
-				    		calledForShare = true;
-			    		}else
-			    			return;
-		    		}else{
-					intent.setAction(null);
-					Toast.makeText(this, "This file share not supported", Toast.LENGTH_LONG).show();
+						shareUri = getRealPathFromURIForFile(this, imageUri);
+					}else if (imageUri.toString().startsWith("content://")){
+						if (imageUri.toString().startsWith("content://gmail"))
+							shareUri = getRealPathFromURIForFile(this, imageUri);
+						else
+							shareUri = getRealPathFromURI(this, imageUri);
+					}else if (imageUri.toString().startsWith("file:///storage/")){
+						shareUri = imageUri.getPath();
+					}else
+						shareUri = imageUri.toString();
+				}else{
+					Toast.makeText(this, "This file sharing is not supported", Toast.LENGTH_LONG).show();
 				}
-		    }
+				if(shareUri != null){
+					intent.setAction(null);
+					calledForShare = true;
+				}else
+					return;
+			}else{
+				intent.setAction(null);
+				Toast.makeText(this, "This file share not supported", Toast.LENGTH_LONG).show();
+			}
+		}
 
 //		    if (uri.toString().startsWith("content://gmail")) { // special handling for gmail
 //		        Bitmap b;
@@ -1905,58 +1940,58 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
 	}
 	public String getRealPathFromURI(Context context, Uri contentUri) {
-		  Cursor cursor = null;
-		  try {
-		    String[] proj = { MediaStore.Images.Media.DATA };
-		    cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
-		    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-		    cursor.moveToFirst();
-		    return cursor.getString(column_index);
-		  } finally {
-		    if (cursor != null) {
-		      cursor.close();
-		    }
-		  }
+		Cursor cursor = null;
+		try {
+			String[] proj = { MediaStore.Images.Media.DATA };
+			cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+			int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+			cursor.moveToFirst();
+			return cursor.getString(column_index);
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
 		}
+	}
 	public String getRealPathFromURIForFile(Context context, Uri fileAttachUri) {
-		 String full_path = null;
+		String full_path = null;
 		try {
 			String mimeType = getContentResolver().getType(fileAttachUri);
-            Log.i(TAG, "mimeType : " + mimeType);
-            if(mimeType != null && mimeType.lastIndexOf("/") != -1)
-            	mimeType = "." + mimeType.substring(mimeType.lastIndexOf("/") + 1);
-            Cursor returnCursor = getContentResolver().query(fileAttachUri, null, null, null, null);
-            int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-            int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
-            Log.i(TAG, "sizeIndex : " + sizeIndex);
-            returnCursor.moveToFirst();
-            String path = returnCursor.getString(nameIndex);
+			Log.i(TAG, "mimeType : " + mimeType);
+			if(mimeType != null && mimeType.lastIndexOf("/") != -1)
+				mimeType = "." + mimeType.substring(mimeType.lastIndexOf("/") + 1);
+			Cursor returnCursor = getContentResolver().query(fileAttachUri, null, null, null, null);
+			int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+			int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+			Log.i(TAG, "sizeIndex : " + sizeIndex);
+			returnCursor.moveToFirst();
+			String path = returnCursor.getString(nameIndex);
 //            path = path.replace(" ", "_");
 //            if(!path.endsWith(mimeType))
 //            	path = path + mimeType;
-            full_path = writeFileAndGetFullPath(getContentResolver().openInputStream(fileAttachUri),
-                    new File(Environment.getExternalStorageDirectory() + "//" + path));
+			full_path = writeFileAndGetFullPath(getContentResolver().openInputStream(fileAttachUri),
+					new File(Environment.getExternalStorageDirectory() + "//" + path));
 		}catch(Exception ex){
 
 		}
 		return full_path;
 	}
 	private String writeFileAndGetFullPath(InputStream in, File file) {
-        String full_path = file.getAbsolutePath();
-        try {
-            OutputStream out = new FileOutputStream(file);
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            out.close();
-            in.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return full_path;
-    }
+		String full_path = file.getAbsolutePath();
+		try {
+			OutputStream out = new FileOutputStream(file);
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = in.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}
+			out.close();
+			in.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return full_path;
+	}
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -1967,7 +2002,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					addNewGroupsAndBroadcastsToDB();
 					break;
 			}
-		}
+	}
 	private void addNewGroupsAndBroadcastsToDB(){
 		try{
 			if(directoryGroupSet !=null && !directoryGroupSet.isEmpty()) {
@@ -2010,32 +2045,32 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //		}
 		syncProcessStart(false);
 	}
-protected void onDestroy(){
-	super.onDestroy();
-	calledForShare = false;
-	isLaunched = false;
-	try {
-		unbindService(mConnection);
-	} catch (Exception e) {
-		// Just ignore that
-		Log.d("MessageHistoryScreen", "Unable to un bind");
+	protected void onDestroy(){
+		super.onDestroy();
+		calledForShare = false;
+		isLaunched = false;
+		try {
+			unbindService(mConnection);
+		} catch (Exception e) {
+			// Just ignore that
+			Log.d("MessageHistoryScreen", "Unable to un bind");
+		}
 	}
-}
-public void onComposeClick(View view){
-	if (!contactMenuLayout.isSelected()) {
-		contactsFragment.setPorfileListener();
-		mViewPager.setCurrentItem(2);
+	public void onComposeClick(View view){
+		if (!contactMenuLayout.isSelected()) {
+			contactsFragment.setPorfileListener();
+			mViewPager.setCurrentItem(2);
+		}
 	}
-}
 	@Override
 	public void onClick(View v) {
 
 		switch(v.getId()){
-		case R.id.id_more:
-			if(calledForShare && !SharedPrefManager.getInstance().isDomainAdminORSubAdmin()){
-				Toast.makeText(this, "Only owner can post messages in Bulletin!", Toast.LENGTH_LONG).show();
-				return;
-			}
+			case R.id.id_more:
+				if(calledForShare && !SharedPrefManager.getInstance().isDomainAdminORSubAdmin()){
+					Toast.makeText(this, "Only owner can post messages in Bulletin!", Toast.LENGTH_LONG).show();
+					return;
+				}
 //			if (!moreMenuLayout.isSelected()) {
 //				moreMenuLayout.setSelected(true);
 //				contactMenuLayout.setSelected(false);
@@ -2043,34 +2078,34 @@ public void onComposeClick(View view){
 //			fragmentTransaction = getSupportFragmentManager().beginTransaction();
 //			replaceFragment(moreFragment, R.id.main_frame);
 //			}
-			mViewPager.setCurrentItem(3);
-			break;
-		case R.id.id_channel:
-			if (!publicGroupTab.isSelected()) {
-				mViewPager.setCurrentItem(1);
-			}
-			break;
-		case R.id.id_chat:
-			if (!chatMenuLayout.isSelected()) {
+				mViewPager.setCurrentItem(3);
+				break;
+			case R.id.id_channel:
+				if (!publicGroupTab.isSelected()) {
+					mViewPager.setCurrentItem(1);
+				}
+				break;
+			case R.id.id_chat:
+				if (!chatMenuLayout.isSelected()) {
 //				chatMenuLayout.setSelected(true);
 //				contactMenuLayout.setSelected(false);
 //				moreMenuLayout.setSelected(false);
 //				fragmentTransaction = getSupportFragmentManager().beginTransaction();
 //				replaceFragment(chatFragment, R.id.main_frame);
-				mViewPager.setCurrentItem(0);
-			}
-			break;
-		case R.id.id_contact:
-			if (!contactMenuLayout.isSelected()) {
+					mViewPager.setCurrentItem(0);
+				}
+				break;
+			case R.id.id_contact:
+				if (!contactMenuLayout.isSelected()) {
 //				contactMenuLayout.setSelected(true);
 //				chatMenuLayout.setSelected(false);
 //				moreMenuLayout.setSelected(false);
 //				fragmentTransaction = getSupportFragmentManager().beginTransaction();
 //				replaceFragment(contactsFragment, R.id.main_frame);
-				mViewPager.setCurrentItem(2);
-				contactsFragment.setPorfileListener();
-			}
-			break;
+					mViewPager.setCurrentItem(2);
+					contactsFragment.setPorfileListener();
+				}
+				break;
 
 		}
 
@@ -2084,9 +2119,9 @@ public void onComposeClick(View view){
 			contentvalues.put(DatabaseConstants.FROM_USER_FIELD, from);
 //			contentvalues.put(DatabaseConstants.TO_USER_FIELD, myName);
 			if(SharedPrefManager.getInstance().isBroadCast(from))
-			    contentvalues.put(DatabaseConstants.TO_USER_FIELD, from);
+				contentvalues.put(DatabaseConstants.TO_USER_FIELD, from);
 			else
-			    contentvalues.put(DatabaseConstants.TO_USER_FIELD, myName);
+				contentvalues.put(DatabaseConstants.TO_USER_FIELD, myName);
 			contentvalues.put(DatabaseConstants.UNREAD_COUNT_FIELD, new Integer(1));
 			contentvalues.put(DatabaseConstants.FROM_GROUP_USER_FIELD, "");
 			contentvalues.put(DatabaseConstants.SEEN_FIELD, com.chatsdk.org.jivesoftware.smack.packet.Message.SeenState.sent.ordinal());
@@ -2128,17 +2163,17 @@ public void onComposeClick(View view){
 //			AtMeApplication.dayValue = date;
 			contentvalues.put(DatabaseConstants.LAST_UPDATE_FIELD, 0);
 
-            if(SharedPrefManager.getInstance().isBroadCast(from)) {
-                if(name.indexOf("#786#") != -1) {
-                    SharedPrefManager.getInstance().saveBroadcastFirstTimeName(from, name.substring(0, name.indexOf("#786#")));
-                    contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name.substring(0, name.indexOf("#786#")));
-                }
-                else {
-                    SharedPrefManager.getInstance().saveBroadcastFirstTimeName(from, name);
-                    contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
-                }
-            }else
-			    contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
+			if(SharedPrefManager.getInstance().isBroadCast(from)) {
+				if(name.indexOf("#786#") != -1) {
+					SharedPrefManager.getInstance().saveBroadcastFirstTimeName(from, name.substring(0, name.indexOf("#786#")));
+					contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name.substring(0, name.indexOf("#786#")));
+				}
+				else {
+					SharedPrefManager.getInstance().saveBroadcastFirstTimeName(from, name);
+					contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
+				}
+			}else
+				contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
 			//Save USerID and SG in DB
 			contentvalues.put(DatabaseConstants.USER_ID, SharedPrefManager.getInstance().getUserId());
 			contentvalues.put(DatabaseConstants.USER_SG, SharedPrefManager.getInstance().getUserDomain());
@@ -2148,10 +2183,10 @@ public void onComposeClick(View view){
 
 		}
 	}
-	 class HomePagerAdapter extends FragmentPagerAdapter{
+	class HomePagerAdapter extends FragmentPagerAdapter{
 		private Context mContext;
 		FragmentManager fm;
-//		 private String[] titles = new String[]{"CHAT","CONTACT","MORE"};
+		//		 private String[] titles = new String[]{"CHAT","CONTACT","MORE"};
 		public HomePagerAdapter(FragmentManager fm, Context context) {
 			super(fm);
 			this.fm = fm;
@@ -2164,21 +2199,21 @@ public void onComposeClick(View view){
 		}
 		@Override
 		public int getItemPosition(Object object) {
-		    return POSITION_NONE;
+			return POSITION_NONE;
 		}
 
 		@Override
 		public Fragment getItem(int position) {
 			switch(position) {
-			case 0:
-				return new ChatHome();
-			case 1:
-				return  publicGroupFragment;//new PublicGroupScreen();
-			case 2:
-				return (contactsFragment = new ContactsScreen());
+				case 0:
+					return new ChatHome();
+				case 1:
+					return  publicGroupFragment;//new PublicGroupScreen();
+				case 2:
+					return (contactsFragment = new ContactsScreen());
 
-			case 3:
-				return  new BulletinScreen();
+				case 3:
+					return  new BulletinScreen();
 			}
 
 			return null;
@@ -2188,536 +2223,536 @@ public void onComposeClick(View view){
 //	        return titles[position];
 //	    }
 	}
-//------------ Changes for call ---------------
-	 @Override
-	    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-	        if (SinchService.class.getName().equals(componentName.getClassName())) {
-	            mSinchServiceInterface = (SinchService.SinchServiceInterface) iBinder;
-	            onServiceConnected();
+	//------------ Changes for call ---------------
+	@Override
+	public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+		if (SinchService.class.getName().equals(componentName.getClassName())) {
+			mSinchServiceInterface = (SinchService.SinchServiceInterface) iBinder;
+			onServiceConnected();
 
-	          //Register the user for call
-	    		if (!getSinchServiceInterface().isStarted()) {
-	                getSinchServiceInterface().startClient(SharedPrefManager.getInstance().getUserName());
-	            }
-	        }
-	    }
-
-	    @Override
-	    public void onServiceDisconnected(ComponentName componentName) {
-	        if (SinchService.class.getName().equals(componentName.getClassName())) {
-	            mSinchServiceInterface = null;
-	            onServiceDisconnected();
-	        }
-	    }
-
-	    protected void onServiceConnected() {
-	        // for subclasses
-	    }
-
-	    protected void onServiceDisconnected() {
-	        // for subclasses
-	    }
-
-	    protected SinchService.SinchServiceInterface getSinchServiceInterface() {
-	        return mSinchServiceInterface;
-	    }
-		@Override
-		public void onStartFailed(SinchError error) {
-			// TODO Auto-generated method stub
-			Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show();
-		}
-		@Override
-		public void onStarted() {
-			// TODO Auto-generated method stub
-
-		}
-		private class OpenGroupTaskOnServer extends AsyncTask<String, String, String> {
-			LoginModel loginForm;
-			ProgressDialog progressDialog = null;
-			SharedPrefManager sharedPrefManager;
-			boolean isLoading;
-			public OpenGroupTaskOnServer(boolean isLoading){
-				sharedPrefManager = SharedPrefManager.getInstance();
-				loginForm = new LoginModel();
-				loginForm.setUserName(sharedPrefManager.getUserName());
-				loginForm.setPassword(sharedPrefManager.getUserPassword());
-				if(sharedPrefManager.getDeviceToken() != null)
-					loginForm.setToken(sharedPrefManager.getDeviceToken());
-				this.isLoading = isLoading;
+			//Register the user for call
+			if (!getSinchServiceInterface().isStarted()) {
+				getSinchServiceInterface().startClient(SharedPrefManager.getInstance().getUserName());
 			}
-			@Override
-			protected void onPreExecute() {
+		}
+	}
+
+	@Override
+	public void onServiceDisconnected(ComponentName componentName) {
+		if (SinchService.class.getName().equals(componentName.getClassName())) {
+			mSinchServiceInterface = null;
+			onServiceDisconnected();
+		}
+	}
+
+	protected void onServiceConnected() {
+		// for subclasses
+	}
+
+	protected void onServiceDisconnected() {
+		// for subclasses
+	}
+
+	protected SinchService.SinchServiceInterface getSinchServiceInterface() {
+		return mSinchServiceInterface;
+	}
+	@Override
+	public void onStartFailed(SinchError error) {
+		// TODO Auto-generated method stub
+		Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show();
+	}
+	@Override
+	public void onStarted() {
+		// TODO Auto-generated method stub
+
+	}
+	private class OpenGroupTaskOnServer extends AsyncTask<String, String, String> {
+		LoginModel loginForm;
+		ProgressDialog progressDialog = null;
+		SharedPrefManager sharedPrefManager;
+		boolean isLoading;
+		public OpenGroupTaskOnServer(boolean isLoading){
+			sharedPrefManager = SharedPrefManager.getInstance();
+			loginForm = new LoginModel();
+			loginForm.setUserName(sharedPrefManager.getUserName());
+			loginForm.setPassword(sharedPrefManager.getUserPassword());
+			if(sharedPrefManager.getDeviceToken() != null)
+				loginForm.setToken(sharedPrefManager.getDeviceToken());
+			this.isLoading = isLoading;
+		}
+		@Override
+		protected void onPreExecute() {
 //				if(isLoading)
 //					progressDialog = ProgressDialog.show(HomeScreen.this, "", "Fetching data. Please wait...", true);
-				super.onPreExecute();
-			}
-			@Override
-			protected String doInBackground(String... params) {
-				// TODO Auto-generated method stub
+			super.onPreExecute();
+		}
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
 //				String JSONstring = new Gson().toJson(loginForm);
-				String searchText = "";
-				if(params!=null && params.length>0){
-					searchText = "text="+params[0]+"&";
-				}
-			    DefaultHttpClient client1 = new DefaultHttpClient();
+			String searchText = "";
+			if(params!=null && params.length>0){
+				searchText = "text="+params[0]+"&";
+			}
+			DefaultHttpClient client1 = new DefaultHttpClient();
 
 //				Log.d("HomeScreen", "serverUpdateCreateGroupInfo request:"+JSONstring);  p5domain
-				 HttpPost httpPost = new HttpPost(Constants.SERVER_URL+ "/tiger/rest/group/search?"+searchText+"limit=1000");
+			HttpPost httpPost = new HttpPost(Constants.SERVER_URL+ "/tiger/rest/group/search?"+searchText+"limit=1000");
 //		         httpPost.setEntity(new UrlEncodedFormEntity(JSONstring));
-				 httpPost = SuperChatApplication.addHeaderInfo(httpPost,true);
-				 HttpResponse response = null;
+			httpPost = SuperChatApplication.addHeaderInfo(httpPost,true);
+			HttpResponse response = null;
 
-		         try {
+			try {
 //					httpPost.setEntity(new StringEntity(JSONstring));
-					 try {
-						 response = client1.execute(httpPost);
-						 final int statusCode=response.getStatusLine().getStatusCode();
-						 if (statusCode == HttpStatus.SC_OK){ //new1
-							 HttpEntity entity = response.getEntity();
+				try {
+					response = client1.execute(httpPost);
+					final int statusCode=response.getStatusLine().getStatusCode();
+					if (statusCode == HttpStatus.SC_OK){ //new1
+						HttpEntity entity = response.getEntity();
 //							    System.out.println("SERVER RESPONSE STRING: " + entity.getContent());
-							    BufferedReader rd = new BufferedReader(new InputStreamReader(entity.getContent()));
-							    String line = "";
-					            String str = "";
-					            while ((line = rd.readLine()) != null) {
+						BufferedReader rd = new BufferedReader(new InputStreamReader(entity.getContent()));
+						String line = "";
+						String str = "";
+						while ((line = rd.readLine()) != null) {
 
-					            	str+=line;
-					            }
-					            if(str!=null &&!str.equals("")){
-					            	Gson gson = new GsonBuilder().create();
-					            	LoginResponseModel loginObj = gson.fromJson(str,LoginResponseModel.class);
-									if (loginObj != null) {
-										if(loginObj.directoryGroupSet!=null){
-											groupsData.clear();
-											for (GroupDetail groupDetail : loginObj.directoryGroupSet) {
-												if(!groupDetail.memberType.equals("USER"))
-													SharedPrefManager.getInstance().saveUserGroupInfo(groupDetail.groupName, SharedPrefManager.getInstance().getUserName(), SharedPrefManager.PUBLIC_CHANNEL, true);
-												groupsData.add(groupDetail);
-											}
-										}
-						            }
-									DBWrapper.getInstance().updateSGGroupsBroadcastLoaded(iPrefManager.getUserDomain(), "true");
-					            }
-						 }
-					} catch (ClientProtocolException e) {
-						Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
-					} catch (IOException e) {
-						Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
+							str+=line;
+						}
+						if(str!=null &&!str.equals("")){
+							Gson gson = new GsonBuilder().create();
+							LoginResponseModel loginObj = gson.fromJson(str,LoginResponseModel.class);
+							if (loginObj != null) {
+								if(loginObj.directoryGroupSet!=null){
+									groupsData.clear();
+									for (GroupDetail groupDetail : loginObj.directoryGroupSet) {
+										if(!groupDetail.memberType.equals("USER"))
+											SharedPrefManager.getInstance().saveUserGroupInfo(groupDetail.groupName, SharedPrefManager.getInstance().getUserName(), SharedPrefManager.PUBLIC_CHANNEL, true);
+										groupsData.add(groupDetail);
+									}
+								}
+							}
+							DBWrapper.getInstance().updateSGGroupsBroadcastLoaded(iPrefManager.getUserDomain(), "true");
+						}
 					}
-
-				} catch(Exception e){
-					Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution Exception:"+e.toString());
-					e.printStackTrace();
+				} catch (ClientProtocolException e) {
+					Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
+				} catch (IOException e) {
+					Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
 				}
 
-
-				return null;
+			} catch(Exception e){
+				Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution Exception:"+e.toString());
+				e.printStackTrace();
 			}
-			@Override
-			protected void onPostExecute(String str) {
-				if (progressDialog != null) {
-					progressDialog.dismiss();
-					progressDialog = null;
-				}
-				if (str!=null && str.contains("error")){
-					Gson gson = new GsonBuilder().create();
-					ErrorModel errorModel = gson.fromJson(str,ErrorModel.class);
-					if (errorModel != null) {
-						if (errorModel.citrusErrors != null
-								&& !errorModel.citrusErrors.isEmpty()) {
-							ErrorModel.CitrusError citrusError = errorModel.citrusErrors.get(0);
-							if(citrusError!=null && citrusError.code.equals("20019") ){
-								SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
-//								iPrefManager.saveUserDomain(domainNameView.getText().toString());
-								iPrefManager.saveUserId(errorModel.userId);
-								//below code should be only, in case of brand new user - "First time SC user"
-								iPrefManager.setAppMode("SecondMode");
-//								iPrefManager.saveUserPhone(regObj.iMobileNumber);
-		//						iPrefManager.saveUserPassword(regObj.getPassword());
-								iPrefManager.saveUserLogedOut(false);
-								iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
-								showDialog(citrusError.message, null);
-							}else if(citrusError!=null && citrusError.code.equals("20020") ){
-								showDialog(citrusError.message, citrusError.code);
-							}else
-								showDialog(citrusError.message, null);
-						} else if (errorModel.message != null)
-							showDialog(errorModel.message, null);
-					} else
-						showDialog("Please try again later.", null);
-				}else{
-//					if(mViewPager.getCurrentItem() == 1){
-					iPrefManager.setGroupsLoaded(true);
-					if(PublicGroupScreen.isAllChannelTab)
-						publicGroupFragment.showAllContacts(1);
-					else
-						publicGroupFragment.showAllContacts(0);
-//					}
-				}
-				super.onPostExecute(str);
-			}
+
+
+			return null;
 		}
-//-------------------------------------------------------
-		public static class GetSharedIDListFromServer extends AsyncTask<String, String, String> {
-			LoginModel loginForm;
-			ProgressDialog progressDialog = null;
-			SharedPrefManager sharedPrefManager;
-			public GetSharedIDListFromServer(){
-				sharedPrefManager = SharedPrefManager.getInstance();
-				loginForm = new LoginModel();
-				loginForm.setUserName(sharedPrefManager.getUserName());
-				loginForm.setPassword(sharedPrefManager.getUserPassword());
-				if(sharedPrefManager.getDeviceToken() != null)
-					loginForm.setToken(sharedPrefManager.getDeviceToken());
+		@Override
+		protected void onPostExecute(String str) {
+			if (progressDialog != null) {
+				progressDialog.dismiss();
+				progressDialog = null;
 			}
-			@Override
-			protected void onPreExecute() {
+			if (str!=null && str.contains("error")){
+				Gson gson = new GsonBuilder().create();
+				ErrorModel errorModel = gson.fromJson(str,ErrorModel.class);
+				if (errorModel != null) {
+					if (errorModel.citrusErrors != null
+							&& !errorModel.citrusErrors.isEmpty()) {
+						ErrorModel.CitrusError citrusError = errorModel.citrusErrors.get(0);
+						if(citrusError!=null && citrusError.code.equals("20019") ){
+							SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
+//								iPrefManager.saveUserDomain(domainNameView.getText().toString());
+							iPrefManager.saveUserId(errorModel.userId);
+							//below code should be only, in case of brand new user - "First time SC user"
+							iPrefManager.setAppMode("SecondMode");
+//								iPrefManager.saveUserPhone(regObj.iMobileNumber);
+							//						iPrefManager.saveUserPassword(regObj.getPassword());
+							iPrefManager.saveUserLogedOut(false);
+							iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
+							showDialog(citrusError.message, null);
+						}else if(citrusError!=null && citrusError.code.equals("20020") ){
+							showDialog(citrusError.message, citrusError.code);
+						}else
+							showDialog(citrusError.message, null);
+					} else if (errorModel.message != null)
+						showDialog(errorModel.message, null);
+				} else
+					showDialog("Please try again later.", null);
+			}else{
+//					if(mViewPager.getCurrentItem() == 1){
+				iPrefManager.setGroupsLoaded(true);
+				if(PublicGroupScreen.isAllChannelTab)
+					publicGroupFragment.showAllContacts(1);
+				else
+					publicGroupFragment.showAllContacts(0);
+//					}
+			}
+			super.onPostExecute(str);
+		}
+	}
+	//-------------------------------------------------------
+	public static class GetSharedIDListFromServer extends AsyncTask<String, String, String> {
+		LoginModel loginForm;
+		ProgressDialog progressDialog = null;
+		SharedPrefManager sharedPrefManager;
+		public GetSharedIDListFromServer(){
+			sharedPrefManager = SharedPrefManager.getInstance();
+			loginForm = new LoginModel();
+			loginForm.setUserName(sharedPrefManager.getUserName());
+			loginForm.setPassword(sharedPrefManager.getUserPassword());
+			if(sharedPrefManager.getDeviceToken() != null)
+				loginForm.setToken(sharedPrefManager.getDeviceToken());
+		}
+		@Override
+		protected void onPreExecute() {
 //				if(isLoading)
 //					progressDialog = ProgressDialog.show(HomeScreen.this, "", "Fetching data. Please wait...", true);
-				super.onPreExecute();
-			}
-			@Override
-			protected String doInBackground(String... params) {
-				// TODO Auto-generated method stub
+			super.onPreExecute();
+		}
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
 //				String shared_id_name = "";
 //				if(params != null && params.length > 0){
 ////					shared_id_name = "text="+params[0]+"&";
 //					shared_id_name = params[0];
 //				}
-			    DefaultHttpClient client1 = new DefaultHttpClient();
-			    //http://52.88.175.48/tiger/rest/sharedid/getall?domainName=p5domain
-				 HttpPost httpPost = new HttpPost(Constants.SERVER_URL+ "/tiger/rest/sharedid/getall?domainName="+sharedPrefManager.getUserDomain());
-				 httpPost = SuperChatApplication.addHeaderInfo(httpPost,true);
-				 HttpResponse response = null;
+			DefaultHttpClient client1 = new DefaultHttpClient();
+			//http://52.88.175.48/tiger/rest/sharedid/getall?domainName=p5domain
+			HttpPost httpPost = new HttpPost(Constants.SERVER_URL+ "/tiger/rest/sharedid/getall?domainName="+sharedPrefManager.getUserDomain());
+			httpPost = SuperChatApplication.addHeaderInfo(httpPost,true);
+			HttpResponse response = null;
 
-		         try {
-					 try {
-						 response = client1.execute(httpPost);
-						 final int statusCode=response.getStatusLine().getStatusCode();
-						 if (statusCode == HttpStatus.SC_OK){ //new1
-							 HttpEntity entity = response.getEntity();
-							    BufferedReader rd = new BufferedReader(new InputStreamReader(entity.getContent()));
-							    String line = "";
-					            String str = "";
-					            while ((line = rd.readLine()) != null) {
-					            	str+=line;
-					            }
-					           return str;
-						 }
-					} catch (ClientProtocolException e) {
-						Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
-					} catch (IOException e) {
-						Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
+			try {
+				try {
+					response = client1.execute(httpPost);
+					final int statusCode=response.getStatusLine().getStatusCode();
+					if (statusCode == HttpStatus.SC_OK){ //new1
+						HttpEntity entity = response.getEntity();
+						BufferedReader rd = new BufferedReader(new InputStreamReader(entity.getContent()));
+						String line = "";
+						String str = "";
+						while ((line = rd.readLine()) != null) {
+							str+=line;
+						}
+						return str;
 					}
-
-				} catch(Exception e){
-					Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution Exception:"+e.toString());
-					e.printStackTrace();
+				} catch (ClientProtocolException e) {
+					Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
+				} catch (IOException e) {
+					Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
 				}
 
-
-				return null;
+			} catch(Exception e){
+				Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution Exception:"+e.toString());
+				e.printStackTrace();
 			}
-			@Override
-			protected void onPostExecute(String str) {
-				if (progressDialog != null) {
-					progressDialog.dismiss();
-					progressDialog = null;
-				}
-				if(str != null && str.length() > 0){
-					try {
-						JSONObject jsonobj = new JSONObject(str);
-						if (jsonobj != null && jsonobj.getString("status") != null
-								&& jsonobj.getString("status").equalsIgnoreCase("success")){
-							if(str != null && !str.equals("")){
-								parseSharedIDData(str);
-								System.out.println("[HomeScreen : SHared ID : Done for - "+SharedPrefManager.getInstance().getUserDomain());
-								DBWrapper.getInstance().updateSGSharedIDLoaded(SharedPrefManager.getInstance().getUserDomain(), "true");
-							}
-						}//else Do Nothing
+
+
+			return null;
+		}
+		@Override
+		protected void onPostExecute(String str) {
+			if (progressDialog != null) {
+				progressDialog.dismiss();
+				progressDialog = null;
+			}
+			if(str != null && str.length() > 0){
+				try {
+					JSONObject jsonobj = new JSONObject(str);
+					if (jsonobj != null && jsonobj.getString("status") != null
+							&& jsonobj.getString("status").equalsIgnoreCase("success")){
+						if(str != null && !str.equals("")){
+							parseSharedIDData(str);
+							System.out.println("[HomeScreen : SHared ID : Done for - "+SharedPrefManager.getInstance().getUserDomain());
+							DBWrapper.getInstance().updateSGSharedIDLoaded(SharedPrefManager.getInstance().getUserDomain(), "true");
+						}
+					}//else Do Nothing
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}//else Do Nothing
 			super.onPostExecute(str);
-			}
 		}
-//-------------------------------------------------------
-		public static void parseSharedIDData(String str){
-			try{
-				SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance();
-				Gson gson = new GsonBuilder().create();
-            	LoginResponseModel loginObj = gson.fromJson(str, LoginResponseModel.class);
-            	if (loginObj != null) {
-					if(loginObj.directoryBroadcastGroupSet != null && loginObj.directoryBroadcastGroupSet.size() > 0){
-						sharedIDData.clear();
-						System.out.println("HomeScreen :: SignInTaskOnServer : Writing Official ID Data..");
-						for (BroadcastGroupDetail shared_id_detail : loginObj.directoryBroadcastGroupSet) {
-							if(sharedPrefManager.getSharedIDDisplayName(shared_id_detail.broadcastGroupName) == null){
-								System.out.println("Shared ID :: "+shared_id_detail.displayName+" : "+shared_id_detail.broadcastGroupName);
-								sharedPrefManager.saveSharedIDDisplayName(shared_id_detail.broadcastGroupName, shared_id_detail.displayName);
-								sharedPrefManager.setSharedIDContact(shared_id_detail.broadcastGroupName, true);
-								if(shared_id_detail.fileId != null)
-									sharedPrefManager.saveSharedIDFileId(shared_id_detail.broadcastGroupName, shared_id_detail.fileId);
-								//Update Shared Id'd to add on top of contact list
-								ContentValues contentvalues = new ContentValues();
-								//Shared ID name is saved in username field
-								contentvalues.put(DatabaseConstants.USER_NAME_FIELD, shared_id_detail.broadcastGroupName);
-								contentvalues.put(DatabaseConstants.VOPIUM_FIELD, Integer.valueOf(1));
-								contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, shared_id_detail.broadcastGroupMemberId);
-								int id = shared_id_detail.userName.hashCode();
-								if (id < -1)
-									id = -(id);
-								contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD, Integer.valueOf(id));
-								contentvalues.put(DatabaseConstants.RAW_CONTACT_ID, Integer.valueOf(id));
-								//Shared ID Display name is saved in Display name field
-								contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, Constants.SHARED_ID_START_STRING + shared_id_detail.displayName);
-								contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD, Integer.valueOf(0));
-								contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
-								contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
-								contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
-								//Save USerID and SG in DB
-								contentvalues.put(DatabaseConstants.USER_ID, sharedPrefManager.getUserId());
-								contentvalues.put(DatabaseConstants.USER_SG, sharedPrefManager.getUserDomain());
-								contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, "9999999999");
-								DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
-							}
-							sharedIDData.add(shared_id_detail);
+	}
+	//-------------------------------------------------------
+	public static void parseSharedIDData(String str){
+		try{
+			SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance();
+			Gson gson = new GsonBuilder().create();
+			LoginResponseModel loginObj = gson.fromJson(str, LoginResponseModel.class);
+			if (loginObj != null) {
+				if(loginObj.directoryBroadcastGroupSet != null && loginObj.directoryBroadcastGroupSet.size() > 0){
+					sharedIDData.clear();
+					System.out.println("HomeScreen :: SignInTaskOnServer : Writing Official ID Data..");
+					for (BroadcastGroupDetail shared_id_detail : loginObj.directoryBroadcastGroupSet) {
+						if(sharedPrefManager.getSharedIDDisplayName(shared_id_detail.broadcastGroupName) == null){
+							System.out.println("Shared ID :: "+shared_id_detail.displayName+" : "+shared_id_detail.broadcastGroupName);
+							sharedPrefManager.saveSharedIDDisplayName(shared_id_detail.broadcastGroupName, shared_id_detail.displayName);
+							sharedPrefManager.setSharedIDContact(shared_id_detail.broadcastGroupName, true);
+							if(shared_id_detail.fileId != null)
+								sharedPrefManager.saveSharedIDFileId(shared_id_detail.broadcastGroupName, shared_id_detail.fileId);
+							//Update Shared Id'd to add on top of contact list
+							ContentValues contentvalues = new ContentValues();
+							//Shared ID name is saved in username field
+							contentvalues.put(DatabaseConstants.USER_NAME_FIELD, shared_id_detail.broadcastGroupName);
+							contentvalues.put(DatabaseConstants.VOPIUM_FIELD, Integer.valueOf(1));
+							contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, shared_id_detail.broadcastGroupMemberId);
+							int id = shared_id_detail.userName.hashCode();
+							if (id < -1)
+								id = -(id);
+							contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD, Integer.valueOf(id));
+							contentvalues.put(DatabaseConstants.RAW_CONTACT_ID, Integer.valueOf(id));
+							//Shared ID Display name is saved in Display name field
+							contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, Constants.SHARED_ID_START_STRING + shared_id_detail.displayName);
+							contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD, Integer.valueOf(0));
+							contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
+							contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
+							contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
+							//Save USerID and SG in DB
+							contentvalues.put(DatabaseConstants.USER_ID, sharedPrefManager.getUserId());
+							contentvalues.put(DatabaseConstants.USER_SG, sharedPrefManager.getUserDomain());
+							contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, "9999999999");
+							DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
 						}
+						sharedIDData.add(shared_id_detail);
 					}
-            	}
-			}catch(Exception ex){
-				ex.printStackTrace();
-			}
-		}
-//-------------------------------------------------------
-		public static int messageCounter = 0;
-		public static final int VALUE_TO_EMAIL = 2;
-		public void writeLogsToFile(String message) {
-			String fileName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SuperChat/logs.txt";
-			File file = new File(fileName);
-			if (!file.exists()) {
-				try {
-					file.createNewFile();
-				} catch (IOException e) {
-					e.printStackTrace();
 				}
 			}
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	//-------------------------------------------------------
+	public static int messageCounter = 0;
+	public static final int VALUE_TO_EMAIL = 2;
+	public void writeLogsToFile(String message) {
+		String fileName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SuperChat/logs.txt";
+		File file = new File(fileName);
+		if (!file.exists()) {
 			try {
-				BufferedWriter writer = new BufferedWriter(new FileWriter(file,
-						true));
-				Date d = new Date();
-				writer.write(""+ d.toString()+"->");
-				writer.write(message);
-				writer.newLine();
-				writer.flush();
-				writer.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				file.createNewFile();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			finally
+		}
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(file,
+					true));
+			Date d = new Date();
+			writer.write(""+ d.toString()+"->");
+			writer.write(message);
+			writer.newLine();
+			writer.flush();
+			writer.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		finally
+		{
+			messageCounter++;
+			if(messageCounter == VALUE_TO_EMAIL)
 			{
-				messageCounter++;
-				if(messageCounter == VALUE_TO_EMAIL)
-				{
-					BufferedReader br = null;
-					String sCurrentLine;
-					StringBuffer buffer = new StringBuffer();
+				BufferedReader br = null;
+				String sCurrentLine;
+				StringBuffer buffer = new StringBuffer();
+				try {
+					br = new BufferedReader(new FileReader(fileName));
+					while ((sCurrentLine = br.readLine()) != null) {
+						buffer.append(sCurrentLine);
+						buffer.append("\n");
+					}
+
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
 					try {
-						br = new BufferedReader(new FileReader(fileName));
-						while ((sCurrentLine = br.readLine()) != null) {
-							buffer.append(sCurrentLine);
-							buffer.append("\n");
-						}
+						if (br != null)
+							br.close();
+						//Send email
+						messageCounter = 0;
 
-					} catch (IOException e) {
-						e.printStackTrace();
-					} finally {
-						try {
-							if (br != null)
-								br.close();
-							//Send email
-							messageCounter = 0;
-
-						} catch (IOException ex) {
-							ex.printStackTrace();
-						}
+					} catch (IOException ex) {
+						ex.printStackTrace();
 					}
 				}
 			}
 		}
+	}
 
-		public void sendEmail(String aSubject, String aMessage) {
-			Intent i = new Intent(Intent.ACTION_SEND);
-			i.setType("text/plain");
-			i.putExtra(Intent.EXTRA_EMAIL, new String[] { "mahesh@citrusplatform.com"});
-			i.putExtra(Intent.EXTRA_SUBJECT, aSubject);
-			i.putExtra(Intent.EXTRA_TEXT, aMessage);
-			try {
-				startActivity(Intent.createChooser(i,
-						"Crash - Please send email to us for better experience"));
-			} catch (android.content.ActivityNotFoundException ex) {
-				Toast.makeText(HomeScreen.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
-			}
+	public void sendEmail(String aSubject, String aMessage) {
+		Intent i = new Intent(Intent.ACTION_SEND);
+		i.setType("text/plain");
+		i.putExtra(Intent.EXTRA_EMAIL, new String[] { "mahesh@citrusplatform.com"});
+		i.putExtra(Intent.EXTRA_SUBJECT, aSubject);
+		i.putExtra(Intent.EXTRA_TEXT, aMessage);
+		try {
+			startActivity(Intent.createChooser(i,
+					"Crash - Please send email to us for better experience"));
+		} catch (android.content.ActivityNotFoundException ex) {
+			Toast.makeText(HomeScreen.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
 		}
-		private void serverUpdateContactsInfo(List<String> numbers){
-			SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
-			ContactUploadModel model = new ContactUploadModel(iPrefManager.getUserId(),null, numbers);
-			  String JSONstring = new Gson().toJson(model);
-			    DefaultHttpClient client1 = new DefaultHttpClient();
-				 HttpPost httpPost = new HttpPost(Constants.SERVER_URL+ "/tiger/rest/contact/match");
-				 httpPost = SuperChatApplication.addHeaderInfo(httpPost,true);
-				 HttpResponse response = null;
-		         try {
-					httpPost.setEntity(new StringEntity(JSONstring));
-					 try {
-						 response = client1.execute(httpPost);
-						 final int statusCode=response.getStatusLine().getStatusCode();
-						 if (statusCode == HttpStatus.SC_OK){ //new1
-							 HttpEntity entity = response.getEntity();
-							    BufferedReader rd = new BufferedReader(new InputStreamReader(entity.getContent()));
-					            String line = "";
-					            String str = "";
-					            while ((line = rd.readLine()) != null) {
+	}
+	private void serverUpdateContactsInfo(List<String> numbers){
+		SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
+		ContactUploadModel model = new ContactUploadModel(iPrefManager.getUserId(),null, numbers);
+		String JSONstring = new Gson().toJson(model);
+		DefaultHttpClient client1 = new DefaultHttpClient();
+		HttpPost httpPost = new HttpPost(Constants.SERVER_URL+ "/tiger/rest/contact/match");
+		httpPost = SuperChatApplication.addHeaderInfo(httpPost,true);
+		HttpResponse response = null;
+		try {
+			httpPost.setEntity(new StringEntity(JSONstring));
+			try {
+				response = client1.execute(httpPost);
+				final int statusCode=response.getStatusLine().getStatusCode();
+				if (statusCode == HttpStatus.SC_OK){ //new1
+					HttpEntity entity = response.getEntity();
+					BufferedReader rd = new BufferedReader(new InputStreamReader(entity.getContent()));
+					String line = "";
+					String str = "";
+					while ((line = rd.readLine()) != null) {
 
-					            	str+=line;
-					            }
-					            if(str!=null &&!str.equals("")){
-					            	str = str.trim();
+						str+=line;
+					}
+					if(str!=null &&!str.equals("")){
+						str = str.trim();
 //					            	Log.d(TAG, "serverUpdateContact sync response: "+str);
-					            	Gson gson = new GsonBuilder().create();
-									if (str==null || str.contains("error")){
+						Gson gson = new GsonBuilder().create();
+						if (str==null || str.contains("error")){
 //										contactSyncState = CONTACT_SYNC_FAILED;
 //										Log.d(TAG,"serverUpdateContactsInfo onSuccess error comming : "	+ str);
-										return;
-									}
+							return;
+						}
 
-									ContactUpDatedModel updatedModel = gson.fromJson(str,ContactUpDatedModel.class);
-									if (updatedModel != null) {
-										DBWrapper wrapper = DBWrapper.getInstance();
-											for (String st : updatedModel.mobileNumberUserBaseMap.keySet()) {
-												ContactUpDatedModel.UserDetail userDetail = updatedModel.mobileNumberUserBaseMap.get(st);
+						ContactUpDatedModel updatedModel = gson.fromJson(str,ContactUpDatedModel.class);
+						if (updatedModel != null) {
+							DBWrapper wrapper = DBWrapper.getInstance();
+							for (String st : updatedModel.mobileNumberUserBaseMap.keySet()) {
+								ContactUpDatedModel.UserDetail userDetail = updatedModel.mobileNumberUserBaseMap.get(st);
 //											}
 //										for (UserResponseDetail userDetail : loginObj.directoryUserSet) {
-											if(userDetail.userState!=null){
-												if(userDetail.userState.equals("inactive"))
-													iPrefManager.saveUserExistence(userDetail.userName,false);
-					                        	 else if(userDetail.userState.equals("active"))
-					                        		 iPrefManager.saveUserExistence(userDetail.userName,true);
-											}
-											String number = wrapper.getContactNumber(userDetail.userName);
-											if(number!=null && !number.equals("")){
-												wrapper.updateAtMeContactStatus(number);
-												firstTimeAdmin = true;
-												continue;
-											}
+								if(userDetail.userState!=null){
+									if(userDetail.userState.equals("inactive"))
+										iPrefManager.saveUserExistence(userDetail.userName,false);
+									else if(userDetail.userState.equals("active"))
+										iPrefManager.saveUserExistence(userDetail.userName,true);
+								}
+								String number = wrapper.getContactNumber(userDetail.userName);
+								if(number!=null && !number.equals("")){
+									wrapper.updateAtMeContactStatus(number);
+									firstTimeAdmin = true;
+									continue;
+								}
 //											UserResponseDetail userDetail = loginObj.directoryUserSet.get(st);
-										//Alter Modified Tables here
+								//Alter Modified Tables here
 //										wrapper.alterTable(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, new String[]{DatabaseConstants.FLAT_NUMBER, DatabaseConstants.BUILDING_NUMBER,
 //												DatabaseConstants.ADDRESS, DatabaseConstants.RESIDENCE_TYPE});
-										ContentValues contentvalues = new ContentValues();
-										contentvalues.put(DatabaseConstants.USER_NAME_FIELD,userDetail.userName);
-										contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(1));
-										contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,userDetail.mobileNumber);
-										int id = userDetail.userName.hashCode();
-										if (id < -1)
-											id = -(id);
-										contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD,Integer.valueOf(id));
-										contentvalues.put(DatabaseConstants.RAW_CONTACT_ID,Integer.valueOf(id));
-										contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, (userDetail.name != null ? userDetail.name : ""));
-										contentvalues.put(DatabaseConstants.CONTACT_TYPE_FIELD, userDetail.type);
-										contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD,Integer.valueOf(0));
-										contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-										contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
-										contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
+								ContentValues contentvalues = new ContentValues();
+								contentvalues.put(DatabaseConstants.USER_NAME_FIELD,userDetail.userName);
+								contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(1));
+								contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,userDetail.mobileNumber);
+								int id = userDetail.userName.hashCode();
+								if (id < -1)
+									id = -(id);
+								contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD,Integer.valueOf(id));
+								contentvalues.put(DatabaseConstants.RAW_CONTACT_ID,Integer.valueOf(id));
+								contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, (userDetail.name != null ? userDetail.name : ""));
+								contentvalues.put(DatabaseConstants.CONTACT_TYPE_FIELD, userDetail.type);
+								contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD,Integer.valueOf(0));
+								contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
+								contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
+								contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
 
-										//Add Address Details
-										contentvalues.put(DatabaseConstants.FLAT_NUMBER, userDetail.flatNumber);
-										contentvalues.put(DatabaseConstants.BUILDING_NUMBER, userDetail.buildingNumber);
-										contentvalues.put(DatabaseConstants.ADDRESS, userDetail.address);
-										contentvalues.put(DatabaseConstants.RESIDENCE_TYPE, userDetail.residenceType);
+								//Add Address Details
+								contentvalues.put(DatabaseConstants.FLAT_NUMBER, userDetail.flatNumber);
+								contentvalues.put(DatabaseConstants.BUILDING_NUMBER, userDetail.buildingNumber);
+								contentvalues.put(DatabaseConstants.ADDRESS, userDetail.address);
+								contentvalues.put(DatabaseConstants.RESIDENCE_TYPE, userDetail.residenceType);
 
-										contentvalues.put(DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
-										//Save USerID and SG in DB
-										contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
-										contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
+								contentvalues.put(DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
+								//Save USerID and SG in DB
+								contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
+								contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
-										System.out.println("TABLE_NAME_CONTACT_NUMBERS : "+contentvalues.toString());
-										if(!userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
-											wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
-										if(userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
-											iPrefManager.saveDisplayName((userDetail.name != null ? userDetail.name : ""));
-										iPrefManager.saveUserServerName(userDetail.userName, (userDetail.name != null ? userDetail.name : ""));
-										if(userDetail.currentStatus!=null)
-											iPrefManager.saveUserStatusMessage(userDetail.userName, userDetail.currentStatus);
-										if(userDetail.department!=null)
-											iPrefManager.saveUserDepartment(userDetail.userName, userDetail.department);
-										if(userDetail.designation!=null)
-											iPrefManager.saveUserDesignation(userDetail.userName, userDetail.designation);
-										if(userDetail.gender!=null){
-											iPrefManager.saveUserGender(userDetail.userName, userDetail.gender);
-										}
-										ContactUpDatedModel.UserDetail.PrivacyStatusMap privacyStatusMap = userDetail.getPrivacyStatusMap();
-										if(privacyStatusMap!=null){
-											if(privacyStatusMap.dnc == 1)
-												iPrefManager.saveStatusDNC(userDetail.userName, true);
-											else
-												iPrefManager.saveStatusDNC(userDetail.userName, false);
-											if(privacyStatusMap.dnm == 1)
-												iPrefManager.saveStatusDNM(userDetail.userName, true);
-											else
-												iPrefManager.saveStatusDNM(userDetail.userName, false);
-										}
-										if(userDetail.imageFileId!=null){
-											iPrefManager.saveUserFileId(userDetail.userName, userDetail.imageFileId);
-											if(userDetail.imageFileId!=null && !userDetail.imageFileId.equals("")){
-												Message msg = new Message();
-												Bundle data = new Bundle();
-												data.putString("TaskMessage",userDetail.imageFileId);
-												msg.setData(data);
-												mainTask.sendMessage(msg);
-											}
-										}
+								System.out.println("TABLE_NAME_CONTACT_NUMBERS : "+contentvalues.toString());
+								if(!userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
+									wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
+								if(userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
+									iPrefManager.saveDisplayName((userDetail.name != null ? userDetail.name : ""));
+								iPrefManager.saveUserServerName(userDetail.userName, (userDetail.name != null ? userDetail.name : ""));
+								if(userDetail.currentStatus!=null)
+									iPrefManager.saveUserStatusMessage(userDetail.userName, userDetail.currentStatus);
+								if(userDetail.department!=null)
+									iPrefManager.saveUserDepartment(userDetail.userName, userDetail.department);
+								if(userDetail.designation!=null)
+									iPrefManager.saveUserDesignation(userDetail.userName, userDetail.designation);
+								if(userDetail.gender!=null){
+									iPrefManager.saveUserGender(userDetail.userName, userDetail.gender);
+								}
+								ContactUpDatedModel.UserDetail.PrivacyStatusMap privacyStatusMap = userDetail.getPrivacyStatusMap();
+								if(privacyStatusMap!=null){
+									if(privacyStatusMap.dnc == 1)
+										iPrefManager.saveStatusDNC(userDetail.userName, true);
+									else
+										iPrefManager.saveStatusDNC(userDetail.userName, false);
+									if(privacyStatusMap.dnm == 1)
+										iPrefManager.saveStatusDNM(userDetail.userName, true);
+									else
+										iPrefManager.saveStatusDNM(userDetail.userName, false);
+								}
+								if(userDetail.imageFileId!=null){
+									iPrefManager.saveUserFileId(userDetail.userName, userDetail.imageFileId);
+									if(userDetail.imageFileId!=null && !userDetail.imageFileId.equals("")){
+										Message msg = new Message();
+										Bundle data = new Bundle();
+										data.putString("TaskMessage",userDetail.imageFileId);
+										msg.setData(data);
+										mainTask.sendMessage(msg);
 									}
 								}
-					            }
-
-				            }
-					} catch (ClientProtocolException e) {
-//						contactSyncState = CONTACT_SYNC_FAILED;
-					} catch (IOException e) {
-//						contactSyncState = CONTACT_SYNC_FAILED;
-					}catch(Exception e){
-//						contactSyncState = CONTACT_SYNC_FAILED;
+							}
+						}
 					}
 
-				} catch (UnsupportedEncodingException e1) {
-//					contactSyncState = CONTACT_SYNC_FAILED;
-				}catch(Exception e){
-//					contactSyncState = CONTACT_SYNC_FAILED;
 				}
-			System.out.println("[HomeScreen : Contacts ID : Done for - "+iPrefManager.getUserDomain());
-			DBWrapper.getInstance().updateSGContactsLoaded(iPrefManager.getUserDomain(), "true");
+			} catch (ClientProtocolException e) {
+//						contactSyncState = CONTACT_SYNC_FAILED;
+			} catch (IOException e) {
+//						contactSyncState = CONTACT_SYNC_FAILED;
+			}catch(Exception e){
+//						contactSyncState = CONTACT_SYNC_FAILED;
+			}
+
+		} catch (UnsupportedEncodingException e1) {
+//					contactSyncState = CONTACT_SYNC_FAILED;
+		}catch(Exception e){
+//					contactSyncState = CONTACT_SYNC_FAILED;
 		}
-		public static String formatNumber(String str){
-			try{
-				if(str==null)
-					return null;
+		System.out.println("[HomeScreen : Contacts ID : Done for - "+iPrefManager.getUserDomain());
+		DBWrapper.getInstance().updateSGContactsLoaded(iPrefManager.getUserDomain(), "true");
+	}
+	public static String formatNumber(String str){
+		try{
+			if(str==null)
+				return null;
 
-				boolean isCountryCheckingNeeded = false;
-				if(str.startsWith("00"))
+			boolean isCountryCheckingNeeded = false;
+			if(str.startsWith("00"))
 				isCountryCheckingNeeded = true;
-				if(str.length()>1)
-					while(str.startsWith("0")){
-						if(str.length()>1)
-							str = str.substring(1);
-						else break;
-					}
+			if(str.length()>1)
+				while(str.startsWith("0")){
+					if(str.length()>1)
+						str = str.substring(1);
+					else break;
+				}
 
 
-			boolean isPlus = str.contains("+");
+			boolean isPlus = str.contains("+")?true:false;
 			if(isPlus)
 				isCountryCheckingNeeded = true;
 
@@ -2735,11 +2770,11 @@ public void onComposeClick(View view){
 			if(isCountryCheckingNeeded){
 				for(int i = 5;i>=1;i--){
 					replacingCode = str.substring(0, i);
-				if(SuperChatApplication.countrySet.contains(replacingCode)){
-					str = replacingCode+"-"+str.replaceFirst(replacingCode, "");
-					isNumberModified = true;
-					break;
-				}}
+					if(SuperChatApplication.countrySet.contains(replacingCode)){
+						str = replacingCode+"-"+str.replaceFirst(replacingCode, "");
+						isNumberModified = true;
+						break;
+					}}
 			}
 			if(!isNumberModified)
 			{
@@ -2750,243 +2785,243 @@ public void onComposeClick(View view){
 					str = code+"-"+str;
 			}
 
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return str;
+	}
+	private class GetVersionCode extends AsyncTask<String, String, String> {
+		public final Pattern CURRENT_VERSION_REGEX = Pattern.compile(".*?softwareVersion.*?[>](.*?)[<][/]div.*?");
+		@Override
+		protected String doInBackground(String...voids) {
+			String version = null;
+			try{
+				version = getData("https://play.google.com/store/apps/details?id=com.superchat");
+				if(version!=null && !version.equals(""))
+					version = getCurrentVersion(version);
 			}catch(Exception e){
 				e.printStackTrace();
 			}
-			return str;
+			return version;
 		}
-		private class GetVersionCode extends AsyncTask<String, String, String> {
-			public final Pattern CURRENT_VERSION_REGEX = Pattern.compile(".*?softwareVersion.*?[>](.*?)[<][/]div.*?");
-		    @Override
-		    protected String doInBackground(String...voids) {
-				String version = null;
-				try{
-				version = getData("https://play.google.com/store/apps/details?id=com.superchat");
-				if(version!=null && !version.equals(""))
-				version = getCurrentVersion(version);
-				}catch(Exception e){
-					e.printStackTrace();
-				}
-		         return version;
-		    }
-		    public  String getCurrentVersion(String data) {
+		public  String getCurrentVersion(String data) {
 
-	            data = data.replaceAll("\\s+", " ");
+			data = data.replaceAll("\\s+", " ");
 
-	            Matcher m = CURRENT_VERSION_REGEX.matcher(data);
+			Matcher m = CURRENT_VERSION_REGEX.matcher(data);
 
-	            if (m.matches()) {
+			if (m.matches()) {
 
-	                  return m.group(1).trim();
+				return m.group(1).trim();
 
-	            }
+			}
 
-	            return null;
+			return null;
 
-	      }
+		}
 
 
 
-	      public String getData(String urlPath) {
-	    	  try{
-	    	  URL url = new URL(urlPath);
+		public String getData(String urlPath) {
+			try{
+				URL url = new URL(urlPath);
 
-	    	  HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+				HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
 //	    	   urlConnection.setSSLSocketFactory(getSocketFactory());
-	    	  urlConnection.connect();
-	    	   java.io.InputStream input = urlConnection.getInputStream();
+				urlConnection.connect();
+				java.io.InputStream input = urlConnection.getInputStream();
 
-	    	  int count;
+				int count;
 
 //	            java.io.InputStream input = conection.getInputStream();
-	            // getting file length
-				  int lenghtOfFile = urlConnection.getContentLength();
-				  // input stream to read file - with 8k buffer
+				// getting file length
+				int lenghtOfFile = urlConnection.getContentLength();
+				// input stream to read file - with 8k buffer
 //				  java.io.InputStream input = new BufferedInputStream(urlConnection.openStream());
-				  // Output stream to write file
-				  byte data[] = new byte[4096];
-				  long total = 0;
-				  StringBuilder sb = new StringBuilder();
-				  while ((count = input.read(data)) != -1) {
+				// Output stream to write file
+				byte data[] = new byte[4096];
+				long total = 0;
+				StringBuilder sb = new StringBuilder();
+				while ((count = input.read(data)) != -1) {
 
 
 
 //	            while (input.read(b) > 0) {
 
-	                  sb.append(new String(data, Charset.forName("utf-8")));
+					sb.append(new String(data, Charset.forName("utf-8")));
 
-	            }
-
-	            input.close();
-
-	            return sb.toString();
-	    	  }catch(Throwable e){
-	    		  e.printStackTrace();
-	    		  Log.d(TAG, "Error throwing in version fetching from play store."+e.toString());
-	    	  }
-	    	  return null;
-	      }
-		    @Override
-		    protected void onPostExecute(String onlineVersion) {
-		        super.onPostExecute(onlineVersion);
-		        String currentVersion = getCurrentAppVersion();
-		        if (onlineVersion != null && !onlineVersion.isEmpty()) {
-		            if (!currentVersion.equals(onlineVersion) && versionCompare(currentVersion,onlineVersion)>0) {
-		            	Toast.makeText(HomeScreen.this, "Updates available.", Toast.LENGTH_LONG).show();
-		            	showUpdateDialog("Update Available!","Do you want to update \"SuperChat\"?");
-		            	iPrefManager.setUpdateCheck(false);
-		            }else
-		            	iPrefManager.setUpdateCheck(true);
-		        }else
-		        	iPrefManager.setUpdateCheck(true);//Toast.makeText(HomeScreen.this, "Current version " + currentVersion + "playstore version " + onlineVersion, Toast.LENGTH_LONG).show();
-
-//		        Log.d("update", "Current version " + currentVersion + "playstore version " + onlineVersion);
-		    }
-		}
-		 private int  versionCompare(String currentVersion, String onlineVersion) {
-			 try{
-			 	if(currentVersion==null || onlineVersion == null)
-			 		return 0;
-		        String[] currentVersionData = currentVersion.split("[.]");
-
-		        String[] onlineVersionData = onlineVersion.split("[.]");
-
-
-
-		        Integer[] currentVersionInt = new Integer[3];
-
-		        Integer[] onlineVersionInt = new Integer[3];
-
-
-
-		        for (int i = 0; i < 3; i++) {
-
-		              currentVersionInt[i] = Integer.parseInt(currentVersionData[i].trim());
-
-		        }
-
-		        for (int i = 0; i < 3; i++) {
-
-		              onlineVersionInt[i] = Integer.parseInt(onlineVersionData[i].trim());
-
-		        }
-
-
-
-		        for (int i = 0; i < 3; i++) {
-		              if (currentVersionInt[i] < onlineVersionInt[i]) {
-		                    return 1;
-		              } else if (currentVersionInt[i] > onlineVersionInt[i]) {
-		                    return -1;
-		              }
-		        }
-			 }catch(Exception e){}
-		        return 0;
-		  }
-		public void showUpdateDialog(final String title, final String s) {
-			final Dialog bteldialog = new Dialog(this);
-			bteldialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-			bteldialog.setCanceledOnTouchOutside(true);
-			bteldialog.setContentView(R.layout.custom_dialog_two_button);
-			if(title!=null){
-				((TextView)bteldialog.findViewById(R.id.id_dialog_title)).setText(title);
 				}
-			((TextView)bteldialog.findViewById(R.id.id_dialog_message)).setText(s);
-			((TextView)bteldialog.findViewById(R.id.id_send)).setText("Update Now");
-			((TextView)bteldialog.findViewById(R.id.id_cancel)).setText("Later");
-			bteldialog.findViewById(R.id.id_send).setOnTouchListener(new OnTouchListener() {
 
-				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					bteldialog.cancel();
-//					startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.superchat")));
-					try {
+				input.close();
 
-						Intent intent = new Intent(Intent.ACTION_VIEW);
-			            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			            intent.setData(Uri.parse("market://details?id=com.superchat"));
-			            startActivity(intent);
-
-			        } catch (Exception anfe) {
-			        	try{
-				        	Intent intent = new Intent(Intent.ACTION_VIEW);
-				            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				            intent.setData(Uri.parse("http://play.google.com/store/apps/details?id=com.superchat"));
-				            startActivity(intent);
-			        	}catch(Exception e){}
-			        }
-					return false;
-				}
-			});
-	bteldialog.findViewById(R.id.id_cancel).setOnTouchListener(new OnTouchListener() {
-
-				@Override
-				public boolean onTouch(View v, MotionEvent event) {
-					bteldialog.cancel();
-					return false;
-				}
-			});
-			bteldialog.show();
-		}
-
-		public void showPopup(View v){
-			 PopupMenu popup = new PopupMenu(this, v);
-			 popup.setOnMenuItemClickListener(this);
-			 if (publicGroupTab.isSelected())// && iPrefManager.isDomainAdmin())
-				 popup.getMenu().add(0,0,0,getResources().getString(R.string.create_group));
-
-			 if(contactMenuLayout.isSelected()){
-				 if(iPrefManager.isDomainAdmin()){
-					 popup.getMenu().add(0,2,0,getResources().getString(R.string.create_broadcast_list));
-					 popup.getMenu().add(0,3,0,getResources().getString(R.string.invite_member));
-				 } else if(iPrefManager.isDomainSubAdmin()){
-					 popup.getMenu().add(0,2,0,getResources().getString(R.string.create_broadcast_list));
-					 popup.getMenu().add(0,3,0,getResources().getString(R.string.invite_member));
-				 }else if(SharedPrefManager.getInstance().isOpenDomain()){
-//			 		popup.getMenu().add(0,3,0,getResources().getString(R.string.invite_member));
-			 	}
-			 }
-			 popup.getMenu().add(0,1,0,getResources().getString(R.string.settings));
-			 popup.show();
+				return sb.toString();
+			}catch(Throwable e){
+				e.printStackTrace();
+				Log.d(TAG, "Error throwing in version fetching from play store."+e.toString());
+			}
+			return null;
 		}
 		@Override
-		public boolean onMenuItemClick(MenuItem item) {
-			// TODO Auto-generated method stub
-			  switch (item.getItemId()) {
-		        case 0: // Create A group
-		        	Intent intent = new Intent(HomeScreen.this, CreateGroupScreen.class);
-					intent.putExtra(Constants.CHANNEL_CREATION, true);
-					startActivity(intent);
-					return true;
-		        case 1: // Settings
-		        	intent = new Intent(HomeScreen.this, MoreScreen.class);
-					startActivity(intent);
-					return true;
-		        case 2: // create_broadcast_list
-		        	intent = new Intent(SuperChatApplication.context, CreateBroadCastScreen.class);
-					intent.putExtra(Constants.BROADCAST, true);
-					startActivity(intent);
-		        	return true;
-		        case 3: // invite_member
-		        	intent = new Intent(SuperChatApplication.context, BulkInvitationScreen.class);
-					startActivity(intent);
-		        	return true;
-			  }
-			return false;
-		}
-//============================
-		 public boolean isServiceRunning(String serviceClassName){
-		        final ActivityManager activityManager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
-		        final List<RunningServiceInfo> services = activityManager.getRunningServices(Integer.MAX_VALUE);
+		protected void onPostExecute(String onlineVersion) {
+			super.onPostExecute(onlineVersion);
+			String currentVersion = getCurrentAppVersion();
+			if (onlineVersion != null && !onlineVersion.isEmpty()) {
+				if (!currentVersion.equals(onlineVersion) && versionCompare(currentVersion,onlineVersion)>0) {
+					Toast.makeText(HomeScreen.this, "Updates available.", Toast.LENGTH_LONG).show();
+					showUpdateDialog("Update Available!","Do you want to update \"SuperChat\"?");
+					iPrefManager.setUpdateCheck(false);
+				}else
+					iPrefManager.setUpdateCheck(true);
+			}else
+				iPrefManager.setUpdateCheck(true);//Toast.makeText(HomeScreen.this, "Current version " + currentVersion + "playstore version " + onlineVersion, Toast.LENGTH_LONG).show();
 
-		        for (RunningServiceInfo runningServiceInfo : services) {
+//		        Log.d("update", "Current version " + currentVersion + "playstore version " + onlineVersion);
+		}
+	}
+	private int  versionCompare(String currentVersion, String onlineVersion) {
+		try{
+			if(currentVersion==null || onlineVersion == null)
+				return 0;
+			String[] currentVersionData = currentVersion.split("[.]");
+
+			String[] onlineVersionData = onlineVersion.split("[.]");
+
+
+
+			Integer[] currentVersionInt = new Integer[3];
+
+			Integer[] onlineVersionInt = new Integer[3];
+
+
+
+			for (int i = 0; i < 3; i++) {
+
+				currentVersionInt[i] = Integer.parseInt(currentVersionData[i].trim());
+
+			}
+
+			for (int i = 0; i < 3; i++) {
+
+				onlineVersionInt[i] = Integer.parseInt(onlineVersionData[i].trim());
+
+			}
+
+
+
+			for (int i = 0; i < 3; i++) {
+				if (currentVersionInt[i] < onlineVersionInt[i]) {
+					return 1;
+				} else if (currentVersionInt[i] > onlineVersionInt[i]) {
+					return -1;
+				}
+			}
+		}catch(Exception e){}
+		return 0;
+	}
+	public void showUpdateDialog(final String title, final String s) {
+		final Dialog bteldialog = new Dialog(this);
+		bteldialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		bteldialog.setCanceledOnTouchOutside(true);
+		bteldialog.setContentView(R.layout.custom_dialog_two_button);
+		if(title!=null){
+			((TextView)bteldialog.findViewById(R.id.id_dialog_title)).setText(title);
+		}
+		((TextView)bteldialog.findViewById(R.id.id_dialog_message)).setText(s);
+		((TextView)bteldialog.findViewById(R.id.id_send)).setText("Update Now");
+		((TextView)bteldialog.findViewById(R.id.id_cancel)).setText("Later");
+		((TextView)bteldialog.findViewById(R.id.id_send)).setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				bteldialog.cancel();
+//					startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.superchat")));
+				try {
+
+					Intent intent = new Intent(Intent.ACTION_VIEW);
+					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					intent.setData(Uri.parse("market://details?id=com.superchat"));
+					startActivity(intent);
+
+				} catch (Exception anfe) {
+					try{
+						Intent intent = new Intent(Intent.ACTION_VIEW);
+						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						intent.setData(Uri.parse("http://play.google.com/store/apps/details?id=com.superchat"));
+						startActivity(intent);
+					}catch(Exception e){}
+				}
+				return false;
+			}
+		});
+		((TextView)bteldialog.findViewById(R.id.id_cancel)).setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				bteldialog.cancel();
+				return false;
+			}
+		});
+		bteldialog.show();
+	}
+
+	public void showPopup(View v){
+		PopupMenu popup = new PopupMenu(this, v);
+		popup.setOnMenuItemClickListener(this);
+		if (publicGroupTab.isSelected())// && iPrefManager.isDomainAdmin())
+			popup.getMenu().add(0,0,0,getResources().getString(R.string.create_group));
+
+		if(contactMenuLayout.isSelected()){
+			if(iPrefManager.isDomainAdmin()){
+				popup.getMenu().add(0,2,0,getResources().getString(R.string.create_broadcast_list));
+				popup.getMenu().add(0,3,0,getResources().getString(R.string.invite_member));
+			} else if(iPrefManager.isDomainSubAdmin()){
+				popup.getMenu().add(0,2,0,getResources().getString(R.string.create_broadcast_list));
+				popup.getMenu().add(0,3,0,getResources().getString(R.string.invite_member));
+			}else if(SharedPrefManager.getInstance().isOpenDomain()){
+//			 		popup.getMenu().add(0,3,0,getResources().getString(R.string.invite_member));
+			}
+		}
+		popup.getMenu().add(0,1,0,getResources().getString(R.string.settings));
+		popup.show();
+	}
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+			case 0: // Create A group
+				Intent intent = new Intent(HomeScreen.this, CreateGroupScreen.class);
+				intent.putExtra(Constants.CHANNEL_CREATION, true);
+				startActivity(intent);
+				return true;
+			case 1: // Settings
+				intent = new Intent(HomeScreen.this, MoreScreen.class);
+				startActivity(intent);
+				return true;
+			case 2: // create_broadcast_list
+				intent = new Intent(SuperChatApplication.context, CreateBroadCastScreen.class);
+				intent.putExtra(Constants.BROADCAST, true);
+				startActivity(intent);
+				return true;
+			case 3: // invite_member
+				intent = new Intent(SuperChatApplication.context, BulkInvitationScreen.class);
+				startActivity(intent);
+				return true;
+		}
+		return false;
+	}
+	//============================
+	public boolean isServiceRunning(String serviceClassName){
+		final ActivityManager activityManager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
+		final List<RunningServiceInfo> services = activityManager.getRunningServices(Integer.MAX_VALUE);
+
+		for (RunningServiceInfo runningServiceInfo : services) {
 //		        	System.out.println("ClassName : "+runningServiceInfo.service.getClassName());
-		            if (runningServiceInfo.service.getClassName().equals(serviceClassName)){
-		                return true;
-		            }
-		        }
-		        return false;
-		     }
+			if (runningServiceInfo.service.getClassName().equals(serviceClassName)){
+				return true;
+			}
+		}
+		return false;
+	}
 	//-----------------------------------------------
 	private void getBulletinMessages() {
 		try {
@@ -3366,15 +3401,15 @@ public void onComposeClick(View view){
 
 
 	}
-//------------------------- Clear Data to switch for another SG ------------------------------------------
+	//------------------------- Clear Data to switch for another SG ------------------------------------------
 	boolean isSwitchSG;
 	int selectedTab = 0;
 
 	/**
 	 * When next Supergroup is clicked to change
 	 * @param sg
-     */
-	public void switchSG(String sg){
+	 */
+	public void switchSG(String sg, boolean confirmation){
 		//Testing
 		String sg_name = sg.substring(sg.indexOf("_") + 1);
 //		ArrayList<JoinedDomainNameSet> joined = DBWrapper.getInstance().getListOfJoinedSGs();
@@ -3386,13 +3421,16 @@ public void onComposeClick(View view){
 
 		if(DBWrapper.getInstance().isSGActive(sg_name)) {
 			//Check if that group is deactivated then show alert
-			String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
-			isSwitchSG = true;
-			selectedTab = mViewPager.getCurrentItem();
-			drawerFragment.fragmentClose();
-//			updateUserData(sg);
-			updateUserData(sg);
-			markSGActive(sg_name);
+//			String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
+			if(confirmation){
+				showCustomDialogWith2Buttons(sg, "Do you want to switch?");
+			}else {
+				isSwitchSG = true;
+				selectedTab = mViewPager.getCurrentItem();
+				drawerFragment.fragmentClose();
+				updateUserData(sg);
+				markSGActive(sg_name);
+			}
 		}else{
 			//Show Alert Screen to switch Screen.
 			drawerFragment.fragmentClose();
@@ -3418,49 +3456,49 @@ public void onComposeClick(View view){
 	/**
 	 * Maek a SG active
 	 * @param sgname
-     */
-    private void markSGActive(final String sgname){
-        try{
-            Call call = objApi.getApi(this).markSGActive(sgname);
-            call.enqueue(new RetrofitRetrofitCallback<MarkSGActive>(this) {
-                @Override
-                protected void onResponseVoidzResponse(Call call, Response response) {
-                    System.out.println("Retrofit : onResponseVoidzResponse 1 - "+response.toString());
+	 */
+	private void markSGActive(final String sgname){
+		try{
+			Call call = objApi.getApi(this).markSGActive(sgname);
+			call.enqueue(new RetrofitRetrofitCallback<MarkSGActive>(this) {
+				@Override
+				protected void onResponseVoidzResponse(Call call, Response response) {
+					System.out.println("Retrofit : onResponseVoidzResponse 1 - "+response.toString());
 
-                }
+				}
 
-                @Override
-                protected void onResponseVoidzObject(Call call, MarkSGActive response) {
+				@Override
+				protected void onResponseVoidzObject(Call call, MarkSGActive response) {
 					if(progressDialog != null){
 						progressDialog.dismiss();
 						progressDialog = null;
 					}
-                    System.out.println("Retrofit : onResponseVoidzObject 2 - "+response.toString());
+					System.out.println("Retrofit : onResponseVoidzObject 2 - "+response.toString());
 					if(Build.VERSION.SDK_INT >= 11)
 						new SignInTaskOnServer(sgname).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					else
 						new SignInTaskOnServer(sgname).execute();
 
-                }
+				}
 
-                @Override
-                protected void common() {
+				@Override
+				protected void common() {
 					System.out.println("Retrofit : onResponseVoidzObject 3 - ");
 
-                }
-            });
-        } catch(Exception e){
-            objExceptione.printStackTrace(e);
+				}
+			});
+		} catch(Exception e){
+			objExceptione.printStackTrace(e);
 
-        }
-    }
+		}
+	}
 //-------------------------------------------------------------------------
 
 	/**
 	 * Update the below items in left pannel
 	 * @param text
 	 * @param fileId
-     */
+	 */
 	public void updateSlidingDrawer(String text , String fileId) {
 		drawerFragment.currentSGName.setText("" + text);
 		if(fileId != null && fileId.trim().length() > 0)
@@ -3468,20 +3506,20 @@ public void onComposeClick(View view){
 		drawerFragment.user.setText("" + SharedPrefManager.getInstance().getDisplayName() + "(You)");
 	}
 
-//-------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	private boolean setProfilePic(ImageView picView, String groupPicId) {
-	//		System.out.println("groupPicId : "+groupPicId);
+		//		System.out.println("groupPicId : "+groupPicId);
 		String img_path = getThumbPath(groupPicId);
 		picView.setImageResource(R.drawable.about_icon);
 		if (groupPicId == null || (groupPicId != null && groupPicId.equals("")) || groupPicId.equals("clear") || groupPicId.contains("logofileid"))
 			return false;
 		if (img_path != null) {
 			File file1 = new File(img_path);
-	//			Log.d(TAG, "PicAvailibilty: "+ Uri.parse(filename)+" , "+filename+" , "+file1.exists());
+			//			Log.d(TAG, "PicAvailibilty: "+ Uri.parse(filename)+" , "+filename+" , "+file1.exists());
 			if (file1.exists()) {
 				picView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-	//				picView.setImageURI(Uri.parse(img_path));
-				setThumb(picView, img_path, groupPicId);
+				//				picView.setImageURI(Uri.parse(img_path));
+				setThumb((ImageView) picView, img_path, groupPicId);
 				return true;
 			} else {
 				if (Build.VERSION.SDK_INT >= 11)
@@ -3541,8 +3579,8 @@ public void onComposeClick(View view){
 	 *
 	 * @param path
 	 * @param bm
-     * @return
-     */
+	 * @return
+	 */
 	public static Bitmap rotateImage(String path, Bitmap bm) {
 		int orientation = 1;
 		try {
@@ -3574,7 +3612,7 @@ public void onComposeClick(View view){
 	/**
 	 * Single deactivated SG will be activated
 	 * @param super_group - Name of the SG to Activate
-     */
+	 */
 	private void activateSG(final String super_group){
 		try{
 			String imei = SuperChatApplication.getDeviceId();
