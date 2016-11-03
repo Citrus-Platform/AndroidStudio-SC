@@ -149,9 +149,11 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
 //			countryCode = bundle.getString(Constants.COUNTRY_CODE_TXT);
             mobileNumber = bundle.getString(Constants.MOBILE_NUMBER_TXT);
             invitedDomainNameSetTemp = DBWrapper.getInstance().getListOfInvitedSGs();
-            invitedDomainNameSet = new ArrayList<String>(invitedDomainNameSetTemp.size());
-            for(InvitedDomainNameSet invited : invitedDomainNameSetTemp){
-                invitedDomainNameSet.add(invited.getDomainName());
+            if(invitedDomainNameSetTemp != null) {
+                invitedDomainNameSet = new ArrayList<String>(invitedDomainNameSetTemp.size());
+                for (InvitedDomainNameSet invited : invitedDomainNameSetTemp) {
+                    invitedDomainNameSet.add(invited.getDomainName());
+                }
             }
 //            invitedDomainNameSet = bundle.getStringArrayList(KEY_INVITED_DOMAIN_SET);
             if (invitedDomainNameSet != null && !invitedDomainNameSet.isEmpty())

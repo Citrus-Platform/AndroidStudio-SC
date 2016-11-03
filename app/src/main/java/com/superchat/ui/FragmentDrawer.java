@@ -171,6 +171,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         // Inflating view layout
         View layout = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         recyclerView = (RecyclerView) layout.findViewById(R.id.drawerList);
+        ArrayList<InvitedDomainNameSet> invite = DBWrapper.getInstance().getListOfInvitedSGs();
 
         //current SG data//////////////////////////////////////////////
         currentSGName = (TextView) layout.findViewById(R.id.currentSGName);
@@ -181,7 +182,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         addSGTextView = (TextView) layout.findViewById(R.id.id_add_sg_txt);
 
         invitedNotificationCount = (TextView)layout.findViewById(R.id.invitedNotificationCount);
-        invitedNotificationCount.setText(""+DBWrapper.getInstance().getListOfInvitedSGs().size());
+        if(invite != null && invite.size() > 0)
+            invitedNotificationCount.setText(""+invite.size());
 
 
         /*int muteId = DBWrapper.getInstance().getSGMuteInfo(SharedPrefManager.getInstance().getUserDomain());
