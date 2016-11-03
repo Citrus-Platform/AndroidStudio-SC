@@ -339,7 +339,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                     model.setInviteSGName(data.getStringExtra("SG_NAME"));
                     model.setInviteSGDisplayName(data.getStringExtra("SG_DISPLAY_NAME"));
                     model.setInviteSGFileID(data.getStringExtra("SG_FILE_ID"));
-                    model.setInviteSGDisplayName(data.getStringExtra("SG_USER_NAME"));
+                    model.setInviteUserName(data.getStringExtra("SG_USER_NAME"));
                     model.setInviteUserID(data.getLongExtra("SG_USER_ID", -1));
                     model.setInviteUserPassword(data.getStringExtra("SG_USER_PASSWORD"));
 

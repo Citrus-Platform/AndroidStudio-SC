@@ -1565,7 +1565,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		final String sg = model.getInviteUserName();
 		bteldialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		bteldialog.setCanceledOnTouchOutside(false);
-		bteldialog.setContentView(R.layout.custom_dialog);
+		bteldialog.setContentView(R.layout.custom_dialog_layout);
 		((TextView)bteldialog.findViewById(R.id.id_dialog_message)).setText(message);
 		((TextView)bteldialog.findViewById(R.id.id_cancel)).setOnTouchListener(new OnTouchListener() {
 
