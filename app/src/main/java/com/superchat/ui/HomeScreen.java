@@ -1135,10 +1135,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			}
 			if(isSwitchSG){
 				isSwitchSG = false;
+
 				if(chatFragment != null)
 					chatFragment.notifyChatRecieve("", "");
-//				loadFragments();
-//				chatFragment.refreshList();
 				//Switch to chat
 				if(frompush) {
 					Intent intent = new Intent(SuperChatApplication.context, ChatListScreen.class);
@@ -1151,6 +1150,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					startActivity(intent);
 					frompush = false;
 				}
+				if(selectedTab >= 0)
+					mViewPager.setCurrentItem(selectedTab);
 			}
 			//Get all the shared ID's - This call is for everyone
 			String shared_id_data = sharedPrefManager.getSharedIDData();
@@ -3357,6 +3358,7 @@ public void onComposeClick(View view){
 	}
 //------------------------- Clear Data to switch for another SG ------------------------------------------
 	boolean isSwitchSG;
+	int selectedTab = 0;
 
 	/**
 	 * When next Supergroup is clicked to change
@@ -3370,11 +3372,13 @@ public void onComposeClick(View view){
 //		OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
 //		activateSG(sg_name);
 
+		iPrefManager.setSGListData(null);
 
 		if(DBWrapper.getInstance().isSGActive(sg_name)) {
 			//Check if that group is deactivated then show alert
 			String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
 			isSwitchSG = true;
+			selectedTab = mViewPager.getCurrentItem();
 			drawerFragment.fragmentClose();
 //			updateUserData(sg);
 			updateUserData(sg);

@@ -343,7 +343,11 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             case CODE_INVITE: {
                 try {
                     String SG_NAME = data.getStringExtra("SG_NAME");
-                    ((HomeScreen) getActivity()).switchSG(SG_NAME);
+                    String user = SharedPrefManager.getInstance().getUserPhone();
+                    if(user != null && user.contains("-"))
+                        user = user.replace("-", "");
+                    DBWrapper.getInstance().updateSGTypeValue(SG_NAME, 2);//Joined
+                    ((HomeScreen) getActivity()).switchSG(user + "_" + SG_NAME);
                 } catch (Exception e) {
 
                 }

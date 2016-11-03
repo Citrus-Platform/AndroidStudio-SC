@@ -1351,6 +1351,8 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 											iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
 											iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
 											iPrefManager.saveUserDomain(regObj.getDomainName());
+											//This is added specifically for the Invite part.
+											iPrefManager.saveUserPassword(regObj.getPassword());
 											if (selectedSGDisplayName != null)
 												iPrefManager.saveCurrentSGDisplayName(selectedSGDisplayName);
 											iPrefManager.saveUserId(regObj.getUserId());

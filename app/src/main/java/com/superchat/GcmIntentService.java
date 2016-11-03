@@ -131,7 +131,7 @@ public class GcmIntentService extends IntentService {
 
 				}else{
 					Log.i(TAG, "isMyServiceRunning : false");
-					if(ChatService.xmppConectionStatus){
+					if(!ChatService.xmppConectionStatus){
 						Log.i(TAG, "ChatService.xmppConectionStatus: "+ChatService.xmppConectionStatus);
 						ChatService.xmppConectionStatus = false;
 						stopService(new Intent(SuperChatApplication.context, ChatService.class));
