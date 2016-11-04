@@ -120,6 +120,7 @@ public class SharedPrefManager {
 	private final String SG_LIST_DATA = "sg_list_data";
 	private final String CONTACT_SYNCHED = "contact_synched";
 	private final String GROUP_LOADED = "group_loaded";
+	private final String USER_SEL_NAV_INDEX = "sel_nav_index";
 
 	private final String BROADCAST_FIRST_TIME_NAME = "broadcast_first_time_name";
 	private final String BACKUP_FILE_ID = "backup_file_id";
@@ -1006,6 +1007,16 @@ public boolean isContactModified(){
 
 	public String getUserPhone() {
 		String value = pref.getString(USER_PHONE, null);
+		return value;
+	}
+
+	public void saveSelectedIndexNav(int index) {
+		editor.putInt(USER_SEL_NAV_INDEX, index);
+		editor.commit();
+	}
+
+	public int getSelectedIndexNav() {
+		int value = pref.getInt(USER_SEL_NAV_INDEX, 0);
 		return value;
 	}
 
