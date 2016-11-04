@@ -2576,7 +2576,7 @@ public class ChatService extends Service implements interfaceInstances {
 							// new MUCUserProvider());
 							int last_online_time = 0;
 							if(prefManager.getLastOnline(prefManager.getUserDomain()) > 0)
-							 	last_online_time = (int)((System.currentTimeMillis() - (prefManager.getLastOnline(prefManager.getUserDomain()) - (60 * 1000)))/1000);
+							 	last_online_time = (int)((System.currentTimeMillis() - (prefManager.getLastOnline(prefManager.getUserDomain()) - (100 * 1000)))/1000);
 							System.out.println("(last_online_time) - "+last_online_time);
 							if (!connection.isAuthenticated())
 								connection.login(userName, password);

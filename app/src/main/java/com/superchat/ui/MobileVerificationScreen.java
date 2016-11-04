@@ -798,6 +798,11 @@ public void onDestroy(){
 							}
 							return;
 						}						
+					}else if(objUserModel.iStatus != null && objUserModel.iStatus.equals("error")){
+						if(objUserModel.iMessage != null)
+							showDialog(objUserModel.iMessage);
+						else
+							showDialog("Error generating code on SMS.");
 					}else{
 							isAutoServerCode = false;
 							timeCounterView.setText("00:00");
