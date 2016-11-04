@@ -8,6 +8,7 @@ import com.superchat.model.MarkSGActive;
 import com.superchat.model.RegistrationForm;
 import com.superchat.model.RegistrationFormResponse;
 import com.superchat.model.UserProfileModel;
+import com.superchat.model.multiplesg.MultipleSGObject;
 import com.superchat.retrofit.request.model.UserAdminRequest;
 import com.superchat.retrofit.response.model.UserAdminResponse;
 
@@ -51,5 +52,8 @@ public interface RetrofitInterface {
 
     @POST(PREFIX_URL + "user/login/")
     Call<LoginResponseModel> validateAutoConflict(@Body LoginModel requestObject);
+
+    @GET(PREFIX_URL + "user/domainprofiledata")
+    Call<MultipleSGObject> getSGListForMobile(@Query("mobileNumber") String mobileNumber);
 
 }

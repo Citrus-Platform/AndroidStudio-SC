@@ -154,6 +154,8 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
 
         searchBoxView.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable editable) {
+                if(searchBoxView.getText().toString().trim().length() == 0)
+                    return;
                 String sg = SharedPrefManager.getInstance().getUserDomain();
                 String s1 = (new StringBuilder()).append("%")
                         .append(searchBoxView.getText().toString().trim()).append("%")
@@ -424,17 +426,14 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
     public void updateCursorForSearch(String s, String as[]) {
         Log.i(TAG, "Updating cursor");
         String sg = SharedPrefManager.getInstance().getUserDomain();
-
-        if (s == null) {
-            s = DatabaseConstants.VOPIUM_FIELD + "!=?" + " AND " + DatabaseConstants.USER_SG + "='?'";
-            as = (new String[]{"2", sg});
+        if(s == null){
+            s = DatabaseConstants.VOPIUM_FIELD + "!=? AND " +  DatabaseConstants.USER_SG + "='?'";
+            as = (new String[] { "2", sg});
         }
         cursor = DBWrapper.getInstance().query(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, null, s, as,
-                DatabaseConstants.VOPIUM_FIELD + " ASC, " + DatabaseConstants.CONTACT_NAMES_FIELD + " COLLATE NOCASE");
-
-//        cursor = DBWrapper.getInstance().getContactsCursor(sg);
-        System.out.println("Cursor size = "+cursor.getCount());
-        if (cursor != null && adapter != null) {
+                DatabaseConstants.VOPIUM_FIELD+" ASC, "+DatabaseConstants.CONTACT_NAMES_FIELD +" COLLATE NOCASE");
+        if (cursor != null && adapter != null)
+        {
             adapter.changeCursor(cursor);
             adapter.notifyDataSetChanged();
         }

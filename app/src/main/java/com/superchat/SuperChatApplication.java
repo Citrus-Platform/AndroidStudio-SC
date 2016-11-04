@@ -24,6 +24,7 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
@@ -58,6 +59,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import io.fabric.sdk.android.Fabric;
 
 //import com.crashlytics.android.Crashlytics;
 //import com.google.android.gms.analytics.GoogleAnalytics;
@@ -113,7 +116,7 @@ public class SuperChatApplication extends MultiDexApplication {
 	
 	public void onCreate() {
 		super.onCreate();
-//		Fabric.with(this, new Crashlytics());
+		Fabric.with(this, new Crashlytics());
 		mInstance = this;
 		context = getApplicationContext();
 		 density = context.getResources().getDisplayMetrics().density;
