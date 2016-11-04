@@ -63,6 +63,8 @@ import com.superchat.model.ErrorModel;
 import com.superchat.model.RegMatchCodeModel;
 import com.superchat.model.RegistrationForm;
 import com.superchat.model.multiplesg.InvitedDomainNameSet;
+import com.superchat.model.multiplesg.MultipleSGObject;
+import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.ui.BulkInvitationAdapter.AppContact;
 import com.superchat.utils.AppUtil;
 import com.superchat.utils.BitmapDownloader;
@@ -97,6 +99,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Response;
+
+import static com.superchat.interfaces.interfaceInstances.objApi;
+import static com.superchat.interfaces.interfaceInstances.objExceptione;
+
 public class SupergroupListingScreenNew extends Activity implements OnClickListener, OnItemClickListener {
 
     public final static String KEY_INVITED_DOMAIN_SET = "INVITEDDOMAINSET";
@@ -112,7 +120,6 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
         starter.putExtras(bundle);
         context.startActivity(starter);
     }
-
     private static final String TAG = "SupergroupListingScreen";
     HashMap<String, AppContact> allContacts = new HashMap<String, AppContact>();
     ArrayList<AppContact> dataList;
@@ -310,40 +317,11 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
             expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
             expandableListAdapter = new ExpandableListAdapter(this, expandableListTitle, expandableListDetail);
             expandableListView.setAdapter(expandableListAdapter);
-
             expandableListView.expandGroup(0);
-
-            /*expandableListView.setOnGroupExpandListener(new OnGroupExpandListener() {
-
-                @Override
-                public void onGroupExpand(int groupPosition) {
-                    String title_name = expandableListTitle.get(groupPosition);
-                    if (title_name.startsWith("Invited SuperGroups")) {
-                        expandableListAdapter.setExpandedType(ExpandableListAdapter.INVITED_SUPERGROUPS);
-                    } else if (title_name.startsWith("Owned SuperGroups")) {
-                        expandableListAdapter.setExpandedType(ExpandableListAdapter.OWNED_SUPERGROUPS);
-                    } else if (title_name.startsWith("Joined SuperGroups")) {
-                        expandableListAdapter.setExpandedType(ExpandableListAdapter.JOINED_SUPERGROUPS);
-                    }
-                }
-            });
-
-            expandableListView.setOnGroupCollapseListener(new OnGroupCollapseListener() {
-
-                @Override
-                public void onGroupCollapse(int groupPosition) {
-//		                Toast.makeText(getApplicationContext(),
-//		                        expandableListTitle.get(groupPosition) + " List Collapsed.",
-//		                        Toast.LENGTH_SHORT).show();
-
-                }
-            });*/
-
             expandableListView.setOnChildClickListener(new OnChildClickListener() {
                 @Override
                 public boolean onChildClick(ExpandableListView parent, View v,
                                             int groupPosition, int childPosition, long id) {
-
                     InvitedDomainNameSet invited = expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition);
                     String sg_display_name = null;
                     String title_name = expandableListTitle.get(groupPosition);
@@ -367,41 +345,6 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                     org_name = invited.getOrgName();
 
                     domainType = invited.getDomainType();
-
-
-
-//                    try {
-//                        JSONObject json = new JSONObject(superGroupName);
-//                        if (json != null && json.has("domainName")) {
-//                            sg_name = json.getString("domainName");
-//                            superGroupName = sg_name;
-//                        } else
-//                            sg_name = superGroupName;
-//                        if (json != null && json.has("displayName"))
-//                            sg_display_name = json.getString("displayName");
-//                        else
-//                            sg_display_name = sg_name;
-//                        if (json != null && json.has("adminName"))
-//                            inviter = json.getString("adminName");
-//                        else
-//                            inviter = null;
-//                        if (json != null && json.has("logoFileId"))
-//                            file_id = json.getString("logoFileId");
-//                        else
-//                            file_id = null;
-//                        if (json != null && json.has("orgName"))
-//                            org_name = json.getString("orgName");
-//                        else
-//                            org_name = null;
-//                        if (json != null && json.has("domainType"))
-//                            domainType = json.getString("domainType");
-//                        else
-//                            domainType = null;
-//                    } catch (JSONException e) {
-//                        // TODO Auto-generated catch block
-//                        e.printStackTrace();
-//                    }
-//		                registerUserOnServer(superGroupName, v);
                     if (title_name.startsWith("Invited SuperGroups")) {
                         newUser = true;
                         showWelcomeScreen(sg_name, sg_display_name, inviter, org_name, file_id, 1, domainType);
@@ -413,6 +356,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                 }
             });
         }
+        getSGList(SharedPrefManager.getInstance().getUserPhone());
     }
 
     public void onResume() {
@@ -1671,6 +1615,112 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                 }
             } else
                 showDialog("Please try again later.");
+        }
+    }
+    //-----------------------------------------------------------------------------------
+
+    ProgressDialog dialog = null;
+        private void getSGList(final String mobileNumber){
+        try{
+            dialog = ProgressDialog.show(SupergroupListingScreenNew.this, "","Loading invite list, please wait...", true);
+            Call call = objApi.getApi(this).getSGListForMobile(mobileNumber);
+            System.out.println("Retrofit : Start ");
+            call.enqueue(new RetrofitRetrofitCallback<MultipleSGObject>(this) {
+                @Override
+                protected void onResponseVoidzResponse(Call call, Response response) {
+                    System.out.println("Retrofit : onResponseVoidzResponse 1 - "+response.toString());
+
+                }
+
+                @Override
+                protected void onResponseVoidzObject(Call call, MultipleSGObject response) {
+                    System.out.println("Retrofit : onResponseVoidzObject 2 - "+response.toString());
+                    ArrayList<InvitedDomainNameSet> invitedSG = new ArrayList<>();
+                    invitedSG = response.getInvitedDomainNameSet();
+                    if(invitedSG != null && invitedSG.size() > 0) {
+                        DBWrapper.getInstance().addAndUpdateInvitedSGData(invitedSG);
+                    }
+
+                    //Redraw screen.
+                    invitedDomainNameSetTemp = DBWrapper.getInstance().getListOfInvitedSGs();
+                    if(invitedDomainNameSetTemp != null) {
+                        invitedDomainNameSet = new ArrayList<String>(invitedDomainNameSetTemp.size());
+                        for (InvitedDomainNameSet invited : invitedDomainNameSetTemp) {
+                            invitedDomainNameSet.add(invited.getDomainName());
+                        }
+                    }
+                    if (invitedDomainNameSet != null && !invitedDomainNameSet.isEmpty())
+                        Collections.sort(invitedDomainNameSet);
+                    int size = (invitedDomainNameSet != null ? invitedDomainNameSet.size() : 0);
+                    if (size == 1) {
+                        newUser = true;
+                        superGroupName = invitedDomainNameSet.get(0);
+                    }
+                    if (size > 0) {
+                        //This is new member, show him different view
+                        listView = (ListView) findViewById(R.id.id_contacts_list);
+                        setContentView(R.layout.sg_listing_for_invites_from_lhs);
+                        if (size > 0) {
+                            expandableListView = (ExpandableListView) findViewById(R.id.expandableListView);
+                            expandableListDetail = new HashMap<String, ArrayList<InvitedDomainNameSet>>();
+                            int list_size = invitedDomainNameSet != null ? invitedDomainNameSet.size() : 0;
+                            if (list_size > 0) {
+                                expandableListDetail.put("Invited SuperGroups" + "(" + invitedDomainNameSet.size() + ")", invitedDomainNameSetTemp);
+                            }
+                            expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
+                            expandableListAdapter = new ExpandableListAdapter(SupergroupListingScreenNew.this, expandableListTitle, expandableListDetail);
+                            expandableListView.setAdapter(expandableListAdapter);
+                            expandableListView.expandGroup(0);
+                            expandableListView.setOnChildClickListener(new OnChildClickListener() {
+                                @Override
+                                public boolean onChildClick(ExpandableListView parent, View v,
+                                                            int groupPosition, int childPosition, long id) {
+                                    InvitedDomainNameSet invited = expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition);
+                                    String sg_display_name = null;
+                                    String title_name = expandableListTitle.get(groupPosition);
+                                    String inviter = null;
+                                    String file_id = null;
+                                    String org_name = null;
+                                    String domainType = null;
+
+                                    superGroupName = invited.getDomainName();
+                                    String sg_name = superGroupName;
+
+                                    if(invited.getDomainDisplayName() != null)
+                                        sg_display_name = invited.getDomainDisplayName();
+                                    else
+                                        sg_display_name = superGroupName;
+
+                                    inviter = invited.getAdminName();
+
+                                    file_id = invited.getLogoFileId();
+
+                                    org_name = invited.getOrgName();
+
+                                    domainType = invited.getDomainType();
+                                    if (title_name.startsWith("Invited SuperGroups")) {
+                                        newUser = true;
+                                        showWelcomeScreen(sg_name, sg_display_name, inviter, org_name, file_id, 1, domainType);
+                                    } else if (title_name.startsWith("Owned SuperGroups"))
+                                        showWelcomeScreen(sg_name, sg_display_name, inviter, org_name, file_id, 2, domainType);
+                                    else
+                                        showWelcomeScreen(sg_name, sg_display_name, inviter, org_name, file_id, 3, domainType);
+                                    return false;
+                                }
+                            });
+                        }
+                    }
+                }
+
+                @Override
+                protected void common() {
+                    dialog.dismiss();
+
+                }
+            });
+        } catch(Exception e){
+            objExceptione.printStackTrace(e);
+
         }
     }
 }

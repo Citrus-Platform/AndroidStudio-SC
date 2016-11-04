@@ -495,6 +495,13 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
             superGroupName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
 //        if (superGroupIcon != null && SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID") != null)
 //            setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
+
+        if(sgSwitch && isAllChannelTab){
+            if (Build.VERSION.SDK_INT >= 11)
+                new OpenGroupTaskOnServer(true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            else
+                new OpenGroupTaskOnServer(true).execute();
+        }
     }
 
     public void onPause() {
@@ -509,6 +516,13 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
     }
 
     private static int screenNumber;
+
+    private boolean sgSwitch;
+
+    public void setSgSwitch(boolean sgSwitch){
+        this.sgSwitch = sgSwitch;
+
+    }
 
     public void setPageNumber(int screenNumber) {
         this.screenNumber = screenNumber;

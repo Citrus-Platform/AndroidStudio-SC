@@ -192,6 +192,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	boolean isLoginProcessing;
 	boolean isContactSync;
 	boolean isContactSynching;
+	boolean isSwitchingSG;
 	boolean noLoadingNeeded = false;
 	public static boolean firstTimeAdmin = false;
 
@@ -1259,8 +1260,11 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					startActivity(intent);
 					frompush = false;
 				}
-				if(selectedTab >= 0)
+				if(selectedTab >= 0) {
+					if(selectedTab == 2)
+						publicGroupFragment.setSgSwitch(true);
 					mViewPager.setCurrentItem(selectedTab);
+				}
 			}
 			//Get all the shared ID's - This call is for everyone
 			String shared_id_data = sharedPrefManager.getSharedIDData();
@@ -1296,6 +1300,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				json = null;
 				new_user = false;
 			}
+			isSwitchingSG = false;
 			sharedPrefManager.setDataLoadedForSG(sharedPrefManager.getUserDomain(), true);
 			syncProcessStart(false);
 			isLoginProcessing = false;
@@ -3534,7 +3539,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		if(!SharedPrefManager.getInstance().getUserDomain().equalsIgnoreCase(sg_name)){
 		iPrefManager.setSGListData(null);
 
-		if(isContactSynching){
+		if(isContactSynching || isSwitchingSG){
 			drawerFragment.fragmentClose();
 			Toast.makeText(this, "Loading some data, please wait.", Toast.LENGTH_LONG).show();
 			return;
@@ -3544,6 +3549,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //			String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
 				//Update SG counter for clicked SG
 				DBWrapper.getInstance().updateSGNewMessageCount(sg_name, 0);
+				isSwitchingSG = true;
 				if(mSinchServiceInterface != null)
 					mSinchServiceInterface.stopClient();
 				if(confirmation){
