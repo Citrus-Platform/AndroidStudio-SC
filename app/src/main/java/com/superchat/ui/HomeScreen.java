@@ -1826,6 +1826,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			frompush = extras.getBoolean("FROM_NOTIFICATION");
 			switchUserName = extras.getString(ChatDBConstants.USER_NAME_FIELD);
 			switchUserDisplayName = extras.getString(ChatDBConstants.CONTACT_NAMES_FIELD);
+			if(switchUserDisplayName != null && switchUserDisplayName.contains("[") && switchUserDisplayName.contains("]"))
+				switchUserDisplayName = switchUserDisplayName.substring(switchUserDisplayName.indexOf(']') +1).trim();
 			if(frompush) {
 				String user = iPrefManager.getUserPhone();
 				if(user != null && user.contains("-"))

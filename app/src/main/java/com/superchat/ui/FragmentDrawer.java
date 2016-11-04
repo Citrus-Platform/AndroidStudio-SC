@@ -214,7 +214,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         if (file_id != null && file_id.trim().length() > 0) {
             setProfilePic(displayPictureCurrent, file_id);
         }else{
-            setProfilePic(displayPictureCurrent, "");
+//            setProfilePic(displayPictureCurrent, "");
+            displayPictureCurrent.setImageResource(R.drawable.logo_small);
         }
         user.setText("" + SharedPrefManager.getInstance().getDisplayName() + " (You)");
 
@@ -250,7 +251,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         if (file_id != null && file_id.trim().length() > 0) {
             setProfilePic(displayPictureCurrent, file_id);
         }else{
-            setProfilePic(displayPictureCurrent, "");
+//            setProfilePic(displayPictureCurrent, "");
+            displayPictureCurrent.setImageResource(R.drawable.logo_small);
         }
         user.setText("" + SharedPrefManager.getInstance().getDisplayName() + "(You)");
         super.onResume();
@@ -463,7 +465,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         if (file_id != null && file_id.trim().length() > 0) {
             setProfilePic(displayPictureCurrent, file_id);
         }else{
-            setProfilePic(displayPictureCurrent, "");
+//            setProfilePic(displayPictureCurrent, "");
+            displayPictureCurrent.setImageResource(R.drawable.logo_small);
         }
     }
 

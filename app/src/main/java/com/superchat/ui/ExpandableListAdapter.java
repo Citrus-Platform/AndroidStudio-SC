@@ -132,7 +132,8 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 if (fileId != null && fileId.length() > 0) {
                     setProfilePic(itemControllerChild.displayPicture, fileId);
                 }else{
-                    setProfilePic(itemControllerChild.displayPicture, null);
+//                    setProfilePic(itemControllerChild.displayPicture, null);//logo_small
+                    itemControllerChild.displayPicture.setImageResource(R.drawable.logo_small);
                 }
                 //count of child//////////////
                 boolean muteId = SharedPrefManager.getInstance().isSnoozeExpired(item.actualName);
