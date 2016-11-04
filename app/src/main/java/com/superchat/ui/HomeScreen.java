@@ -191,6 +191,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	ObjectAnimator syncAnimation;
 	boolean isLoginProcessing;
 	boolean isContactSync;
+	boolean isContactSynching;
 	boolean noLoadingNeeded = false;
 	public static boolean firstTimeAdmin = false;
 
@@ -462,6 +463,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(mToolbar);
 
+
 		drawerFragment = (FragmentDrawer)
 				getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
 		drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
@@ -481,10 +483,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		publicGroupTab.setOnClickListener(this);
 		loadFragments();
 		iPrefManager = SharedPrefManager.getInstance();
-		if(Build.VERSION.SDK_INT >= 11)
-			new SignInTaskOnServer(null).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-		else
-			new SignInTaskOnServer(null).execute();
 
 		//UserID, UserName, Display Name
 //		if(SharedPrefManager.getInstance().getUserId() > 0)
@@ -602,10 +600,38 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		};
 		mViewPager.addOnPageChangeListener(mPageChangeListener);
 //		 titleIndicator.setOnPageChangeListener(mPageChangeListener);
-		startService(new Intent(SuperChatApplication.context, SinchService.class));
 
-		//Chrck for backUp and upload.
-		checkForBackUpAndUploadBackup();
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			frompush = extras.getBoolean("FROM_NOTIFICATION");
+			switchUserName = extras.getString(ChatDBConstants.USER_NAME_FIELD);
+			switchUserDisplayName = extras.getString(ChatDBConstants.CONTACT_NAMES_FIELD);
+			if(switchUserDisplayName != null && switchUserDisplayName.contains("[") && switchUserDisplayName.contains("]"))
+				switchUserDisplayName = switchUserDisplayName.substring(switchUserDisplayName.indexOf(']') +1).trim();
+			System.out.println(TAG + "onResume :: switchUserName - "+switchUserName+", switchUserDisplayName - "+switchUserDisplayName);
+//			if(frompush) {
+//				String user = iPrefManager.getUserPhone();
+//				if(user != null && user.contains("-"))
+//					user = user.replace("-", "");
+//				switchSG(user + "_" + extras.getString("DOMAIN_NAME"), false, null);
+//				return;
+//			}
+		}
+		if(frompush) {
+			String user = iPrefManager.getUserPhone();
+			if(user != null && user.contains("-"))
+				user = user.replace("-", "");
+				switchSG(user + "_" + extras.getString("DOMAIN_NAME"), false, null);
+			return;
+		}else {
+			if (Build.VERSION.SDK_INT >= 11)
+				new SignInTaskOnServer(null).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			else
+				new SignInTaskOnServer(null).execute();
+			startService(new Intent(SuperChatApplication.context, SinchService.class));
+			//Check for backUp and upload.
+			checkForBackUpAndUploadBackup();
+		}
 	}
 	private boolean isVerifiedUser(String mobileNumber) {
 		if (mobileNumber == null)
@@ -1133,7 +1159,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						messageService.chatLogin();
 					}
 					//Reset Sinch Service
-					if(mSinchServiceInterface != null)
+					if(mSinchServiceInterface != null && !frompush)
 						mSinchServiceInterface.startClient(sharedPrefManager.getUserName());
 //					startService(new Intent(SuperChatApplication.context, SinchService.class));
 				}
@@ -1278,6 +1304,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		List<String> numbers = new ArrayList<String>();
 		@Override
 		protected void onPreExecute() {
+			isContactSynching = true;
 			if(!firstTimeAdmin)
 				progressDialog = ProgressDialog.show(HomeScreen.this, "", "Contact loading. Please wait...", true);
 			super.onPreExecute();
@@ -1322,6 +1349,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				progressDialog.dismiss();
 				progressDialog = null;
 			}
+			isContactSynching = false;
 			if(iPrefManager.isFirstTime() || firstTimeAdmin || isContactSync){
 				if(isContactSync)
 					syncProcessStart(false);
@@ -1362,6 +1390,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		protected void onPreExecute() {
 //			if(iPrefManager.isFirstTime()|| isContactSync)
 //				progressDialog = ProgressDialog.show(HomeScreen.this, "", "Contact refreshing. Please wait...", true);
+			isContactSynching = true;
 			if(isContactSync)
 				syncProcessStart(true);
 			super.onPreExecute();
@@ -1506,6 +1535,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				progressDialog.dismiss();
 				progressDialog = null;
 			}
+			isContactSynching = false;
 			if(iPrefManager.isFirstTime()){
 				startService(new Intent(SuperChatApplication.context, ChatService.class));
 			}
@@ -1789,7 +1819,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	boolean frompush = false;
 	@Override
 	protected void onNewIntent(Intent intent) {
-
 		super.onNewIntent(intent);
 		String user_name;
 		Bundle extras = intent.getExtras();
@@ -1810,14 +1839,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		super.onResume();
 		isforeGround = true;
 		isLaunched = true;
+
 		isRWA = SharedPrefManager.getInstance().getDomainType().equals("rwa");
-//		System.out.println("[ON-RESUME CALLED]");
 
-//		System.out.println("[ON-RESUME 1]");
-//		startService(new Intent(SuperChatApplication.context, SinchService.class));
 		bindService(new Intent(this, SinchService.class), mCallConnection, Context.BIND_AUTO_CREATE);
-//		System.out.println("[ON-RESUME 2]");
-
 		bindService(new Intent(this, ChatService.class), mConnection,Context.BIND_AUTO_CREATE);
 		getShareInfo();
 		syncProcessStart(true);
@@ -3488,6 +3513,11 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //		activateSG(sg_name);
 
 		iPrefManager.setSGListData(null);
+
+		if(isContactSynching){
+			Toast.makeText(this, "Loading some data, please wait.", Toast.LENGTH_LONG).show();
+			return;
+		}
 
 		if(DBWrapper.getInstance().isSGActive(sg_name)) {
 			//Check if that group is deactivated then show alert

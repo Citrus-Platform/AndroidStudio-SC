@@ -740,7 +740,7 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 					+ ChatDBConstants.LAST_UPDATE_FIELD + ", MAX("
 					+ ChatDBConstants.LAST_UPDATE_FIELD + ") FROM "
 					+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO
-					+" WHERE "+ChatDBConstants.CONTACT_NAMES_FIELD + " like '"+searchKey + "' AND " + ChatDBConstants.USER_SG+"='"+sg_name+"'"
+					+" WHERE "+ChatDBConstants.MESSAGE_TYPE + "!=" + 3 + " AND " + ChatDBConstants.CONTACT_NAMES_FIELD + " like '"+searchKey + "' AND " + ChatDBConstants.USER_SG+"='"+sg_name+"'"
 					+" GROUP BY "
 					+ ChatDBConstants.CONTACT_NAMES_FIELD + " ORDER BY "
 					+ ChatDBConstants.LAST_UPDATE_FIELD + " DESC";

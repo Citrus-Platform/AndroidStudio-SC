@@ -121,28 +121,28 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                 }
             }
         ArrayList<JoinedDomainNameSet> joinedDomainNameSetTemp = DBWrapper.getInstance().getListOfJoinedSGs();
-        Collections.sort(joinedDomainNameSetTemp, new Comparator<JoinedDomainNameSet>() {
-            @Override
-            public int compare(final JoinedDomainNameSet object1, final JoinedDomainNameSet object2) {
-
-                String itemOne = "";
-                String itemTwo = "";
-                //////////////////////////
-                if(object1.getDomainDisplayName()!=null && object1.getDomainDisplayName().trim().length()>0){
-                    itemOne = object1.getDomainDisplayName().toUpperCase();
-                }else{
-                    itemOne = object1.getDomainName().toUpperCase();
-                }
-                //////////////////////////
-                if(object2.getDomainDisplayName()!=null && object2.getDomainDisplayName().trim().length()>0){
-                    itemTwo = object2.getDomainDisplayName().toUpperCase();
-                }else{
-                    itemTwo = object2.getDomainName().toUpperCase();
-                }
-                return itemOne.compareTo(itemTwo);
-            }
-        });
         if (joinedDomainNameSetTemp != null && joinedDomainNameSetTemp.size() > 0) {
+                Collections.sort(joinedDomainNameSetTemp, new Comparator<JoinedDomainNameSet>() {
+                    @Override
+                    public int compare(final JoinedDomainNameSet object1, final JoinedDomainNameSet object2) {
+
+                        String itemOne = "";
+                        String itemTwo = "";
+                        //////////////////////////
+                        if(object1.getDomainDisplayName()!=null && object1.getDomainDisplayName().trim().length()>0){
+                            itemOne = object1.getDomainDisplayName().toUpperCase();
+                        }else{
+                            itemOne = object1.getDomainName().toUpperCase();
+                        }
+                        //////////////////////////
+                        if(object2.getDomainDisplayName()!=null && object2.getDomainDisplayName().trim().length()>0){
+                            itemTwo = object2.getDomainDisplayName().toUpperCase();
+                        }else{
+                            itemTwo = object2.getDomainName().toUpperCase();
+                        }
+                        return itemOne.compareTo(itemTwo);
+                    }
+                });
                 for (int i = 0; i < joinedDomainNameSetTemp.size(); i++) {
                     String joinedDisplayName = "";
                     if(joinedDomainNameSetTemp.get(i).getDomainDisplayName()!=null &&
