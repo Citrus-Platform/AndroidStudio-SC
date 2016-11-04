@@ -44,7 +44,7 @@ import com.superchat.data.db.DBWrapper;
 import com.superchat.model.AdminRegistrationForm;
 import com.superchat.model.ErrorModel;
 import com.superchat.model.RegMatchCodeModel;
-import com.superchat.model.RegistrationForm;
+import com.superchat.model.multiplesg.Registration;
 import com.superchat.utils.AppUtil;
 import com.superchat.utils.CompressImage;
 import com.superchat.utils.Constants;
@@ -1519,7 +1519,7 @@ public class MainActivity extends FragmentActivity implements
 		if (validateInputForRegistration(true)) {
 			sharedPrefManager.saveUserOrgName("");
 			sharedPrefManager.saveDisplayName("");
-			RegistrationForm registrationForm = null;
+			Registration registrationForm = null;
 			String input = mobileNumberView.getText().toString();
 			if(input!=null && !sharedPrefManager.getRecentUsers().contains(input))
 				historyNumberAdapter.add(input);
@@ -1544,7 +1544,7 @@ public class MainActivity extends FragmentActivity implements
 				e.printStackTrace();
 			}
 			String clientVersion = "Android_"+version;
-					registrationForm = new RegistrationForm(formatedNumber, null, imei, null, clientVersion, null, "false");
+					registrationForm = new Registration(formatedNumber, null, imei, null, clientVersion, null, "false");
 					registrationForm.setToken(imei);
 					registrationForm.countryCode = countryCodeView.getText().toString().replace("+", "");
 					countryCode = registrationForm.countryCode;
@@ -1676,10 +1676,10 @@ public class MainActivity extends FragmentActivity implements
 //		};
 //	};
 	public class SignupTaskOnServer extends AsyncTask<String, String, String> {
-		RegistrationForm registrationForm;
+		Registration registrationForm;
 		ProgressDialog progressDialog = null;
 		View view1;
-		public SignupTaskOnServer(RegistrationForm registrationForm,final View view1){
+		public SignupTaskOnServer(Registration registrationForm,final View view1){
 			this.registrationForm = registrationForm;
 			this.view1 = view1;
 		}
@@ -1734,7 +1734,7 @@ public class MainActivity extends FragmentActivity implements
 //												showDialog("Please try again later.");
 											return str;
 										}
-										RegistrationForm regObj = gson.fromJson(str, RegistrationForm.class);
+										Registration regObj = gson.fromJson(str, Registration.class);
 										if (regObj != null) {
 											SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
 											if (iPrefManager != null && iPrefManager.getUserId() != 0) {
@@ -1904,7 +1904,7 @@ public class MainActivity extends FragmentActivity implements
 								return str;
 							}
 							Log.i(TAG, "SignupTaskForAdmin :: doInBackground : response:"+str);
-							RegistrationForm regObj = gson.fromJson(str, RegistrationForm.class);
+							Registration regObj = gson.fromJson(str, Registration.class);
 							if (regObj != null) {
 								SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
 								if (iPrefManager != null

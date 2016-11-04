@@ -177,6 +177,7 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
         searchBoxView.setVisibility(EditText.GONE);
         global_icon_white.setVisibility(View.VISIBLE);
         clearSearch.setVisibility(ImageView.GONE);
+        searchIcon.setVisibility(ImageView.GONE);
 
         ((Button) view.findViewById(R.id.id_settings)).setVisibility(View.GONE);
 
