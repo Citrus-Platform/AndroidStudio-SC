@@ -1217,8 +1217,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			if(isSwitchSG){
 				isSwitchSG = false;
 
-				if(chatFragment != null)
-					chatFragment.notifyChatRecieve("", "");
+//				if(chatFragment != null)
+//					chatFragment.notifyChatRecieve("", "");
 				//Switch to chat
 				if(frompush) {
 					Intent intent = new Intent(SuperChatApplication.context, ChatListScreen.class);
@@ -1231,8 +1231,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					startActivity(intent);
 					frompush = false;
 				}
-//				if(selectedTab >= 0)
-//					mViewPager.setCurrentItem(selectedTab);
+				if(selectedTab >= 0)
+					mViewPager.setCurrentItem(selectedTab);
 			}
 			//Get all the shared ID's - This call is for everyone
 			String shared_id_data = sharedPrefManager.getSharedIDData();
