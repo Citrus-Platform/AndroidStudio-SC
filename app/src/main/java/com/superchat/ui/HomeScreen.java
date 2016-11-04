@@ -1222,7 +1222,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					}
 //					if(!iPrefManager.isContactSynched()){
 //					if(!DBWrapper.getInstance().isSGContactsLoaded(iPrefManager.getUserDomain())){
-					if(iPrefManager.isDataLoadedForSG(iPrefManager.getUserDomain())){
+					if(!iPrefManager.isDataLoadedForSG(iPrefManager.getUserDomain())){
 						if(sharedPrefManager.isOpenDomain()){
 							if(Build.VERSION.SDK_INT >= 11)
 								new ContactMatchingLoadingTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

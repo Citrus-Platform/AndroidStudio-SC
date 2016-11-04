@@ -154,6 +154,7 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
 
         searchBoxView.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable editable) {
+                String sg = SharedPrefManager.getInstance().getUserDomain();
                 String s1 = (new StringBuilder()).append("%")
                         .append(searchBoxView.getText().toString().trim()).append("%")
                         .toString();
@@ -162,14 +163,15 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
                 String s2 = null;
                 if (i >= 1) {
                     if (isRWA) {
-                        s2 = DatabaseConstants.CONTACT_NAMES_FIELD + " like ? OR " + DatabaseConstants.FLAT_NUMBER + " like ? OR " + DatabaseConstants.BUILDING_NUMBER + " like ? AND " + DatabaseConstants.VOPIUM_FIELD + "!=?";
-                        as = (new String[]{s1, s1, s1, "2"});
+                        s2 = DatabaseConstants.CONTACT_NAMES_FIELD + " like ? OR " + DatabaseConstants.FLAT_NUMBER + " like ? OR " + DatabaseConstants.BUILDING_NUMBER + " like ? AND "
+                                + DatabaseConstants.VOPIUM_FIELD + "!=? AND "+ DatabaseConstants.USER_SG + "='?'";
+                        as = (new String[]{s1, s1, s1, "2", sg});
                     } else {
                         s2 = DatabaseConstants.CONTACT_NAMES_FIELD + " like ? AND " + DatabaseConstants.VOPIUM_FIELD + "!=?";
                         as = (new String[]{s1, "2"});
                     }
                 }
-                updateCursor(s2, as);
+                updateCursorForSearch(s2, as);
             }
 
             public void beforeTextChanged(CharSequence charsequence, int i,
@@ -411,6 +413,25 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
 //        cursor = DBWrapper.getInstance().query(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, null, s, as,
 //                DatabaseConstants.VOPIUM_FIELD + " ASC, " + DatabaseConstants.CONTACT_NAMES_FIELD + " COLLATE NOCASE");
         cursor = DBWrapper.getInstance().getContactsCursor(sg);
+//        System.out.println("Cursor size = "+cursor.getCount());
+        if (cursor != null && adapter != null) {
+            adapter.changeCursor(cursor);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    public void updateCursorForSearch(String s, String as[]) {
+        Log.i(TAG, "Updating cursor");
+        String sg = SharedPrefManager.getInstance().getUserDomain();
+
+        if (s == null) {
+            s = DatabaseConstants.VOPIUM_FIELD + "!=?" + " AND " + DatabaseConstants.USER_SG + "='?'";
+            as = (new String[]{"2", sg});
+        }
+        cursor = DBWrapper.getInstance().query(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, null, s, as,
+                DatabaseConstants.VOPIUM_FIELD + " ASC, " + DatabaseConstants.CONTACT_NAMES_FIELD + " COLLATE NOCASE");
+
+//        cursor = DBWrapper.getInstance().getContactsCursor(sg);
         System.out.println("Cursor size = "+cursor.getCount());
         if (cursor != null && adapter != null) {
             adapter.changeCursor(cursor);
