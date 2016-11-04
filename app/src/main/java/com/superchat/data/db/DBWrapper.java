@@ -2304,6 +2304,39 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+	/**
+	 * Add and Update Invited SG's in DB
+	 * @param list
+	 */
+	public void addAndUpdateInvitedSGData(ArrayList<InvitedDomainNameSet> list){
+		try{
+			for (InvitedDomainNameSet sg_data : list) {
+				ContentValues contentvalues = new ContentValues();
+				//Check if domain name is already added then skip.
+				int type = getSGUserTypeValue(sg_data.getDomainName());
+				if(type == -1) {
+					contentvalues.put(DatabaseConstants.DOMAIN_NAME, sg_data.getDomainName());
+					//contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDomainDisplayName());
+					contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDisplayName());
+					contentvalues.put(DatabaseConstants.DOMAIN_ADMIN_NAME, sg_data.getAdminName());
+					contentvalues.put(DatabaseConstants.DOMAIN_ORG_NAME, sg_data.getOrgName());
+					contentvalues.put(DatabaseConstants.DOMAIN_PRIVACY_TYPE, sg_data.getPrivacyType());
+					contentvalues.put(DatabaseConstants.DOMAIN_TYPE, sg_data.getDomainType());
+					contentvalues.put(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT, Integer.valueOf(sg_data.getUnreadCounter()));
+					contentvalues.put(DatabaseConstants.DOMAIN_CREATED_DATE, sg_data.getCreatedDate());
+					contentvalues.put(DatabaseConstants.DOMAIN_TYPE_VALUE, Integer.valueOf(3));
+					contentvalues.put(DatabaseConstants.DOMAIN_ORG_URL, sg_data.getOrgUrl());
+					contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
+					contentvalues.put(DatabaseConstants.DOMAIN_MUTE_INFO, Integer.valueOf(0));
+					long row = insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
+					if (row > 0)
+						Log.e("DBWrapper", "updateInvitedSGData count " + row);
+				}
+			}
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
 
 	/**
 	 * Returns SG Name
@@ -2453,8 +2486,8 @@ public boolean isContactModified(String rawId, int version){
 	 * @param sg
 	 * @return
      */
-	public long getSGUserTypeValue(String sg) {
-		long user_id = 0;
+	public int getSGUserTypeValue(String sg) {
+		int type = -1;
 		Cursor cursor = DBWrapper.getInstance().query(
 				DatabaseConstants.TABLE_NAME_MULTIPLE_SG,
 				new String[] { DatabaseConstants.DOMAIN_TYPE_VALUE },
@@ -2462,11 +2495,11 @@ public boolean isContactModified(String rawId, int version){
 				null);
 		if (cursor != null) {
 			while (cursor.moveToNext())
-				user_id = cursor.getInt(cursor.getColumnIndex(DatabaseConstants.DOMAIN_TYPE_VALUE));
+				type = cursor.getInt(cursor.getColumnIndex(DatabaseConstants.DOMAIN_TYPE_VALUE));
 		}
 		if (cursor != null)
 			cursor.close();
-		return user_id;
+		return type;
 	}
 
 	/**

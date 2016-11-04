@@ -348,31 +348,23 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         switch (requestCode) {
             case CODE_INVITE: {
                 try {
-
-//                    data.putExtra("SG_MOBILE", ""+inviteMobileNumber);
-//                    data.putExtra("SG_NAME", ""+inviteSGName);
-//                    data.putExtra("SG_DISPLAY_NAME", ""+inviteSGDisplayName);
-//                    data.putExtra("SG_FILE_ID", ""+inviteSGFileID);
-//                    data.putExtra("SG_USER_NAME", ""+inviteUserName);
-//                    data.putExtra("SG_USER_ID", inviteUserID);
-//                    data.putExtra("SG_USER_PASSWORD", ""+inviteUserPassword);
-
-                    InviteJoinDataModel model = new InviteJoinDataModel();
-                    String SG_NAME = data.getStringExtra("SG_NAME");
-                    model.setInviteMobileNumber(data.getStringExtra("SG_MOBILE"));
-                    model.setInviteSGName(data.getStringExtra("SG_NAME"));
-                    model.setInviteSGDisplayName(data.getStringExtra("SG_DISPLAY_NAME"));
-                    model.setInviteSGFileID(data.getStringExtra("SG_FILE_ID"));
-                    model.setInviteUserName(data.getStringExtra("SG_USER_NAME"));
-                    model.setInviteUserID(data.getLongExtra("SG_USER_ID", -1));
-                    model.setInviteUserPassword(data.getStringExtra("SG_USER_PASSWORD"));
-
-                    String user = SharedPrefManager.getInstance().getUserPhone();
-                    if (user != null && user.contains("-"))
-                        user = user.replace("-", "");
-                    DBWrapper.getInstance().updateSGTypeValue(SG_NAME, 2);
-                    DBWrapper.getInstance().updateSGActiveStatus(SG_NAME, "true");
-                    ((HomeScreen) getActivity()).switchSG(user + "_" + SG_NAME, true, model);
+                    if(data != null) {
+                        InviteJoinDataModel model = new InviteJoinDataModel();
+                        String SG_NAME = data.getStringExtra("SG_NAME");
+                        model.setInviteMobileNumber(data.getStringExtra("SG_MOBILE"));
+                        model.setInviteSGName(data.getStringExtra("SG_NAME"));
+                        model.setInviteSGDisplayName(data.getStringExtra("SG_DISPLAY_NAME"));
+                        model.setInviteSGFileID(data.getStringExtra("SG_FILE_ID"));
+                        model.setInviteUserName(data.getStringExtra("SG_USER_NAME"));
+                        model.setInviteUserID(data.getLongExtra("SG_USER_ID", -1));
+                        model.setInviteUserPassword(data.getStringExtra("SG_USER_PASSWORD"));
+                        String user = SharedPrefManager.getInstance().getUserPhone();
+                        if (user != null && user.contains("-"))
+                            user = user.replace("-", "");
+                        DBWrapper.getInstance().updateSGTypeValue(SG_NAME, 2);
+                        DBWrapper.getInstance().updateSGActiveStatus(SG_NAME, "true");
+                        ((HomeScreen) getActivity()).switchSG(user + "_" + SG_NAME, true, model);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
