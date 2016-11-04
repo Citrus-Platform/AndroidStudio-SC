@@ -613,6 +613,46 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		boolean isVerified = SharedPrefManager.getInstance().isMobileVerified(mobileNumber);
 		return isVerified;
 	}
+
+	private ServiceConnection mCallConnection = new ServiceConnection() {
+		// ------------ Changes for call ---------------
+		@Override
+		public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+			// if
+			// (SinchService.class.getName().equals(componentName.getClassName()))
+			{
+				mSinchServiceInterface = (SinchService.SinchServiceInterface) iBinder;
+				onServiceConnected();
+
+			}
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName componentName) {
+			// if
+			// (SinchService.class.getName().equals(componentName.getClassName()))
+			{
+				mSinchServiceInterface = null;
+				onServiceDisconnected();
+			}
+		}
+
+		protected void onServiceConnected() {
+			// Register the user for call
+			if (mSinchServiceInterface != null && !mSinchServiceInterface.isStarted()) {
+				mSinchServiceInterface.startClient(SharedPrefManager.getInstance().getUserName());
+			}
+		}
+
+		protected void onServiceDisconnected() {
+			// for subclasses
+		}
+
+		protected SinchService.SinchServiceInterface getSinchServiceInterface() {
+			return mSinchServiceInterface;
+		}
+	};
+
 	private ChatService messageService;
 	private ServiceConnection mConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder binder) {
@@ -1079,13 +1119,23 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					showDialog("Please try again later.", null);
 			}else{
 //				if (str!=null && str.contains("success"))
-				if(isSwitchSG && messageService != null) {
-					messageService.chatLogout();
-					messageService.chatLogin();
-
+				if(sharedPrefManager.isBackupCheckedForSG(sharedPrefManager.getUserDomain())) {
+					addNewGroupsAndBroadcastsToDB();
+				}else {
+					if (Build.VERSION.SDK_INT >= 11)
+						new CheckDataBackup().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					else
+						new CheckDataBackup().execute();
+				}
+				if(isSwitchSG) {
+					if(messageService != null) {
+						messageService.chatLogout();
+						messageService.chatLogin();
+					}
 					//Reset Sinch Service
-//					stopService(new Intent(SuperChatApplication.context, SinchService.class));
-					startService(new Intent(SuperChatApplication.context, SinchService.class));
+					if(mSinchServiceInterface != null)
+						mSinchServiceInterface.startClient(sharedPrefManager.getUserName());
+//					startService(new Intent(SuperChatApplication.context, SinchService.class));
 				}
 //				if(iPrefManager.isContactSynched() && iPrefManager.isGroupsLoaded()){
 				if(iPrefManager.isContactSynched(iPrefManager.getUserDomain()) && !DBWrapper.getInstance().isSGSharedIDLoaded(iPrefManager.getUserDomain())){
@@ -1131,7 +1181,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					}else{
 						if(isContactSync){
 							mViewPager.setCurrentItem(2);
-						}else
+						}
+						else
 							mViewPager.setCurrentItem(0);
 					}
 
@@ -1180,8 +1231,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					startActivity(intent);
 					frompush = false;
 				}
-				if(selectedTab >= 0)
-					mViewPager.setCurrentItem(selectedTab);
+//				if(selectedTab >= 0)
+//					mViewPager.setCurrentItem(selectedTab);
 			}
 			//Get all the shared ID's - This call is for everyone
 			String shared_id_data = sharedPrefManager.getSharedIDData();
@@ -1194,14 +1245,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				else
 					new GetSharedIDListFromServer().execute();
 			}
-			if(sharedPrefManager.isBackupCheckedForSG(sharedPrefManager.getUserDomain())) {
-				addNewGroupsAndBroadcastsToDB();
-			}else {
-				if (Build.VERSION.SDK_INT >= 11)
-					new CheckDataBackup().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-				else
-					new CheckDataBackup().execute();
-			}
+//			if(sharedPrefManager.isBackupCheckedForSG(sharedPrefManager.getUserDomain())) {
+//				addNewGroupsAndBroadcastsToDB();
+//			}else {
+//				if (Build.VERSION.SDK_INT >= 11)
+//					new CheckDataBackup().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//				else
+//					new CheckDataBackup().execute();
+//			}
 
 			if(new_user && messageService != null){
 				String json = finalJSONbject.toString();
@@ -1764,7 +1815,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //		System.out.println("[ON-RESUME CALLED]");
 
 //		System.out.println("[ON-RESUME 1]");
-		startService(new Intent(SuperChatApplication.context, SinchService.class));
+//		startService(new Intent(SuperChatApplication.context, SinchService.class));
+		bindService(new Intent(this, SinchService.class), mCallConnection, Context.BIND_AUTO_CREATE);
 //		System.out.println("[ON-RESUME 2]");
 
 		bindService(new Intent(this, ChatService.class), mConnection,Context.BIND_AUTO_CREATE);
@@ -1845,6 +1897,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						startActivityForResult(intent, 111);
 					}else
 						addNewGroupsAndBroadcastsToDB();
+
 				} catch (JSONException e) {
 
 					// TODO Auto-generated catch block
@@ -2483,7 +2536,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 							&& jsonobj.getString("status").equalsIgnoreCase("success")){
 						if(str != null && !str.equals("")){
 							parseSharedIDData(str);
-							System.out.println("[HomeScreen : SHared ID : Done for - "+SharedPrefManager.getInstance().getUserDomain());
+//							System.out.println("[HomeScreen : SHared ID : Done for - "+SharedPrefManager.getInstance().getUserDomain());
 							DBWrapper.getInstance().updateSGSharedIDLoaded(SharedPrefManager.getInstance().getUserDomain(), "true");
 						}
 					}//else Do Nothing
@@ -3440,6 +3493,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		if(DBWrapper.getInstance().isSGActive(sg_name)) {
 			//Check if that group is deactivated then show alert
 //			String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
+			if(mSinchServiceInterface != null)
+				mSinchServiceInterface.stopClient();
 			if(confirmation){
 				showCustomDialogWith2Buttons(model, "Do you want to switch?");
 			}else {

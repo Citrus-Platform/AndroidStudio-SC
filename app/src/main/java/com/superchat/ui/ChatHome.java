@@ -322,55 +322,27 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
 
     public void onActivityCreated(Bundle bundle) {
         onForeground = true;
-//		if(service!=null)
-//			service.setTypingListener(this);
-//		 chatClient = new XmppChatClient();
-//		 SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
-//			chatClient.setCustomChatNotification(R.layout.message_notifier, R.id.chat_person_name, R.id.chat_message, R.id.chat_notification_bubble_text, R.drawable.chatgreen);
-//			XmppChatClient.initChatService(EsiaChatApplication.context, iPrefManager.getUserName(), iPrefManager.getUserPassword(), Constants.CHAT_SERVER_URL);
-
-
-//		ChatDBWrapper wraper = ChatDBWrapper.getInstance(EsiaChatApplication.context);
-//		 cursor = wraper.getRecentChatList(null);
-//		 recentList = getListView();
-//		 if(cursor!=null && cursor.getCount() > 0){
-//			 	noneMessageView.setVisibility(TextView.GONE);
-//				String as[] = { DatabaseConstants.FROM_USER_FIELD};
-//				int ai[] = new int[1];
-//				ai[0] = R.id.chat_person_name;
-//				adapter = new ChatHomeAdapter(fragmentactivity,R.layout.chat_history_item, cursor, as, ai, 0,ChatHome.this);
-//				getListView().setAdapter(adapter);
-//
-//	    		if(ChatService.xmppConectionStatus){
-//					xmppStatusView.setImageResource(R.drawable.blue_dot);
-//				}else{
-//					xmppStatusView.setImageResource(R.drawable.red_dot);
-//					}	
-//		 }else
-//			noneMessageView.setVisibility(View.VISIBLE);
-
-//		new Timer().schedule(new TimerTask() {
-//			
-//			@Override
-//			public void run() {
-//				notifyActivityCreatedHandler.sendEmptyMessage(0);
-//			}
-//		}, 10);
-//		notifyActivityCreatedHandler.sendEmptyMessage(0);
         recentList = getListView();
         if (Build.VERSION.SDK_INT >= 11)
             new YourAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         else
             new YourAsyncTask().execute();
-//			chatClient.startClient(this);
         super.onActivityCreated(bundle);
+    }
+
+    public void loadMessageList(){
+        if (Build.VERSION.SDK_INT >= 11)
+            new YourAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        else
+            new YourAsyncTask().execute();
     }
 
     private class YourAsyncTask extends AsyncTask<String, Void, String> {
 
         protected void onPreExecute() {
 //			dialog = ProgressDialog.show(getActivity(), "","Loading. Please wait...", true);
-            progressBarView.setVisibility(ProgressBar.VISIBLE);
+            if(progressBarView != null)
+                progressBarView.setVisibility(ProgressBar.VISIBLE);
             super.onPreExecute();
         }
 
@@ -406,13 +378,14 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
                 }
             } else
                 noneMessageView.setVisibility(View.VISIBLE);
-
-            if (ChatService.xmppConectionStatus) {
-                xmppStatusView.setImageResource(R.drawable.blue_dot);
-            } else {
-                xmppStatusView.setImageResource(R.drawable.red_dot);
-            }
-            progressBarView.setVisibility(ProgressBar.GONE);
+//
+//            if (ChatService.xmppConectionStatus) {
+//                xmppStatusView.setImageResource(R.drawable.blue_dot);
+//            } else {
+//                xmppStatusView.setImageResource(R.drawable.red_dot);
+//            }
+            if(progressBarView != null)
+                progressBarView.setVisibility(ProgressBar.GONE);
             super.onPostExecute(result);
         }
     }
