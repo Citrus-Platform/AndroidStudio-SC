@@ -1349,7 +1349,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				progressDialog.dismiss();
 				progressDialog = null;
 			}
-			isContactSynching = false;
 			if(iPrefManager.isFirstTime() || firstTimeAdmin || isContactSync){
 				if(isContactSync)
 					syncProcessStart(false);
@@ -1357,7 +1356,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				isContactSync =false;
 				firstTimeAdmin = false;
 				iPrefManager.setContactSynched(iPrefManager.getUserDomain(), true);
-				if(contactsFragment!=null)
+				if(contactsFragment != null)
 					contactsFragment.showAllContacts();
 				int contactsCount = DBWrapper.getInstance().getAllNumbersCount();
 				if(iPrefManager.getNewContactsCounter()>=0 && (contactsCount-iPrefManager.getNewContactsCounter())>0 && iPrefManager.getChatCounter()>0){
@@ -1365,7 +1364,11 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					unseenContactView.setText(String.valueOf(iPrefManager.getChatCounter()));
 				}else
 					unseenContactView.setVisibility(View.GONE);
+			}else if(isContactSynching){
+				if(contactsFragment != null && selectedTab == 2)
+					contactsFragment.showAllContacts();
 			}
+			isContactSynching = false;
 //			if(SharedPrefManager.getInstance().isDomainAdmin()){
 //				if(Build.VERSION.SDK_INT >= 11)
 //					new DomainsUserTaskOnServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -1576,6 +1579,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						firstTimeAdmin = false;
 						contactsFragment.showAllContacts();
 					}
+					if(selectedTab == 2)
+						contactsFragment.showAllContacts();
 //					mAdapter.notifyDataSetChanged();
 //					mViewPager.setAdapter(mAdapter);
 //					mViewPager.setCurrentItem(0);

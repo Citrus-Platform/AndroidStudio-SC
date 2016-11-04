@@ -360,7 +360,7 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
         }
     }
 
-    private void updateCursor(String s, String as[]) {
+    public void updateCursor(String s, String as[]) {
         Log.i(TAG, "Updating cursor");
         String sg = SharedPrefManager.getInstance().getUserDomain();
 
