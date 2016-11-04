@@ -67,7 +67,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         return null;
     }
 
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final Item item = data.get(position);
         switch (item.type) {
             case HEADER:
@@ -195,6 +195,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     public void onClick(View v) {
                         SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance();
                         String user = sharedPrefManager.getUserPhone();
+                        sharedPrefManager.saveSelectedIndexNav(position);
                         if (user != null && user.contains("-"))
                             user = user.replace("-", "");
                         if (context != null)
