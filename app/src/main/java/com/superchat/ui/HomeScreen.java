@@ -978,6 +978,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 								for (GroupDetail groupDetail : loginObj.directoryGroupSet) {
 //										Log.d(TAG, "counter check  Login response : "+groupDetail.type+""+groupDetail.displayName+" , "+groupDetail.numberOfMembers);
 //										writeLogsToFile(groupDetail.groupName+" - "+groupDetail.displayName);
+									boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(groupDetail.groupName);
+									if (isFirstChat)
+										saveMessage(groupDetail.displayName, groupDetail.groupName, "Group created by " + groupDetail.userDisplayName);
+
 									sharedPrefManager.saveGroupInfo(groupDetail.groupName,SharedPrefManager.GROUP_ACTIVE_INFO,true);
 									sharedPrefManager.saveGroupName(groupDetail.groupName, groupDetail.displayName);
 									sharedPrefManager.saveGroupDisplayName(groupDetail.groupName, groupDetail.displayName);
@@ -1013,6 +1017,11 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 									System.out.println("HomeScreen :: SignInTaskOnServer : Writing Broadcast..");
 								}
 								for (BroadcastGroupDetail broadcastGroupDetail : loginObj.directoryBroadcastGroupSet) {
+
+									boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(broadcastGroupDetail.broadcastGroupName);
+									if (isFirstChat)
+										saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName, "Broadcast created by " + broadcastGroupDetail.userDisplayName);
+
 									sharedPrefManager.saveBroadCastName(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.displayName);
 									sharedPrefManager.saveBroadCastDisplayName(broadcastGroupDetail.broadcastGroupName, broadcastGroupDetail.displayName);
 									if(broadcastGroupDetail.activatedUserSet!=null)
@@ -1118,15 +1127,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				} else
 					showDialog("Please try again later.", null);
 			}else{
-//				if (str!=null && str.contains("success"))
-				if(sharedPrefManager.isBackupCheckedForSG(sharedPrefManager.getUserDomain())) {
-					addNewGroupsAndBroadcastsToDB();
-				}else {
-					if (Build.VERSION.SDK_INT >= 11)
-						new CheckDataBackup().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-					else
-						new CheckDataBackup().execute();
-				}
 				if(isSwitchSG) {
 					if(messageService != null) {
 						messageService.chatLogout();
@@ -1245,15 +1245,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				else
 					new GetSharedIDListFromServer().execute();
 			}
-//			if(sharedPrefManager.isBackupCheckedForSG(sharedPrefManager.getUserDomain())) {
-//				addNewGroupsAndBroadcastsToDB();
-//			}else {
-//				if (Build.VERSION.SDK_INT >= 11)
-//					new CheckDataBackup().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-//				else
-//					new CheckDataBackup().execute();
-//			}
-
+			if(sharedPrefManager.isBackupCheckedForSG(sharedPrefManager.getUserDomain())) {
+				addNewGroupsAndBroadcastsToDB();
+			}else {
+				if (Build.VERSION.SDK_INT >= 11)
+					new CheckDataBackup().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				else
+					new CheckDataBackup().execute();
+			}
 			if(new_user && messageService != null){
 				String json = finalJSONbject.toString();
 				Log.i(TAG, "Final JSON :  " + json);
@@ -2075,27 +2074,27 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			}
 	}
 	private void addNewGroupsAndBroadcastsToDB(){
-		try{
-			if(directoryGroupSet !=null && !directoryGroupSet.isEmpty()) {
-				for (GroupDetail groupDetail : directoryGroupSet) {
-					boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(groupDetail.groupName);
-					if (isFirstChat)
-						saveMessage(groupDetail.displayName, groupDetail.groupName, "Group created by " + groupDetail.userDisplayName);
-				}
-				directoryGroupSet = null;
-			}
-
-			if(directoryBroadcastGroupSet !=null && !directoryBroadcastGroupSet.isEmpty()) {
-				for (BroadcastGroupDetail broadcastGroupDetail : directoryBroadcastGroupSet) {
-					boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(broadcastGroupDetail.broadcastGroupName);
-					if (isFirstChat)
-						saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName, "Broadcast created by " + broadcastGroupDetail.userDisplayName);
-				}
-				directoryBroadcastGroupSet = null;
-			}
-		}catch(Exception ex){
-			ex.printStackTrace();
-		}
+//		try{
+//			if(directoryGroupSet !=null && !directoryGroupSet.isEmpty()) {
+//				for (GroupDetail groupDetail : directoryGroupSet) {
+//					boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(groupDetail.groupName);
+//					if (isFirstChat)
+//						saveMessage(groupDetail.displayName, groupDetail.groupName, "Group created by " + groupDetail.userDisplayName);
+//				}
+//				directoryGroupSet = null;
+//			}
+//
+//			if(directoryBroadcastGroupSet !=null && !directoryBroadcastGroupSet.isEmpty()) {
+//				for (BroadcastGroupDetail broadcastGroupDetail : directoryBroadcastGroupSet) {
+//					boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(broadcastGroupDetail.broadcastGroupName);
+//					if (isFirstChat)
+//						saveMessage(broadcastGroupDetail.displayName, broadcastGroupDetail.broadcastGroupName, "Broadcast created by " + broadcastGroupDetail.userDisplayName);
+//				}
+//				directoryBroadcastGroupSet = null;
+//			}
+//		}catch(Exception ex){
+//			ex.printStackTrace();
+//		}
 	}
 	protected void onPause() {
 //		chatClient.stopClient();
