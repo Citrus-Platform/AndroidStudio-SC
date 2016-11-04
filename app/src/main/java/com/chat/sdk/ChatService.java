@@ -1841,7 +1841,7 @@ public class ChatService extends Service implements interfaceInstances {
 							Iterator<?> keys = jsonobj.keys();
 							while( keys.hasNext() ) {
 								String key = (String)keys.next();
-								System.out.println("Key  - "+key);
+//								System.out.println("Key  - "+key);
 								try {
 									DBWrapper.getInstance().updateSGNewMessageCount(key, Integer.parseInt((String) jsonobj.get(key)));
 //								if ( jsonobj.get(key) instanceof JSONObject ) {

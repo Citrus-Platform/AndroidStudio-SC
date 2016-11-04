@@ -871,6 +871,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		@Override
 		protected void onPreExecute() {
 			try {
+				boolean data_loaded = sharedPrefManager.isDataLoadedForSG(sg_name);
 				if (!noLoadingNeeded) {
 					progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
 					noLoadingNeeded = false;
@@ -1220,7 +1221,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 							new OpenGroupTaskOnServer(!iPrefManager.isFirstTime()).execute();
 					}
 //					if(!iPrefManager.isContactSynched()){
-					if(!DBWrapper.getInstance().isSGContactsLoaded(iPrefManager.getUserDomain())){
+//					if(!DBWrapper.getInstance().isSGContactsLoaded(iPrefManager.getUserDomain())){
+					if(iPrefManager.isDataLoadedForSG(iPrefManager.getUserDomain())){
 						if(sharedPrefManager.isOpenDomain()){
 							if(Build.VERSION.SDK_INT >= 11)
 								new ContactMatchingLoadingTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -1294,6 +1296,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				json = null;
 				new_user = false;
 			}
+			sharedPrefManager.setDataLoadedForSG(sharedPrefManager.getUserDomain(), true);
 			syncProcessStart(false);
 			isLoginProcessing = false;
 			super.onPostExecute(str);
@@ -3522,6 +3525,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		iPrefManager.setSGListData(null);
 
 		if(isContactSynching){
+			drawerFragment.fragmentClose();
 			Toast.makeText(this, "Loading some data, please wait.", Toast.LENGTH_LONG).show();
 			return;
 		}
@@ -3529,6 +3533,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		if(DBWrapper.getInstance().isSGActive(sg_name)) {
 			//Check if that group is deactivated then show alert
 //			String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
+			//Update SG counter for clicked SG
+			DBWrapper.getInstance().updateSGNewMessageCount(sg_name, 0);
 			if(mSinchServiceInterface != null)
 				mSinchServiceInterface.stopClient();
 			if(confirmation){

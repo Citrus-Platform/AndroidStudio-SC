@@ -132,6 +132,11 @@ public class SharedPrefManager {
 	private final String SG_USER_ID = "sg_userid";
 	private final String SG_BACKUP_CHECKED = "sg_backup_checked";
 
+
+	private final String DATA_LOADED_FOR_SG = "data_loaded_for_sg";
+
+
+
 	private static SharedPrefManager sharedPrefManager;
 
 	private SharedPrefManager(Context context) {
@@ -253,6 +258,16 @@ public class SharedPrefManager {
 		editor.putBoolean(SG_BACKUP_CHECKED + sg, flag);
 		editor.commit();
 	}
+
+	public boolean isDataLoadedForSG(String sg){
+		return pref.getBoolean(DATA_LOADED_FOR_SG + sg, false);
+	}
+	public void setDataLoadedForSG(String sg, boolean flag){
+		editor.putBoolean(DATA_LOADED_FOR_SG + sg, flag);
+		editor.commit();
+	}
+
+
 
 	public boolean isUpdateCheckNeeded(){
 		return pref.getBoolean(APP_UPDATE, true);
