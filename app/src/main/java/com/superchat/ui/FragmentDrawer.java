@@ -29,6 +29,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -476,6 +477,15 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 initialize();
+
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(containerView.getWindowToken(), 0);
+
+
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView
+                        .getLayoutManager();
+                layoutManager.scrollToPositionWithOffset(SharedPrefManager.getInstance().getSelectedIndexNav(), 0);
+
                 getActivity().invalidateOptionsMenu();
             }
 
@@ -483,6 +493,11 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 adapter.notifyDataSetChanged();
+
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView
+                        .getLayoutManager();
+                layoutManager.scrollToPositionWithOffset(SharedPrefManager.getInstance().getSelectedIndexNav(), 0);
+
                 getActivity().invalidateOptionsMenu();
             }
 
