@@ -1261,7 +1261,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					frompush = false;
 				}
 				if(selectedTab >= 0) {
-					if(selectedTab == 2)
+					if(selectedTab == 1)
 						publicGroupFragment.setSgSwitch(true);
 					mViewPager.setCurrentItem(selectedTab);
 				}
@@ -3536,7 +3536,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //		OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
 //		activateSG(sg_name);
 
-		if(!SharedPrefManager.getInstance().getUserDomain().equalsIgnoreCase(sg_name)){
+		if(!sg_name.equalsIgnoreCase(iPrefManager.getUserDomain())){
 		iPrefManager.setSGListData(null);
 
 		if(isContactSynching || isSwitchingSG){
@@ -3548,8 +3548,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				//Check if that group is deactivated then show alert
 //			String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
 				//Update SG counter for clicked SG
-				DBWrapper.getInstance().updateSGNewMessageCount(sg_name, 0);
 				isSwitchingSG = true;
+				DBWrapper.getInstance().updateSGNewMessageCount(sg_name, 0);
 				if(mSinchServiceInterface != null)
 					mSinchServiceInterface.stopClient();
 				if(confirmation){
