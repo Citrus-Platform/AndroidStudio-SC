@@ -425,6 +425,9 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
 
     @Override
     public void onClick(View v) {
+
+        int i = 0;
+
         if (v != null)
             switch (v.getId()) {
                 case R.id.id_sg_icon:
@@ -439,35 +442,39 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
                     isAllChannelTab = true;
                     break;
                 case R.id.global_icon_white:
+                    i++;
                     ((HomeScreen) getActivity()).openDrawer();
                     break;
             }
 
-        if (!isAllChannelTab) {
+        if(i <= 0){
+            if (!isAllChannelTab) {
 //			myChannelTabLayout.setBackgroundColor(0xffcde1f5);//Color.WHITE);
 //			allChannelTabLayout.setBackgroundColor(Color.GRAY);
-            viewAllChannelLabel.setVisibility(View.GONE);
-            viewMyChannelLabel.setVisibility(View.VISIBLE);
-            allChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
-            myChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
-        } else {
+                viewAllChannelLabel.setVisibility(View.GONE);
+                viewMyChannelLabel.setVisibility(View.VISIBLE);
+                allChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
+                myChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
+            } else {
 //			myChannelTabLayout.setBackgroundColor(Color.GRAY);
 //			allChannelTabLayout.setBackgroundColor(0xffcde1f5);//Color.WHITE);
-            viewMyChannelLabel.setVisibility(View.GONE);
-            viewAllChannelLabel.setVisibility(View.VISIBLE);
-            myChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
-            allChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
-        }
-        if (isAllChannelTab)
-            showAllContacts(1);
-        else
-            showAllContacts(0);
-        if (isAllChannelTab) {
-            if (Build.VERSION.SDK_INT >= 11)
-                new OpenGroupTaskOnServer(true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                viewMyChannelLabel.setVisibility(View.GONE);
+                viewAllChannelLabel.setVisibility(View.VISIBLE);
+                myChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
+                allChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
+            }
+            if (isAllChannelTab)
+                showAllContacts(1);
             else
-                new OpenGroupTaskOnServer(true).execute();
+                showAllContacts(0);
+            if (isAllChannelTab) {
+                if (Build.VERSION.SDK_INT >= 11)
+                    new OpenGroupTaskOnServer(true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                else
+                    new OpenGroupTaskOnServer(true).execute();
+            }
         }
+
     }
 
     public void onResume() {
