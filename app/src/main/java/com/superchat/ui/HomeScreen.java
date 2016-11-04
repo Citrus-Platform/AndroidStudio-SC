@@ -3531,6 +3531,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //		OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
 //		activateSG(sg_name);
 
+		if(!SharedPrefManager.getInstance().getUserDomain().equalsIgnoreCase(sg_name)){
 		iPrefManager.setSGListData(null);
 
 		if(isContactSynching){
@@ -3538,27 +3539,30 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			Toast.makeText(this, "Loading some data, please wait.", Toast.LENGTH_LONG).show();
 			return;
 		}
-
-		if(DBWrapper.getInstance().isSGActive(sg_name)) {
-			//Check if that group is deactivated then show alert
+			if(DBWrapper.getInstance().isSGActive(sg_name) ) {
+				//Check if that group is deactivated then show alert
 //			String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
-			//Update SG counter for clicked SG
-			DBWrapper.getInstance().updateSGNewMessageCount(sg_name, 0);
-			if(mSinchServiceInterface != null)
-				mSinchServiceInterface.stopClient();
-			if(confirmation){
-				showCustomDialogWith2Buttons(model, "Do you want to switch?");
-			}else {
-				isSwitchSG = true;
-				selectedTab = mViewPager.getCurrentItem();
+				//Update SG counter for clicked SG
+				DBWrapper.getInstance().updateSGNewMessageCount(sg_name, 0);
+				if(mSinchServiceInterface != null)
+					mSinchServiceInterface.stopClient();
+				if(confirmation){
+					showCustomDialogWith2Buttons(model, "Do you want to switch?");
+				}else {
+					isSwitchSG = true;
+					selectedTab = mViewPager.getCurrentItem();
+					drawerFragment.fragmentClose();
+					updateUserData(sg, null);
+					markSGActive(sg_name);
+				}
+			}else{
+				//Show Alert Screen to switch Screen.
 				drawerFragment.fragmentClose();
-				updateUserData(sg, null);
-				markSGActive(sg_name);
+				showDeactiveDialog("");
 			}
+
 		}else{
-			//Show Alert Screen to switch Screen.
 			drawerFragment.fragmentClose();
-			showDeactiveDialog("");
 		}
 	}
 	public void cleanDataAndSwitchSG(String sg_name){
