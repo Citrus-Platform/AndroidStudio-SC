@@ -568,7 +568,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						}
 						contactMenuLayout.setSelected(true);
 						int contactsCount = DBWrapper.getInstance().getAllNumbersCount();
-						iPrefManager.saveNewContactsCounter(contactsCount);
+						iPrefManager.saveNewContactsCounter(iPrefManager.getUserDomain(), contactsCount);
 						notificationHandler.sendEmptyMessage(0);
 						break;
 					case 1:
@@ -710,22 +710,22 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	}
 	Handler notificationHandler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
-			if(iPrefManager.getChatCounter()>0){
+			if(iPrefManager.getChatCounter(iPrefManager.getUserDomain())>0){
 				totalCountView.setVisibility(View.VISIBLE);
-				totalCountView.setText(String.valueOf(iPrefManager.getChatCounter()));
+				totalCountView.setText(String.valueOf(iPrefManager.getChatCounter(iPrefManager.getUserDomain())));
 			}else
 				totalCountView.setVisibility(View.GONE);
 
-			if(iPrefManager.getBulletinChatCounter() > 0){
+			if(iPrefManager.getBulletinChatCounter(iPrefManager.getUserDomain()) > 0){
 				totalBulletinView.setVisibility(View.VISIBLE);
-				totalBulletinView.setText(String.valueOf(iPrefManager.getBulletinChatCounter()));
+				totalBulletinView.setText(String.valueOf(iPrefManager.getBulletinChatCounter(iPrefManager.getUserDomain())));
 			}else
 				totalBulletinView.setVisibility(View.GONE);
 
 			int contactsCount = DBWrapper.getInstance().getAllNumbersCount();
-			if((contactsCount-iPrefManager.getNewContactsCounter())>0){
+			if((contactsCount - iPrefManager.getNewContactsCounter(iPrefManager.getUserDomain()))>0){
 				unseenContactView.setVisibility(View.VISIBLE);
-				unseenContactView.setText(String.valueOf(contactsCount-iPrefManager.getNewContactsCounter()));
+				unseenContactView.setText(String.valueOf(contactsCount - iPrefManager.getNewContactsCounter(iPrefManager.getUserDomain())));
 			}else
 				unseenContactView.setVisibility(View.GONE);
 			if(publicGroupFragment!=null)
@@ -1362,9 +1362,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				if(contactsFragment != null)
 					contactsFragment.showAllContacts();
 				int contactsCount = DBWrapper.getInstance().getAllNumbersCount();
-				if(iPrefManager.getNewContactsCounter()>=0 && (contactsCount-iPrefManager.getNewContactsCounter())>0 && iPrefManager.getChatCounter()>0){
+				if(iPrefManager.getNewContactsCounter(iPrefManager.getUserDomain())>=0 && (contactsCount-iPrefManager.getNewContactsCounter(iPrefManager.getUserDomain()))>0 && iPrefManager.getChatCounter(iPrefManager.getUserDomain())>0){
 					unseenContactView.setVisibility(View.VISIBLE);
-					unseenContactView.setText(String.valueOf(iPrefManager.getChatCounter()));
+					unseenContactView.setText(String.valueOf(iPrefManager.getChatCounter(iPrefManager.getUserDomain())));
 				}else
 					unseenContactView.setVisibility(View.GONE);
 			}else if(isContactSynching){
@@ -1633,10 +1633,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					}
 				}
 				int contactsCount = DBWrapper.getInstance().getAllNumbersCount();
-				if(iPrefManager.getNewContactsCounter()>=0 && (contactsCount-iPrefManager.getNewContactsCounter())>0){
-					if(iPrefManager.getChatCounter()>0){
+				if(iPrefManager.getNewContactsCounter(iPrefManager.getUserDomain())>=0 && (contactsCount-iPrefManager.getNewContactsCounter(iPrefManager.getUserDomain()))>0){
+					if(iPrefManager.getChatCounter(iPrefManager.getUserDomain())>0){
 						unseenContactView.setVisibility(View.VISIBLE);
-						unseenContactView.setText(String.valueOf(iPrefManager.getChatCounter()));
+						unseenContactView.setText(String.valueOf(iPrefManager.getChatCounter(iPrefManager.getUserDomain())));
 					}else
 						unseenContactView.setVisibility(View.GONE);
 				}else

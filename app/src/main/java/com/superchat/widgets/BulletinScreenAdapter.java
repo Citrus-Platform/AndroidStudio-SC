@@ -422,7 +422,7 @@ public class BulletinScreenAdapter extends SimpleCursorAdapter implements OnClic
 //        int hour = calander.get(Calendar.HOUR);
 //        int minute = calander.get(Calendar.MINUTE);
 //        int messageCount = SharedPrefManager.getInstance().getChatCountOfUser(viewholder.userName);
-        int messageCount = SharedPrefManager.getInstance().getBulletinChatCounter();
+        int messageCount = SharedPrefManager.getInstance().getBulletinChatCounter(SharedPrefManager.getInstance().getUserDomain());
         name = SharedPrefManager.getInstance().getGroupDisplayName(name);
 //        if(name!=null && name.startsWith("m"))
 //        	name = name.substring(1);

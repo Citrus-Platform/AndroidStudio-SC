@@ -384,12 +384,13 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
             getListView().setAdapter(adapter);
             updateCursor(null, null);
 
+            SharedPrefManager pref = SharedPrefManager.getInstance();
             int contactsCount = DBWrapper.getInstance().getAllNumbersCount();
-            SharedPrefManager.getInstance().saveNewContactsCounter(contactsCount);
-            if (SharedPrefManager.getInstance().getNewContactsCounter() >= 0 && (contactsCount - SharedPrefManager.getInstance().getNewContactsCounter()) > 0) {
-                if (SharedPrefManager.getInstance().getChatCounter() > 0) {
+            pref.saveNewContactsCounter(pref.getUserDomain(), contactsCount);
+            if (pref.getNewContactsCounter(pref.getUserDomain()) >= 0 && (contactsCount - pref.getNewContactsCounter(pref.getUserDomain())) > 0) {
+                if (pref.getChatCounter(pref.getUserDomain()) > 0) {
                     ((HomeScreen) fragmentactivity).unseenContactView.setVisibility(View.VISIBLE);
-                    ((HomeScreen) fragmentactivity).unseenContactView.setText(String.valueOf(SharedPrefManager.getInstance().getChatCounter()));
+                    ((HomeScreen) fragmentactivity).unseenContactView.setText(String.valueOf(pref.getChatCounter(pref.getUserDomain())));
                 } else {
                     ((HomeScreen) fragmentactivity).unseenContactView.setVisibility(View.GONE);
                 }

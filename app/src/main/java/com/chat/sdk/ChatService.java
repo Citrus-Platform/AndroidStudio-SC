@@ -897,8 +897,8 @@ public class ChatService extends Service implements interfaceInstances {
 					// }
 					if (message.getBody() != null && !message.getBody().equals("")) {
 						if(!console_msg) {
-							prefManager.saveChatCounter(prefManager.getChatCounter() + 1);
-							int messageCount = prefManager.getChatCounter();
+							prefManager.saveChatCounter(prefManager.getUserDomain(), prefManager.getChatCounter(prefManager.getUserDomain()) + 1);
+							int messageCount = prefManager.getChatCounter(prefManager.getUserDomain());
 							ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
 							prefManager.saveChatCountOfUser(user, prefManager.getChatCountOfUser(user) + 1);
 						}
@@ -1894,8 +1894,8 @@ public class ChatService extends Service implements interfaceInstances {
 					if (message.getBody() != null && !message.getBody().equals("")) {
 						if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal()){
 							if(message.isConsoleMessage() == null) {
-								prefManager.saveBulletinChatCounter(prefManager.getBulletinChatCounter() + 1);
-								int messageCount = prefManager.getBulletinChatCounter();
+								prefManager.saveBulletinChatCounter(prefManager.getUserDomain(), prefManager.getBulletinChatCounter(prefManager.getUserDomain()) + 1);
+								int messageCount = prefManager.getBulletinChatCounter(prefManager.getUserDomain());
 								ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
 							}
 						}else if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal()){
@@ -1904,8 +1904,8 @@ public class ChatService extends Service implements interfaceInstances {
 //							ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
 						}else{
 							if(message.isConsoleMessage() == null) {
-								prefManager.saveChatCounter(prefManager.getChatCounter() + 1);
-								int messageCount = prefManager.getChatCounter();
+								prefManager.saveChatCounter(prefManager.getUserDomain(), prefManager.getChatCounter(prefManager.getUserDomain()) + 1);
+								int messageCount = prefManager.getChatCounter(prefManager.getUserDomain());
 								ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
 								prefManager.saveChatCountOfUser(user, prefManager.getChatCountOfUser(user) + 1);
 							}

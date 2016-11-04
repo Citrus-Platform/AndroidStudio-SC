@@ -1199,16 +1199,16 @@ public boolean isContactModified(){
 		editor.commit();
 	}
 
-	public void saveChatCounter(int counter) {
-		editor.putInt(CHAT_COUNTER, counter);
+	public void saveChatCounter(String sg, int counter) {
+		editor.putInt(CHAT_COUNTER + sg, counter);
 		editor.commit();
 	}
-	public void saveBulletinChatCounter(int counter) {
-		editor.putInt(BULLETIN_CHAT_COUNTER, counter);
+	public void saveBulletinChatCounter(String sg, int counter) {
+		editor.putInt(BULLETIN_CHAT_COUNTER + sg, counter);
 		editor.commit();
 	}
-	public void saveNewContactsCounter(int counter) {
-		editor.putInt(CONTACT_COUNTER, counter);
+	public void saveNewContactsCounter(String sg, int counter) {
+		editor.putInt(CONTACT_COUNTER + sg, counter);
 		editor.commit();
 	}
 	public void saveChatCountOfUser(String person, int counter) {
@@ -1332,16 +1332,16 @@ public boolean isContactModified(){
 		return value;
 	}
 
-	public int getChatCounter() {
-		int value = pref.getInt(CHAT_COUNTER, 0);
+	public int getChatCounter(String sg) {
+		int value = pref.getInt(CHAT_COUNTER + sg, 0);
 		return value;
 	}
-	public int getBulletinChatCounter() {
-		int value = pref.getInt(BULLETIN_CHAT_COUNTER, 0);
+	public int getBulletinChatCounter(String sg) {
+		int value = pref.getInt(BULLETIN_CHAT_COUNTER + sg, 0);
 		return value;
 	}
-	public int getNewContactsCounter() {
-		int value = pref.getInt(CONTACT_COUNTER, 0);
+	public int getNewContactsCounter(String sg) {
+		int value = pref.getInt(CONTACT_COUNTER + sg, 0);
 		return value;
 	}
 	public int getChatCountOfUser(String person) {

@@ -1242,7 +1242,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         if (isBulletinBroadcast) {
             chatOptions.setVisibility(View.GONE);
             callOption.setVisibility(View.GONE);
-            SharedPrefManager.getInstance().saveBulletinChatCounter(0);
+            iChatPref.saveBulletinChatCounter(iChatPref.getUserDomain(), 0);
 //            final String next_url = iChatPref.getBulletinNextURL();
 //            if(next_url != null && !next_url.equals("0"))
 //                loadPrevious.setVisibility(View.VISIBLE);
@@ -2844,12 +2844,12 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 SharedPrefManager prefObj = SharedPrefManager.getInstance();
                 int userUnreadMsgCount = prefObj.getChatCountOfUser(userName);
                 if (userUnreadMsgCount > 0) {
-                    int totalChatCount = prefObj.getChatCounter() - userUnreadMsgCount;
+                    int totalChatCount = prefObj.getChatCounter(prefObj.getUserDomain()) - userUnreadMsgCount;
                     if (totalChatCount < 0)
                         totalChatCount = 0;
-                    prefObj.saveChatCounter(totalChatCount);
+                    prefObj.saveChatCounter(prefObj.getUserDomain(), totalChatCount);
                     prefObj.saveChatCountOfUser(userName, 0);
-                    int messageCount = prefObj.getChatCounter();
+                    int messageCount = prefObj.getChatCounter(prefObj.getUserDomain());
                     // ShortcutBadger.setBadge(getApplicationContext(),
                     // badgeCount);
                     ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
@@ -2949,12 +2949,12 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         SharedPrefManager prefObj = SharedPrefManager.getInstance();
         int userUnreadMsgCount = prefObj.getChatCountOfUser(userName);
         if (userUnreadMsgCount > 0) {
-            int totalChatCount = prefObj.getChatCounter() - userUnreadMsgCount;
+            int totalChatCount = prefObj.getChatCounter(prefObj.getUserDomain()) - userUnreadMsgCount;
             if (totalChatCount < 0)
                 totalChatCount = 0;
-            prefObj.saveChatCounter(totalChatCount);
+            prefObj.saveChatCounter(prefObj.getUserDomain(), totalChatCount);
             prefObj.saveChatCountOfUser(userName, 0);
-            int messageCount = prefObj.getChatCounter();
+            int messageCount = prefObj.getChatCounter(prefObj.getUserDomain());
             // ShortcutBadger.setBadge(getApplicationContext(), badgeCount);
             ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
         } else
@@ -2991,7 +2991,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         }
         //Reset Bulleting message count, if any
         if (isBulletinBroadcast)
-            iChatPref.saveBulletinChatCounter(0);
+            iChatPref.saveBulletinChatCounter(iChatPref.getUserDomain(), 0);
         try {
             if (mPlayer != null)
                 mPlayer.stop();
@@ -3534,7 +3534,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             stopVoicePlay();
         }
         if (isBulletinBroadcast)
-            iChatPref.saveBulletinChatCounter(0);
+            iChatPref.saveBulletinChatCounter(iChatPref.getUserDomain(), 0);
         if (chatAdapter != null && chatAdapter.isEditableChat()) {
             chatAdapter.removeSelectedItems();
             onClick(okEditTextView);
