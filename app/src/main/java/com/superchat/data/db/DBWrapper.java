@@ -1956,6 +1956,23 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+	/**
+	 * Updates Display Name for the SG in Database
+	 * @param sg_name
+	 * @param displayname
+     */
+	public void updateSGDisplayName(String sg_name, String displayname){
+		try{
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, displayname);
+			int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
+					new String[] { sg_name });
+			if(row > 0)
+				Log.e("DBWrapper", "updateSGLogoFileID count " + row);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
 
 	/**
 	 * Updates SG mute information in Database

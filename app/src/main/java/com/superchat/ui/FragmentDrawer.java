@@ -99,66 +99,68 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         List<ExpandableListAdapter.Item> dataList = new ArrayList<>();
         OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
         ArrayList<OwnerDomainName> ownerDomainNameSet = new ArrayList<>();
-        if(owned != null)
+        if (owned != null)
             ownerDomainNameSet.add(owned);
-            if (ownerDomainNameSet != null && ownerDomainNameSet.size() > 0) {
-                for (int i = 0; i < ownerDomainNameSet.size(); i++) {
-                    String ownerDisplayName = "";
-                    if(ownerDomainNameSet.get(i).getDomainDisplayName()!=null &&
-                            ownerDomainNameSet.get(i).getDomainDisplayName().trim().length() > 0){
-                        ownerDisplayName = ownerDomainNameSet.get(i).getDomainDisplayName().trim();
-                    }else{
-                        if(ownerDomainNameSet.get(i).getDomainName() != null)
-                            ownerDisplayName = ownerDomainNameSet.get(i).getDomainName().trim();
-                    }
-
-                    dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
-                            ownerDisplayName,
-                            ownerDomainNameSet.get(i).getDomainCount(),
-                            ownerDomainNameSet.get(i).getDomainNotify(),
-                            ownerDomainNameSet.get(i).getDomainName(),
-                            ownerDomainNameSet.get(i).getDomainType()));
+        if (ownerDomainNameSet != null && ownerDomainNameSet.size() > 0) {
+            for (int i = 0; i < ownerDomainNameSet.size(); i++) {
+                String ownerDisplayName = "";
+                if (ownerDomainNameSet.get(i).getDomainDisplayName() != null &&
+                        ownerDomainNameSet.get(i).getDomainDisplayName().trim().length() > 0) {
+                    ownerDisplayName = ownerDomainNameSet.get(i).getDomainDisplayName().trim();
+                } else {
+                    if (ownerDomainNameSet.get(i).getDomainName() != null)
+                        ownerDisplayName = ownerDomainNameSet.get(i).getDomainName().trim();
                 }
+
+                dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
+                        ownerDisplayName,
+                        ownerDomainNameSet.get(i).getDomainCount(),
+                        ownerDomainNameSet.get(i).getDomainNotify(),
+                        ownerDomainNameSet.get(i).getDomainName(),
+                        ownerDomainNameSet.get(i).getDomainType()));
             }
+        }
         ArrayList<JoinedDomainNameSet> joinedDomainNameSetTemp = DBWrapper.getInstance().getListOfJoinedSGs();
         if (joinedDomainNameSetTemp != null && joinedDomainNameSetTemp.size() > 0) {
-                Collections.sort(joinedDomainNameSetTemp, new Comparator<JoinedDomainNameSet>() {
-                    @Override
-                    public int compare(final JoinedDomainNameSet object1, final JoinedDomainNameSet object2) {
+            Collections.sort(joinedDomainNameSetTemp, new Comparator<JoinedDomainNameSet>() {
+                @Override
+                public int compare(final JoinedDomainNameSet object1, final JoinedDomainNameSet object2) {
 
-                        String itemOne = "";
-                        String itemTwo = "";
-                        //////////////////////////
-                        if(object1.getDomainDisplayName()!=null && object1.getDomainDisplayName().trim().length()>0){
-                            itemOne = object1.getDomainDisplayName().toUpperCase();
-                        }else{
-                            itemOne = object1.getDomainName().toUpperCase();
-                        }
-                        //////////////////////////
-                        if(object2.getDomainDisplayName()!=null && object2.getDomainDisplayName().trim().length()>0){
-                            itemTwo = object2.getDomainDisplayName().toUpperCase();
-                        }else{
-                            itemTwo = object2.getDomainName().toUpperCase();
-                        }
-                        return itemOne.compareTo(itemTwo);
+                    String itemOne = "";
+                    String itemTwo = "";
+                    //////////////////////////
+                    if (object1.getDomainDisplayName() != null && object1.getDomainDisplayName().trim().length() > 0) {
+                        itemOne = object1.getDomainDisplayName().toUpperCase();
+                    } else {
+                        itemOne = object1.getDomainName().toUpperCase();
                     }
-                });
-                for (int i = 0; i < joinedDomainNameSetTemp.size(); i++) {
-                    String joinedDisplayName = "";
-                    if(joinedDomainNameSetTemp.get(i).getDomainDisplayName()!=null &&
-                            joinedDomainNameSetTemp.get(i).getDomainDisplayName().trim().length()>0){
-                        joinedDisplayName = joinedDomainNameSetTemp.get(i).getDomainDisplayName().trim();
-                    }else{
-                        joinedDisplayName = joinedDomainNameSetTemp.get(i).getDomainName().trim();
+                    //////////////////////////
+                    if (object2.getDomainDisplayName() != null && object2.getDomainDisplayName().trim().length() > 0) {
+                        itemTwo = object2.getDomainDisplayName().toUpperCase();
+                    } else {
+                        itemTwo = object2.getDomainName().toUpperCase();
                     }
-                    dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
-                            joinedDisplayName,
-                            joinedDomainNameSetTemp.get(i).getDomainCount(),
-                            joinedDomainNameSetTemp.get(i).getDomainNotify(),
-                            joinedDomainNameSetTemp.get(i).getDomainName(),
-                            joinedDomainNameSetTemp.get(i).getDomainType()));
+                    return itemOne.compareTo(itemTwo);
                 }
+            });
+            for (int i = 0; i < joinedDomainNameSetTemp.size(); i++) {
+                String joinedDisplayName = "";
+                if (joinedDomainNameSetTemp.get(i).getDomainDisplayName() != null &&
+                        joinedDomainNameSetTemp.get(i).getDomainDisplayName().trim().length() > 0) {
+                    joinedDisplayName = joinedDomainNameSetTemp.get(i).getDomainDisplayName().trim();
+                } else {
+                    joinedDisplayName = joinedDomainNameSetTemp.get(i).getDomainName().trim();
+                }
+                dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
+                        joinedDisplayName,
+                        joinedDomainNameSetTemp.get(i).getDomainCount(),
+                        joinedDomainNameSetTemp.get(i).getDomainNotify(),
+                        joinedDomainNameSetTemp.get(i).getDomainName(),
+                        joinedDomainNameSetTemp.get(i).getDomainType()));
+
+                Log.e("disp" , "is : "+joinedDisplayName);
             }
+        }
         return dataList;
     }
 
@@ -195,9 +197,9 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         user = (TextView) layout.findViewById(R.id.user);
         addSGTextView = (TextView) layout.findViewById(R.id.id_add_sg_txt);
 
-        invitedNotificationCount = (TextView)layout.findViewById(R.id.invitedNotificationCount);
-        if(invite != null && invite.size() > 0)
-            invitedNotificationCount.setText(""+invite.size());
+        invitedNotificationCount = (TextView) layout.findViewById(R.id.invitedNotificationCount);
+        if (invite != null && invite.size() > 0)
+            invitedNotificationCount.setText("" + invite.size());
 
 
         /*int muteId = DBWrapper.getInstance().getSGMuteInfo(SharedPrefManager.getInstance().getUserDomain());
@@ -213,7 +215,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
         if (file_id != null && file_id.trim().length() > 0) {
             setProfilePic(displayPictureCurrent, file_id);
-        }else{
+        } else {
 //            setProfilePic(displayPictureCurrent, "");
             displayPictureCurrent.setImageResource(R.drawable.logo_small);
         }
@@ -250,11 +252,11 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
         if (file_id != null && file_id.trim().length() > 0) {
             setProfilePic(displayPictureCurrent, file_id);
-        }else{
+        } else {
 //            setProfilePic(displayPictureCurrent, "");
             displayPictureCurrent.setImageResource(R.drawable.logo_small);
         }
-        user.setText("" + SharedPrefManager.getInstance().getDisplayName() + "(You)");
+        user.setText("" + SharedPrefManager.getInstance().getDisplayName() + " (You)");
         super.onResume();
     }
 
@@ -289,17 +291,17 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             }*/
             case R.id.llInvited: {
                 //if (invitedDomainNameSet != null && invitedDomainNameSet.size() > 0) {
-                    SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
-                    String number = iPrefManager.getUserPhone();
+                SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
+                String number = iPrefManager.getUserPhone();
 
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constants.MOBILE_NUMBER_TXT, number);
-                    bundle.putStringArrayList(SupergroupListingScreenNew.KEY_INVITED_DOMAIN_SET, invitedDomainNameSet);
-                    bundle.putBoolean(SupergroupListingScreenNew.KEY_SHOW_OWNED_ALERT, false);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.MOBILE_NUMBER_TXT, number);
+                bundle.putStringArrayList(SupergroupListingScreenNew.KEY_INVITED_DOMAIN_SET, invitedDomainNameSet);
+                bundle.putBoolean(SupergroupListingScreenNew.KEY_SHOW_OWNED_ALERT, false);
 
-                    Intent starter = new Intent(getActivity(), SupergroupListingScreenNew.class);
-                    starter.putExtras(bundle);
-                    startActivityForResult(starter, CODE_INVITE);
+                Intent starter = new Intent(getActivity(), SupergroupListingScreenNew.class);
+                starter.putExtras(bundle);
+                startActivityForResult(starter, CODE_INVITE);
                 /*} else {
                     Toast.makeText(getActivity(), "Invited List is empty", Toast.LENGTH_SHORT).show();
                 }*/
@@ -366,7 +368,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                     model.setInviteUserPassword(data.getStringExtra("SG_USER_PASSWORD"));
 
                     String user = SharedPrefManager.getInstance().getUserPhone();
-                    if(user != null && user.contains("-"))
+                    if (user != null && user.contains("-"))
                         user = user.replace("-", "");
                     DBWrapper.getInstance().updateSGTypeValue(SG_NAME, 2);
                     DBWrapper.getInstance().updateSGActiveStatus(SG_NAME, "true");
@@ -444,8 +446,12 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         public void onDrawerItemSelected(View view, int position);
     }
 
-    public void initialize(){
+    public void initialize() {
         adapter.notifyDataSetChanged();
+        /////////////////////////////////////
+        adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity());
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        recyclerView.setAdapter(adapter);
         /////////////////////////////////////
         boolean muteId = SharedPrefManager.getInstance().isSnoozeExpired(SharedPrefManager.getInstance().getUserDomain());
         if (muteId) {
@@ -458,13 +464,13 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         /////////////////////////////////////
         ArrayList<InvitedDomainNameSet> invitedList = new ArrayList<>();
         invitedList = DBWrapper.getInstance().getListOfInvitedSGs();
-        if(invitedList != null && invitedNotificationCount != null && invitedList.size() > 0)
-            invitedNotificationCount.setText(""+invitedList.size());
+        if (invitedList != null && invitedNotificationCount != null && invitedList.size() > 0)
+            invitedNotificationCount.setText("" + invitedList.size());
 
         String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
         if (file_id != null && file_id.trim().length() > 0) {
             setProfilePic(displayPictureCurrent, file_id);
-        }else{
+        } else {
 //            setProfilePic(displayPictureCurrent, "");
             displayPictureCurrent.setImageResource(R.drawable.logo_small);
         }
@@ -510,7 +516,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     }
 
     public void fragmentOpen() {
-        if(HomeScreen.updateNavDrawer){
+        if (HomeScreen.updateNavDrawer) {
             HomeScreen.updateNavDrawer = false;
             adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity());
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -525,7 +531,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         String img_path = getThumbPath(groupPicId);
         picView.setImageResource(R.drawable.about_icon);
 
-        if (groupPicId == null || (groupPicId != null && groupPicId.equals("")) || groupPicId.equals("clear") || groupPicId.contains("logofileid")){
+        if (groupPicId == null || (groupPicId != null && groupPicId.equals("")) || groupPicId.equals("clear") || groupPicId.contains("logofileid")) {
             return false;
         }
 
@@ -639,7 +645,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             public boolean onTouch(View v, MotionEvent event) {
                 bteldialog.cancel();
                 sharedPrefManager.setSnoozeIndex(sharedPrefManager.getUserDomain(), spinner.getSelectedItemPosition());
-                sharedPrefManager.setSnoozeStartTime(sharedPrefManager.getUserDomain(),System.currentTimeMillis());
+                sharedPrefManager.setSnoozeStartTime(sharedPrefManager.getUserDomain(), System.currentTimeMillis());
                 //notifyCurrent.setImageResource(R.drawable.ic_icon_navigation_unmute);
                 Toast.makeText(getActivity(), String.valueOf(spinner.getSelectedItem()), Toast.LENGTH_SHORT).show();
                 return false;

@@ -2311,14 +2311,23 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		public Fragment getItem(int position) {
 			switch(position) {
 				case 0:
-					return new ChatHome();
+                    if(chatFragment != null)
+                        return  chatFragment;
+                    else
+					    return new ChatHome();
 				case 1:
 					return  publicGroupFragment;//new PublicGroupScreen();
 				case 2:
-					return (contactsFragment = new ContactsScreen());
+                    if(contactsFragment != null)
+                        return  contactsFragment;
+                    else
+					    return (contactsFragment = new ContactsScreen());
 
 				case 3:
-					return  new BulletinScreen();
+                    if(bulletinFragment != null)
+                        return bulletinFragment;
+                    else
+					    return  new BulletinScreen();
 			}
 
 			return null;

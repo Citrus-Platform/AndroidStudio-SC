@@ -85,6 +85,41 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
             service.setProfileUpdateListener(ContactsScreen.this);
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            if(global_icon_white != null && searchBoxView != null){
+
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(searchBoxView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+                searchBoxView.setText("");
+                searchBoxView.setVisibility(EditText.GONE);
+                global_icon_white.setVisibility(View.VISIBLE);
+                clearSearch.setVisibility(ImageView.GONE);
+                superGroupName.setVisibility(View.VISIBLE);
+
+                searchIcon.setVisibility(View.VISIBLE);
+
+            }
+        }
+        else {
+            if(global_icon_white != null && searchBoxView != null){
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(searchBoxView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+                searchBoxView.setText("");
+                searchBoxView.setVisibility(EditText.GONE);
+                global_icon_white.setVisibility(View.VISIBLE);
+                clearSearch.setVisibility(ImageView.GONE);
+                superGroupName.setVisibility(View.VISIBLE);
+
+                searchIcon.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
     public View onCreateView(LayoutInflater layoutinflater,
                              ViewGroup viewgroup, Bundle bundle) {
         View view = layoutinflater.inflate(R.layout.contact_home, null);
@@ -104,6 +139,7 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
 //				searchBoxView.setVisibility(EditText.VISIBLE);
 
                 searchBoxView.setVisibility(View.VISIBLE);
+                global_icon_white.setVisibility(View.GONE);
                 clearSearch.setVisibility(View.VISIBLE);
                 searchIcon.setVisibility(View.GONE);
 //                superGroupIcon.setVisibility(View.GONE);
@@ -153,6 +189,7 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
             public void onClick(View v) {
                 searchBoxView.setText("");
                 searchBoxView.setVisibility(View.GONE);
+                global_icon_white.setVisibility(View.VISIBLE);
                 searchIcon.setVisibility(View.VISIBLE);
 //                superGroupIcon.setVisibility(View.VISIBLE);
                 superGroupName.setVisibility(View.VISIBLE);

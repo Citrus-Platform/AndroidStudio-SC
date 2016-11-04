@@ -127,6 +127,41 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
     public void setPorfileListener() {
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            if(global_icon_white != null && searchBoxView != null){
+
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(searchBoxView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+                searchEditText.setText("");
+                searchEditText.setVisibility(EditText.GONE);
+                global_icon_white.setVisibility(View.VISIBLE);
+                clearSearch.setVisibility(ImageView.GONE);
+                superGroupName.setVisibility(View.VISIBLE);
+
+                searchIcon.setVisibility(View.VISIBLE);
+
+            }
+        }
+        else {
+            if(global_icon_white != null && searchBoxView != null){
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(searchBoxView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+                searchEditText.setText("");
+                searchEditText.setVisibility(EditText.GONE);
+                global_icon_white.setVisibility(View.VISIBLE);
+                clearSearch.setVisibility(ImageView.GONE);
+                superGroupName.setVisibility(View.VISIBLE);
+
+                searchIcon.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
     public View onCreateView(LayoutInflater layoutinflater,
                              ViewGroup viewgroup, Bundle bundle) {
         View view = layoutinflater.inflate(R.layout.public_group_layout, null);
@@ -166,7 +201,9 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
         createGroupIcon.setVisibility(View.VISIBLE);
 //		else
 //			createGroupIcon.setVisibility(View.GONE);
+        searchBoxView.setText("");
         searchBoxView.setVisibility(View.GONE);
+        global_icon_white.setVisibility(View.VISIBLE);
         createGroupIcon.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -188,6 +225,7 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
 //				searchBoxView.setText("");		
 //				createGroup.setVisibility(View.GONE);
                 searchEditText.setVisibility(View.VISIBLE);
+                global_icon_white.setVisibility(View.GONE);
                 clearSearch.setVisibility(View.VISIBLE);
                 searchIcon.setVisibility(View.GONE);
 //                superGroupIcon.setVisibility(View.GONE);
@@ -230,6 +268,7 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
                     superGroupName.setVisibility(View.VISIBLE);
 
                     searchBoxView.setVisibility(View.GONE);
+                    global_icon_white.setVisibility(View.VISIBLE);
                     clearSearch.setVisibility(View.GONE);
 //					if(SharedPrefManager.getInstance().isDomainAdmin())
 //						createGroup.setVisibility(View.VISIBLE);

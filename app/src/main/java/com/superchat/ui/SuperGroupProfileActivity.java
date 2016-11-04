@@ -43,6 +43,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
+import com.superchat.data.db.DBWrapper;
 import com.superchat.model.AdminRegistrationForm;
 import com.superchat.model.ErrorModel;
 import com.superchat.utils.AppUtil;
@@ -947,6 +948,12 @@ private static final String TAG = "SuperGroupProfileActivity";
 							finalJSONbject.put("domainDisplayName", sg_display_name);
 						if (prefManager.getSGFileId("SG_FILE_ID") != null)
 							finalJSONbject.put("domainPicID", prefManager.getSGFileId("SG_FILE_ID"));
+
+						////////////////////////////////////////
+						DBWrapper.getInstance().updateSGLogoFileID(sg_real_name , prefManager.getSGFileId("SG_FILE_ID"));
+						DBWrapper.getInstance().updateSGDisplayName(sg_real_name , sg_display_name);
+						////////////////////////////////////////
+
 						String json_txt = finalJSONbject.toString();
 						System.out.println("Final JSON :  " + json_txt);
 						messageService.sendSpecialMessageToAllDomainMembers(
