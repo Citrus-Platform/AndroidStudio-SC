@@ -213,6 +213,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
         if (file_id != null && file_id.trim().length() > 0) {
             setProfilePic(displayPictureCurrent, file_id);
+        }else{
+            setProfilePic(displayPictureCurrent, "");
         }
         user.setText("" + SharedPrefManager.getInstance().getDisplayName() + " (You)");
 
@@ -247,6 +249,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
         if (file_id != null && file_id.trim().length() > 0) {
             setProfilePic(displayPictureCurrent, file_id);
+        }else{
+            setProfilePic(displayPictureCurrent, "");
         }
         user.setText("" + SharedPrefManager.getInstance().getDisplayName() + "(You)");
         super.onResume();
@@ -454,6 +458,13 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         invitedList = DBWrapper.getInstance().getListOfInvitedSGs();
         if(invitedList != null && invitedNotificationCount != null && invitedList.size() > 0)
             invitedNotificationCount.setText(""+invitedList.size());
+
+        String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
+        if (file_id != null && file_id.trim().length() > 0) {
+            setProfilePic(displayPictureCurrent, file_id);
+        }else{
+            setProfilePic(displayPictureCurrent, "");
+        }
     }
 
     public void setUp(int fragmentId, DrawerLayout drawerLayout, final Toolbar toolbar) {
@@ -510,8 +521,11 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 //		System.out.println("groupPicId : "+groupPicId);
         String img_path = getThumbPath(groupPicId);
         picView.setImageResource(R.drawable.about_icon);
-        if (groupPicId == null || (groupPicId != null && groupPicId.equals("")) || groupPicId.equals("clear") || groupPicId.contains("logofileid"))
+
+        if (groupPicId == null || (groupPicId != null && groupPicId.equals("")) || groupPicId.equals("clear") || groupPicId.contains("logofileid")){
             return false;
+        }
+
         if (img_path != null) {
             File file1 = new File(img_path);
 //			Log.d(TAG, "PicAvailibilty: "+ Uri.parse(filename)+" , "+filename+" , "+file1.exists());
