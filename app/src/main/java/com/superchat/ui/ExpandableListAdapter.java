@@ -120,10 +120,21 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 itemControllerChild.child_title.setText(item.text);
 
                 if(item.domainType != null) {
+
+                    String domainTypeShowing = item.domainType;
+
+                    if(item.domainType.equalsIgnoreCase("rwa")){
+                        domainTypeShowing = domainTypeShowing.toUpperCase();
+                    }else if(item.domainType.equalsIgnoreCase("company")){
+                        domainTypeShowing = "Corporate";
+                    }else{
+                        domainTypeShowing = "Others";
+                    }
+
                     if(DBWrapper.getInstance().isSGOwner(item.actualName))
-                     itemControllerChild.child_sg_type.setText("OWNER [ " + item.domainType + " ]");
+                     itemControllerChild.child_sg_type.setText("OWNER [ " + domainTypeShowing + " ]");
                     else
-                        itemControllerChild.child_sg_type.setText("[ " + item.domainType + " ]");
+                        itemControllerChild.child_sg_type.setText("[ " + domainTypeShowing + " ]");
                 }
 //                else
 //                    itemControllerChild.child_sg_type.setText("[Owner]");
