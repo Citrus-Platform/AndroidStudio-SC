@@ -605,6 +605,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			frompush = extras.getBoolean("FROM_NOTIFICATION");
+			switchUserScreenName = extras.getString("SCREEN_NAME");
 			switchUserName = extras.getString(ChatDBConstants.USER_NAME_FIELD);
 			switchUserDisplayName = extras.getString(ChatDBConstants.CONTACT_NAMES_FIELD);
 			if(switchUserDisplayName != null && switchUserDisplayName.contains("[") && switchUserDisplayName.contains("]"))
@@ -1253,8 +1254,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				//Switch to chat
 				if(frompush) {
 					Intent intent = new Intent(SuperChatApplication.context, ChatListScreen.class);
-					if (switchUserName != null)
+					if (switchUserName != null) {
 						intent.putExtra(DatabaseConstants.USER_NAME_FIELD, switchUserName);
+						if(switchUserScreenName.equalsIgnoreCase("bulletin")) {
+							intent.putExtra("FROM_BULLETIN_NOTIFICATION", true);
+							mViewPager.setCurrentItem(selectedTab = 3);
+						}
+					}
 					if (switchUserDisplayName != null) {
 						intent.putExtra(DatabaseConstants.CONTACT_NAMES_FIELD, switchUserDisplayName);
 					}
@@ -1832,6 +1838,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	}
 	String switchUserName;
 	String switchUserDisplayName;
+	String switchUserScreenName;
 	boolean frompush = false;
 	@Override
 	protected void onNewIntent(Intent intent) {
@@ -1840,6 +1847,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		Bundle extras = intent.getExtras();
 		if (extras != null) {
 			frompush = extras.getBoolean("FROM_NOTIFICATION");
+			switchUserScreenName = extras.getString("SCREEN_NAME");
 			switchUserName = extras.getString(ChatDBConstants.USER_NAME_FIELD);
 			switchUserDisplayName = extras.getString(ChatDBConstants.CONTACT_NAMES_FIELD);
 			if(switchUserDisplayName != null && switchUserDisplayName.contains("[") && switchUserDisplayName.contains("]"))

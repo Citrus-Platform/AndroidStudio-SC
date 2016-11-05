@@ -522,6 +522,9 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
             onNotifiUI();
         }
         refreshList();
+        if(isSearchOn){
+            resetSearch();
+        }
 //		getShareInfo();
         onForeground = true;
         ChatService.setConnectionStatusListener(this);

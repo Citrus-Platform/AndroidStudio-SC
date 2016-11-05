@@ -141,9 +141,9 @@ public class GcmIntentService extends IntentService {
 
 				if(domainName != null && !domainName.equals(currentDomain)){
 					if(screen != null && screen.equalsIgnoreCase("group"))
-            			showNotificationForGroupMessage(domainName, senderUserName, groupName, senderDisplayName, message, 0, 0, true);
+            			showNotificationForGroupMessage(screen, domainName, senderUserName, groupName, senderDisplayName, message, 0, 0, true);
             		else
-            			showNotificationForP2PMessage(domainName, senderUserName, senderDisplayName, message, (byte)0, 0, true);
+            			showNotificationForP2PMessage(screen, domainName, senderUserName, senderDisplayName, message, (byte)0, 0, true);
 
 				}else{
 					Log.i(TAG, "isMyServiceRunning : false");
@@ -209,7 +209,7 @@ public class GcmIntentService extends IntentService {
 //		startService(new Intent(SuperChatApplication.context, SinchService.class));
     }
  //===================================================================================
-    public void showNotificationForGroupMessage(String domainName, String senderName, String groupID,
+    public void showNotificationForGroupMessage(String screen, String domainName, String senderName, String groupID,
 			String displayName, String msg, int type, int mediaType, boolean forOtherSG) {
 		 if(senderName != null && senderName.contains("#786#"))
 			 senderName = senderName.substring(0, senderName.indexOf("#786#"));
@@ -265,6 +265,7 @@ public class GcmIntentService extends IntentService {
 		notificationIntent.putExtra(ChatDBConstants.USER_NAME_FIELD, user);
 		notificationIntent.putExtra("FROM_NOTIFICATION", true);
 		notificationIntent.putExtra("DOMAIN_NAME", domainName);
+		notificationIntent.putExtra("SCREEN_NAME", screen);
 
 //		if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal())
 //			notificationIntent.putExtra("FROM_BULLETIN_NOTIFICATION", true);
@@ -339,7 +340,7 @@ public class GcmIntentService extends IntentService {
 
 	}
    //========================================
-    public void showNotificationForP2PMessage(String domainName, String from, String displayName,
+    public void showNotificationForP2PMessage(String screen, String domainName, String from, String displayName,
 			String msg, byte messageType, int mediaType, boolean forOtherSG) {
     	SharedPrefManager sharedPref = SharedPrefManager.getInstance();
 		 if(displayName!=null && displayName.contains("#786#"))
@@ -390,7 +391,8 @@ public class GcmIntentService extends IntentService {
 		notificationIntent.putExtra(ChatDBConstants.USER_NAME_FIELD, user);
 		notificationIntent.putExtra("FROM_NOTIFICATION", true);
 		notificationIntent.putExtra("DOMAIN_NAME", domainName);
-		
+		notificationIntent.putExtra("SCREEN_NAME", screen);
+
 //		if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal())
 //			notificationIntent.putExtra("FROM_BULLETIN_NOTIFICATION", true);
 		
