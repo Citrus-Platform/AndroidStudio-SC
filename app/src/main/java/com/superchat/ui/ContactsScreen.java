@@ -156,8 +156,8 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
 
         searchBoxView.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable editable) {
-                if(searchBoxView.getText().toString().trim().length() == 0)
-                    return;
+//                if(searchBoxView.getText().toString().trim().length() == 0)
+//                    return;
                 String sg = SharedPrefManager.getInstance().getUserDomain();
                 String s1 = (new StringBuilder()).append("%")
                         .append(searchBoxView.getText().toString().trim()).append("%")
@@ -168,11 +168,11 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
                 if (i >= 1) {
                     if (isRWA) {
                         s2 = DatabaseConstants.CONTACT_NAMES_FIELD + " like ? OR " + DatabaseConstants.FLAT_NUMBER + " like ? OR " + DatabaseConstants.BUILDING_NUMBER + " like ? AND "
-                                + DatabaseConstants.VOPIUM_FIELD + "!=? AND "+ DatabaseConstants.USER_SG + "='?'";
+                                + DatabaseConstants.VOPIUM_FIELD + "!=? AND "+ DatabaseConstants.USER_SG + "=?";
                         as = (new String[]{s1, s1, s1, "2", sg});
                     } else {
-                        s2 = DatabaseConstants.CONTACT_NAMES_FIELD + " like ? AND " + DatabaseConstants.VOPIUM_FIELD + "!=?";
-                        as = (new String[]{s1, "2"});
+                        s2 = DatabaseConstants.CONTACT_NAMES_FIELD + " like ? AND " + DatabaseConstants.VOPIUM_FIELD + "!=? AND "+ DatabaseConstants.USER_SG + "=?";
+                        as = (new String[]{s1, "2", sg});
                     }
                 }
                 updateCursorForSearch(s2, as);

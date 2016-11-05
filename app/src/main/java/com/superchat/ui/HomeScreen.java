@@ -823,6 +823,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				prefManager.saveCurrentSGDisplayName(sg_name);
 			}
 
+			updateCounterValuesAtBottomTabs();
 			prefManager.saveSGFileId("SG_FILE_ID",DBWrapper.getInstance().getSGLogoFileID(sg_name));
 			cleanDataAndSwitchSG(sg_name);
 			//Set contact and group synch's
@@ -3579,6 +3580,37 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		}else{
 			drawerFragment.fragmentClose();
 		}
+	}
+
+	public void updateCounterValuesAtBottomTabs(){
+		runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				try{
+					if(iPrefManager.getChatCounter(iPrefManager.getUserDomain()) > 0){
+						totalCountView.setVisibility(View.VISIBLE);
+						totalCountView.setText(String.valueOf(iPrefManager.getChatCounter(iPrefManager.getUserDomain())));
+					}else
+						totalCountView.setVisibility(View.GONE);
+
+					if(iPrefManager.getBulletinChatCounter(iPrefManager.getUserDomain()) > 0){
+						totalBulletinView.setVisibility(View.VISIBLE);
+						totalBulletinView.setText(String.valueOf(iPrefManager.getBulletinChatCounter(iPrefManager.getUserDomain())));
+					}else
+						totalBulletinView.setVisibility(View.GONE);
+
+					int contactsCount = DBWrapper.getInstance().getAllNumbersCount();
+					if((contactsCount - iPrefManager.getNewContactsCounter(iPrefManager.getUserDomain()))>0){
+						unseenContactView.setVisibility(View.VISIBLE);
+						unseenContactView.setText(String.valueOf(contactsCount - iPrefManager.getNewContactsCounter(iPrefManager.getUserDomain())));
+					}else
+						unseenContactView.setVisibility(View.GONE);
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
+			}
+		});
 	}
 	public void cleanDataAndSwitchSG(String sg_name){
 		try{
