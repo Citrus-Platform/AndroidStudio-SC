@@ -443,7 +443,7 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
         Log.i(TAG, "Updating cursor");
         String sg = SharedPrefManager.getInstance().getUserDomain();
         if(s == null){
-            s = DatabaseConstants.VOPIUM_FIELD + "!=? AND " +  DatabaseConstants.USER_SG + "='?'";
+            s = DatabaseConstants.VOPIUM_FIELD + "!=? AND " +  DatabaseConstants.USER_SG + "=?";
             as = (new String[] { "2", sg});
         }
         cursor = DBWrapper.getInstance().query(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, null, s, as,

@@ -125,7 +125,7 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
                 clearSearch.setVisibility(ImageView.GONE);
                 superGroupName.setVisibility(View.VISIBLE);
 
-                searchIcon.setVisibility(View.VISIBLE);
+//                searchIcon.setVisibility(View.VISIBLE);
 
             }
         }
@@ -140,7 +140,7 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
                 clearSearch.setVisibility(ImageView.GONE);
                 superGroupName.setVisibility(View.VISIBLE);
 
-                searchIcon.setVisibility(View.VISIBLE);
+//                searchIcon.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -203,7 +203,7 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
             public void onClick(View v) {
                 searchBoxView.setVisibility(View.GONE);
                 global_icon_white.setVisibility(View.VISIBLE);
-                searchIcon.setVisibility(View.VISIBLE);
+//                searchIcon.setVisibility(View.VISIBLE);
 //                superGroupIcon.setVisibility(View.VISIBLE);
                 superGroupName.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(View.GONE);
