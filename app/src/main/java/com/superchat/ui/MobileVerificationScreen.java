@@ -528,6 +528,10 @@ public void onDestroy(){
 			@Override
 			public void onSuccess(int arg0, String arg1) {
 				System.out.println("verifyCode :: onSuccess : onSuccess Data : " + arg1);
+				if(arg1 == null){
+					showDialog(getString(R.string.network_not_responding));
+					return;
+				}
 				Gson gson = new GsonBuilder().create();
 				final RegMatchCodeModel objUserModel = gson.fromJson(arg1, RegMatchCodeModel.class);
 				if (objUserModel.iStatus != null

@@ -149,7 +149,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 //count of child//////////////
                 boolean muteId = SharedPrefManager.getInstance().isSnoozeExpired(item.actualName);
 
-                Log.e("here" , "mute : "+muteId);
+//                Log.e("here" , "mute : "+muteId);
                 if (!muteId) {
                     itemControllerChild.btn_notify_toggle.setVisibility(View.VISIBLE);
                 } else {

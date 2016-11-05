@@ -610,7 +610,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			switchUserDisplayName = extras.getString(ChatDBConstants.CONTACT_NAMES_FIELD);
 			if(switchUserDisplayName != null && switchUserDisplayName.contains("[") && switchUserDisplayName.contains("]"))
 				switchUserDisplayName = switchUserDisplayName.substring(switchUserDisplayName.indexOf(']') +1).trim();
-			System.out.println(TAG + "onResume :: switchUserName - "+switchUserName+", switchUserDisplayName - "+switchUserDisplayName);
+//			System.out.println(TAG + "onResume :: switchUserName - "+switchUserName+", switchUserDisplayName - "+switchUserDisplayName);
 //			if(frompush) {
 //				String user = iPrefManager.getUserPhone();
 //				if(user != null && user.contains("-"))
@@ -778,13 +778,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	public void onFileDownloadResposne(View view, int[] type, String[] file_urls, String[] file_paths) {
 
 	}
-	public void updateUserData(String user, InviteJoinDataModel model){
+	public void updateUserData(String username, InviteJoinDataModel model){
 		try {
 			progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
 			SharedPrefManager prefManager = SharedPrefManager.getInstance();
 			long userID = 0;
 			if(model != null){
-				user = model.getInviteUserName();
+				username = model.getInviteUserName();
 				String pass = model.getInviteUserPassword();
 				userID = model.getInviteUserID();
 
@@ -793,18 +793,21 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				System.out.println("<< mobileNumber :: Switch :: " + model.getInviteMobileNumber());
 
 				prefManager.saveUserId(userID);
-				prefManager.saveUserName(user);
+				prefManager.saveUserName(username);
 				prefManager.saveUserPassword(pass);
-				prefManager.setProfileAdded(user, true);
+				prefManager.setProfileAdded(username, true);
 			}else {
-				userID = prefManager.getSGUserID(user);
+//				String sg_name = username.substring(username.indexOf("_") + 1);
+				userID = prefManager.getSGUserID(username);
+
 				System.out.println("[UserID - ] " + userID);
-				System.out.println("[Pass - ] " + prefManager.getSGPassword(user));
+				System.out.println("[Pass - ] " + prefManager.getSGPassword(username));
 				System.out.println("<< mobileNumber :: Switch :: " + prefManager.getUserPhone());
+
 				prefManager.saveUserId(userID);
-				prefManager.saveUserName(user);
-				prefManager.saveUserPassword(prefManager.getSGPassword(user));
-				prefManager.setProfileAdded(user, true);
+				prefManager.saveUserName(username);
+				prefManager.saveUserPassword(prefManager.getSGPassword(username));
+				prefManager.setProfileAdded(username, true);
 			}
 		}catch(Exception ex){
 			ex.printStackTrace();
@@ -972,7 +975,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 											contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
 											contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
-											System.out.println("TABLE_NAME_CONTACT_NUMBERS : " + contentvalues.toString());
+//											System.out.println("TABLE_NAME_CONTACT_NUMBERS : " + contentvalues.toString());
 											DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
 										}
 
@@ -1490,7 +1493,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 											contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
 											contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
-											System.out.println("TABLE_NAME_CONTACT_NUMBERS : " + contentvalues.toString());
+//											System.out.println("TABLE_NAME_CONTACT_NUMBERS : " + contentvalues.toString());
 											if (!userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName()))
 												wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
 										}
@@ -1674,6 +1677,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				bteldialog.cancel();
+				isContactSynching = false;
+				isSwitchingSG = false;
 				return false;
 			}
 		});
@@ -2305,7 +2310,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			//Save USerID and SG in DB
 			contentvalues.put(DatabaseConstants.USER_ID, SharedPrefManager.getInstance().getUserId());
 			contentvalues.put(DatabaseConstants.USER_SG, SharedPrefManager.getInstance().getUserDomain());
-			System.out.println("HomeScreen::saveMessage: - "+contentvalues.toString());
+//			System.out.println("HomeScreen::saveMessage: - "+contentvalues.toString());
 			chatDBWrapper.insertInDB(DatabaseConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 		} catch (Exception e) {
 
@@ -2517,13 +2522,11 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				} else
 					showDialog("Please try again later.", null);
 			}else{
-//					if(mViewPager.getCurrentItem() == 1){
 				iPrefManager.setGroupsLoaded(true);
-				if(PublicGroupScreen.isAllChannelTab)
+				if (PublicGroupScreen.isAllChannelTab)
 					publicGroupFragment.showAllContacts(1);
 				else
 					publicGroupFragment.showAllContacts(0);
-//					}
 			}
 			super.onPostExecute(str);
 		}
@@ -2626,7 +2629,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					System.out.println("HomeScreen :: SignInTaskOnServer : Writing Official ID Data..");
 					for (BroadcastGroupDetail shared_id_detail : loginObj.directoryBroadcastGroupSet) {
 						if(sharedPrefManager.getSharedIDDisplayName(shared_id_detail.broadcastGroupName) == null){
-							System.out.println("Shared ID :: "+shared_id_detail.displayName+" : "+shared_id_detail.broadcastGroupName);
+//							System.out.println("Shared ID :: "+shared_id_detail.displayName+" : "+shared_id_detail.broadcastGroupName);
 							sharedPrefManager.saveSharedIDDisplayName(shared_id_detail.broadcastGroupName, shared_id_detail.displayName);
 							sharedPrefManager.setSharedIDContact(shared_id_detail.broadcastGroupName, true);
 							if(shared_id_detail.fileId != null)
@@ -2816,7 +2819,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 								contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
 								contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
-								System.out.println("TABLE_NAME_CONTACT_NUMBERS : "+contentvalues.toString());
+//								System.out.println("TABLE_NAME_CONTACT_NUMBERS : "+contentvalues.toString());
 								if(!userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
 									wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
 								if(userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
@@ -3213,7 +3216,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 									new_msg_date = calender.get(Calendar.DATE);
 								}
 
-								System.out.println("new_msg_date = "+new_msg_date+", old_msg_date = "+old_msg_date);
+//								System.out.println("new_msg_date = "+new_msg_date+", old_msg_date = "+old_msg_date);
 								if (new_msg_date == 0 || old_msg_date < new_msg_date) {
 									contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "1");
 								} else {
@@ -3235,7 +3238,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 								if(media_url != null && media_url.length() > 0)
 									media_url = Constants.LIVE_DOMAIN + "/rtMediaServer/get/" + media_url;
 								if (json_body != null && json_body.trim().length() > 0){
-									System.out.println("json_body = " + json_body);
+//									System.out.println("json_body = " + json_body);
 									JSONObject jsonobj = null;
 									try {
 										jsonobj = new JSONObject(json_body);
@@ -3544,27 +3547,20 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
 	/**
 	 * When next Supergroup is clicked to change
-	 * @param sg
+	 * @param username
 	 */
-	public void switchSG(String sg, boolean confirmation, InviteJoinDataModel model){
-		//Testing
-		String sg_name = sg.substring(sg.indexOf("_") + 1);
-//		ArrayList<JoinedDomainNameSet> joined = DBWrapper.getInstance().getListOfJoinedSGs();
-//		ArrayList<InvitedDomainNameSet> invited = DBWrapper.getInstance().getListOfInvitedSGs();
-//		OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
-//		activateSG(sg_name);
-
+	public void switchSG(String username, boolean confirmation, InviteJoinDataModel model){
+		String sg_name = username.substring(username.indexOf("_") + 1);
 		if(!sg_name.equalsIgnoreCase(iPrefManager.getUserDomain())){
-		iPrefManager.setSGListData(null);
+			iPrefManager.setSGListData(null);
 
-		if(isContactSynching || isSwitchingSG){
-			drawerFragment.fragmentClose();
-			Toast.makeText(this, "Loading some data, please wait.", Toast.LENGTH_LONG).show();
-			return;
-		}
+			if(isContactSynching || isSwitchingSG){
+				drawerFragment.fragmentClose();
+				Toast.makeText(this, "Loading some data, please wait.", Toast.LENGTH_LONG).show();
+				return;
+			}
+			//Check if that group is deactivated then show alert
 			if(DBWrapper.getInstance().isSGActive(sg_name) ) {
-				//Check if that group is deactivated then show alert
-//			String current_username = DBWrapper.getInstance().getSGUserName(sg_name);
 				//Update SG counter for clicked SG
 				isSwitchingSG = true;
 				DBWrapper.getInstance().updateSGNewMessageCount(sg_name, 0);
@@ -3575,8 +3571,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				}else {
 					isSwitchSG = true;
 					selectedTab = mViewPager.getCurrentItem();
+//					if(selectedTab == 1)
+//						selectedTab = 0;
 					drawerFragment.fragmentClose();
-					updateUserData(sg, null);
+					updateUserData(username, null);
 					markSGActive(sg_name);
 				}
 			}else{
@@ -3584,7 +3582,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				drawerFragment.fragmentClose();
 				showDeactiveDialog("");
 			}
-
 		}else{
 			drawerFragment.fragmentClose();
 		}
@@ -3646,7 +3643,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			call.enqueue(new RetrofitRetrofitCallback<MarkSGActive>(this) {
 				@Override
 				protected void onResponseVoidzResponse(Call call, Response response) {
-					System.out.println("Retrofit : onResponseVoidzResponse 1 - "+response.toString());
+//					System.out.println("Retrofit : onResponseVoidzResponse 1 - "+response.toString());
 
 				}
 
@@ -3666,7 +3663,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
 				@Override
 				protected void common() {
-					System.out.println("Retrofit : onResponseVoidzObject 3 - ");
+//					System.out.println("Retrofit : onResponseVoidzObject 3 - ");
 
 				}
 			});

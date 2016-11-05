@@ -1910,7 +1910,7 @@ public boolean isContactModified(String rawId, int version){
 			contentvalues.put(DatabaseConstants.DOMAIN_USER_PASSWORD, sg_password);
 			contentvalues.put(DatabaseConstants.DOMAIN_ACTIVATE_STATUS, active);
 			contentvalues.put(DatabaseConstants.DOMAIN_USER_ID, user_id);
-			System.out.println("DBWrapper :: updateSGCredentials : "+contentvalues.toString());
+//			System.out.println("DBWrapper :: updateSGCredentials : "+contentvalues.toString());
 			int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
 					new String[] { sg_name });
 			if(row > 0)
@@ -2297,8 +2297,8 @@ public boolean isContactModified(String rawId, int version){
 				contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
 				contentvalues.put(DatabaseConstants.DOMAIN_MUTE_INFO, Integer.valueOf(0));
 				long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
-				if(row > 0)
-					Log.e("DBWrapper", "updateInvitedSGData count " + row);
+//				if(row > 0)
+//					Log.e("DBWrapper", "updateInvitedSGData count " + row);
 			}
 		}catch(Exception ex){
 			ex.printStackTrace();
@@ -2329,8 +2329,8 @@ public boolean isContactModified(String rawId, int version){
 					contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
 					contentvalues.put(DatabaseConstants.DOMAIN_MUTE_INFO, Integer.valueOf(0));
 					long row = insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
-					if (row > 0)
-						Log.e("DBWrapper", "updateInvitedSGData count " + row);
+//					if (row > 0)
+//						Log.e("DBWrapper", "updateInvitedSGData count " + row);
 				}
 			}
 		}catch(Exception ex){

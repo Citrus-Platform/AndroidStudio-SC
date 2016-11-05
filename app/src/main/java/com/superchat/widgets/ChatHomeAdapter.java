@@ -554,7 +554,7 @@ public void loadDialog(){
 //        			if(msg!=null && !msg.contains("created by") && !msg.contains("You have removed")  
 //        					&& !msg.contains("You have added") && !msg.contains("have added \"You\"")){
         			if(msg!=null && !msg.contains("created by") && !msg.contains("have removed") && !msg.contains("updated group")  
-        					&& !msg.contains("have added")){
+        					&& !msg.contains("have added") && !msg.contains("messages cleared")){
         				groupMsgSenderName ="You: ";
         				viewholder.id_last_msg_sender.setVisibility(View.VISIBLE);
         				viewholder.id_last_msg_sender.setText(groupMsgSenderName);

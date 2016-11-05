@@ -200,7 +200,7 @@
         android:layout_marginBottom="10dp"
         android:onClick="onConfirmClick"
         android:text="@string/confirm_txt"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:textColor="@color/white" />
 
     <ScrollView

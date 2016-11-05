@@ -159,7 +159,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                         joinedDomainNameSetTemp.get(i).getDomainName(),
                         joinedDomainNameSetTemp.get(i).getDomainType()));
 
-                Log.e("disp" , "is : "+joinedDisplayName);
+//                Log.e("disp" , "is : "+joinedDisplayName);
             }
         }
         return dataList;
@@ -362,8 +362,12 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                         String user = SharedPrefManager.getInstance().getUserPhone();
                         if (user != null && user.contains("-"))
                             user = user.replace("-", "");
+
+                        SharedPrefManager.getInstance().saveSGUserID(model.getInviteUserName(), model.getInviteUserID());
+                        SharedPrefManager.getInstance().saveSGPassword(model.getInviteUserName(), model.getInviteUserPassword());
+                        DBWrapper.getInstance().updateSGCredentials(SG_NAME, model.getInviteUserName(), model.getInviteUserPassword(), model.getInviteUserID(), true);
                         DBWrapper.getInstance().updateSGTypeValue(SG_NAME, 2);
-                        DBWrapper.getInstance().updateSGActiveStatus(SG_NAME, "true");
+//                        DBWrapper.getInstance().updateSGActiveStatus(SG_NAME, "true");
                         ((HomeScreen) getActivity()).switchSG(user + "_" + SG_NAME, true, model);
                     }
                 } catch (Exception e) {

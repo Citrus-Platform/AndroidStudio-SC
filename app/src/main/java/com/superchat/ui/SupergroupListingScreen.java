@@ -1347,7 +1347,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 									if (registrationForm.getDomainName().equalsIgnoreCase(regObjRes.getActivateDomainDataSet().get(i).getDomainName())) {
 										regObj = regObjRes.getActivateDomainDataSet().get(i);
 										if(regObj.isActivateSuccess()) {
-											System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
+//											System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
 											iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
 											iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
 											iPrefManager.saveUserDomain(regObj.getDomainName());
@@ -1369,7 +1369,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 										}
 									}else{
 										regObj = regObjRes.getActivateDomainDataSet().get(i);
-										System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
+//										System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
 										iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
 										iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
 										DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());

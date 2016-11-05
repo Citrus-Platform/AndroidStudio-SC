@@ -621,44 +621,46 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
     }
 
     public void showAllContacts(int type) {
-        FragmentActivity fragmentactivity = getActivity();
-        String as[] = {DatabaseConstants.CONTACT_NAMES_FIELD};
-        int ai[] = new int[1];
-        ai[0] = R.id.id_contact_name;
-        ArrayList<LoginResponseModel.GroupDetail> list = new ArrayList<LoginResponseModel.GroupDetail>();
-        for (LoginResponseModel.GroupDetail groups : HomeScreen.groupsData) {
+        synchronized(this) {
+            FragmentActivity fragmentactivity = getActivity();
+            String as[] = {DatabaseConstants.CONTACT_NAMES_FIELD};
+            int ai[] = new int[1];
+            ai[0] = R.id.id_contact_name;
+            ArrayList<LoginResponseModel.GroupDetail> list = new ArrayList<LoginResponseModel.GroupDetail>();
+            for (LoginResponseModel.GroupDetail groups : HomeScreen.groupsData) {
 //			LoginResponseModel.GroupDetail info = new LoginResponseModel.GroupDetail();
-            if (type == 0 && !groups.memberType.equals("USER")) {
-                list.add(groups);
-            } else if (type == 1)
-                list.add(groups);
-        }
-        if (type == 0)
-            for (String group : SharedPrefManager.getInstance().getGroupNamesArray()) {
-                if (group == null || group.equals(""))
-                    continue;
-                if (SharedPrefManager.getInstance().isPublicGroup(group) || !SharedPrefManager.getInstance().isGroupMemberActive(group, SharedPrefManager.getInstance().getUserName()))
-                    continue;
-                LoginResponseModel.GroupDetail groups = new LoginResponseModel.GroupDetail();
-                groups.groupName = group;
-                groups.memberType = "MEMBER";
-                groups.displayName = SharedPrefManager.getInstance().getGroupDisplayName(group);
-                groups.description = SharedPrefManager.getInstance().getUserStatusMessage(group);
-                groups.numberOfMembers = SharedPrefManager.getInstance().getGroupMemberCount(group);
-                if (groups.numberOfMembers != null && groups.numberOfMembers.equals(""))
-                    groups.numberOfMembers = "1";
-                if (list != null && !isGroupAddedInList(list, groups.groupName))
+                if (type == 0 && !groups.memberType.equals("USER")) {
+                    list.add(groups);
+                } else if (type == 1)
                     list.add(groups);
             }
-        Collections.sort(list);
-        ListView listView = null;
-        try {
-            adapter = new PublicGroupAdapter(this, fragmentactivity,
-                    R.layout.public_group_items, list, Constants.GROUP_USER_CHAT_CREATE);
-            listView = getListView();
-            if (listView != null && adapter != null)
-                listView.setAdapter(adapter);
-        } catch (Exception e) {
+            if (type == 0)
+                for (String group : SharedPrefManager.getInstance().getGroupNamesArray()) {
+                    if (group == null || group.equals(""))
+                        continue;
+                    if (SharedPrefManager.getInstance().isPublicGroup(group) || !SharedPrefManager.getInstance().isGroupMemberActive(group, SharedPrefManager.getInstance().getUserName()))
+                        continue;
+                    LoginResponseModel.GroupDetail groups = new LoginResponseModel.GroupDetail();
+                    groups.groupName = group;
+                    groups.memberType = "MEMBER";
+                    groups.displayName = SharedPrefManager.getInstance().getGroupDisplayName(group);
+                    groups.description = SharedPrefManager.getInstance().getUserStatusMessage(group);
+                    groups.numberOfMembers = SharedPrefManager.getInstance().getGroupMemberCount(group);
+                    if (groups.numberOfMembers != null && groups.numberOfMembers.equals(""))
+                        groups.numberOfMembers = "1";
+                    if (list != null && !isGroupAddedInList(list, groups.groupName))
+                        list.add(groups);
+                }
+            Collections.sort(list);
+            ListView listView = null;
+            try {
+                adapter = new PublicGroupAdapter(this, fragmentactivity,
+                        R.layout.public_group_items, list, Constants.GROUP_USER_CHAT_CREATE);
+                listView = getListView();
+                if (listView != null && adapter != null)
+                    listView.setAdapter(adapter);
+            } catch (Exception e) {
+            }
         }
 
 //		updateCursor(null, null);
@@ -991,6 +993,7 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
                             str += line;
                         }
                         if (str != null && !str.equals("")) {
+                            System.out.println(TAG+"OpenGroupTaskOnServer :: response : "+str);
                             Gson gson = new GsonBuilder().create();
                             LoginResponseModel loginObj = gson.fromJson(str, LoginResponseModel.class);
                             if (loginObj != null) {
