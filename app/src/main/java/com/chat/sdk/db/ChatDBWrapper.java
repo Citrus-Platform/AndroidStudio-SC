@@ -2330,8 +2330,9 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 					 } else
 						 contentvalues.put(ChatDBConstants.TO_USER_FIELD, pref.getUserName());
 					 //Add SG Name and user ID
-					 contentvalues.put(ChatDBConstants.USER_SG, message_data.getSgName());
-					 contentvalues.put(ChatDBConstants.USER_ID, message_data.getUserID());
+					 contentvalues.put(ChatDBConstants.USER_SG, pref.getUserDomain());
+					 contentvalues.put(ChatDBConstants.USER_ID, pref.getUserId());
+//					 System.out.println("=======>ANDROID:: USER_SG : "+message_data.getSgName()+", USER_ID : "+message_data.getUserID());
 
 					 if (message_data.fromGroupUserName == null)
 						 message_data.fromGroupUserName = "";
@@ -2407,8 +2408,10 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 							 	contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message_data.roomID);
 						 }
 						 //Add SG Name and user ID
-						 contentvalues.put(ChatDBConstants.USER_SG, message_data.getSgName());
-						 contentvalues.put(ChatDBConstants.USER_ID, message_data.getUserID());
+						 contentvalues.put(ChatDBConstants.USER_SG, pref.getUserDomain());
+						 contentvalues.put(ChatDBConstants.USER_ID, pref.getUserId());
+
+//						 System.out.println("=======>ANDROID:: USER_SG : "+message_data.getSgName()+", USER_ID : "+message_data.getUserID());
 
 						 if (pref.isBroadCast(message_data.roomID)) {
 							 contact_name = pref.getBroadCastDisplayName(message_data.roomID) + "#786#" + message_data.roomID;

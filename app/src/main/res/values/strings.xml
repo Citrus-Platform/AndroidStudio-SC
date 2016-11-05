@@ -572,6 +572,7 @@
       <string name="no_thanks">No thanks</string>
     <string name="old_messages">Load more</string>
     <string name="switch_sg">Switch</string>
+    <string name="loading_contacts">Updating contacts, please wait..</string>
     <!--
          Content description for the hour selector in the time picker, which displays
          selectable hours of the day along the inside edge of a circle, as in an analog clock.

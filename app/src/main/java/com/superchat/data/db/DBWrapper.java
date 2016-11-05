@@ -2587,6 +2587,7 @@ public boolean isContactModified(String rawId, int version){
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 		} finally {
 			if (cursor != null) {
 				cursor.close();

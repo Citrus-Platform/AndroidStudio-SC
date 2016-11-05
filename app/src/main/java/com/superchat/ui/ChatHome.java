@@ -246,6 +246,7 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
         }
     }
 
+    boolean isSearchOn;
     public View onCreateView(LayoutInflater layoutinflater,
                              ViewGroup viewgroup, Bundle bundle) {
 
@@ -290,6 +291,7 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
 //                superGroupIcon.setVisibility(View.GONE);
                 superGroupName.setVisibility(View.GONE);
 
+                isSearchOn = true;
                 searchBoxView.requestFocus();
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(searchBoxView, InputMethodManager.SHOW_IMPLICIT);
@@ -315,8 +317,8 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
                 superGroupName.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(View.GONE);
                 searchBoxView.setText("");
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
             }
         });
         searchBoxView.addTextChangedListener(new TextWatcher() {
@@ -355,6 +357,22 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
 //        if(service!=null)
 //			service.setTypingListener(this);
         return view;
+    }
+    public boolean isSearchOn(){
+        return isSearchOn;
+    }
+    public void resetSearch(){
+        if(searchBoxView != null){
+            searchBoxView.setText("");
+            searchBoxView.setVisibility(View.GONE);
+            searchIcon.setVisibility(View.VISIBLE);
+
+//            superGroupIcon.setVisibility(View.VISIBLE);
+            superGroupName.setVisibility(View.VISIBLE);
+            searchBoxView.setVisibility(View.GONE);
+            clearSearch.setVisibility(View.GONE);
+            isSearchOn = false;
+        }
     }
 
     ProgressDialog dialog;

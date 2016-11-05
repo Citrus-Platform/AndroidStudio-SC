@@ -191,7 +191,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	ObjectAnimator syncAnimation;
 	boolean isLoginProcessing;
 	boolean isContactSync;
-	boolean isContactSynching;
+	public static boolean isContactSynching;
 	boolean isSwitchingSG;
 	boolean noLoadingNeeded = false;
 	public static boolean firstTimeAdmin = false;
@@ -1237,7 +1237,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 							else
 								new DomainsUserTaskOnServer().execute();
 						}
-					}
+					}else
+						isContactSynching = false;
 					//call Once
 					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain()))
 						getBulletinMessages();
@@ -1594,6 +1595,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //					mViewPager.setCurrentItem(0);
 					isContactRefreshed = true;
 					isContactSync = false;
+					isContactSynching = false;
 					if(EsiaChatContactsScreen.invitationPending){
 						try {
 							Thread.sleep(3000);
@@ -1957,6 +1959,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	@Override
 	public void onBackPressed() {
 		int count = getFragmentManager().getBackStackEntryCount();
+		if(publicGroupFragment.isSearchOn()) {
+			publicGroupFragment.resetSearch();
+			return;
+		}else if(chatMenuLayout.isSelected() && chatFragment.isSearchOn()) {
+			chatFragment.resetSearch();
+			return;
+		}
 		if (count == 0) {
 //	        super.onBackPressed();
 			moveTaskToBack(true);

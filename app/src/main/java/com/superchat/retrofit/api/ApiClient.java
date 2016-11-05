@@ -23,7 +23,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiClient {
 
     private static ApiClient uniqInstance;
-    private final String API_URL_LIVE = "http://" + Constants.LIVE_DOMAIN;
+//    private final String API_URL_LIVE = "http://" + Constants.LIVE_DOMAIN;
+    private final String API_URL_LIVE = Constants.LIVE_DOMAIN;
 
     private RetrofitInterface apiMazkara;
 

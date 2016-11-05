@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -63,6 +64,7 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
     ImageView global_icon_white;
     ImageView searchIcon;
     boolean isRWA = false;
+    LinearLayout contactLoadingLayout;
     private ServiceConnection mConnection = new ServiceConnection() {
 
         public void onServiceConnected(ComponentName className, IBinder binder) {
@@ -202,6 +204,8 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
             }
         });
+
+        contactLoadingLayout = (LinearLayout) view.findViewById(R.id.id_loading_layout);
 //		view.findViewById(R.id.id_add_icon).setOnClickListener(new OnClickListener() {
 //			@Override
 //			public void onClick(View v) {
@@ -339,6 +343,10 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
         }
         if (superGroupName != null)
             superGroupName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
+
+        if(HomeScreen.isContactSynching && contactLoadingLayout != null){
+            contactLoadingLayout.setVisibility(View.VISIBLE);
+        }
 //        if (superGroupIcon != null && SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID") != null)
 //            setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
 //		showAllContacts();
@@ -417,9 +425,17 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
 //                DatabaseConstants.VOPIUM_FIELD + " ASC, " + DatabaseConstants.CONTACT_NAMES_FIELD + " COLLATE NOCASE");
         cursor = DBWrapper.getInstance().getContactsCursor(sg);
 //        System.out.println("Cursor size = "+cursor.getCount());
-        if (cursor != null && adapter != null) {
-            adapter.changeCursor(cursor);
-            adapter.notifyDataSetChanged();
+
+        if(cursor != null){
+            if(cursor.getCount() > 0) {
+                HomeScreen.isContactSynching = false;
+                if(contactLoadingLayout != null)
+                    contactLoadingLayout.setVisibility(View.GONE);
+            }
+            if(adapter != null){
+                adapter.changeCursor(cursor);
+                adapter.notifyDataSetChanged();
+            }
         }
     }
 

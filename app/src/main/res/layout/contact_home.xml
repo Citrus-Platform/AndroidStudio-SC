@@ -187,6 +187,35 @@
         android:fastScrollEnabled="true"
         android:longClickable="true"
         android:scrollbarSize="4dip"
+        android:visibility="visible"
         android:scrollbarThumbVertical="@color/color_lite_blue" />
+
+    <LinearLayout
+        android:id="@+id/id_loading_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_gravity="center">
+
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar" />
+     <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:paddingTop="5.0dip"
+            android:text="@string/loading_contacts"
+            android:textColor="@color/text_color_grayblack"
+            android:textSize="14sp"
+            android:textStyle="normal" />
+
+    </LinearLayout>
 
 </RelativeLayout>

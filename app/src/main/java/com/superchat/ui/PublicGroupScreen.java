@@ -240,43 +240,9 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
 
             @Override
             public void onClick(View v) {
-                if (searchBoxView.getText().toString().trim().length() > 0) {
-                    searchBoxView.setText("");
-                    Timer timer = new Timer();
-                    long DELAY = 800; // milliseconds
-                    timer.cancel();
-                    timer = new Timer();
-                    if (isSearchOn)
-                        timer.schedule(
-                                new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        Message msg = new Message();
-                                        Bundle data = new Bundle();
-                                        data.putString("SearchText", "");
-                                        msg.setData(data);
-                                        handler.sendMessage(msg);
-                                    }
-                                },
-                                DELAY
-                        );
-                } else {
-                    searchEditText.setText("");
-                    searchEditText.setVisibility(View.GONE);
-                    searchIcon.setVisibility(View.VISIBLE);
-//                    superGroupIcon.setVisibility(View.VISIBLE);
-                    superGroupName.setVisibility(View.VISIBLE);
-
-                    searchBoxView.setVisibility(View.GONE);
-                    global_icon_white.setVisibility(View.VISIBLE);
-                    clearSearch.setVisibility(View.GONE);
-//					if(SharedPrefManager.getInstance().isDomainAdmin())
-//						createGroup.setVisibility(View.VISIBLE);
-//					else
-//						createGroup.setVisibility(View.GONE);
-                    InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
+                resetSearchBox();
+                InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
             }
         });
 //		view.findViewById(R.id.id_add_icon).setOnClickListener(new OnClickListener() {
@@ -290,6 +256,56 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
 //		superGroupName.setText(SharedPrefManager.getInstance().getUserDomain());
 //		setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
         return view;
+    }
+
+    public boolean isSearchOn(){
+        return isSearchOn;
+    }
+    public void resetSearchBox(){
+        if(searchEditText == null)
+            return;
+        if(searchBoxView.getText().toString().trim().length() > 0){
+            searchBoxView.setText("");
+            Timer timer=new Timer();
+            long DELAY = 800; // milliseconds
+            timer.cancel();
+            timer = new Timer();
+            if(isSearchOn)
+                timer.schedule(
+                        new TimerTask() {
+                            @Override
+                            public void run() {
+                                Message msg = new Message();
+                                Bundle data = new Bundle();
+                                data.putString("SearchText", "");
+                                msg.setData(data);
+                                handler.sendMessage(msg);
+                            }
+                        },
+                        DELAY
+                );
+        }else{
+            searchEditText.setText("");
+            searchEditText.setVisibility(View.GONE);
+            searchIcon.setVisibility(View.VISIBLE);
+//            superGroupIcon.setVisibility(View.VISIBLE);
+            superGroupName.setVisibility(View.VISIBLE);
+            searchBoxView.setVisibility(View.GONE);
+            clearSearch.setVisibility(View.GONE);
+            isSearchOn = false;
+        }
+    }
+    public void resetSearch(){
+        if(searchEditText != null){
+            searchEditText.setText("");
+            searchEditText.setVisibility(View.GONE);
+            searchIcon.setVisibility(View.VISIBLE);
+//            superGroupIcon.setVisibility(View.VISIBLE);
+            superGroupName.setVisibility(View.VISIBLE);
+            searchBoxView.setVisibility(View.GONE);
+            clearSearch.setVisibility(View.GONE);
+            isSearchOn = false;
+        }
     }
 
     private String getThumbPath(String groupPicId) {
@@ -455,6 +471,9 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
                 viewMyChannelLabel.setVisibility(View.VISIBLE);
                 allChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
                 myChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
+                if(searchEditText != null)
+                    searchEditText.setText("");
+                resetSearchBox();
             } else {
 //			myChannelTabLayout.setBackgroundColor(Color.GRAY);
 //			allChannelTabLayout.setBackgroundColor(0xffcde1f5);//Color.WHITE);
@@ -462,6 +481,7 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
                 viewAllChannelLabel.setVisibility(View.VISIBLE);
                 myChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
                 allChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
+                resetSearchBox();
             }
             if (isAllChannelTab)
                 showAllContacts(1);
@@ -482,6 +502,7 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
         getActivity().bindService(new Intent(getActivity(), ChatService.class), mConnection, Context.BIND_AUTO_CREATE);
         onForeground = true;
         refreshList();
+        resetSearch();
 //		if(HomeScreen.refreshContactList){
 //			updateCursor(null, null);
 //			HomeScreen.refreshContactList = false;
