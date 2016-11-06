@@ -3522,23 +3522,40 @@ public class ChatService extends Service implements interfaceInstances {
 							ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID
 									.randomUUID().toString());
 			}
+			if(to.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")){
+				long currentTime = System.currentTimeMillis();
+				calender.setTimeInMillis(currentTime);
+				int new_msg_date = calender.get(Calendar.DATE);
 
-			long currentTime = System.currentTimeMillis();
-			calender.setTimeInMillis(currentTime);
-			int date = calender.get(Calendar.DATE);
-			int oldDate = date;
-			long milis = chatDBWrapper.lastMessageInDB(oppName);
-			if(milis!=-1){
-				calender.setTimeInMillis(milis);
-				oldDate = calender.get(Calendar.DATE);
-			}
-			if (((oldDate != date) || chatDBWrapper.isFirstChat(oppName))
-					&& message.getStatusMessageType().ordinal() != Message.StatusMessageType.broadcasttoall.ordinal()
-					&& !prefManager.isSharedIDContact(to)) {
+				int old_msg_date = 0;
+				long milis = chatDBWrapper.latestMessageInDBForBulletin();
+				if(milis != -1){
+					calender.setTimeInMillis(milis);
+					old_msg_date = calender.get(Calendar.DATE);
+				}
+				if (old_msg_date == 0 || new_msg_date > old_msg_date) {
+					contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
+				} else {
+					contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
+				}
+
+			}else {
+				long currentTime = System.currentTimeMillis();
+				calender.setTimeInMillis(currentTime);
+				int date = calender.get(Calendar.DATE);
+				int oldDate = date;
+				long milis = chatDBWrapper.lastMessageInDB(oppName);
+				if(milis!=-1){
+					calender.setTimeInMillis(milis);
+					oldDate = calender.get(Calendar.DATE);
+				}
+				if (((oldDate != date) || chatDBWrapper.isFirstChat(oppName))
+						&& message.getStatusMessageType().ordinal() != Message.StatusMessageType.broadcasttoall.ordinal()
+						&& !prefManager.isSharedIDContact(to)) {
 //				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
-//				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
-			} else {
-				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
+				} else {
+					contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
+				}
 			}
 			if(delay != null && delay.getStamp() != null) {
 				try {
@@ -5744,7 +5761,7 @@ public class ChatService extends Service implements interfaceInstances {
 			//Save USerID and SG in DB
 			contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
 			contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
-			System.out.println("ChatService - 1::saveMessage: - "+contentvalues.toString());
+//			System.out.println("ChatService - 1::saveMessage: - "+contentvalues.toString());
 			chatDBWrapper.insertInDB(DatabaseConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 		} catch (Exception e) {
 

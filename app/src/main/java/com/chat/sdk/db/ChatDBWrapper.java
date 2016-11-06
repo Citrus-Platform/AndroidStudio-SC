@@ -1746,7 +1746,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 		String sql = "SELECT "+ChatDBConstants.LAST_UPDATE_FIELD+", MAX("+ChatDBConstants.LAST_UPDATE_FIELD+") FROM "
 				+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO + " WHERE "
 						+ ChatDBConstants.TO_USER_FIELD + " = '" + person + "' OR "
-						+ ChatDBConstants.FROM_USER_FIELD + " = '" + person + "'";;
+						+ ChatDBConstants.FROM_USER_FIELD + " = '" + person + "'";
 		Cursor cursor = null;
 		try {
 			cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
@@ -1769,12 +1769,38 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 		return ret;
 	}
 	public long firstMessageInDB(String person) {
+		String sg = SharedPrefManager.getInstance().getUserDomain();
 		long ret = -1;
 		String sql = "SELECT "+ChatDBConstants.LAST_UPDATE_FIELD+", MIN("+ChatDBConstants.LAST_UPDATE_FIELD+") FROM "
 				+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO + " WHERE "
 //				+ ChatDBConstants.FROM_USER_FIELD + " = '" + person + "' OR "
 //				+ ChatDBConstants.FROM_USER_FIELD + " = '" + SharedPrefManager.getInstance().getUserName() + "' AND "
-				+ ChatDBConstants.MESSAGE_TYPE + "=" + 3;
+				+ ChatDBConstants.MESSAGE_TYPE + "=" + 3 + " AND " + DatabaseConstants.USER_SG + "='" + sg +"'";
+		Cursor cursor = null;
+		try {
+			cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
+			if (cursor != null)
+				if (cursor != null && cursor.moveToFirst()){
+					ret = cursor.getLong(cursor.getColumnIndex(ChatDBConstants.LAST_UPDATE_FIELD));
+				}
+			Log.d("ChatDBWrapper","lastMessageInDB in ret "+ret);
+		} catch (Exception e) {
+			Log.e("ChatDBWrapper",
+					"Exception in getRecievedMessages method " + e.toString());
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+				cursor = null;
+			}
+		}
+		return ret;
+	}
+	public long latestMessageInDBForBulletin() {
+		String sg = SharedPrefManager.getInstance().getUserDomain();
+		long ret = -1;
+		String sql = "SELECT "+ChatDBConstants.LAST_UPDATE_FIELD+", MAX("+ChatDBConstants.LAST_UPDATE_FIELD+") FROM "
+				+ ChatDBConstants.TABLE_NAME_MESSAGE_INFO + " WHERE "
+				+ ChatDBConstants.MESSAGE_TYPE + "=" + 3 + " AND " + DatabaseConstants.USER_SG + "='" + sg +"'";
 		Cursor cursor = null;
 		try {
 			cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
@@ -2317,7 +2343,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 				 MessageDataModel message_data = gson.fromJson(message.toString(), MessageDataModel.class);
 
 				ContentValues contentvalues = new ContentValues();
-				 if(message_data.messageType == 3)
+				 if(message_data.messageType == 3 || (message_data.textMessage != null && message_data.textMessage.startsWith("Group created by")))
 					 continue;
 				 if(os_type != null && os_type.equalsIgnoreCase("Android")) {
 					 if (message_data.fromUserName != null)

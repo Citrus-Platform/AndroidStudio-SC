@@ -620,19 +620,30 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
             }
     }
 
+    ArrayList<LoginResponseModel.GroupDetail> list = null;
     public void showAllContacts(int type) {
         synchronized(this) {
             FragmentActivity fragmentactivity = getActivity();
             String as[] = {DatabaseConstants.CONTACT_NAMES_FIELD};
             int ai[] = new int[1];
             ai[0] = R.id.id_contact_name;
-            ArrayList<LoginResponseModel.GroupDetail> list = new ArrayList<LoginResponseModel.GroupDetail>();
+            boolean exists = false;
+            if(list != null)
+                list.clear();
+            if(list == null)
+                list = new ArrayList<LoginResponseModel.GroupDetail>();
             for (LoginResponseModel.GroupDetail groups : HomeScreen.groupsData) {
-//			LoginResponseModel.GroupDetail info = new LoginResponseModel.GroupDetail();
                 if (type == 0 && !groups.memberType.equals("USER")) {
                     list.add(groups);
-                } else if (type == 1)
-                    list.add(groups);
+                } else if (type == 1) {
+//                    for(LoginResponseModel.GroupDetail detail : list){
+//                        if(detail.groupName.equals(groups.groupName))
+//                            exists = true;
+//                    }
+//                    if(!exists)
+                    if (list != null && !isGroupAddedInList(list, groups.groupName))
+                        list.add(groups);
+                }
             }
             if (type == 0)
                 for (String group : SharedPrefManager.getInstance().getGroupNamesArray()) {

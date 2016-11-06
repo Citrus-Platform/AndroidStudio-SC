@@ -200,6 +200,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
 	boolean isRWA = false;
 	boolean sgCreationAfterLogin;
+	public static boolean isBulletinMsgFound;
 
 	public Set<GroupDetail> directoryGroupSet = null;
 	public Set<BroadcastGroupDetail> directoryBroadcastGroupSet;
@@ -3204,20 +3205,22 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //								System.out.println("[Creaton Date ] "+message.getCreatedDate());
 
 
+								//Here message comes in reverse order to check care fully
 								Calendar calender = Calendar.getInstance();
 								calender.setTimeInMillis(convertTomilliseconds(message.getCreatedDate()));
-								int old_msg_date = calender.get(Calendar.DATE);
-								int new_msg_date = 0;
+
+								int new_msg_date = calender.get(Calendar.DATE);;
+								int old_msg_date = 0;
 
 								String oppName = message.getSender();
-								long millis = ChatDBWrapper.getInstance().firstMessageInDB(oppName);
+								long millis = ChatDBWrapper.getInstance().latestMessageInDBForBulletin();
 								if(millis > 0){
 									calender.setTimeInMillis(millis);
-									new_msg_date = calender.get(Calendar.DATE);
+									old_msg_date = calender.get(Calendar.DATE);
 								}
 
 //								System.out.println("new_msg_date = "+new_msg_date+", old_msg_date = "+old_msg_date);
-								if (new_msg_date == 0 || old_msg_date < new_msg_date) {
+								if (old_msg_date == 0 || new_msg_date > old_msg_date) {
 									contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "1");
 								} else {
 									contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "0");
@@ -3276,6 +3279,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 							}
 							System.out.println("[HomeScreen : Bulletin  : Done for - "+iPrefManager.getUserDomain());
 							DBWrapper.getInstance().updateSGBulletinLoaded(iPrefManager.getUserDomain(), "true");
+							isBulletinMsgFound = true;
+						}else{
+							isBulletinMsgFound = false;
 						}
 						if(next_url != null) {
 							//Save this url is shared preferences for next hit
@@ -3286,7 +3292,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						}
 
 					} else {
-//						String errorMessage = response.getMessage() != null ? response.getMessage() : "Please try later";
+						String errorMessage = response.getMessage() != null ? response.getMessage() : "Please try later";
+						System.out.println("Bulletin Response : "+errorMessage);
 //						showDialog(errorMessage);
 					}
 				}

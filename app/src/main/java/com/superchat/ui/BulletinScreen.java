@@ -385,7 +385,7 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
             ChatDBWrapper wraper = ChatDBWrapper.getInstance(SuperChatApplication.context);
             if (SharedPrefManager.getInstance().isDomainAdminORSubAdmin()) {
                 cursor = wraper.getBulletinList(BULLETIN_ADMIN);
-                if (cursor != null && cursor.getCount() == 0) {
+                if (cursor != null && cursor.getCount() == 0 && !HomeScreen.isBulletinMsgFound) {
                     saveMessage(bulletinDomainName, bulletinDomainName, getString(R.string.bulleting_welcome1) + SharedPrefManager.getInstance().getUserDomain() + "'s" + getString(R.string.bulleting_welcome2));
                     cursor = wraper.getBulletinList(BULLETIN_ADMIN);
                 }
@@ -393,7 +393,7 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
                 cursor = wraper.getBulletinList(BULLETIN_MEMBER);
                 if (cursor != null && cursor.getCount() == 0)
                     cursor = wraper.getBulletinList(BULLETIN_ADMIN);
-                if (cursor != null && cursor.getCount() == 0) {
+                if (cursor != null && cursor.getCount() == 0 && !HomeScreen.isBulletinMsgFound) {
                     saveMessage(bulletinDomainName, bulletinDomainName, getString(R.string.bulleting_welcome1) + SharedPrefManager.getInstance().getUserDomain() + "'s" + getString(R.string.bulleting_welcome2));
                     cursor = wraper.getBulletinList(BULLETIN_MEMBER);
                 }
