@@ -1894,32 +1894,33 @@ public class MainActivity extends FragmentActivity implements
 						String line = "";
 						String str = "";
 						while ((line = rd.readLine()) != null) {
-							
 							str+=line;
 						}
 						if(str!=null &&!str.equals("")){
 							str = str.trim();
 							Gson gson = new GsonBuilder().create();
-							if (str==null || str.contains("error")){
+							if (str == null || str.contains("error")){
 								return str;
 							}
 							Log.i(TAG, "SignupTaskForAdmin :: doInBackground : response:"+str);
 							Registration regObj = gson.fromJson(str, Registration.class);
 							if (regObj != null) {
 								SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
-								if (iPrefManager != null
-										&& iPrefManager.getUserId() != 0) {
-									if (iPrefManager.getUserId() != regObj.iUserId) {
-										try {
-											DBWrapper.getInstance().clearMessageDB();
-											DBWrapper.getInstance().clearAllDB();
-											iPrefManager.clearSharedPref();
-										} catch (Exception e) {
-										}
-									}
-								}
+								//This Code not needed now, as we haev multiple SG support so no need to clean data.
+//								if (iPrefManager != null && iPrefManager.getUserId() != 0) {
+//									if (iPrefManager.getUserId() != regObj.iUserId) {
+//										try {
+//											DBWrapper.getInstance().clearMessageDB();
+//											DBWrapper.getInstance().clearAllDB();
+//											iPrefManager.clearSharedPref();
+//										} catch (Exception e) {
+//											e.printStackTrace();
+//										}
+//									}
+//								}
 								Log.d(TAG, "SignupTaskForAdmin :: doInBackground : password, mobileNumber: " + regObj.getPassword()+" , "+regObj.iMobileNumber);
 								iPrefManager.saveUserId(regObj.iUserId);
+
 								if(!tempVerify){
 									iPrefManager.saveUserDomain(domainNameView.getText().toString());
 									iPrefManager.saveCurrentSGDisplayName(domainNameView.getText().toString());

@@ -6918,7 +6918,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 call = objApi.getApi(this).getMoreMessages(url);
             } else {
                 System.out.println("ChatListScreen: [Hitting first time]");
-                call = objApi.getApi(this).getMessages("" + 10);
+                call = objApi.getApi(this).getBulletinMessages("" + 10);
             }
             (header.findViewById(R.id.load_older_messages)).setVisibility(View.GONE);
             (header.findViewById(R.id.message_loading)).setVisibility(View.VISIBLE);

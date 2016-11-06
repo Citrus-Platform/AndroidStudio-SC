@@ -3522,9 +3522,9 @@ public class ChatService extends Service implements interfaceInstances {
 							ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID
 									.randomUUID().toString());
 			}
+			long currentTime = System.currentTimeMillis();
+			calender.setTimeInMillis(currentTime);
 			if(to.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")){
-				long currentTime = System.currentTimeMillis();
-				calender.setTimeInMillis(currentTime);
 				int new_msg_date = calender.get(Calendar.DATE);
 
 				int old_msg_date = 0;
@@ -3538,10 +3538,7 @@ public class ChatService extends Service implements interfaceInstances {
 				} else {
 					contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
 				}
-
 			}else {
-				long currentTime = System.currentTimeMillis();
-				calender.setTimeInMillis(currentTime);
 				int date = calender.get(Calendar.DATE);
 				int oldDate = date;
 				long milis = chatDBWrapper.lastMessageInDB(oppName);

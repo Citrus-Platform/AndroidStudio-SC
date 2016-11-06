@@ -430,8 +430,11 @@ public class CreateSharedIDActivity extends Activity implements OnClickListener{
 				break;
 			}
 		}
-		if(!contains)
-			groupAdmins.add(0, HomeScreen.getSharedIDOwnerName(sharedID));
+		if(!contains) {
+			String admin = HomeScreen.getSharedIDOwnerName(sharedID);
+			if(admin != null)
+				groupAdmins.add(0, admin);
+		}
 
 		String owner_name = HomeScreen.getSharedIDOwnerName(sharedID);
 		if(SharedPrefManager.getInstance().getUserServerName(owner_name) != null 

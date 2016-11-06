@@ -624,7 +624,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			String user = iPrefManager.getUserPhone();
 			if(user != null && user.contains("-"))
 				user = user.replace("-", "");
-				switchSG(user + "_" + extras.getString("DOMAIN_NAME"), false, null);
+				switchSG(user + "_" + extras.getString("DOMAIN_NAME"), false, null, false);
 			return;
 		}else {
 			if (Build.VERSION.SDK_INT >= 11)
@@ -1862,7 +1862,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				String user = iPrefManager.getUserPhone();
 				if(user != null && user.contains("-"))
 					user = user.replace("-", "");
-				switchSG(user + "_" + extras.getString("DOMAIN_NAME"), false, null);
+				switchSG(user + "_" + extras.getString("DOMAIN_NAME"), false, null, false);
 				return;
 			}
 		}
@@ -3168,7 +3168,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		try {
 			retrofit2.Call call = null;
 			final SharedPrefManager pref = SharedPrefManager.getInstance();
-			call = objApi.getApi(this).getMessages("" + 10);
+			call = objApi.getApi(this).getBulletinMessages("" + 10);
 			call.enqueue(new RetrofitRetrofitCallback<BulletinGetMessageDataModel>(this) {
 				@Override
 				protected void onResponseVoidzResponse(retrofit2.Call call, Response response) {
@@ -3556,9 +3556,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	 * When next Supergroup is clicked to change
 	 * @param username
 	 */
-	public void switchSG(String username, boolean confirmation, InviteJoinDataModel model){
+	public void switchSG(String username, boolean confirmation, InviteJoinDataModel model, boolean sg_reg){
 		String sg_name = username.substring(username.indexOf("_") + 1);
-		if(!sg_name.equalsIgnoreCase(iPrefManager.getUserDomain())){
+		if(!sg_name.equalsIgnoreCase(iPrefManager.getUserDomain()) || sg_reg){
 			iPrefManager.setSGListData(null);
 
 			if(isContactSynching || isSwitchingSG){

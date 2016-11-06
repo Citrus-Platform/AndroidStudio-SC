@@ -1465,7 +1465,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Log.w("My Current loction address", "Canont get Address!");
+            Log.w("My Current loction address", "Can not get Address!");
         }
         return strAdd;
     }
@@ -2309,6 +2309,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                             DBWrapper.getInstance().updateSGCredentials(iSharedPrefManager.getUserDomain(), iSharedPrefManager.getUserName(), iSharedPrefManager.getUserPassword(), iSharedPrefManager.getUserId(), true);
                         }
                         startActivity(intent);
+                        finish();
                     } else {
                         if(backToPrevUI) {
                             setResult(Activity.RESULT_OK);

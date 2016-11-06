@@ -55,9 +55,11 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 public class FragmentDrawer extends Fragment implements View.OnClickListener {
@@ -367,8 +369,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                         SharedPrefManager.getInstance().saveSGPassword(model.getInviteUserName(), model.getInviteUserPassword());
                         DBWrapper.getInstance().updateSGCredentials(SG_NAME, model.getInviteUserName(), model.getInviteUserPassword(), model.getInviteUserID(), true);
                         DBWrapper.getInstance().updateSGTypeValue(SG_NAME, 2);
-//                        DBWrapper.getInstance().updateSGActiveStatus(SG_NAME, "true");
-                        ((HomeScreen) getActivity()).switchSG(user + "_" + SG_NAME, true, model);
+                        ((HomeScreen) getActivity()).switchSG(user + "_" + SG_NAME, true, model, false);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -377,10 +378,38 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             }
             case CODE_ADD_SUPERGROUP: {
                 try {
-                    String SG_NAME = data.getStringExtra("SG_NAME");
-                    ((HomeScreen) getActivity()).switchSG(SG_NAME, false, null);
-                } catch (Exception e) {
+                    SharedPrefManager pref = SharedPrefManager.getInstance();
+                    String SG_NAME = pref.getUserDomain();
+                    String user = pref.getUserPhone();
+                    if (user != null && user.contains("-"))
+                        user = user.replace("-", "");
+                    pref.saveSGUserID(pref.getUserName(), pref.getUserId());
+                    pref.saveSGPassword(pref.getUserName(), pref.getUserPassword());
 
+                    OwnerDomainName owned = new OwnerDomainName();
+                    owned.setDomainName(SG_NAME);
+                    owned.setDisplayName(pref.getCurrentSGDisplayName());
+                    owned.setUnreadCounter(0);
+                    owned.setCreatedDate("");
+                    owned.setDomainType("Company");
+                    owned.setDomainMuteInfo(0);
+                    owned.setOrgName("");
+                    owned.setOrgUrl("");
+                    owned.setPrivacyType("Open");
+                    owned.setAdminName(pref.getUserName());
+                    owned.setLogoFileId(pref.getSGFileId("SG_FILE_ID"));
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+                    String dateString = formatter.format(new Date(System.currentTimeMillis()));
+                    owned.setCreatedDate(dateString);
+
+                    if(owned != null)
+                        DBWrapper.getInstance().updateOwnedSGData(owned);
+
+                    DBWrapper.getInstance().updateSGCredentials(SG_NAME, pref.getUserName(), pref.getUserPassword(), pref.getUserId(), true);
+                    ((HomeScreen) getActivity()).switchSG(user + "_" + SG_NAME, false, null, true);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 break;
             }

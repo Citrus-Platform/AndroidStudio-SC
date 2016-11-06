@@ -36,7 +36,7 @@ public interface RetrofitInterface {
     Call<UserProfileModel> getUserProfile(@Query("userName") String userName);
 
     @GET(PREFIX_URL + "user/bulletin/get")
-    Call<BulletinGetMessageDataModel> getMessages(@Query("limit") String minId);
+    Call<BulletinGetMessageDataModel> getBulletinMessages(@Query("limit") String minId);
 
     @GET
     Call<BulletinGetMessageDataModel> getMoreMessages(@Url String url);

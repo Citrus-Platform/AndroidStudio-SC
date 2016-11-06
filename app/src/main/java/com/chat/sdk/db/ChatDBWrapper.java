@@ -2343,7 +2343,8 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 				 MessageDataModel message_data = gson.fromJson(message.toString(), MessageDataModel.class);
 
 				ContentValues contentvalues = new ContentValues();
-				 if(message_data.messageType == 3 || (message_data.textMessage != null && message_data.textMessage.startsWith("Group created by")))
+				 if(message_data.messageType == 3 ||
+						 (message_data.textMessage != null && (message_data.textMessage.startsWith("Group created by") || message_data.textMessage.startsWith("Broadcast created by"))))
 					 continue;
 				 if(os_type != null && os_type.equalsIgnoreCase("Android")) {
 					 if (message_data.fromUserName != null)

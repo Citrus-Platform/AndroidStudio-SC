@@ -1880,6 +1880,7 @@ public boolean isContactModified(String rawId, int version){
 			contentvalues.put(DatabaseConstants.DOMAIN_ADMIN_NAME, sg_data.getAdminName());
 			contentvalues.put(DatabaseConstants.DOMAIN_ORG_NAME, sg_data.getOrgName());
 			contentvalues.put(DatabaseConstants.DOMAIN_PRIVACY_TYPE, sg_data.getPrivacyType());
+
 			contentvalues.put(DatabaseConstants.DOMAIN_TYPE, sg_data.getDomainType());
 			contentvalues.put(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT, Integer.valueOf(sg_data.getUnreadCounter()));
 			contentvalues.put(DatabaseConstants.DOMAIN_CREATED_DATE, sg_data.getCreatedDate());

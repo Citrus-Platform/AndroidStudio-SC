@@ -117,8 +117,8 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
         if (bundle != null) {
             if(bundle.getBoolean(Constants.REG_TYPE))
                 inviteFromReg = true;
-            else if(bundle.getBoolean(Constants.SG_CREATE_AFTER_LOGIN))
-                sgCreationAfterLogin = getIntent().getExtras().getBoolean(Constants.SG_CREATE_AFTER_LOGIN);
+            if(bundle.getBoolean(Constants.SG_CREATE_AFTER_LOGIN))
+                sgCreationAfterLogin = bundle.getBoolean(Constants.SG_CREATE_AFTER_LOGIN);
         }
         if (inviteFromReg) {
             ((TextView) findViewById(R.id.id_cancel)).setText(getString(R.string.done_caps));
@@ -373,7 +373,12 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
             case R.id.id_cancel:
                 if (!inviteFromReg) {
                     finish();
-                } else {
+                } else if(sgCreationAfterLogin){
+                    Intent data = new Intent();
+//                    data.putExtra("SG_NAME", ""+SharedPrefManager.getInstance().getUserDomain());
+                    setResult(RESULT_OK, data);
+                    finish();
+                }else {
                     Intent intent = new Intent(BulkInvitationScreen.this, HomeScreen.class);
                     intent.putExtra("ADMIN_FIRST_TIME", true);
                     if(sgCreationAfterLogin)
