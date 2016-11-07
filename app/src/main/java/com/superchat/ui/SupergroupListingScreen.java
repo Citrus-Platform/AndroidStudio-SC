@@ -219,8 +219,9 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 						Toast.makeText(SupergroupListingScreen.this, getString(R.string.enter_sg_name_to_continue), Toast.LENGTH_SHORT).show();
 						return false;
 					}
-					String text = domaine_name.getText().toString();
-					registerUserOnServer(text, selectedSGDisplayName, view);
+//					String text = domaine_name.getText().toString();
+//					registerUserOnServer(text, selectedSGDisplayName, view);
+					new GetSuperGroupProfile(domaine_name.getText().toString()).execute();
 					return true;
 				}
 				return false;
@@ -909,6 +910,8 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 //		}
 
 		if(isInvitedDomain(invitedDomainNameSet, super_group))
+			invitedDomainSelected = true;
+		if(ownerDomainNameSet.size() == 0 && invitedDomainNameSet.size() == 0 && joinedDomainNameSet.size() == 0)
 			invitedDomainSelected = true;
 		RegistrationForm registrationForm = null;
 		//RegistrationForm registrationForm = new RegistrationForm(mobileNumber, "normal",imei, imsi, clientVersion);
@@ -1618,10 +1621,11 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 						bundle.putString(Constants.CHAT_NAME, "");
 						bundle.putBoolean(Constants.REG_TYPE, false);
 						bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
-						bundle.putBoolean("PROFILE_EDIT_BACK_TO_PREV", true);
+//						bundle.putBoolean("PROFILE_EDIT_BACK_TO_PREV", true);
 						intent.putExtras(bundle);
-						startActivityForResult(intent, 222);
-//						startActivity(intent);
+//						startActivityForResult(intent, 222);
+						startActivity(intent);
+						finish();
 					} else {
 						Intent intent = new Intent(SupergroupListingScreen.this, HomeScreen.class);
 						sharedPrefManager.setProfileAdded(sharedPrefManager.getUserName(), true);

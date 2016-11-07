@@ -24,6 +24,7 @@ import com.chat.sdk.db.ChatDBWrapper;
 import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.superchat.data.db.DBWrapper;
+import com.superchat.emojicon.EmojiconTextView;
 import com.superchat.ui.ChatListScreen;
 import com.superchat.ui.HomeScreen;
 import com.superchat.utils.Constants;
@@ -64,6 +65,8 @@ public class GcmIntentService extends IntentService {
 	static String notificationActivity = ".ui.HomeScreen";
 	static String homeScreen = ".ui.HomeScreen";
 
+	private EmojiconTextView notificationTextView;
+
     public GcmIntentService() {
         super("GcmIntentService");
         prefManager = SharedPrefManager.getInstance();
@@ -92,6 +95,7 @@ public class GcmIntentService extends IntentService {
         String screen = null;
         String[] data = null;
 		String currentDomain = prefManager.getUserDomain();
+		String user = prefManager.getUserName();
         if (extras != null && !extras.isEmpty()) {
         	if(extras.containsKey("message"))
         		message = extras.getString("message");
@@ -126,6 +130,9 @@ public class GcmIntentService extends IntentService {
 //            		else
 //            			showNotificationForP2PMessage(senderUserName, senderDisplayName, message, (byte)0, 0);
                 Log.e(TAG, "GCM - Push Message Received: " + extras.toString());
+
+					if(user == null)
+						return;
 
 					//Check For special Message type
 					if(senderUserName == null && groupName ==  null){
@@ -291,6 +298,7 @@ public class GcmIntentService extends IntentService {
 			RemoteViews contentView = new RemoteViews(
 					SuperChatApplication.context.getPackageName(),
 					R.layout.message_notifier);
+
 //			if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal())
 //				contentView.setTextViewText(R.id.chat_person_name, notificationSenderName+"@"+SharedPrefManager.getInstance().getSharedIDDisplayName(grpDisplayName));
 //			else

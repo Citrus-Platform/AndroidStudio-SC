@@ -829,7 +829,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			}
 
 			updateCounterValuesAtBottomTabs();
-			prefManager.saveSGFileId("SG_FILE_ID",DBWrapper.getInstance().getSGLogoFileID(sg_name));
+			String file_id = DBWrapper.getInstance().getSGLogoFileID(sg_name);
+			if(file_id != null)
+				prefManager.saveSGFileId("SG_FILE_ID", file_id);
 			cleanDataAndSwitchSG(sg_name);
 			//Set contact and group synch's
 			prefManager.setContactSynched(sg_name, false);
@@ -1275,8 +1277,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					frompush = false;
 				}
 				if(selectedTab >= 0) {
-					if(firstTimeAdmin){
+					if(firstTimeAdmin || new_user){
 						mViewPager.setCurrentItem(1);
+						selectedTab = 1;
 					}else {
 						if (selectedTab == 1)
 							publicGroupFragment.setSgSwitch(true);

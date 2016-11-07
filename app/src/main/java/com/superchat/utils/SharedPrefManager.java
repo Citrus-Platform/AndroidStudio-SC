@@ -617,16 +617,16 @@ public boolean isContactModified(){
 		String value = pref.getString(SHARED_ID_FILE_ID+sharedid, null);
 		return value;
 	}
-	public void saveSGFileId(String userName,String fileId) {
-		editor.putString(SG_FILE_ID+userName, fileId);
+	public void saveSGFileId(String sg,String fileId) {
+		editor.putString(SG_FILE_ID+sg, fileId);
 		editor.commit();
 	}
 	public void saveSharedIDData(String data) {
 		editor.putString(SHARED_ID_DATA, data);
 		editor.commit();
 	}
-	public String getSGFileId(String userName) {
-		String value = pref.getString(SG_FILE_ID+userName, null);
+	public String getSGFileId(String sg) {
+		String value = pref.getString(SG_FILE_ID+sg, null);
 		return value;
 	}
 	public String getSharedIDData() {
