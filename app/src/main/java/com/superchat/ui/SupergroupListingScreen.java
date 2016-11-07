@@ -965,7 +965,11 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 			welcomeDialog = null;
 			return;
 		}
-		SharedPrefManager.getInstance().clearSharedPref();
+		try {
+			DBWrapper.getInstance().clearAllDB();
+			SharedPrefManager.getInstance().clearSharedPref();
+		} catch (Exception e) {
+		}
 		Intent intent = new Intent(this, RegistrationOptions.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(intent);

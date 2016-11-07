@@ -6954,8 +6954,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                                 contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, (message.getText() != null) ? message.getText() : "");
                                 contentvalues.put(ChatDBConstants.MESSAGE_ID, message.getPacketId());
                                 contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID.randomUUID().toString());
-                                System.out.println("ChatListScreen: [Creaton Date ] " + message.getCreatedDate());
-
+//                                System.out.println("ChatListScreen: [Creaton Date ] " + message.getCreatedDate());
 
                                 Calendar calender = Calendar.getInstance();
                                 calender.setTimeInMillis(convertTomilliseconds(message.getCreatedDate()));
@@ -7012,6 +7011,9 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                                     }
                                 }
                                 contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, media_url);
+                                //Save USerID and SG in DB
+                                contentvalues.put(ChatDBConstants.USER_ID, iChatPref.getUserId());
+                                contentvalues.put(ChatDBConstants.USER_SG, iChatPref.getUserDomain());
                                 ChatDBWrapper.getInstance().insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
                                 media_url = caption = null;
                                 json_body = null;
@@ -7128,7 +7130,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             values = time.split(":");
             millis = (Integer.parseInt(values[0]) * 60 * 60 * 1000) + (Integer.parseInt(values[1]) * 60 * 1000);
         }
-        System.out.println("+05:30 Millis = " + millis);
+//        System.out.println("+05:30 Millis = " + millis);
         return millis;
     }
     //-------------------------------------------------------
