@@ -842,7 +842,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		}
 	}
 
-
+    boolean bulletinNotLoadedAndFromPush;
 	public class SignInTaskOnServer extends AsyncTask<String, String, String> {
 		LoginModel loginForm;
 		ProgressDialog progressDialog = null;
@@ -936,19 +936,19 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 								else
 									sharedPrefManager.setDomainAsPublic(false);
 								if(loginObj.type!=null && loginObj.type.equals("domainAdmin")){
-									sharedPrefManager.setAsDomainAdmin(true);
+									sharedPrefManager.setAsDomainAdmin(sharedPrefManager.getUserDomain(), true);
 									if(loginObj.joinedUserCount!=null && !loginObj.joinedUserCount.equals(""))
 										sharedPrefManager.saveDomainJoinedCount(loginObj.joinedUserCount);
 									if(loginObj.unJoinedUserCount!=null && !loginObj.unJoinedUserCount.equals(""))
 										sharedPrefManager.saveDomainUnjoinedCount(loginObj.unJoinedUserCount);
 								}else if(loginObj.type!=null && loginObj.type.equals("domainSubAdmin")){
-									sharedPrefManager.setAsDomainSubAdmin(true);
+									sharedPrefManager.setAsDomainSubAdmin(sharedPrefManager.getUserDomain(), true);
 									if(loginObj.joinedUserCount!=null && !loginObj.joinedUserCount.equals(""))
 										sharedPrefManager.saveDomainJoinedCount(loginObj.joinedUserCount);
 									if(loginObj.unJoinedUserCount!=null && !loginObj.unJoinedUserCount.equals(""))
 										sharedPrefManager.saveDomainUnjoinedCount(loginObj.unJoinedUserCount);
 								} else
-									sharedPrefManager.setAsDomainAdmin(false);
+									sharedPrefManager.setAsDomainAdmin(sharedPrefManager.getUserDomain(), false);
 
 								if(loginObj.directoryUserSet != null){
 									System.out.println("HomeScreen :: SignInTaskOnServer : Writing in TABLE_NAME_CONTACT_NUMBERS.");
@@ -1250,30 +1250,36 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					}else
 						isContactSynching = false;
 					//call Once
-					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain()))
-						getBulletinMessages();
+					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain())) {
+						if(!frompush)
+							getBulletinMessages();
+					}
 				}
 			}
 			if(isSwitchSG){
 				isSwitchSG = false;
-
-//				if(chatFragment != null)
-//					chatFragment.notifyChatRecieve("", "");
 				//Switch to chat
 				if(frompush) {
-					Intent intent = new Intent(SuperChatApplication.context, ChatListScreen.class);
-					if (switchUserName != null) {
-						intent.putExtra(DatabaseConstants.USER_NAME_FIELD, switchUserName);
-						if(switchUserScreenName.equalsIgnoreCase("bulletin")) {
-							intent.putExtra("FROM_BULLETIN_NOTIFICATION", true);
-							mViewPager.setCurrentItem(selectedTab = 3);
+					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain())){
+						bulletinNotLoadedAndFromPush = true;
+						progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading bulletin messages. Please wait...", true);
+						getBulletinMessages();
+					}else
+					{
+						Intent intent = new Intent(SuperChatApplication.context, ChatListScreen.class);
+						if (switchUserName != null) {
+							intent.putExtra(DatabaseConstants.USER_NAME_FIELD, switchUserName);
+							if (switchUserScreenName.equalsIgnoreCase("bulletin")) {
+								intent.putExtra("FROM_BULLETIN_NOTIFICATION", true);
+								mViewPager.setCurrentItem(selectedTab = 3);
+							}
 						}
+						if (switchUserDisplayName != null) {
+							intent.putExtra(DatabaseConstants.CONTACT_NAMES_FIELD, switchUserDisplayName);
+						}
+						intent.putExtra("is_vopium_user", true);
+						startActivity(intent);
 					}
-					if (switchUserDisplayName != null) {
-						intent.putExtra(DatabaseConstants.CONTACT_NAMES_FIELD, switchUserDisplayName);
-					}
-					intent.putExtra("is_vopium_user", true);
-					startActivity(intent);
 					frompush = false;
 				}
 				if(selectedTab >= 0) {
@@ -3121,10 +3127,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			popup.getMenu().add(0,0,0,getResources().getString(R.string.create_group));
 
 		if(contactMenuLayout.isSelected()){
-			if(iPrefManager.isDomainAdmin()){
+			if(iPrefManager.isDomainAdmin(iPrefManager.getUserDomain())){
 				popup.getMenu().add(0,2,0,getResources().getString(R.string.create_broadcast_list));
 				popup.getMenu().add(0,3,0,getResources().getString(R.string.invite_member));
-			} else if(iPrefManager.isDomainSubAdmin()){
+			} else if(iPrefManager.isDomainSubAdmin(iPrefManager.getUserDomain())){
 				popup.getMenu().add(0,2,0,getResources().getString(R.string.create_broadcast_list));
 				popup.getMenu().add(0,3,0,getResources().getString(R.string.invite_member));
 			}else if(SharedPrefManager.getInstance().isOpenDomain()){
@@ -3299,7 +3305,24 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						}else{
 							pref.saveBulletinNextURL(iPrefManager.getUserDomain(), "0");
 						}
-
+						if(bulletinNotLoadedAndFromPush){
+							if(progressDialog != null)
+								progressDialog.dismiss();
+							bulletinNotLoadedAndFromPush = false;
+							Intent intent = new Intent(SuperChatApplication.context, ChatListScreen.class);
+							if (switchUserName != null) {
+								intent.putExtra(DatabaseConstants.USER_NAME_FIELD, switchUserName);
+								if (switchUserScreenName.equalsIgnoreCase("bulletin")) {
+									intent.putExtra("FROM_BULLETIN_NOTIFICATION", true);
+									mViewPager.setCurrentItem(selectedTab = 3);
+								}
+							}
+							if (switchUserDisplayName != null) {
+								intent.putExtra(DatabaseConstants.CONTACT_NAMES_FIELD, switchUserDisplayName);
+							}
+							intent.putExtra("is_vopium_user", true);
+							startActivity(intent);
+						}
 					} else {
 						String errorMessage = response.getMessage() != null ? response.getMessage() : "Please try later";
 						System.out.println("Bulletin Response : "+errorMessage);
@@ -3310,6 +3333,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				@Override
 				protected void common() {
 //                    progressDialog.cancel();
+					if(bulletinNotLoadedAndFromPush){
+						if(progressDialog != null)
+							progressDialog.dismiss();
+					}
 				}
 
 				@Override

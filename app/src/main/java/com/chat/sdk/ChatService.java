@@ -1280,10 +1280,10 @@ public class ChatService extends Service implements interfaceInstances {
 						prefManager.saveUserExistence(captionTag, true);
 						return;
 					}else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeMakeSGSubAdmin.ordinal()){
-                        prefManager.setAsDomainSubAdmin(true);
+                        prefManager.setAsDomainSubAdmin(prefManager.getUserDomain(), true);
 						return;
                     }else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeRemoveSGSubAdmin.ordinal()){
-                        prefManager.setAsDomainSubAdmin(false);
+                        prefManager.setAsDomainSubAdmin(prefManager.getUserDomain(), false);
 						return;
                     }else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSGUpdate.ordinal()){
 						String captionTag  = message.getMediaTagMessage();
@@ -1574,7 +1574,7 @@ public class ChatService extends Service implements interfaceInstances {
 //							prefManager.saveSharedIDFileId(sharedIDName, sharedIDFileID);
 						
 						//Save Shared ID in Preferences
-						if(!prefManager.isDomainAdmin() && xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSharedIDUpdated.ordinal()){
+						if(!prefManager.isDomainAdmin(prefManager.getUserDomain()) && xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSharedIDUpdated.ordinal()){
 							prefManager.saveSharedIDDisplayName(sharedIDName, sharedIDDisplayName);
 							prefManager.setSharedIDContact(sharedIDName, true);
 							if(sharedIDFileID != null) {
@@ -1588,7 +1588,7 @@ public class ChatService extends Service implements interfaceInstances {
 								new GetSharedIDListFromServer().execute();
 							HomeScreen.refreshContactList = true;
 						}else if(prefManager.getSharedIDDisplayName(sharedIDName) == null){
-							if(!prefManager.isDomainAdmin())
+							if(!prefManager.isDomainAdmin(prefManager.getUserDomain()))
 							{
 								prefManager.saveSharedIDDisplayName(sharedIDName, sharedIDDisplayName);
 								prefManager.setSharedIDContact(sharedIDName, true);
@@ -1671,7 +1671,7 @@ public class ChatService extends Service implements interfaceInstances {
 							}
 						}
 						//Save Deactivated Status in Preferences Shared ID in Preferences
-						if(!prefManager.isDomainAdmin()){
+						if(!prefManager.isDomainAdmin(prefManager.getUserDomain())){
 							prefManager.setSharedIDDeactivated(sharedIDName, true);
 							//Delete From Shared ID list
 							DBWrapper.getInstance().deleteContact(sharedIDName);
@@ -1726,7 +1726,7 @@ public class ChatService extends Service implements interfaceInstances {
 								e.printStackTrace();
 							}
 						}
-						if(prefManager.isDomainAdmin())
+						if(prefManager.isDomainAdmin(prefManager.getUserDomain()))
 							HomeScreen.removeAdminFromSharedID(sharedIDName, removed_user);
 						else{
 							if(Build.VERSION.SDK_INT >= 11)

@@ -293,7 +293,8 @@
     <string name="clear">Clear</string>
     <string name="email">Email(*)</string>
     <string name="email_profile">Email</string>
-    <string name="employee_id">Employee id</string>
+    <!--<string name="employee_id">Employee id</string>-->
+    <string name="employee_id">ID/Code</string>
     <string name="employee_name">Employee Name</string>
     <string name="enter_name">Your Name</string>
     <string name="admin_name">Enter your full name(*)</string>

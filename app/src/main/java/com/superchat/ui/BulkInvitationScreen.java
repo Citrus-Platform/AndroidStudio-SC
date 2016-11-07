@@ -251,7 +251,7 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
 
             }
         });
-        if(SharedPrefManager.getInstance().isDomainSubAdmin())
+        if(SharedPrefManager.getInstance().isDomainSubAdmin(SharedPrefManager.getInstance().getUserDomain()))
             cbMakeSuperAdmin.setVisibility(View.GONE);
 
         String cc = Constants.countryCode.replace("+", "");

@@ -224,8 +224,8 @@ public class SharedPrefManager {
 		editor.putBoolean(SHARED_ID_CONTACT + contact, flag);
 		editor.commit();
 	}
-	public void setAsDomainAdmin(boolean flag){
-		editor.putBoolean(DOMAIN_ADMIN, flag);
+	public void setAsDomainAdmin(String sg, boolean flag){
+		editor.putBoolean(DOMAIN_ADMIN + sg, flag);
 		editor.commit();
 	}
 	public void setUpdateCheck(boolean flag){
@@ -343,19 +343,19 @@ public class SharedPrefManager {
 		return pref.getBoolean(PUBLIC_DOMAIN_ADMIN, false);
 	}
 
-	public boolean isDomainAdmin(){
-		return pref.getBoolean(DOMAIN_ADMIN, false);
+	public boolean isDomainAdmin(String sg){
+		return pref.getBoolean(DOMAIN_ADMIN + sg, false);
 	}
-	public boolean isDomainSubAdmin(){
-		return pref.getBoolean(DOMAIN_SUB_ADMIN, false);
+	public boolean isDomainSubAdmin(String sg){
+		return pref.getBoolean(DOMAIN_SUB_ADMIN + sg, false);
 	}
 
 	public boolean isDomainAdminORSubAdmin(){
-		return isDomainAdmin() || isDomainSubAdmin();
+		return isDomainAdmin(getUserDomain()) || isDomainSubAdmin(getUserDomain());
 	}
 
-	public void setAsDomainSubAdmin(boolean flag){
-		editor.putBoolean(DOMAIN_SUB_ADMIN, flag);
+	public void setAsDomainSubAdmin(String sg, boolean flag){
+		editor.putBoolean(DOMAIN_SUB_ADMIN + sg, flag);
 		editor.commit();
 	}
 

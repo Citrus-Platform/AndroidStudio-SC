@@ -96,7 +96,7 @@ public class MoreScreen extends Activity implements OnClickListener {
 		sharedPrefManager = SharedPrefManager.getInstance();
 		myNameView.setText(sharedPrefManager.getDisplayName());
 		aboutSuperGroupView.setText("About "+sharedPrefManager.getCurrentSGDisplayName());
-		if(sharedPrefManager.isDomainAdmin() || sharedPrefManager.isDomainSubAdmin()){
+		if(sharedPrefManager.isDomainAdmin(sharedPrefManager.getUserDomain()) || sharedPrefManager.isDomainSubAdmin(sharedPrefManager.getUserDomain())){
 //			memberStatsLayout = (RelativeLayout)findViewById(R.id.id_member_stats_layout);
 			advancedSettings = (RelativeLayout)findViewById(R.id.id_advanced_settings);
 			memberManageLayout = (RelativeLayout)findViewById(R.id.id_manage_members_layout);

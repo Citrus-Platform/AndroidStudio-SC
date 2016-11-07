@@ -63,6 +63,8 @@ import com.superchat.model.RegistrationForm;
 import com.superchat.model.RegistrationFormResponse;
 import com.superchat.model.SGroupListObject;
 import com.superchat.model.SlidingMenuData;
+import com.superchat.model.multiplesg.JoinedDomainNameSet;
+import com.superchat.model.multiplesg.OwnerDomainName;
 import com.superchat.ui.BulkInvitationAdapter.AppContact;
 import com.superchat.utils.AppUtil;
 import com.superchat.utils.BitmapDownloader;
@@ -92,8 +94,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1613,6 +1617,28 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 					sharedPrefManager.saveSGUserID(objUserModel.username, sharedPrefManager.getUserId());
 
 					if (newUser || pendingProfile) {
+						if(newUser){
+							JoinedDomainNameSet joined = new JoinedDomainNameSet();
+							joined.setDomainName(sharedPrefManager.getUserDomain());
+							joined.setDisplayName(sharedPrefManager.getCurrentSGDisplayName());
+							joined.setUnreadCounter(0);
+							joined.setDomainType("Company");
+							joined.setDomainMuteInfo(0);
+							joined.setOrgName("");
+							joined.setOrgUrl("");
+							joined.setPrivacyType("Open");
+							joined.setAdminName(sharedPrefManager.getUserName());
+							joined.setLogoFileId(sharedPrefManager.getSGFileId("SG_FILE_ID"));
+							SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+							String dateString = formatter.format(new Date(System.currentTimeMillis()));
+							joined.setCreatedDate(dateString);
+							ArrayList<JoinedDomainNameSet> joinedSG = new ArrayList<>();
+							joinedSG.add(joined);
+							if(joined != null)
+								DBWrapper.getInstance().updateJoinedSGData(joinedSG);
+							DBWrapper.getInstance().updateSGCredentials(sharedPrefManager.getUserDomain(), sharedPrefManager.getUserName(), sharedPrefManager.getUserPassword(), sharedPrefManager.getUserId(), true);
+						}
+
 						Intent intent = new Intent(SupergroupListingScreen.this, ProfileScreen.class);
 						Bundle bundle = new Bundle();
 						sharedPrefManager.setFirstTime(true);

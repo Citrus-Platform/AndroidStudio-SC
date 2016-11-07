@@ -124,7 +124,8 @@ public class SharedIDScreen extends Activity implements OnClickListener{//, OnMe
 //		}
 		
 		createGroup = (RelativeLayout) findViewById(R.id.id_create_gp_layout);
-		if(SharedPrefManager.getInstance().isDomainAdmin() || SharedPrefManager.getInstance().isDomainSubAdmin())
+		if(SharedPrefManager.getInstance().isDomainAdmin(SharedPrefManager.getInstance().getUserDomain())
+				|| SharedPrefManager.getInstance().isDomainSubAdmin(SharedPrefManager.getInstance().getUserDomain()))
 			createGroup.setVisibility(View.VISIBLE);
 		else
 			createGroup.setVisibility(View.GONE);

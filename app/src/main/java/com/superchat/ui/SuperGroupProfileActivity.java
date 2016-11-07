@@ -166,7 +166,7 @@ private static final String TAG = "SuperGroupProfileActivity";
 				}
 			}
 		});
-		if(SharedPrefManager.getInstance().isDomainAdmin()){
+		if(SharedPrefManager.getInstance().isDomainAdmin(SharedPrefManager.getInstance().getUserDomain())){
 			sgEditButton.setVisibility(View.VISIBLE);
 			sgEditButton.setOnClickListener(new OnClickListener() {
 				

@@ -930,8 +930,8 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
             // Check Cursor Values and show / Hide view accordingly
             {
                 boolean isUserInvited = prefManager.isUserInvited(userNames);
-                boolean isDomainAdmin = prefManager.isDomainAdmin();
-                boolean isDomainSubAdmin = prefManager.isDomainSubAdmin();
+                boolean isDomainAdmin = prefManager.isDomainAdmin(prefManager.getUserDomain());
+                boolean isDomainSubAdmin = prefManager.isDomainSubAdmin(prefManager.getUserDomain());
 
                 boolean isCurrentUserAdmin = isSuperAdmin(userNames, contentType);
                 boolean isCurrentUserSubAdmin = isSuperSubAdmin(userNames, contentType);
