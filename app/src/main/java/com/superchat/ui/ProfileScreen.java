@@ -262,6 +262,8 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
             if (domainReg && bundle.getBoolean("PROFILE_FIRST")) {
                 mobForReg = bundle.getString(Constants.MOBILE_NUMBER_TXT);
             }
+            if(sgCreationAfterLogin)
+                displayName = "";
         }
 
         if (reg_flow) {

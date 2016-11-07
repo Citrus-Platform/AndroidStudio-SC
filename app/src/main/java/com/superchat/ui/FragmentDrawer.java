@@ -260,6 +260,10 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             displayPictureCurrent.setImageResource(R.drawable.logo_small);
         }
         user.setText("" + SharedPrefManager.getInstance().getDisplayName() + " (You)");
+        if (SharedPrefManager.getInstance().getOwnedDomain() != null) {
+            addSGTextView.setVisibility(View.GONE);
+            llAddSuperGroup.setVisibility(View.GONE);
+        }
         super.onResume();
     }
 

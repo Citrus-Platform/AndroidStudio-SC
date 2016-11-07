@@ -592,14 +592,14 @@ public boolean isContactModified(){
 		return value;
 	}
 
-	public void saveBulletinNextURL(String url) {
+	public void saveBulletinNextURL(String sg, String url) {
 		if(url != null && !url.equals("")){
-			editor.putString(BULLETIN_NEXT_URL, url);
+			editor.putString(BULLETIN_NEXT_URL + sg, url);
 			editor.commit();
 		}
 	}
-	public String getBulletinNextURL() {
-		String value = pref.getString(BULLETIN_NEXT_URL, null);
+	public String getBulletinNextURL(String sg) {
+		String value = pref.getString(BULLETIN_NEXT_URL + sg, null);
 		return value;
 	}
 

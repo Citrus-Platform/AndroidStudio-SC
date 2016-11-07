@@ -1303,7 +1303,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 LayoutInflater inflater = getLayoutInflater();
                 final ViewGroup header = (ViewGroup) inflater.inflate(R.layout.message_header, chatList, false);
                 chatList.addHeaderView(header, null, false);
-                final String next_url = iChatPref.getBulletinNextURL();
+                final String next_url = iChatPref.getBulletinNextURL(iChatPref.getUserDomain());
                 if (next_url != null && !next_url.equals("0")) {
                     header.setVisibility(View.VISIBLE);
                     header.findViewById(R.id.load_older_messages).setVisibility(View.VISIBLE);
@@ -1311,7 +1311,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                         @Override
                         public void onClick(View v) {
                             //do something
-                            getBulletinMessages(iChatPref.getBulletinNextURL(), header);
+                            getBulletinMessages(iChatPref.getBulletinNextURL(iChatPref.getUserDomain()), header);
                         }
                     });
                 }
@@ -7029,12 +7029,12 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                         }
                         if (next_url != null) {
                             //Save this url is shared preferences for next hit
-                            iChatPref.saveBulletinNextURL(next_url);
+                            iChatPref.saveBulletinNextURL(iChatPref.getUserDomain(), next_url);
                             next_url = null;
                             (header.findViewById(R.id.load_older_messages)).setVisibility(View.VISIBLE);
                             (header.findViewById(R.id.message_loading)).setVisibility(View.GONE);
                         } else {
-                            iChatPref.saveBulletinNextURL("0");
+                            iChatPref.saveBulletinNextURL(iChatPref.getUserDomain(), "0");
                             (header.findViewById(R.id.load_older_messages)).setVisibility(View.GONE);
                             (header.findViewById(R.id.message_loading)).setVisibility(View.GONE);
                             header.setVisibility(View.GONE);

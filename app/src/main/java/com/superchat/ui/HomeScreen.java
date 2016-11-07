@@ -1185,7 +1185,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				}
 				if(mViewPager!=null && mAdapter!=null && isforeGround){
 					mViewPager.setAdapter(mAdapter);
-					if(iPrefManager.isFirstTime() && iPrefManager.getAppMode().equals("VirginMode")){
+					if(iPrefManager.isFirstTime()
+							&& iPrefManager.getAppMode() != null && iPrefManager.getAppMode().equals("VirginMode")){
 //						if(isContactSync || firstTimeAdmin){
 						if(isContactSync){
 							mViewPager.setCurrentItem(2);
@@ -1213,9 +1214,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						}
 						new_user = true;
 					}else{
-						if(isContactSync){
+						if(isContactSync)
 							mViewPager.setCurrentItem(2);
-						}
+						else if(firstTimeAdmin)
+							mViewPager.setCurrentItem(1);
 						else
 							mViewPager.setCurrentItem(0);
 					}
@@ -1273,9 +1275,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					frompush = false;
 				}
 				if(selectedTab >= 0) {
-					if(selectedTab == 1)
-						publicGroupFragment.setSgSwitch(true);
-					mViewPager.setCurrentItem(selectedTab);
+					if(firstTimeAdmin){
+						mViewPager.setCurrentItem(1);
+					}else {
+						if (selectedTab == 1)
+							publicGroupFragment.setSgSwitch(true);
+						mViewPager.setCurrentItem(selectedTab);
+					}
 				}
 			}
 			//Get all the shared ID's - This call is for everyone
@@ -3285,10 +3291,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						}
 						if(next_url != null) {
 							//Save this url is shared preferences for next hit
-							pref.saveBulletinNextURL(next_url);
+							pref.saveBulletinNextURL(iPrefManager.getUserDomain(), next_url);
 							next_url = null;
 						}else{
-							pref.saveBulletinNextURL("0");
+							pref.saveBulletinNextURL(iPrefManager.getUserDomain(), "0");
 						}
 
 					} else {
