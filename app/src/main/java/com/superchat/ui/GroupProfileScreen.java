@@ -3199,23 +3199,26 @@ private void getServerGroupProfile(String groupName){
 		showDialogWithPositive(message);
 //        showAlertDialog(message);
 	}
+	Dialog systemMessageDialog;
 	public void showDialogWithPositive(String s) {
-		final Dialog dailog = new Dialog(GroupProfileScreen.this);
+		if(systemMessageDialog != null)
+			systemMessageDialog.dismiss();
+		systemMessageDialog = new Dialog(GroupProfileScreen.this);
 		try {
-			dailog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-			dailog.setCanceledOnTouchOutside(false);
+			systemMessageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			systemMessageDialog.setCanceledOnTouchOutside(false);
 //            dailog.setContentView(R.layout.custom_dialog);
-			dailog.setContentView(R.layout.system_message_dialog);
-			((TextView) dailog.findViewById(R.id.id_dialog_message)).setText(s);
-			((TextView) dailog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
+			systemMessageDialog.setContentView(R.layout.system_message_dialog);
+			((TextView) systemMessageDialog.findViewById(R.id.id_dialog_message)).setText(s);
+			((TextView) systemMessageDialog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
 
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
-					dailog.cancel();
+					systemMessageDialog.cancel();
 					return false;
 				}
 			});
-			dailog.show();
+			systemMessageDialog.show();
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}

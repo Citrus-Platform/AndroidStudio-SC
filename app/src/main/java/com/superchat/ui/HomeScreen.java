@@ -1711,21 +1711,25 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		});
 		bteldialog.show();
 	}
+
+	Dialog systemMessageDialog;
 	public void showDialogWithPositive(String s) {
-		final Dialog bteldialog = new Dialog(this);
-		bteldialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		bteldialog.setCanceledOnTouchOutside(false);
-		bteldialog.setContentView(R.layout.custom_dialog);
-		((TextView)bteldialog.findViewById(R.id.id_dialog_message)).setText(s);
-		((TextView)bteldialog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
+		if(systemMessageDialog != null)
+			systemMessageDialog.dismiss();
+		systemMessageDialog = new Dialog(this);
+		systemMessageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		systemMessageDialog.setCanceledOnTouchOutside(false);
+		systemMessageDialog.setContentView(R.layout.custom_dialog);
+		((TextView)systemMessageDialog.findViewById(R.id.id_dialog_message)).setText(s);
+		((TextView)systemMessageDialog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				bteldialog.cancel();
+				systemMessageDialog.cancel();
 				return false;
 			}
 		});
-		bteldialog.show();
+		systemMessageDialog.show();
 	}
 	public void showDialog(String s, final String error_code) {
 		final Dialog bteldialog = new Dialog(this);

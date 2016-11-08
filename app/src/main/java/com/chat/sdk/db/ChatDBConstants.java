@@ -75,7 +75,7 @@ public static final byte MEDIA_FAILED = 4;
 			+ ChatDBConstants._ID
 			+ " INTEGER PRIMARY KEY AUTOINCREMENT,"
 			+ ChatDBConstants.MESSAGE_ID
-			+ " TEXT NOT NULL,"
+			+ " TEXT UNIQUE NOT NULL,"
 			+ ChatDBConstants.MEDIA_CAPTION_TAG
 			+ " TEXT,"
 			+ ChatDBConstants.MESSAGE_TYPE_LOCATION
