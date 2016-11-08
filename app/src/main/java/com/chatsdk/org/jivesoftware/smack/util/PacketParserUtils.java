@@ -84,6 +84,8 @@ public class PacketParserUtils {
 		return Message.XMPPMessageType.atMeXmppMessageTypeNormal;
 	}
     public static Message.StatusMessageType getStatusMessageType(String v){
+        if(v == null)
+            return Message.StatusMessageType.normal;
 		for(Message.StatusMessageType state:Message.StatusMessageType.values()){
 			try{
 				if(state.ordinal()== Integer.parseInt(v))

@@ -290,7 +290,7 @@ public class GcmIntentService extends IntentService {
 			messageNotification.setContentTitle(notificationSenderName + "@" + grpDisplayName);
 		else
 			messageNotification.setContentTitle(notificationSenderName);
-		messageNotification.setContentText(msg);
+
 		messageNotification.setContentIntent(contentIntent);
 		int count = prefManager.getChatCountOfUser(user);
 		Notification notification = messageNotification.build();
@@ -298,6 +298,7 @@ public class GcmIntentService extends IntentService {
 			RemoteViews contentView = new RemoteViews(
 					SuperChatApplication.context.getPackageName(),
 					R.layout.message_notifier);
+
 
 //			if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal())
 //				contentView.setTextViewText(R.id.chat_person_name, notificationSenderName+"@"+SharedPrefManager.getInstance().getSharedIDDisplayName(grpDisplayName));
@@ -415,56 +416,60 @@ public class GcmIntentService extends IntentService {
 		messageNotification.setContentIntent(contentIntent);
 		int count = prefManager.getChatCountOfUser(user);
 		Notification notification = messageNotification.build();
-		
-		if(R.layout.message_notifier!=-1){
-			RemoteViews contentView = new RemoteViews(
-					context.getPackageName(),
-					R.layout.message_notifier);
-			contentView.setTextViewText(R.id.chat_person_name, displayName);
-			Uri uri = getPicUri(user);
-			if(uri!=null)
-			contentView.setImageViewUri(R.id.imagenotileft, uri);
+		try {
+
+			if (R.layout.message_notifier != -1) {
+				RemoteViews contentView = new RemoteViews(
+						SuperChatApplication.context.getPackageName(),
+						R.layout.message_notifier);
+				contentView.setTextViewText(R.id.chat_person_name, displayName);
+				Uri uri = getPicUri(user);
+				if (uri != null)
+					contentView.setImageViewUri(R.id.imagenotileft, uri);
 //			setProfilePic()
-			
-				if(mediaType == 0)
+
+				if (mediaType == 0)
 					contentView.setTextViewText(R.id.chat_message, msg);
-				else{
-					if(mediaType == XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
+				else {
+					if (mediaType == XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
 						contentView.setTextViewText(R.id.chat_message, "Picture message");
-					else if(mediaType == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal())
+					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal())
 						contentView.setTextViewText(R.id.chat_message, "Voice message");
-					else if(mediaType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal())
+					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal())
 						contentView.setTextViewText(R.id.chat_message, "Video message");
-					else if(mediaType == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal())
+					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal())
 						contentView.setTextViewText(R.id.chat_message, "Doc message");
-					else if(mediaType == XMPPMessageType.atMeXmppMessageTypePdf.ordinal())
+					else if (mediaType == XMPPMessageType.atMeXmppMessageTypePdf.ordinal())
 						contentView.setTextViewText(R.id.chat_message, "Pdf message");
-					else if(mediaType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal())
+					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal())
 						contentView.setTextViewText(R.id.chat_message, "XLS message");
-					else if(mediaType == XMPPMessageType.atMeXmppMessageTypePPT.ordinal())
+					else if (mediaType == XMPPMessageType.atMeXmppMessageTypePPT.ordinal())
 						contentView.setTextViewText(R.id.chat_message, "PPT message");
-					else if(mediaType == XMPPMessageType.atMeXmppMessageTypeLocation.ordinal())
+					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeLocation.ordinal())
 						contentView.setTextViewText(R.id.chat_message, "Shared a location");
-					else if(mediaType == XMPPMessageType.atMeXmppMessageTypeContact.ordinal())
+					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeContact.ordinal())
 						contentView.setTextViewText(R.id.chat_message, "Shared contact");
-					else if(mediaType == XMPPMessageType.atMeXmppMessageTypePoll.ordinal())
+					else if (mediaType == XMPPMessageType.atMeXmppMessageTypePoll.ordinal())
 						contentView.setTextViewText(R.id.chat_message, "Poll");
 				}
-			if (count > 0) {
-				contentView.setTextViewText(R.id.chat_notification_bubble_text, String.valueOf(count));
+				if (count > 0) {
+					contentView.setTextViewText(R.id.chat_notification_bubble_text, String.valueOf(count));
+				}
+				notification.contentView = contentView;
 			}
-			notification.contentView = contentView;
+			int id = user.hashCode();
+			if (id < -1)
+				id = -(id);
+			Log.d(TAG, "showNotificationForMessage: " + from + " , " + currentUser + " , " + onForeground);
+			if (prefManager.isSnoozeExpired(prefManager.getUserDomain()) && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
+					.equals(from)) || !ChatListScreen.onForeground))
+				notificationManager.notify(id, notification);
+			previousUser = from;
+			isFirstMessage = false;
+		}catch(Exception ex){
+			ex.printStackTrace();
 		}
-		int id = user.hashCode();
-		if (id < -1)
-			id = -(id);
-		Log.d(TAG, "showNotificationForMessage: "+from+" , "+currentUser+" , "+onForeground);
-		if(prefManager.isSnoozeExpired(prefManager.getUserDomain()) && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
-				.equals(from)) || !ChatListScreen.onForeground))
-		notificationManager.notify(id, notification);
-		previousUser = from;
-		isFirstMessage = false;
-		startService(new Intent(SuperChatApplication.context, ChatService.class));
+//		startService(new Intent(SuperChatApplication.context, ChatService.class));
 	}
 	//============================================================================================================
 	public void showSystemMessage(String msg) {

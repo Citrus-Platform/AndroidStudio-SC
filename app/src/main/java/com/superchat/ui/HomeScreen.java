@@ -1250,9 +1250,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					}else
 						isContactSynching = false;
 					//call Once
-					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain())) {
-						if(!frompush)
-							getBulletinMessages();
+					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain()) && !frompush) {
+						getBulletinMessages();
 					}
 				}
 			}
@@ -1262,14 +1261,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				if(frompush) {
 					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain())){
 						bulletinNotLoadedAndFromPush = true;
-						progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading bulletin messages. Please wait...", true);
 						getBulletinMessages();
 					}else
 					{
 						Intent intent = new Intent(SuperChatApplication.context, ChatListScreen.class);
 						if (switchUserName != null) {
 							intent.putExtra(DatabaseConstants.USER_NAME_FIELD, switchUserName);
-							if (switchUserScreenName.equalsIgnoreCase("bulletin")) {
+							if (switchUserScreenName != null && switchUserScreenName.equalsIgnoreCase("bulletin")) {
 								intent.putExtra("FROM_BULLETIN_NOTIFICATION", true);
 								mViewPager.setCurrentItem(selectedTab = 3);
 							}
@@ -1279,8 +1277,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						}
 						intent.putExtra("is_vopium_user", true);
 						startActivity(intent);
+						frompush = false;
 					}
-					frompush = false;
 				}
 				if(selectedTab >= 0) {
 					if(firstTimeAdmin || new_user){
@@ -1293,6 +1291,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					}
 				}
 			}
+			if(sharedPrefManager.isBackupCheckedForSG(sharedPrefManager.getUserDomain())) {
+				addNewGroupsAndBroadcastsToDB();
+			}else {
+				if (Build.VERSION.SDK_INT >= 11)
+					new CheckDataBackup().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				else
+					new CheckDataBackup().execute();
+			}
 			//Get all the shared ID's - This call is for everyone
 			String shared_id_data = sharedPrefManager.getSharedIDData();
 			if(shared_id_data != null && shared_id_data.length() > 0)
@@ -1303,14 +1309,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					new GetSharedIDListFromServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				else
 					new GetSharedIDListFromServer().execute();
-			}
-			if(sharedPrefManager.isBackupCheckedForSG(sharedPrefManager.getUserDomain())) {
-				addNewGroupsAndBroadcastsToDB();
-			}else {
-				if (Build.VERSION.SDK_INT >= 11)
-					new CheckDataBackup().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-				else
-					new CheckDataBackup().execute();
 			}
 			if(new_user && messageService != null){
 				String json = finalJSONbject.toString();
@@ -1903,9 +1901,48 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			else
 				new GetVersionCode().execute();
 		}
+		if(backUpFound && backupData != null){
+			showBackUpRestoreScreen(backupData);
+		}
 //		checkForBackUpAndUploadBackup();
 	}
+
+	private void showBackUpRestoreScreen(String data){
+		String fileid = null;
+		String lastdate = null;
+		try {
+			JSONObject jsonobj = new JSONObject(data);
+			if (jsonobj != null && jsonobj.getString("status") != null
+					&& jsonobj.getString("status").equalsIgnoreCase("success")){
+				if(jsonobj.has("backupFileId"))
+					fileid = jsonobj.getString("backupFileId");
+				if(jsonobj.has("backupDate"))
+					lastdate = jsonobj.getString("backupDate");
+				//this time is gmt 00 time.
+				long time = convertTomilliseconds(lastdate);
+				if(time  > 0)
+					SharedPrefManager.getInstance().setLastBackUpTime(time);
+				Date date = new Date(time);
+				SimpleDateFormat dateformat = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.US);
+//						System.out.println("[lastdate - ] "+lastdate);
+				Intent intent = new Intent(HomeScreen.this, ChatBackupRestoreScreen.class);
+				if(fileid != null)
+					intent.putExtra(Constants.BACKUP_FILEID, fileid);
+				if(lastdate != null)
+					intent.putExtra(Constants.LAST_BACKUP_DATE, dateformat.format(date));
+//					    startActivity(intent);
+				startActivityForResult(intent, 111);
+			}else
+				addNewGroupsAndBroadcastsToDB();
+
+		} catch (JSONException e) {
+
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	boolean backUpFound;
+	String backupData;
 	class CheckDataBackup extends AsyncTask<String, String, String> {
 
 		public CheckDataBackup(){
@@ -1943,6 +1980,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			String lastdate = null;
 			if(data != null){
 				System.out.println("Response======>"+data);
+				backupData = data;
 				try {
 					JSONObject jsonobj = new JSONObject(data);
 					if (jsonobj != null && jsonobj.getString("status") != null
@@ -3182,6 +3220,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	private void getBulletinMessages() {
 		try {
 			retrofit2.Call call = null;
+			progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading bulletin messages. Please wait...", true);
 			final SharedPrefManager pref = SharedPrefManager.getInstance();
 			call = objApi.getApi(this).getBulletinMessages("" + 10);
 			call.enqueue(new RetrofitRetrofitCallback<BulletinGetMessageDataModel>(this) {
@@ -3306,15 +3345,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 							pref.saveBulletinNextURL(iPrefManager.getUserDomain(), "0");
 						}
 						if(bulletinNotLoadedAndFromPush){
-							if(progressDialog != null)
-								progressDialog.dismiss();
-							bulletinNotLoadedAndFromPush = false;
+							frompush = false;
 							Intent intent = new Intent(SuperChatApplication.context, ChatListScreen.class);
 							if (switchUserName != null) {
 								intent.putExtra(DatabaseConstants.USER_NAME_FIELD, switchUserName);
-								if (switchUserScreenName.equalsIgnoreCase("bulletin")) {
+								if (switchUserScreenName != null && switchUserScreenName.equalsIgnoreCase("bulletin")) {
 									intent.putExtra("FROM_BULLETIN_NOTIFICATION", true);
 									mViewPager.setCurrentItem(selectedTab = 3);
+									bulletinNotLoadedAndFromPush = false;
 								}
 							}
 							if (switchUserDisplayName != null) {
@@ -3333,7 +3371,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				@Override
 				protected void common() {
 //                    progressDialog.cancel();
-					if(bulletinNotLoadedAndFromPush){
+//					if(bulletinNotLoadedAndFromPush)
+					{
+//						bulletinNotLoadedAndFromPush = false;
 						if(progressDialog != null)
 							progressDialog.dismiss();
 					}
