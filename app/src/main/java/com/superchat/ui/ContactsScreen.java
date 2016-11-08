@@ -159,14 +159,14 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
             public void afterTextChanged(Editable editable) {
 //                if(searchBoxView.getText().toString().trim().length() == 0)
 //                    return;
-                String sg = SharedPrefManager.getInstance().getUserDomain();
+                String sg = SharedPrefManager.getInstance().getUserDomain().trim();
                 String s1 = (new StringBuilder()).append("%")
                         .append(searchBoxView.getText().toString().trim()).append("%")
                         .toString();
                 int i = s1.length();
                 String as[] = null;
                 String s2 = null;
-                if (i >= 1) {
+                if (i > 2) {
                     if (isRWA) {
                         s2 = DatabaseConstants.CONTACT_NAMES_FIELD + " like ? OR " + DatabaseConstants.FLAT_NUMBER + " like ? OR " + DatabaseConstants.BUILDING_NUMBER + " like ? AND "
                                 + DatabaseConstants.VOPIUM_FIELD + "!=? AND "+ DatabaseConstants.USER_SG + "=?";

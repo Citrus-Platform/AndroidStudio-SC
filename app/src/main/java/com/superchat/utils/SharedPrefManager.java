@@ -232,8 +232,8 @@ public class SharedPrefManager {
 		editor.putBoolean(APP_UPDATE, flag);
 		editor.commit();
 	}
-	public void setDomainAsPublic(boolean flag){
-		editor.putBoolean(PUBLIC_DOMAIN_ADMIN, flag);
+	public void setDomainAsPublic(String sg, boolean flag){
+		editor.putBoolean(PUBLIC_DOMAIN_ADMIN + sg, flag);
 		editor.commit();
 	}
 	public void setDomainType(String type){
@@ -340,7 +340,8 @@ public class SharedPrefManager {
 		return pref.getBoolean(SHARED_ID_DEACTIVATED+shared_id, false);
 	}
 	public boolean isOpenDomain(){
-		return pref.getBoolean(PUBLIC_DOMAIN_ADMIN, false);
+		String sg = getUserDomain();
+		return pref.getBoolean(PUBLIC_DOMAIN_ADMIN + sg, false);
 	}
 
 	public boolean isDomainAdmin(String sg){

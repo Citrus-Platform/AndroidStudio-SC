@@ -391,6 +391,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	}
 
 	public void OnSyncClick(View view){
+		if(!SuperChatApplication.isNetworkConnected()){
+			Toast.makeText(this, getString(R.string.check_net_connection), Toast.LENGTH_LONG).show();
+			return;
+		}
 		if(syncAnimation==null){
 			syncAnimation = ObjectAnimator.ofFloat(view, "rotation", 360);
 			syncAnimation.setDuration(1000);
@@ -934,9 +938,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 								if(loginObj.getDomainType()!=null && !loginObj.getDomainType().equals(""))
 									sharedPrefManager.setDomainType(loginObj.getDomainType());
 								if(loginObj.domainPrivacyType!=null && loginObj.domainPrivacyType.equals("open"))
-									sharedPrefManager.setDomainAsPublic(true);
+									sharedPrefManager.setDomainAsPublic(sharedPrefManager.getUserDomain(), true);
 								else
-									sharedPrefManager.setDomainAsPublic(false);
+									sharedPrefManager.setDomainAsPublic(sharedPrefManager.getUserDomain(), false);
 								if(loginObj.type!=null && loginObj.type.equals("domainAdmin")){
 									sharedPrefManager.setAsDomainAdmin(sharedPrefManager.getUserDomain(), true);
 									if(loginObj.joinedUserCount!=null && !loginObj.joinedUserCount.equals(""))
@@ -1171,8 +1175,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						messageService.chatLogin();
 					}
 					//Reset Sinch Service
-					if(mSinchServiceInterface != null && !frompush)
-						mSinchServiceInterface.startClient(sharedPrefManager.getUserName());
+					if(mSinchServiceInterface != null && !frompush) {
+						try {
+							mSinchServiceInterface.startClient(sharedPrefManager.getUserName());
+						}catch(Exception ex){
+							ex.printStackTrace();
+						}
+					}
 //					startService(new Intent(SuperChatApplication.context, SinchService.class));
 				}
 //				if(iPrefManager.isContactSynched() && iPrefManager.isGroupsLoaded()){
@@ -2194,7 +2203,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			switch (requestCode) {
 				case 111:
 					backUpFound = false;
-//					isContactSynching = false;
+					isContactSynching = false;
 					if(mViewPager.getCurrentItem() == 2)
 						contactsFragment.showAllContacts();
 					addNewGroupsAndBroadcastsToDB();
@@ -3647,6 +3656,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		String sg_name = username.substring(username.indexOf("_") + 1);
 		if(contactMenuLayout.isSelected() && contactsFragment.isSearchOn()) {
 			contactsFragment.resetSearch();
+		}
+		if(!SuperChatApplication.isNetworkConnected()){
+			Toast.makeText(this, getString(R.string.check_net_connection), Toast.LENGTH_LONG).show();
+			return;
 		}
 		if(!sg_name.equalsIgnoreCase(iPrefManager.getUserDomain()) || sg_reg){
 			iPrefManager.setSGListData(null);
