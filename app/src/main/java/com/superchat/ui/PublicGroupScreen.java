@@ -632,6 +632,8 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
                 list.clear();
             if(list == null)
                 list = new ArrayList<LoginResponseModel.GroupDetail>();
+            else
+                list.clear();
             for (LoginResponseModel.GroupDetail groups : HomeScreen.groupsData) {
                 if (type == 0 && !groups.memberType.equals("USER")) {
                     list.add(groups);

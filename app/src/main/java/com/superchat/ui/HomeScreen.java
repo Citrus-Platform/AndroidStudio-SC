@@ -1236,7 +1236,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					}
 
 //					if(!isContactSync && !iPrefManager.isGroupsLoaded()){
-					if(!isContactSync && !DBWrapper.getInstance().isSGGroupsBroadcastLoaded(iPrefManager.getUserDomain())){
+//					if(!isContactSync && !DBWrapper.getInstance().isSGGroupsBroadcastLoaded(iPrefManager.getUserDomain()))
+					{
 						if(Build.VERSION.SDK_INT >= 11)
 							new OpenGroupTaskOnServer(!iPrefManager.isFirstTime()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 						else

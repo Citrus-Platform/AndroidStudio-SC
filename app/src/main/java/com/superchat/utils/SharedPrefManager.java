@@ -452,12 +452,21 @@ public boolean isContactModified(){
 	return value;
 }
 	public void setAppMode(String message) {
-		editor.putString(FIRST_TIME_APP, message);
+		String sg = getUserDomain();
+		if(sg != null)
+			editor.putString(FIRST_TIME_APP + sg, message);
+		else
+			editor.putString(FIRST_TIME_APP, message);
 		editor.commit();
 	}
 
 	public String getAppMode() {
-		String value = pref.getString(FIRST_TIME_APP, "");
+		String sg = getUserDomain();
+		String value = "";
+		if(sg != null)
+			value = pref.getString(FIRST_TIME_APP + sg, "");
+		else
+			value = pref.getString(FIRST_TIME_APP, "");
 		return value;
 	}
 	public String getRecentDomains(){
