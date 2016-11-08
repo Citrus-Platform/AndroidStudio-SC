@@ -1651,11 +1651,16 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 						bundle.putString(Constants.CHAT_NAME, "");
 						bundle.putBoolean(Constants.REG_TYPE, false);
 						bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
-//						bundle.putBoolean("PROFILE_EDIT_BACK_TO_PREV", true);
-						intent.putExtras(bundle);
-//						startActivityForResult(intent, 222);
-						startActivity(intent);
-						finish();
+						if(invitedDomainSelected){
+							invitedDomainSelected = false;
+							bundle.putBoolean("PROFILE_EDIT_BACK_TO_PREV", true);
+							intent.putExtras(bundle);
+							startActivityForResult(intent, 222);
+						}else {
+							intent.putExtras(bundle);
+							startActivity(intent);
+							finish();
+						}
 					} else {
 						Intent intent = new Intent(SupergroupListingScreen.this, HomeScreen.class);
 						sharedPrefManager.setProfileAdded(sharedPrefManager.getUserName(), true);
