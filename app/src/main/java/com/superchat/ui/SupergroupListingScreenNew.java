@@ -209,8 +209,9 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                         Toast.makeText(SupergroupListingScreenNew.this, getString(R.string.enter_sg_name_to_continue), Toast.LENGTH_SHORT).show();
                         return false;
                     }
-                    String text = domaine_name.getText().toString();
-                    registerUserOnServer(text, selectedSGDisplayName, view);
+//                    String text = domaine_name.getText().toString();
+//                    registerUserOnServer(text, selectedSGDisplayName, view);
+                    new GetSuperGroupProfile(domaine_name.getText().toString()).execute();
                     return true;
                 }
                 return false;
@@ -441,7 +442,11 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                welcomeDialog.cancel();
+                if (welcomeDialog != null) {
+                    welcomeDialog.dismiss();
+                    welcomeDialog = null;
+                    return;
+                }
             }
         });
         ((ImageView) welcomeDialog.findViewById(R.id.id_profile_pic)).setOnClickListener(new OnClickListener() {
@@ -734,7 +739,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
 
     public void onBackClick(View view) {
         if (welcomeDialog != null) {
-            welcomeDialog.cancel();
+            welcomeDialog.dismiss();
             welcomeDialog = null;
             return;
         }
@@ -744,7 +749,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
     @Override
     public void onBackPressed() {
         if (welcomeDialog != null) {
-            welcomeDialog.cancel();
+            welcomeDialog.dismiss();
             welcomeDialog = null;
             return;
         }
@@ -1659,7 +1664,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                     if (size > 0) {
                         //This is new member, show him different view
                         listView = (ListView) findViewById(R.id.id_contacts_list);
-                        setContentView(R.layout.sg_listing_for_invites_from_lhs);
+//                        setContentView(R.layout.sg_listing_for_invites_from_lhs);
                         if (size > 0) {
                             expandableListView = (ExpandableListView) findViewById(R.id.expandableListView);
                             expandableListDetail = new HashMap<String, ArrayList<InvitedDomainNameSet>>();

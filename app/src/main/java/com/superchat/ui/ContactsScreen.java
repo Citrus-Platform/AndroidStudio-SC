@@ -408,6 +408,10 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
                 ((HomeScreen) fragmentactivity).unseenContactView.setVisibility(View.GONE);
         } catch (Exception e) {
         }
+
+        if(!HomeScreen.isContactSynching && contactLoadingLayout != null){
+            contactLoadingLayout.setVisibility(View.GONE);
+        }
     }
 
     public void updateCursor(String s, String as[]) {

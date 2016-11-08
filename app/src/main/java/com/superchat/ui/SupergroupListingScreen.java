@@ -1417,9 +1417,13 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 
 		@Override
 		protected void onPostExecute(String str) {
-			if (progressDialog != null) {
-				progressDialog.dismiss();
-				progressDialog = null;
+			try {
+				if (progressDialog != null) {
+					progressDialog.dismiss();
+					progressDialog = null;
+				}
+			}catch(Exception ex){
+				ex.printStackTrace();
 			}
 			if (str != null && str.contains("error")) {
 				Gson gson = new GsonBuilder().create();

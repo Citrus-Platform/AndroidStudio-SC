@@ -260,7 +260,11 @@ public class GcmIntentService extends IntentService {
 //			if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal())
 //				tickerText = "Message from " + notificationSenderName + "@" + SharedPrefManager.getInstance().getSharedIDDisplayName(grpDisplayName);
 //			else
-				tickerText = "Message from " + notificationSenderName + "@" + grpDisplayName;
+//				tickerText = "Message from " + notificationSenderName + "@" + grpDisplayName;
+		if(displayName != null && displayName.length() > 0)
+			tickerText = "Message from " + displayName;
+		else
+			tickerText = "Message from " + notificationSenderName + "@" + grpDisplayName;
 		messageNotification.setWhen(System.currentTimeMillis());
 		messageNotification.setTicker(tickerText);
 		Intent notificationIntent = new Intent(context, HomeScreen.class);

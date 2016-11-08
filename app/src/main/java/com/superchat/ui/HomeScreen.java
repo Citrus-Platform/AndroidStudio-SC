@@ -621,6 +621,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //			}
 		}
 		if(frompush) {
+			if (switchUserScreenName != null && switchUserScreenName.equalsIgnoreCase("bulletin"))
+				bulletinNotLoadedAndFromPush = true;
 			String user = iPrefManager.getUserPhone();
 			if(user != null && user.contains("-"))
 				user = user.replace("-", "");
@@ -1260,7 +1262,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				//Switch to chat
 				if(frompush) {
 					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain())){
-						bulletinNotLoadedAndFromPush = true;
+//						bulletinNotLoadedAndFromPush = true;
 						getBulletinMessages();
 					}else
 					{
@@ -1876,6 +1878,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			if(switchUserDisplayName != null && switchUserDisplayName.contains("[") && switchUserDisplayName.contains("]"))
 				switchUserDisplayName = switchUserDisplayName.substring(switchUserDisplayName.indexOf(']') +1).trim();
 			if(frompush) {
+				if (switchUserScreenName != null && switchUserScreenName.equalsIgnoreCase("bulletin"))
+					bulletinNotLoadedAndFromPush = true;
 				String user = iPrefManager.getUserPhone();
 				if(user != null && user.contains("-"))
 					user = user.replace("-", "");
@@ -2190,6 +2194,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			switch (requestCode) {
 				case 111:
 					backUpFound = false;
+					isContactSynching = false;
+					if(mViewPager.getCurrentItem() == 2)
+						contactsFragment.showAllContacts();
 					addNewGroupsAndBroadcastsToDB();
 					break;
 			}

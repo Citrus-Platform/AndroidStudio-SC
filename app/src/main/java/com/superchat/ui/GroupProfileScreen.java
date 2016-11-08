@@ -543,8 +543,11 @@ private class YourAsyncTask extends AsyncTask<String, Void, String> {
 	ProgressDialog dialog;
 	List<String> displayList = new ArrayList<String>();
 		protected void onPreExecute() {
-			
-			dialog = ProgressDialog.show(GroupProfileScreen.this, "","Loading. Please wait...", true);
+			try {
+				dialog = ProgressDialog.show(GroupProfileScreen.this, "", "Loading. Please wait...", true);
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}
 
 //			progressBarView.setVisibility(ProgressBar.VISIBLE);
 			 super.onPreExecute();
