@@ -159,7 +159,7 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
             public void afterTextChanged(Editable editable) {
 //                if(searchBoxView.getText().toString().trim().length() == 0)
 //                    return;
-                String sg = SharedPrefManager.getInstance().getUserDomain().trim();
+                String sg = SharedPrefManager.getInstance().getUserDomain();
                 String s1 = (new StringBuilder()).append("%")
                         .append(searchBoxView.getText().toString().trim()).append("%")
                         .toString();
@@ -175,8 +175,10 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
                         s2 = DatabaseConstants.CONTACT_NAMES_FIELD + " like ? AND " + DatabaseConstants.VOPIUM_FIELD + "!=? AND "+ DatabaseConstants.USER_SG + "=?";
                         as = (new String[]{s1, "2", sg});
                     }
+                    updateCursorForSearch(s2, as);
+                }else{
+                    updateCursor(null, null);
                 }
-                updateCursorForSearch(s2, as);
             }
 
             public void beforeTextChanged(CharSequence charsequence, int i,
