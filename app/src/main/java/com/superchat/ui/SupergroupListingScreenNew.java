@@ -63,7 +63,9 @@ import com.superchat.model.ErrorModel;
 import com.superchat.model.RegMatchCodeModel;
 import com.superchat.model.RegistrationForm;
 import com.superchat.model.multiplesg.InvitedDomainNameSet;
+import com.superchat.model.multiplesg.JoinedDomainNameSet;
 import com.superchat.model.multiplesg.MultipleSGObject;
+import com.superchat.model.multiplesg.OwnerDomainName;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.ui.BulkInvitationAdapter.AppContact;
 import com.superchat.utils.AppUtil;
@@ -209,6 +211,26 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                         Toast.makeText(SupergroupListingScreenNew.this, getString(R.string.enter_sg_name_to_continue), Toast.LENGTH_SHORT).show();
                         return false;
                     }
+                    superGroupName = domaine_name.getText().toString().trim();
+                    //Check if this SG exists in Left pannel then switch directly
+                    if(superGroupName != null && superGroupName.length() > 0){
+                        OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
+                        if(owned != null && superGroupName.equalsIgnoreCase(owned.getDomainName()))
+                        {
+                            Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this SuperGroup.", Toast.LENGTH_LONG).show();
+                            return false;
+                        }
+                        ArrayList<JoinedDomainNameSet> joinedDomainNameSet= DBWrapper.getInstance().getListOfJoinedSGs();
+                        if(joinedDomainNameSet != null && joinedDomainNameSet.size() > 0) {
+                            for (JoinedDomainNameSet joined : joinedDomainNameSet) {
+                                if(joined != null && superGroupName.equalsIgnoreCase(joined.getDomainName()))
+                                {
+                                    Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this SuperGroup.", Toast.LENGTH_LONG).show();
+                                    return false;
+                                }
+                            }
+                        }
+                    }
 //                    String text = domaine_name.getText().toString();
 //                    registerUserOnServer(text, selectedSGDisplayName, view);
                     new GetSuperGroupProfile(domaine_name.getText().toString()).execute();
@@ -223,7 +245,26 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                superGroupName = domaine_name.getText().toString();
+                superGroupName = domaine_name.getText().toString().trim();
+                //Check if this SG exists in Left pannel then switch directly
+                if(superGroupName != null && superGroupName.length() > 0){
+                    OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
+                    if(owned != null && superGroupName.equalsIgnoreCase(owned.getDomainName()))
+                    {
+                        Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this SuperGroup.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    ArrayList<JoinedDomainNameSet> joinedDomainNameSet= DBWrapper.getInstance().getListOfJoinedSGs();
+                    if(joinedDomainNameSet != null && joinedDomainNameSet.size() > 0) {
+                        for (JoinedDomainNameSet joined : joinedDomainNameSet) {
+                            if(joined != null && superGroupName.equalsIgnoreCase(joined.getDomainName()))
+                            {
+                                Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this SuperGroup.", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                        }
+                    }
+                }
                 boolean contains = false;
                 if (invitedDomainNameSet != null && invitedDomainNameSet.contains(superGroupName))
                     contains = true;

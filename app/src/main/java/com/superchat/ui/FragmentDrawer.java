@@ -203,6 +203,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         invitedNotificationCount = (TextView) layout.findViewById(R.id.invitedNotificationCount);
         if (invite != null && invite.size() > 0)
             invitedNotificationCount.setText("" + invite.size());
+        else
+            invitedNotificationCount.setText("0");
 
 
         /*int muteId = DBWrapper.getInstance().getSGMuteInfo(SharedPrefManager.getInstance().getUserDomain());
@@ -494,8 +496,10 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         /////////////////////////////////////
         ArrayList<InvitedDomainNameSet> invitedList = new ArrayList<>();
         invitedList = DBWrapper.getInstance().getListOfInvitedSGs();
-        if (invitedList != null && invitedNotificationCount != null && invitedList.size() > 0)
+        if (invitedList != null && invitedList.size() > 0)
             invitedNotificationCount.setText("" + invitedList.size());
+        else
+            invitedNotificationCount.setText("0");
 
         String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
         if (file_id != null && file_id.trim().length() > 0) {

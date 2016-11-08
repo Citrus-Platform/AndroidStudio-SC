@@ -2194,7 +2194,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			switch (requestCode) {
 				case 111:
 					backUpFound = false;
-					isContactSynching = false;
+//					isContactSynching = false;
 					if(mViewPager.getCurrentItem() == 2)
 						contactsFragment.showAllContacts();
 					addNewGroupsAndBroadcastsToDB();
@@ -3645,6 +3645,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	 */
 	public void switchSG(String username, boolean confirmation, InviteJoinDataModel model, boolean sg_reg){
 		String sg_name = username.substring(username.indexOf("_") + 1);
+		if(contactMenuLayout.isSelected() && contactsFragment.isSearchOn()) {
+			contactsFragment.resetSearch();
+		}
 		if(!sg_name.equalsIgnoreCase(iPrefManager.getUserDomain()) || sg_reg){
 			iPrefManager.setSGListData(null);
 

@@ -147,6 +147,7 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
 //                superGroupIcon.setVisibility(View.GONE);
                 superGroupName.setVisibility(View.GONE);
 
+                isSearchOn = true;
                 searchBoxView.requestFocus();
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(searchBoxView, InputMethodManager.SHOW_IMPLICIT);
@@ -350,6 +351,20 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
 //        if (superGroupIcon != null && SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID") != null)
 //            setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
 //		showAllContacts();
+    }
+
+    boolean isSearchOn;
+    public boolean isSearchOn(){
+        return isSearchOn;
+    }
+    public void resetSearch(){
+        if(searchBoxView != null){
+            searchBoxView.setText("");
+            searchBoxView.setVisibility(View.GONE);
+            searchIcon.setVisibility(View.VISIBLE);
+            clearSearch.setVisibility(View.GONE);
+            isSearchOn = false;
+        }
     }
 
     public void onPause() {
