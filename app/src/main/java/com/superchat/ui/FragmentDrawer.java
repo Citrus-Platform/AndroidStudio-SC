@@ -373,8 +373,33 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
                         SharedPrefManager.getInstance().saveSGUserID(model.getInviteUserName(), model.getInviteUserID());
                         SharedPrefManager.getInstance().saveSGPassword(model.getInviteUserName(), model.getInviteUserPassword());
-                        DBWrapper.getInstance().updateSGCredentials(SG_NAME, model.getInviteUserName(), model.getInviteUserPassword(), model.getInviteUserID(), true);
-                        DBWrapper.getInstance().updateSGTypeValue(SG_NAME, 2);
+
+                        int type = DBWrapper.getInstance().getSGUserTypeValue(SG_NAME);
+                        if(type == -1) {//Not Found
+                            JoinedDomainNameSet joined = new JoinedDomainNameSet();
+                            joined.setDomainName(SG_NAME);
+                            joined.setDisplayName(model.getInviteSGDisplayName());
+                            joined.setUnreadCounter(0);
+                            joined.setDomainType("Company");
+                            joined.setDomainMuteInfo(0);
+                            joined.setOrgName("");
+                            joined.setOrgUrl("");
+                            joined.setPrivacyType("Open");
+                            joined.setAdminName(SharedPrefManager.getInstance().getUserName());
+                            joined.setLogoFileId(model.getInviteSGFileID());
+
+                            SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+                            String dateString = formatter.format(new Date(System.currentTimeMillis()));
+                            joined.setCreatedDate(dateString);
+
+                            if(joined != null)
+                                DBWrapper.getInstance().addNewJoinedSGData(joined);
+
+                            DBWrapper.getInstance().updateSGCredentials(SG_NAME, model.getInviteUserName(), model.getInviteUserPassword(), model.getInviteUserID(), true);
+                        }else {
+                            DBWrapper.getInstance().updateSGCredentials(SG_NAME, model.getInviteUserName(), model.getInviteUserPassword(), model.getInviteUserID(), true);
+                            DBWrapper.getInstance().updateSGTypeValue(SG_NAME, 2);
+                        }
                         ((HomeScreen) getActivity()).switchSG(user + "_" + SG_NAME, true, model, false);
                     }
                 } catch (Exception e) {

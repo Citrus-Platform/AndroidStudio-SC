@@ -2280,6 +2280,35 @@ public boolean isContactModified(String rawId, int version){
 		}
 	}
 
+	public void addNewJoinedSGData(JoinedDomainNameSet sg_data){
+
+		SharedPrefManager prefManager = SharedPrefManager.getInstance();
+
+		try{
+				ContentValues contentvalues = new ContentValues();
+				contentvalues.put(DatabaseConstants.DOMAIN_NAME, sg_data.getDomainName());
+				//contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDomainDisplayName());
+				contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDisplayName());
+				contentvalues.put(DatabaseConstants.DOMAIN_ADMIN_NAME, sg_data.getAdminName());
+				contentvalues.put(DatabaseConstants.DOMAIN_ORG_NAME, sg_data.getOrgName());
+				contentvalues.put(DatabaseConstants.DOMAIN_PRIVACY_TYPE, sg_data.getPrivacyType());
+				contentvalues.put(DatabaseConstants.DOMAIN_TYPE, sg_data.getDomainType());
+				contentvalues.put(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT, Integer.valueOf(sg_data.getUnreadCounter()));
+				contentvalues.put(DatabaseConstants.DOMAIN_CREATED_DATE, sg_data.getCreatedDate());
+				contentvalues.put(DatabaseConstants.DOMAIN_TYPE_VALUE, Integer.valueOf(2));
+				contentvalues.put(DatabaseConstants.DOMAIN_ORG_URL, sg_data.getOrgUrl());
+				contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
+				contentvalues.put(DatabaseConstants.DOMAIN_MUTE_INFO, Integer.valueOf(0));
+				//Save Last Online time
+				prefManager.saveLastOnline(sg_data.getDomainName(), System.currentTimeMillis());
+				long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
+				if(row > 0)
+					Log.e("DBWrapper", "updateJoinedSGData count " + row);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+
 	/**
 	 * Updates Invited SG's in DB
 	 * @param list
