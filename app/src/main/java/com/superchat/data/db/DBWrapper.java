@@ -1096,6 +1096,7 @@ private String convertStringArrayToString1(List<String> strList) {
 		String sql = "";
 		if(previousUsers == null)
 			previousUsers = new ArrayList<String>();
+		String sg = SharedPrefManager.getInstance().getUserDomain();
 		try {
 			String colmsOfContactNumbers = DatabaseConstants._ID+", "+DatabaseConstants.NAME_CONTACT_ID_FIELD+", "+DatabaseConstants.CONTACT_NUMBERS_FIELD+", "+DatabaseConstants.CONTACT_NAMES_FIELD+", "+DatabaseConstants.CONTACT_COMPOSITE_FIELD+", "+DatabaseConstants.VOPIUM_FIELD+", "+DatabaseConstants.USER_NAME_FIELD+", "+DatabaseConstants.IS_FAVOURITE_FIELD;
 			String colmsOfContactEmails = DatabaseConstants._ID+", "+DatabaseConstants.NAME_CONTACT_ID_FIELD+", "+DatabaseConstants.PHONE_EMAILS_FIELD+", "+DatabaseConstants.CONTACT_NAMES_FIELD+", "+DatabaseConstants.CONTACT_COMPOSITE_FIELD+", "+DatabaseConstants.VOPIUM_FIELD+", "+DatabaseConstants.USER_NAME_FIELD+", "+DatabaseConstants.IS_FAVOURITE_FIELD;
@@ -1203,19 +1204,22 @@ private String convertStringArrayToString1(List<String> strList) {
 			previousUsers = new ArrayList<String>();
 		try {
 			String colmsOfContactNumbers = DatabaseConstants._ID+", "+DatabaseConstants.NAME_CONTACT_ID_FIELD+", "+DatabaseConstants.CONTACT_NUMBERS_FIELD+", "+DatabaseConstants.CONTACT_NAMES_FIELD+", "+DatabaseConstants.CONTACT_COMPOSITE_FIELD+", "+DatabaseConstants.VOPIUM_FIELD+", "+DatabaseConstants.USER_NAME_FIELD+", "+DatabaseConstants.IS_FAVOURITE_FIELD;
-			String colmsOfContactEmails = DatabaseConstants._ID+", "+DatabaseConstants.NAME_CONTACT_ID_FIELD+", "+DatabaseConstants.PHONE_EMAILS_FIELD+", "+DatabaseConstants.CONTACT_NAMES_FIELD+", "+DatabaseConstants.CONTACT_COMPOSITE_FIELD+", "+DatabaseConstants.VOPIUM_FIELD+", "+DatabaseConstants.USER_NAME_FIELD+", "+DatabaseConstants.IS_FAVOURITE_FIELD;
+//			String colmsOfContactEmails = DatabaseConstants._ID+", "+DatabaseConstants.NAME_CONTACT_ID_FIELD+", "+DatabaseConstants.PHONE_EMAILS_FIELD+", "+DatabaseConstants.CONTACT_NAMES_FIELD+", "+DatabaseConstants.CONTACT_COMPOSITE_FIELD+", "+DatabaseConstants.VOPIUM_FIELD+", "+DatabaseConstants.USER_NAME_FIELD+", "+DatabaseConstants.IS_FAVOURITE_FIELD;
 			if(previousUsers!=null && !previousUsers.isEmpty()){
 				tags = convertStringArrayToString(previousUsers);
 				sql = "SELECT "+colmsOfContactNumbers + " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS
-						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND " + DatabaseConstants.USER_SG + "=" + sg + " AND " + DatabaseConstants.CONTACT_COMPOSITE_FIELD + "!='9999999999'" + " AND " + DatabaseConstants.USER_NAME_FIELD + " NOT IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' UNION "+
-						"SELECT " +colmsOfContactEmails+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_EMAILS
-						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+ DatabaseConstants.USER_NAME_FIELD + " NOT IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
+						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND " + DatabaseConstants.USER_SG + "='" + sg + "' AND " + DatabaseConstants.CONTACT_COMPOSITE_FIELD + "!='9999999999'" + " AND " + DatabaseConstants.USER_NAME_FIELD + " NOT IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()
+//						+"' UNION "+ "SELECT " +colmsOfContactEmails+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_EMAILS
+//						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+ DatabaseConstants.USER_NAME_FIELD + " NOT IN " + tags+" AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()
+						+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
 						+ DatabaseConstants.CONTACT_NAMES_FIELD
 						+ " COLLATE NOCASE";
 			}else{
 				sql = "SELECT " +colmsOfContactNumbers+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS
-						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND " + DatabaseConstants.USER_SG + "=" + sg + " AND " + DatabaseConstants.CONTACT_COMPOSITE_FIELD + "!='9999999999'" + " AND " +DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' UNION "+"SELECT " +colmsOfContactEmails+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_EMAILS
-						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
+						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND " + DatabaseConstants.USER_SG + "='" + sg + "' AND " + DatabaseConstants.CONTACT_COMPOSITE_FIELD + "!='9999999999'" + " AND " +DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()
+//						+"' UNION "+"SELECT " +colmsOfContactEmails+ " FROM " + DatabaseConstants.TABLE_NAME_CONTACT_EMAILS
+//						+ " WHERE " +DatabaseConstants.VOPIUM_FIELD + "=1 AND "+DatabaseConstants.USER_NAME_FIELD+"!='"+SharedPrefManager.getInstance().getUserName()
+						+"' ORDER BY "+DatabaseConstants.IS_FAVOURITE_FIELD + " DESC, "
 						+ DatabaseConstants.CONTACT_NAMES_FIELD
 						+ " COLLATE NOCASE";
 			}

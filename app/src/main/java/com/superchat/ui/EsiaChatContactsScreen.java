@@ -1951,11 +1951,12 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                                         contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
                                         contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
                                         contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
+                                        //Save USerID and SG in DB
+                                        contentvalues.put(DatabaseConstants.USER_ID, sharedPrefManager.getUserId());
+                                        contentvalues.put(DatabaseConstants.USER_SG, sharedPrefManager.getUserDomain());
                                         if (!userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName())) {
-                                            long value = DBWrapper.getInstance()
-                                                    .insertInDB(DatabaseConstants.TABLE_NAME_ALL_CONTACT_NUMBERS,
-                                                            contentvalues);
-                                            System.out.println("Inserted with : " + value);
+                                            long value = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_ALL_CONTACT_NUMBERS, contentvalues);
+//                                            System.out.println("Inserted with : " + value);
                                         }
                                         if (userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName())) {
                                             if (userDetail.name == null || (userDetail.name != null && (userDetail.name.equals("") || userDetail.name.equalsIgnoreCase("user"))))

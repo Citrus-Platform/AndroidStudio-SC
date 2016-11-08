@@ -1296,8 +1296,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						mViewPager.setCurrentItem(1);
 						selectedTab = 1;
 					}else {
-						if (selectedTab == 1)
+						if (selectedTab == 1) {
 							publicGroupFragment.setSgSwitch(true);
+							if (PublicGroupScreen.isAllChannelTab)
+								publicGroupFragment.showAllContacts(1);
+							else
+								publicGroupFragment.showAllContacts(0);
+						}
 						mViewPager.setCurrentItem(selectedTab);
 					}
 				}

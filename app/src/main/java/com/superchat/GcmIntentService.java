@@ -249,7 +249,6 @@ public class GcmIntentService extends IntentService {
 			if(notificationSenderName!=null && notificationSenderName.contains("#786#"))
 				notificationSenderName = notificationSenderName.substring(0, notificationSenderName.indexOf("#786#"));
 			if(notificationSenderName.equals(senderName)){
-//				notificationSenderName = notificationSenderName.replaceFirst("m", "+");
 				if(notificationSenderName.contains("_"))
 					notificationSenderName = "+"+notificationSenderName.substring(0, notificationSenderName.indexOf("_"));
 				}
@@ -290,8 +289,8 @@ public class GcmIntentService extends IntentService {
 //		if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal())
 //			messageNotification.setContentTitle(notificationSenderName + "@" + SharedPrefManager.getInstance().getSharedIDDisplayName(grpDisplayName));
 //		else
-		if(grpDisplayName != null && !grpDisplayName.trim().equals(""))
-			messageNotification.setContentTitle(notificationSenderName + "@" + grpDisplayName);
+		if(displayName != null && !displayName.trim().equals(""))
+			messageNotification.setContentTitle(displayName);
 		else
 			messageNotification.setContentTitle(notificationSenderName);
 
@@ -301,13 +300,21 @@ public class GcmIntentService extends IntentService {
 		if(R.layout.message_notifier!=-1){
 			RemoteViews contentView = new RemoteViews(
 					SuperChatApplication.context.getPackageName(),
-					R.layout.message_notifier);
+					R.layout.message_notifier_group);
 
 
 //			if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal())
 //				contentView.setTextViewText(R.id.chat_person_name, notificationSenderName+"@"+SharedPrefManager.getInstance().getSharedIDDisplayName(grpDisplayName));
 //			else
-				contentView.setTextViewText(R.id.chat_person_name, notificationSenderName+"@"+grpDisplayName);
+//				contentView.setTextViewText(R.id.chat_person_name, notificationSenderName+"@"+grpDisplayName);
+			if(notificationSenderName != null && notificationSenderName.contains("]")) {
+				contentView.setTextViewText(R.id.chat_sg_name, notificationSenderName.substring(0, notificationSenderName.indexOf("]") + 1));
+				contentView.setTextViewText(R.id.chat_person_name, notificationSenderName.substring(notificationSenderName.indexOf("]") + 1));
+			}
+			else {
+				contentView.setTextViewText(R.id.chat_sg_name, notificationSenderName);
+				contentView.setTextViewText(R.id.chat_person_name, notificationSenderName);
+			}
 			Uri uri = getPicUri(user);
 			if(uri!=null)
 				contentView.setImageViewUri(R.id.imagenotileft, uri);
