@@ -508,7 +508,7 @@ private static final String TAG = "SuperGroupProfileActivity";
 		    			}
 		                sgType.setVisibility(View.VISIBLE);
 		                if(privacy_type != null && privacy_type.equalsIgnoreCase("closed")){
-//		                	showDialog("For this SuperGroup to join, you need an invitation. Else you can't join this SuperGroup.");
+//		                	showDialog("This SuperGroup only accepts members by invitation");
 		                	isClosed = true;
 		                	sgType.setCompoundDrawablesWithIntrinsicBounds(R.drawable.lock, 0, 0, 0);
 		                	sgType.setText(getString(R.string.closed_sg));
