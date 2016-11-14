@@ -915,7 +915,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 
 		if(isInvitedDomain(invitedDomainNameSet, super_group))
 			invitedDomainSelected = true;
-		if(ownerDomainNameSet.size() == 0 && invitedDomainNameSet.size() == 0 && joinedDomainNameSet.size() == 0)
+		if(ownerDomainNameSet.size() == 0 && /*invitedDomainNameSet.size() == 0 && */joinedDomainNameSet.size() == 0)
 			invitedDomainSelected = true;
 		RegistrationForm registrationForm = null;
 		//RegistrationForm registrationForm = new RegistrationForm(mobileNumber, "normal",imei, imsi, clientVersion);
