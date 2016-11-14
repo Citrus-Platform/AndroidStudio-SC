@@ -600,6 +600,9 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     }
 
     private boolean setProfilePic(ImageView picView, String groupPicId) {
+
+        groupPicId = DBWrapper.getInstance().getSGLogoFileID(SharedPrefManager.getInstance().getUserDomain());
+
 //		System.out.println("groupPicId : "+groupPicId);
         String img_path = getThumbPath(groupPicId);
         picView.setImageResource(R.drawable.about_icon);
