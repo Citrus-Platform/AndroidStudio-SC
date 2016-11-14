@@ -1894,7 +1894,7 @@ public boolean isContactModified(String rawId, int version){
 			contentvalues.put(DatabaseConstants.DOMAIN_MUTE_INFO, Integer.valueOf(0));
 			long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
 			if(row > 0)
-				Log.e("DBWrapper", "updateOwnedSGData count " + row);
+				Log.i("DBWrapper", "updateOwnedSGData count " + row);
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
@@ -1919,7 +1919,7 @@ public boolean isContactModified(String rawId, int version){
 			int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
 					new String[] { sg_name });
 			if(row > 0)
-				Log.e("DBWrapper", "updateSGCredentials count " + row);
+				Log.i("DBWrapper", "updateSGCredentials count " + row);
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
@@ -1991,7 +1991,7 @@ public boolean isContactModified(String rawId, int version){
 			int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
 					new String[] { sg_name });
 			if(row > 0)
-				Log.e("DBWrapper", "updateSGMuteInfo count " + row);
+				Log.i("DBWrapper", "updateSGMuteInfo count " + row);
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
@@ -2273,7 +2273,7 @@ public boolean isContactModified(String rawId, int version){
 				prefManager.saveLastOnline(sg_data.getDomainName(), System.currentTimeMillis());
 				long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
 				if(row > 0)
-					Log.e("DBWrapper", "updateJoinedSGData count " + row);
+					Log.i("DBWrapper", "updateJoinedSGData count " + row);
 			}
 		}catch(Exception ex){
 			ex.printStackTrace();
@@ -2303,7 +2303,7 @@ public boolean isContactModified(String rawId, int version){
 				prefManager.saveLastOnline(sg_data.getDomainName(), System.currentTimeMillis());
 				long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
 				if(row > 0)
-					Log.e("DBWrapper", "updateJoinedSGData count " + row);
+					Log.i("DBWrapper", "updateJoinedSGData count " + row);
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
@@ -2331,8 +2331,8 @@ public boolean isContactModified(String rawId, int version){
 				contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
 				contentvalues.put(DatabaseConstants.DOMAIN_MUTE_INFO, Integer.valueOf(0));
 				long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
-//				if(row > 0)
-//					Log.e("DBWrapper", "updateInvitedSGData count " + row);
+				if(row > 0)
+					Log.i("DBWrapper", "updateInvitedSGData count " + row);
 			}
 		}catch(Exception ex){
 			ex.printStackTrace();
@@ -2363,8 +2363,8 @@ public boolean isContactModified(String rawId, int version){
 					contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
 					contentvalues.put(DatabaseConstants.DOMAIN_MUTE_INFO, Integer.valueOf(0));
 					long row = insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
-//					if (row > 0)
-//						Log.e("DBWrapper", "updateInvitedSGData count " + row);
+					if (row > 0)
+						Log.i("DBWrapper", "updateInvitedSGData count " + row);
 				}
 			}
 		}catch(Exception ex){

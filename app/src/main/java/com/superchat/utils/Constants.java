@@ -38,7 +38,6 @@ public class Constants {
 
 // Live Server
 private static final String PRODUCTION_IP = "52.88.175.48";
-//private static final String PRODUCTION_IP = "superchat3c.com";
 public static final String 	LIVE_DOMAIN = "http://superchat3c.com";
 
 

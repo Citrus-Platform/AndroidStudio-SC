@@ -414,30 +414,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				new ContactMatchingLoadingTask().execute();
 			return;
 		}
-//		if(AtMeApplication.contactSyncState == AtMeApplication.CONTACT_SYNC_IDLE || AtMeApplication.contactSyncState == AtMeApplication.CONTACT_SYNC_SUCESSED){
-//			AtMeApplication.contactSyncState = AtMeApplication.CONTACT_SYNC_IDLE;
-//			AtMeApplication.syncContactsWithServer(this);
-//			chkSyncProcess();
-//			if(syncAnimation!=null){
-
-//				syncAnimation.start();
-//				contactSyncMessage.setVisibility(View.VISIBLE);
-//			}
-//
-//		}
 		isContactSync = true;
 		syncProcessStart(true);
-//		if(!isLoginProcessing){
 		isLoginProcessing = true;
 		if(Build.VERSION.SDK_INT >= 11)
 			new DomainsUserTaskOnServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		else
 			new DomainsUserTaskOnServer().execute();
-//			if(Build.VERSION.SDK_INT >= 11)
-//				new SignInTaskOnServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-//			else
-//				new SignInTaskOnServer().execute();
-//		}
 	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -511,24 +494,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		if(getIntent().getExtras() != null) {
 			firstTimeAdmin = getIntent().getExtras().getBoolean("ADMIN_FIRST_TIME");
 		}
-//		mViewPager.setOffscreenPageLimit(4);
 		mViewPager.setAdapter(mAdapter);
 		if(iPrefManager.isFirstTime()
 				&& iPrefManager.getAppMode() != null && iPrefManager.getAppMode().equals("VirginMode")){
-//			if(firstTimeAdmin){
-//				mViewPager.setCurrentItem(2);
-//				chatMenuLayout.setSelected(false);
-//				publicGroupTab.setSelected(false);
-//				contactMenuLayout.setSelected(true);
-//				bulletinMenuLayout.setSelected(false);
-//			}else
-			{
-				mViewPager.setCurrentItem(1);
-				chatMenuLayout.setSelected(false);
-				publicGroupTab.setSelected(true);
-				contactMenuLayout.setSelected(false);
-				bulletinMenuLayout.setSelected(false);
-			}
+			mViewPager.setCurrentItem(1);
+			chatMenuLayout.setSelected(false);
+			publicGroupTab.setSelected(true);
+			contactMenuLayout.setSelected(false);
+			bulletinMenuLayout.setSelected(false);
 		}else{
 			mViewPager.setCurrentItem(0);
 			chatMenuLayout.setSelected(true);
@@ -538,10 +511,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
 		}
 		startService(new Intent(SuperChatApplication.context, ChatService.class));
-
-//		syncView.setVisibility(View.GONE);
-//		TabPageIndicator titleIndicator = (TabPageIndicator)findViewById(R.id.titles);
-//		 titleIndicator.setViewPager(mViewPager);
 		OnPageChangeListener mPageChangeListener = new ViewPager.OnPageChangeListener() {
 			@Override
 			public void onPageScrolled(int position,
@@ -556,20 +525,15 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						contactMenuLayout.setSelected(false);
 						bulletinMenuLayout.setSelected(false);
 						publicGroupTab.setSelected(false);
-//							syncView.setVisibility(View.GONE);
-
 						chatMenuLayout.setSelected(true);
 						break;
 					case 2:
 						chatMenuLayout.setSelected(false);
 						bulletinMenuLayout.setSelected(false);
 						publicGroupTab.setSelected(false);
-//							syncView.setVisibility(View.INVISIBLE);
-
 						if(contactsFragment!=null && contactsFragment.adapter!=null && isContactRefreshed){
 							contactsFragment.showAllContacts();
 							contactsFragment.setPorfileListener();
-//								contactsFragment.adapter.notifyDataSetChanged();
 							isContactRefreshed = false;
 						}
 						contactMenuLayout.setSelected(true);
@@ -581,8 +545,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						chatMenuLayout.setSelected(false);
 						contactMenuLayout.setSelected(false);
 						bulletinMenuLayout.setSelected(false);
-//						syncView.setVisibility(View.GONE);
-
 						publicGroupTab.setSelected(true);
 						publicGroupFragment.refreshList();
 						publicGroupFragment.restScreen();
@@ -591,8 +553,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						contactMenuLayout.setSelected(false);
 						publicGroupTab.setSelected(false);
 						chatMenuLayout.setSelected(false);
-//							syncView.setVisibility(View.GONE);
-
 						bulletinMenuLayout.setSelected(true);
 						break;
 				}
@@ -605,32 +565,38 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			}
 		};
 		mViewPager.addOnPageChangeListener(mPageChangeListener);
-//		 titleIndicator.setOnPageChangeListener(mPageChangeListener);
-
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			frompush = extras.getBoolean("FROM_NOTIFICATION");
 			switchUserScreenName = extras.getString("SCREEN_NAME");
+			systemMessage = extras.getBoolean("SYSTEM_MESSAGE");
 			switchUserName = extras.getString(ChatDBConstants.USER_NAME_FIELD);
 			switchUserDisplayName = extras.getString(ChatDBConstants.CONTACT_NAMES_FIELD);
+			if(systemMessage)
+				systemMessageText = extras.getString("SYSTEM_MESSAGE_TEXT");
 			if(switchUserDisplayName != null && switchUserDisplayName.contains("[") && switchUserDisplayName.contains("]"))
 				switchUserDisplayName = switchUserDisplayName.substring(switchUserDisplayName.indexOf(']') +1).trim();
-//			System.out.println(TAG + "onResume :: switchUserName - "+switchUserName+", switchUserDisplayName - "+switchUserDisplayName);
-//			if(frompush) {
-//				String user = iPrefManager.getUserPhone();
-//				if(user != null && user.contains("-"))
-//					user = user.replace("-", "");
-//				switchSG(user + "_" + extras.getString("DOMAIN_NAME"), false, null);
-//				return;
-//			}
 		}
 		if(frompush) {
-			if (switchUserScreenName != null && switchUserScreenName.equalsIgnoreCase("bulletin"))
-				bulletinNotLoadedAndFromPush = true;
-			String user = iPrefManager.getUserPhone();
-			if(user != null && user.contains("-"))
-				user = user.replace("-", "");
+			if(systemMessage){
+				if (Build.VERSION.SDK_INT >= 11)
+					new SignInTaskOnServer(null).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				else
+					new SignInTaskOnServer(null).execute();
+				startService(new Intent(SuperChatApplication.context, SinchService.class));
+				//Check for backUp and upload.
+				checkForBackUpAndUploadBackup();
+				if(systemMessageText != null && systemMessageText.length() > 0)
+					showDialogWithPositive(systemMessageText);
+				systemMessage = false;
+			}else {
+				if (switchUserScreenName != null && switchUserScreenName.equalsIgnoreCase("bulletin"))
+					bulletinNotLoadedAndFromPush = true;
+				String user = iPrefManager.getUserPhone();
+				if (user != null && user.contains("-"))
+					user = user.replace("-", "");
 				switchSG(user + "_" + extras.getString("DOMAIN_NAME"), false, null, false);
+			}
 			return;
 		}else {
 			if (Build.VERSION.SDK_INT >= 11)
@@ -1743,6 +1709,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				systemMessageDialog.cancel();
+				systemMessageText = null;
+				systemMessage = false;
+				frompush = false;
 				return false;
 			}
 		});
@@ -1880,6 +1849,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	String switchUserDisplayName;
 	String switchUserScreenName;
 	boolean frompush = false;
+	boolean systemMessage = false;
+	String systemMessageText = null;
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
@@ -1888,21 +1859,29 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		if (extras != null) {
 			frompush = extras.getBoolean("FROM_NOTIFICATION");
 			switchUserScreenName = extras.getString("SCREEN_NAME");
+			systemMessage = extras.getBoolean("SYSTEM_MESSAGE");
 			switchUserName = extras.getString(ChatDBConstants.USER_NAME_FIELD);
 			switchUserDisplayName = extras.getString(ChatDBConstants.CONTACT_NAMES_FIELD);
+			systemMessageText = extras.getString("SYSTEM_MESSAGE_TEXT");
 			if(switchUserDisplayName != null && switchUserDisplayName.contains("[") && switchUserDisplayName.contains("]"))
 				switchUserDisplayName = switchUserDisplayName.substring(switchUserDisplayName.indexOf(']') +1).trim();
 			if(frompush) {
-				if (switchUserScreenName != null && switchUserScreenName.equalsIgnoreCase("bulletin"))
-					bulletinNotLoadedAndFromPush = true;
-				String user = iPrefManager.getUserPhone();
-				if(user != null && user.contains("-"))
-					user = user.replace("-", "");
-				switchSG(user + "_" + extras.getString("DOMAIN_NAME"), false, null, false);
+				if (systemMessage && systemMessageText != null && systemMessageText.length() > 0) {
+					showDialogWithPositive(systemMessageText);
+					systemMessage = false;
+				}else {
+					if (switchUserScreenName != null && switchUserScreenName.equalsIgnoreCase("bulletin"))
+						bulletinNotLoadedAndFromPush = true;
+					String user = iPrefManager.getUserPhone();
+					if (user != null && user.contains("-"))
+						user = user.replace("-", "");
+					switchSG(user + "_" + extras.getString("DOMAIN_NAME"), false, null, false);
+				}
 				return;
 			}
 		}
 	}
+
 	public void onResume(){
 		super.onResume();
 		isforeGround = true;
@@ -1910,8 +1889,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
 		isRWA = SharedPrefManager.getInstance().getDomainType().equals("rwa");
 
-		bindService(new Intent(this, SinchService.class), mCallConnection, Context.BIND_AUTO_CREATE);
-		bindService(new Intent(this, ChatService.class), mConnection,Context.BIND_AUTO_CREATE);
+		try {
+			bindService(new Intent(this, SinchService.class), mCallConnection, Context.BIND_AUTO_CREATE);
+			bindService(new Intent(this, ChatService.class), mConnection, Context.BIND_AUTO_CREATE);
+			getShareInfo();
+		}catch (Exception ex){
+			ex.printStackTrace();
+		}
 		getShareInfo();
 		syncProcessStart(true);
 		if(!iPrefManager.isMyExistence()){
@@ -1927,7 +1911,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		if(backUpFound && backupData != null){
 			showBackUpRestoreScreen(backupData);
 		}
-//		checkForBackUpAndUploadBackup();
 	}
 
 	private void showBackUpRestoreScreen(String data){
@@ -3987,6 +3970,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	// Called in Android UI's main thread
 	@Subscribe(threadMode = ThreadMode.MAIN)
 	public void onMessage(String message) {
+		System.out.println("threadMode = ThreadMode.MAIN : Message - "+message);
 		showDialogWithPositive(message);
 //        showAlertDialog(message);
 	}

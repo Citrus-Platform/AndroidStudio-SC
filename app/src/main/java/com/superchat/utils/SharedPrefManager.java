@@ -134,6 +134,9 @@ public class SharedPrefManager {
 	private final String SG_BACKUP_CHECKED = "sg_backup_checked";
 
 
+	private final String SYSTEM_MSG_FOR_SG = "system_msg_for_sg";
+
+
 	private final String DATA_LOADED_FOR_SG = "data_loaded_for_sg";
 
 
@@ -264,6 +267,7 @@ public class SharedPrefManager {
 		return pref.getBoolean(DATA_LOADED_FOR_SG + sg, false);
 	}
 	public void setDataLoadedForSG(String sg, boolean flag){
+		System.out.println("Data Loaded for "+sg+" = "+flag);
 		editor.putBoolean(DATA_LOADED_FOR_SG + sg, flag);
 		editor.commit();
 	}
@@ -504,6 +508,15 @@ public boolean isContactModified(){
 	public void saveDomainJoinedCount(String id) {
 		editor.putString(DOMAIN_JOINED_COUNTS, id);
 		editor.commit();
+	}
+
+	public void saveSystemMessageForSG(String sg, String message) {
+		editor.putString(SYSTEM_MSG_FOR_SG + sg, message);
+		editor.commit();
+	}
+	public String getSystemMessageForSG(String sg) {
+		String value = pref.getString(SYSTEM_MSG_FOR_SG + sg, null);
+		return value;
 	}
 	public void saveDomainUnjoinedCount(String id) {
 		editor.putString(DOMAIN_UNJOINED_COUNTS, id);

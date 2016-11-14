@@ -1780,6 +1780,10 @@ public class MainActivity extends FragmentActivity implements
 											intent.putExtra(Constants.REG_TYPE, "USER");
 										intent.putExtra(Constants.NAME, displayNameView.getText().toString().trim());
 										startActivity(intent);
+										if (progressDialog != null) {
+											progressDialog.dismiss();
+											progressDialog = null;
+										}
 										finish();
 					            }
 				            
@@ -1840,7 +1844,7 @@ public class MainActivity extends FragmentActivity implements
 			super.onPostExecute(str);
 		}
 	}
-	
+
 	public void switchScreenForVerificaton(boolean is_old_user){
 		if(countryCode != null)
 			sharedPrefManager.setUserCountryCode(countryCode);

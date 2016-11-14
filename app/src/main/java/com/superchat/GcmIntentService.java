@@ -135,7 +135,8 @@ public class GcmIntentService extends IntentService {
 						return;
 
 					//Check For special Message type
-					if(senderUserName == null && groupName ==  null){
+					if(senderUserName == null && groupName ==  null)
+					{
 						if(HomeScreen.isforeGround){
 							EventBus.getDefault().post(message);
 						} else {
@@ -274,6 +275,7 @@ public class GcmIntentService extends IntentService {
 		notificationIntent.putExtra(ChatDBConstants.CONTACT_NAMES_FIELD, grpDisplayName);
 		notificationIntent.putExtra(ChatDBConstants.USER_NAME_FIELD, user);
 		notificationIntent.putExtra("FROM_NOTIFICATION", true);
+		notificationIntent.putExtra("SYSTEM_MESSAGE", false);
 		notificationIntent.putExtra("DOMAIN_NAME", domainName);
 		notificationIntent.putExtra("SCREEN_NAME", screen);
 
@@ -412,6 +414,7 @@ public class GcmIntentService extends IntentService {
 		notificationIntent.putExtra("FROM_NOTIFICATION", true);
 		notificationIntent.putExtra("DOMAIN_NAME", domainName);
 		notificationIntent.putExtra("SCREEN_NAME", screen);
+		notificationIntent.putExtra("SYSTEM_MESSAGE", false);
 
 //		if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal())
 //			notificationIntent.putExtra("FROM_BULLETIN_NOTIFICATION", true);
