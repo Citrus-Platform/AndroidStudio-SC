@@ -753,7 +753,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	}
 	public void updateUserData(String username, InviteJoinDataModel model){
 		try {
-			progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
+			if(!dataAlreadyLoadedForSG)
+				progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
 			SharedPrefManager prefManager = SharedPrefManager.getInstance();
 			long userID = 0;
 			if(model != null){
@@ -852,8 +853,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		@Override
 		protected void onPreExecute() {
 			try {
-				boolean data_loaded = sharedPrefManager.isDataLoadedForSG(sg_name);
-				if (!noLoadingNeeded) {
+//				boolean data_loaded = sharedPrefManager.isDataLoadedForSG(sg_name);
+				if (!noLoadingNeeded && !dataAlreadyLoadedForSG) {
 					progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
 					noLoadingNeeded = false;
 				}
@@ -1148,10 +1149,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 							ex.printStackTrace();
 						}
 					}
-//					startService(new Intent(SuperChatApplication.context, SinchService.class));
 				}
-//				if(iPrefManager.isContactSynched() && iPrefManager.isGroupsLoaded()){
-				if(iPrefManager.isContactSynched(iPrefManager.getUserDomain()) && !DBWrapper.getInstance().isSGSharedIDLoaded(iPrefManager.getUserDomain())){
+//				if(iPrefManager.isContactSynched(iPrefManager.getUserDomain()) && !DBWrapper.getInstance().isSGSharedIDLoaded(iPrefManager.getUserDomain())){
+				if(!dataAlreadyLoadedForSG){
 					//Get all the shared ID's - This call is for everyone
 					String shared_id_data = sharedPrefManager.getSharedIDData();
 					if(shared_id_data != null && shared_id_data.length() > 0)
@@ -1160,10 +1160,11 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						new GetSharedIDListFromServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					else
 						new GetSharedIDListFromServer().execute();
-					return;
+//					return;
 				}
 				if(mViewPager!=null && mAdapter!=null && isforeGround){
-					mViewPager.setAdapter(mAdapter);
+					if(!dataAlreadyLoadedForSG)
+						mViewPager.setAdapter(mAdapter);
 					if(iPrefManager.isFirstTime()
 							&& iPrefManager.getAppMode() != null && iPrefManager.getAppMode().equals("VirginMode")){
 //						if(isContactSync || firstTimeAdmin){
@@ -1193,17 +1194,19 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						}
 						new_user = true;
 					}else{
-						if(isContactSync)
-							mViewPager.setCurrentItem(2);
-						else if(firstTimeAdmin)
-							mViewPager.setCurrentItem(1);
-						else
-							mViewPager.setCurrentItem(0);
+						if(!dataAlreadyLoadedForSG) {
+							if (isContactSync)
+								mViewPager.setCurrentItem(2);
+							else if (firstTimeAdmin)
+								mViewPager.setCurrentItem(1);
+							else
+								mViewPager.setCurrentItem(0);
+						}
 					}
 
 //					if(!isContactSync && !iPrefManager.isGroupsLoaded()){
 //					if(!isContactSync && !DBWrapper.getInstance().isSGGroupsBroadcastLoaded(iPrefManager.getUserDomain()))
-					{
+					if(!dataAlreadyLoadedForSG){
 						if(Build.VERSION.SDK_INT >= 11)
 							new OpenGroupTaskOnServer(!iPrefManager.isFirstTime()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 						else
@@ -1211,14 +1214,12 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					}
 //					if(!iPrefManager.isContactSynched()){
 //					if(!DBWrapper.getInstance().isSGContactsLoaded(iPrefManager.getUserDomain())){
-					if(!iPrefManager.isDataLoadedForSG(iPrefManager.getUserDomain())){
+					if(!dataAlreadyLoadedForSG){
 						if(sharedPrefManager.isOpenDomain()){
 							if(Build.VERSION.SDK_INT >= 11)
 								new ContactMatchingLoadingTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 							else
 								new ContactMatchingLoadingTask().execute();
-
-
 						}else{
 							if(Build.VERSION.SDK_INT >= 11)
 								new DomainsUserTaskOnServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -1228,7 +1229,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					}else
 						isContactSynching = false;
 					//call Once
-					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain()) && !frompush) {
+//					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain()) && !frompush)
+					if(!dataAlreadyLoadedForSG){
 						getBulletinMessages();
 					}
 				}
@@ -1237,7 +1239,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				isSwitchSG = false;
 				//Switch to chat
 				if(frompush) {
-					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain())){
+//					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain())){
+					if(!dataAlreadyLoadedForSG){
 //						bulletinNotLoadedAndFromPush = true;
 						getBulletinMessages();
 					}else
@@ -1258,7 +1261,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						frompush = false;
 					}
 				}
-				if(selectedTab >= 0) {
+				if(!dataAlreadyLoadedForSG && selectedTab >= 0) {
 					if(firstTimeAdmin || new_user){
 						mViewPager.setCurrentItem(1);
 						selectedTab = 1;
@@ -1273,10 +1276,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						mViewPager.setCurrentItem(selectedTab);
 					}
 				}
+				if(dataAlreadyLoadedForSG)
+					isSwitchingSG = false;
 			}
-			if(sharedPrefManager.isBackupCheckedForSG(sharedPrefManager.getUserDomain())) {
-				addNewGroupsAndBroadcastsToDB();
-			}else {
+			if(!dataAlreadyLoadedForSG && !sharedPrefManager.isBackupCheckedForSG(sharedPrefManager.getUserDomain())){
 				if (Build.VERSION.SDK_INT >= 11)
 					new CheckDataBackup().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				else
@@ -1286,8 +1289,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			String shared_id_data = sharedPrefManager.getSharedIDData();
 			if(shared_id_data != null && shared_id_data.length() > 0)
 				parseSharedIDData(shared_id_data);
-			if(!DBWrapper.getInstance().isSGSharedIDLoaded(iPrefManager.getUserDomain()))
-			{
+			if(!DBWrapper.getInstance().isSGSharedIDLoaded(iPrefManager.getUserDomain())){
 				if (Build.VERSION.SDK_INT >= 11)
 					new GetSharedIDListFromServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				else
@@ -1309,8 +1311,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				new_user = false;
 			}
 			isSwitchingSG = false;
+			if(!dataAlreadyLoadedForSG)
+				syncProcessStart(false);
 			sharedPrefManager.setDataLoadedForSG(sharedPrefManager.getUserDomain(), true);
-			syncProcessStart(false);
 			isLoginProcessing = false;
 			super.onPostExecute(str);
 		}
@@ -1321,7 +1324,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		@Override
 		protected void onPreExecute() {
 			isContactSynching = true;
-			if(!firstTimeAdmin)
+			if(!firstTimeAdmin && !dataAlreadyLoadedForSG)
 				progressDialog = ProgressDialog.show(HomeScreen.this, "", "Contact loading. Please wait...", true);
 			super.onPreExecute();
 		}
@@ -1890,8 +1893,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		isRWA = SharedPrefManager.getInstance().getDomainType().equals("rwa");
 
 		try {
-			bindService(new Intent(this, SinchService.class), mCallConnection, Context.BIND_AUTO_CREATE);
-			bindService(new Intent(this, ChatService.class), mConnection, Context.BIND_AUTO_CREATE);
+			if(!isSwitchSG) {
+				bindService(new Intent(this, SinchService.class), mCallConnection, Context.BIND_AUTO_CREATE);
+				bindService(new Intent(this, ChatService.class), mConnection, Context.BIND_AUTO_CREATE);
+			}
 			getShareInfo();
 		}catch (Exception ex){
 			ex.printStackTrace();
@@ -3229,7 +3234,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	private void getBulletinMessages() {
 		try {
 			retrofit2.Call call = null;
-			progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading bulletin messages. Please wait...", true);
+			if(!dataAlreadyLoadedForSG)
+				progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading bulletin messages. Please wait...", true);
 			final SharedPrefManager pref = SharedPrefManager.getInstance();
 			call = objApi.getApi(this).getBulletinMessages("" + 10);
 			call.enqueue(new RetrofitRetrofitCallback<BulletinGetMessageDataModel>(this) {
@@ -3636,6 +3642,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	//------------------------- Clear Data to switch for another SG ------------------------------------------
 	boolean isSwitchSG;
 	int selectedTab = 0;
+	boolean dataAlreadyLoadedForSG;
 
 	/**
 	 * When next Supergroup is clicked to change
@@ -3646,7 +3653,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		if(contactMenuLayout.isSelected() && contactsFragment.isSearchOn()) {
 			contactsFragment.resetSearch();
 		}
-		if(!SuperChatApplication.isNetworkConnected()){
+		dataAlreadyLoadedForSG = iPrefManager.isDataLoadedForSG(sg_name);
+		if(!dataAlreadyLoadedForSG && !SuperChatApplication.isNetworkConnected()){
 			Toast.makeText(this, getString(R.string.check_net_connection), Toast.LENGTH_LONG).show();
 			return;
 		}
@@ -3674,6 +3682,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //						selectedTab = 0;
 					drawerFragment.fragmentClose();
 					updateUserData(username, null);
+					if(dataAlreadyLoadedForSG) {
+						updateUserSGData(sg_name);
+						showSelectedFragment();
+						if(!SuperChatApplication.isNetworkConnected()) {
+							isContactSynching = false;
+							isSwitchingSG = false;
+						}
+					}
 					markSGActive(sg_name);
 				}
 			}else{
@@ -3684,6 +3700,31 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		}else{
 			drawerFragment.fragmentClose();
 		}
+	}
+	public void showSelectedFragment(){
+		runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				if(selectedTab >= 0) {
+					mViewPager.setAdapter(mAdapter);
+					if(firstTimeAdmin){
+						mViewPager.setCurrentItem(1);
+						selectedTab = 1;
+					}else {
+						if (selectedTab == 1) {
+							publicGroupFragment.setSgSwitch(true);
+							if (PublicGroupScreen.isAllChannelTab)
+								publicGroupFragment.showAllContacts(1);
+							else
+								publicGroupFragment.showAllContacts(0);
+						}else
+							mViewPager.setCurrentItem(selectedTab);
+						mViewPager.setCurrentItem(selectedTab);
+					}
+				}
+			}
+		});
 	}
 
 	public void updateCounterValuesAtBottomTabs(){
@@ -3757,7 +3798,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						new SignInTaskOnServer(sgname).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 					else
 						new SignInTaskOnServer(sgname).execute();
-
 				}
 
 				@Override
