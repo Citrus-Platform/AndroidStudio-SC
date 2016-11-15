@@ -599,13 +599,19 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			}
 			return;
 		}else {
-			if (Build.VERSION.SDK_INT >= 11)
-				new SignInTaskOnServer(null).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-			else
-				new SignInTaskOnServer(null).execute();
-			startService(new Intent(SuperChatApplication.context, SinchService.class));
-			//Check for backUp and upload.
-			checkForBackUpAndUploadBackup();
+			if(firstTimeAdmin){
+				//Call Activate domain task here.
+				progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading. Please wait...", true);
+				activateSG(iPrefManager.getUserDomain(), "true");
+			}else {
+				if (Build.VERSION.SDK_INT >= 11)
+					new SignInTaskOnServer(null).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				else
+					new SignInTaskOnServer(null).execute();
+				startService(new Intent(SuperChatApplication.context, SinchService.class));
+				//Check for backUp and upload.
+				checkForBackUpAndUploadBackup();
+			}
 		}
 	}
 	private boolean isVerifiedUser(String mobileNumber) {
@@ -3932,7 +3938,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	 * Single deactivated SG will be activated
 	 * @param super_group - Name of the SG to Activate
 	 */
-	private void activateSG(final String super_group){
+	private void activateSG(final String super_group, final String all){
 		try{
 			String imei = SuperChatApplication.getDeviceId();
 			String version = "";
@@ -3948,7 +3954,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			}
 			String clientVersion = "Android_" + version;
 			String mobileNumber = iPrefManager.getUserPhone();
-			RegistrationForm registrationForm = new RegistrationForm(mobileNumber, null, imei, null, clientVersion , null , "false");
+			final RegistrationForm registrationForm = new RegistrationForm(mobileNumber, null, imei, null, clientVersion , null , all);
+//			RegistrationForm registrationForm = new RegistrationForm(mobileNumber, null, imei, null, clientVersion , null , "false");
 			if(Constants.regid != null)
 				registrationForm.setToken(Constants.regid);
 			registrationForm.setDomainName(super_group);
@@ -3963,21 +3970,57 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
 				@Override
 				protected void onResponseVoidzObject(Call call, RegistrationFormResponse response) {
-					if(progressDialog != null){
+					if (progressDialog != null) {
 						progressDialog.dismiss();
 						progressDialog = null;
 					}
-					DomainSetObject regObj = response.getActivateDomainDataSet().get(0);
-					//Show Popup to switch or not - In case deactivated SG is clicked.
-					if(true){
-						iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
-						iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
-						iPrefManager.saveUserDomain(regObj.getDomainName());
-						iPrefManager.saveUserId(regObj.getUserId());
-						iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
-
-					}else
-						DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
+					if (response != null && all.equals("true")) {
+						ArrayList<DomainSetObject> activateDomainDataSet = response.getActivateDomainDataSet();
+						for (DomainSetObject domain : activateDomainDataSet) {
+							if (registrationForm.getDomainName().equalsIgnoreCase(domain.getDomainName())) {
+								if (domain.isActivateSuccess()) {
+//									System.out.println("My Domain -> " + domain.getDomainName() + ", Pass-> " + domain.getPassword() + ", userName-> " + domain.getUsername() + ", userID-> " + domain.getUserId());
+									iPrefManager.saveSGPassword(domain.getUsername(), domain.getPassword());
+									iPrefManager.saveSGUserID(domain.getUsername(), domain.getUserId());
+									iPrefManager.saveUserDomain(domain.getDomainName());
+									//This is added specifically for the Invite part.
+									iPrefManager.saveUserPassword(domain.getPassword());
+									iPrefManager.saveUserId(domain.getUserId());
+									//iPrefManager.setAppMode("VirginMode");
+									//iPrefManager.saveUserLogedOut(false);
+									iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
+									DBWrapper.getInstance().updateSGCredentials(domain.getDomainName(), domain.getUsername(), domain.getPassword(), domain.getUserId(), domain.isActivateSuccess());
+								} else {
+									DBWrapper.getInstance().updateSGCredentials(domain.getDomainName(), domain.getUsername(), domain.getPassword(), domain.getUserId(), domain.isActivateSuccess());
+									Toast.makeText(HomeScreen.this, getString(R.string.account_deactivated), Toast.LENGTH_SHORT).show();
+								}
+							} else {
+//								System.out.println("Domain -> " + domain.getDomainName() + ", Pass-> " + domain.getPassword() + ", userName-> " + domain.getUsername() + ", userID-> " + domain.getUserId());
+								iPrefManager.saveSGPassword(domain.getUsername(), domain.getPassword());
+								iPrefManager.saveSGUserID(domain.getUsername(), domain.getUserId());
+								DBWrapper.getInstance().updateSGCredentials(domain.getDomainName(), domain.getUsername(), domain.getPassword(), domain.getUserId(), domain.isActivateSuccess());
+							}
+						}
+					} else {
+						//Show Popup to switch or not - In case deactivated SG is clicked.
+	//					if(true){
+	//						iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
+	//						iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
+	//						iPrefManager.saveUserDomain(regObj.getDomainName());
+	//						iPrefManager.saveUserId(regObj.getUserId());
+	//						iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
+	//
+	//					}else
+	//						DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
+	//					}
+					}
+					if(firstTimeAdmin){
+						if (Build.VERSION.SDK_INT >= 11)
+							new SignInTaskOnServer(null).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+						else
+							new SignInTaskOnServer(null).execute();
+						startService(new Intent(SuperChatApplication.context, SinchService.class));
+					}
 				}
 
 				@Override
@@ -3994,7 +4037,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		drawerFragment.adapter.notifyDataSetChanged();
 		drawerFragment.fragmentOpen();
 	}
-	//----------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------
 
 	@Override
 	public void onStart() {

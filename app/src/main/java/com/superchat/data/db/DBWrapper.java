@@ -2425,7 +2425,7 @@ public boolean isContactModified(String rawId, int version){
 			int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
 					new String[] { sg_name });
 			if(row > 0)
-				Log.e("DBWrapper", "updateSGMuteInfo count " + row);
+				Log.i("DBWrapper", "updateSGNewMessageCount count " + row);
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}

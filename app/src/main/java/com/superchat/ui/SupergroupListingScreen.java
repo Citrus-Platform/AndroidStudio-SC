@@ -1410,8 +1410,6 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 			} catch (Exception e) {
 				Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution Exception:" + e.toString());
 			}
-
-
 			return null;
 		}
 

@@ -56,6 +56,7 @@ import com.superchat.model.AddMemberModel;
 import com.superchat.model.AddMemberModel.MemberDetail;
 import com.superchat.model.AddMemberResponseModel;
 import com.superchat.model.ErrorModel;
+import com.superchat.model.multiplesg.OwnerDomainName;
 import com.superchat.ui.BulkInvitationAdapter.AppContact;
 import com.superchat.utils.Constants;
 import com.superchat.utils.Countries;
@@ -74,8 +75,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -379,10 +382,33 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
                     setResult(RESULT_OK, data);
                     finish();
                 }else {
+                    SharedPrefManager pref = SharedPrefManager.getInstance();
                     Intent intent = new Intent(BulkInvitationScreen.this, HomeScreen.class);
                     intent.putExtra("ADMIN_FIRST_TIME", true);
                     if(sgCreationAfterLogin)
                         intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, sgCreationAfterLogin);
+                    else{
+                        OwnerDomainName owned = new OwnerDomainName();
+                        owned.setDomainName(pref.getUserDomain());
+                        owned.setDisplayName(pref.getCurrentSGDisplayName());
+                        owned.setUnreadCounter(0);
+                        owned.setDomainType("Company");
+                        owned.setDomainMuteInfo(0);
+                        owned.setOrgName("");
+                        owned.setOrgUrl("");
+                        owned.setPrivacyType("Open");
+                        owned.setAdminName(pref.getUserName());
+                        owned.setLogoFileId(pref.getSGFileId("SG_FILE_ID"));
+
+                        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+                        String dateString = formatter.format(new Date(System.currentTimeMillis()));
+                        owned.setCreatedDate(dateString);
+
+                        if(owned != null)
+                            DBWrapper.getInstance().updateOwnedSGData(owned);
+
+                        DBWrapper.getInstance().updateSGCredentials(pref.getUserDomain(), pref.getUserName(), pref.getUserPassword(), pref.getUserId(), true);
+                    }
                     startActivity(intent);
                     finish();
                 }
