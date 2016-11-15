@@ -5728,8 +5728,10 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 }
                 break;
             case R.id.id_send_chat:
-//            	if(!ChatService.xmppConectionStatus)
-//            		return;
+            	if(!ChatService.xmppConectionStatus) {
+                    Toast.makeText(getApplicationContext(), "Connecting..", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String newMessage = typingEditText.getText().toString().trim();
                 if (newMessage.length() > 0) {
                     typingEditText.setText("");

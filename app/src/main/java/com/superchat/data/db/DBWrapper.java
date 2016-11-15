@@ -1875,7 +1875,7 @@ public boolean isContactModified(String rawId, int version){
 			cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM " +DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS + " WHERE "
 					+ DatabaseConstants.VOPIUM_FIELD + "!=2 AND "+ DatabaseConstants.USER_SG + "='"+ sg + "' AND "
 					+ DatabaseConstants.CONTACT_NAMES_FIELD + " LIKE '%"+ Constants.SHARED_ID_START_STRING + "%' ORDER BY "
-					+ DatabaseConstants.CONTACT_NAMES_FIELD +" ASC", null);
+					+ DatabaseConstants.CONTACT_NAMES_FIELD +" COLLATE NOCASE" +" ASC", null);
 
 		}catch(Exception ex){
 			ex.printStackTrace();
@@ -1892,7 +1892,7 @@ public boolean isContactModified(String rawId, int version){
 			cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM " +DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS + " WHERE "
 					+ DatabaseConstants.VOPIUM_FIELD + "!=2 AND "+ DatabaseConstants.USER_SG + "='"+ sg + "' AND "
 					+ DatabaseConstants.CONTACT_NAMES_FIELD + " NOT LIKE '%"+ Constants.SHARED_ID_START_STRING + "%' ORDER BY "
-					+ DatabaseConstants.CONTACT_NAMES_FIELD +" ASC", null);
+					+ DatabaseConstants.CONTACT_NAMES_FIELD +" COLLATE NOCASE" +" ASC", null);
 
 		}catch(Exception ex){
 			ex.printStackTrace();

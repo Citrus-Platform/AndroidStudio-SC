@@ -1732,7 +1732,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                                     superGroupName = invited.getDomainName();
                                     String sg_name = superGroupName;
 
-                                    if(invited.getDomainDisplayName() != null)
+                                    if(invited.getDomainDisplayName() != null && invited.getDomainDisplayName().trim().length() > 0)
                                         sg_display_name = invited.getDomainDisplayName();
                                     else
                                         sg_display_name = superGroupName;

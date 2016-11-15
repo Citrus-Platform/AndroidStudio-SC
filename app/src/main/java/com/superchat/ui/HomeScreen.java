@@ -822,6 +822,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	}
 
     boolean bulletinNotLoadedAndFromPush;
+	DomainsUserTaskOnServer contactLoadingTask;
 	public class SignInTaskOnServer extends AsyncTask<String, String, String> {
 		LoginModel loginForm;
 		ProgressDialog progressDialog = null;
@@ -906,7 +907,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 								if(isSwitchSG){
 									//Important lines, this will remove all the groups of previous SG from Shared - Otherwise that will be joined.
 									System.out.println("(Removing all groups from Shared Pref.)");
-									sharedPrefManager.removeAllGroups();
+									sharedPrefManager.removeAllGroups(sharedPrefManager.getUserDomain());
 								}
 								if(loginObj.getDomainType()!=null && !loginObj.getDomainType().equals(""))
 									sharedPrefManager.setDomainType(loginObj.getDomainType());
@@ -1144,8 +1145,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			}else{
 				if(isSwitchSG) {
 					if(messageService != null) {
-						messageService.chatLogout();
-						messageService.chatLogin();
+						if(!dataAlreadyLoadedForSG) {
+							messageService.chatLogout();
+							messageService.chatLogin();
+						}
 					}
 					//Reset Sinch Service
 					if(mSinchServiceInterface != null && !frompush) {
@@ -1220,17 +1223,21 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					}
 //					if(!iPrefManager.isContactSynched()){
 //					if(!DBWrapper.getInstance().isSGContactsLoaded(iPrefManager.getUserDomain())){
-					if(!dataAlreadyLoadedForSG){
+					if(!dataAlreadyLoadedForSG && !sharedPrefManager.isContactSynched(sharedPrefManager.getUserDomain())){
 						if(sharedPrefManager.isOpenDomain()){
 							if(Build.VERSION.SDK_INT >= 11)
 								new ContactMatchingLoadingTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 							else
 								new ContactMatchingLoadingTask().execute();
 						}else{
-							if(Build.VERSION.SDK_INT >= 11)
-								new DomainsUserTaskOnServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-							else
-								new DomainsUserTaskOnServer().execute();
+							if(Build.VERSION.SDK_INT >= 11) {
+								contactLoadingTask = new DomainsUserTaskOnServer();
+								contactLoadingTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+							}
+							else {
+								contactLoadingTask = new DomainsUserTaskOnServer();
+								contactLoadingTask.execute();
+							}
 						}
 					}else
 						isContactSynching = false;
@@ -1248,7 +1255,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					if(!dataAlreadyLoadedForSG && !DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain())){
 //						bulletinNotLoadedAndFromPush = true;
 						getBulletinMessages();
-					}else
+					}
+//					else
 					{
 						Intent intent = new Intent(SuperChatApplication.context, ChatListScreen.class);
 						if (switchUserName != null) {
@@ -1499,6 +1507,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
 											contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
 //											System.out.println("TABLE_NAME_CONTACT_NUMBERS : " + contentvalues.toString());
+											isContactSynching = true;
 											if (!userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName()))
 												wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
 										}
@@ -1541,6 +1550,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 										}
 									}
 									iPrefManager.setContactSynched(iPrefManager.getUserDomain(), true);
+									DBWrapper.getInstance().updateSGContactsLoaded(iPrefManager.getUserDomain(), "true");
 								}
 							}
 						}
@@ -2252,7 +2262,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		syncProcessStart(false);
 	}
 	protected void onDestroy(){
-		super.onDestroy();
+		if (contactLoadingTask != null) {
+			contactLoadingTask.cancel(true);
+		}
 		calledForShare = false;
 		isLaunched = false;
 		try {
@@ -2261,6 +2273,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			// Just ignore that
 			Log.d("MessageHistoryScreen", "Unable to un bind");
 		}
+		super.onDestroy();
 	}
 	public void onComposeClick(View view){
 		if (!contactMenuLayout.isSelected()) {
@@ -2947,6 +2960,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //					contactSyncState = CONTACT_SYNC_FAILED;
 		}
 		System.out.println("[HomeScreen : Contacts ID : Done for - "+iPrefManager.getUserDomain());
+		iPrefManager.setContactSynched(iPrefManager.getUserDomain(), true);
 		DBWrapper.getInstance().updateSGContactsLoaded(iPrefManager.getUserDomain(), "true");
 	}
 	public static String formatNumber(String str){
@@ -3688,6 +3702,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					drawerFragment.fragmentClose();
 					updateUserData(username, null);
 					if(dataAlreadyLoadedForSG) {
+						if(messageService != null) {
+							messageService.chatLogout();
+							messageService.chatLogin();
+						}
 						updateUserSGData(sg_name);
 						showSelectedFragment();
 						if(!SuperChatApplication.isNetworkConnected()) {

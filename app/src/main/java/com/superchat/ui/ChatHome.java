@@ -271,7 +271,7 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
         }
 //		headerBar = (RelativeLayout)view.findViewById(R.id.id_header);
 //		headerBar.setBackgroundColor(R.color.header_color);
-//        searchBoxView.setText("");
+        searchBoxView.setText("");
         searchBoxView.setVisibility(EditText.GONE);
         global_icon_white.setVisibility(View.VISIBLE);
         clearSearch.setVisibility(ImageView.GONE);
@@ -521,7 +521,8 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
             onForeground = true;
             onNotifiUI();
         }
-        refreshList();
+        onNotifiUI();
+//        refreshList();
         if(isSearchOn){
             resetSearch();
         }

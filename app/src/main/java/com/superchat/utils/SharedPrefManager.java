@@ -779,18 +779,19 @@ public boolean isContactModified(){
 	}
 	
 	public void saveGroupName(String groupName,String displayName) {
-		String prevName = getGroupName();
+		String sg = getUserDomain();
+		String prevName = getGroupName(sg);
 		if(prevName.contains(groupName))
 			return;
 		saveGroupDisplayName(groupName, displayName);
 		if (prevName.equals(""))
-			editor.putString(GROUP_NAME, groupName);
+			editor.putString(GROUP_NAME + sg, groupName);
 		else
-			editor.putString(GROUP_NAME, prevName + "%#%" + groupName);
+			editor.putString(GROUP_NAME + sg, prevName + "%#%" + groupName);
 		editor.commit();
 	}
-	public void removeAllGroups() {
-			editor.putString(GROUP_NAME, null);
+	public void removeAllGroups(String sg) {
+			editor.putString(GROUP_NAME + sg, null);
 			editor.commit();
 	}
 	public void saveBroadCastName(String broadCastName,String displayName) {
@@ -848,7 +849,7 @@ public boolean isContactModified(){
 	}
 	
 	public void removeGroupName(String groupName) {
-		String prevName = getGroupName();
+		String prevName = getGroupName(getUserDomain());
 		removeGroupDisplayName(groupName);
 		if (!prevName.equals("")){
 			if(prevName.contains(groupName)){
@@ -884,7 +885,7 @@ public boolean isContactModified(){
 		boolean ret = false;
 		if(groupName==null)
 			return false;
-		String groups = getGroupName();
+		String groups = getGroupName(getUserDomain());
 		if (groups != null) {
 			if (!groups.equals("") && groups.contains("%#%")) {
 				for (String name : groups.split("%#%")) {
@@ -935,8 +936,8 @@ public boolean isContactModified(){
 		String value = pref.getString(BROADCAST_USERS+broadCastName, "");
 		return value;
 	}
-	public String getGroupName() {
-		String value = pref.getString(GROUP_NAME, "");
+	public String getGroupName(String sg) {
+		String value = pref.getString(GROUP_NAME + sg, "");
 		return value;
 	}
 	public String getBroadCastName() {
@@ -945,7 +946,7 @@ public boolean isContactModified(){
 	}
 	public String[] getGroupNamesArray() {
 		String array[] = new String[1];
-		String groups = getGroupName();
+		String groups = getGroupName(getUserDomain());
 		if (groups != null) {
 			if (!groups.equals("") && groups.contains("%#%")) {
 				array = groups.split("%#%");

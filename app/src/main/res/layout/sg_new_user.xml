@@ -14,144 +14,155 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <RelativeLayout
-                android:id="@+id/header_layout_top"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/header_footer_color">
-
-                <RelativeLayout
-                    android:id="@+id/historyDetailHeaderLayout"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/header_footer_color">
-
-                    <com.superchat.widgets.MyriadSemiboldTextView
-                        style="@style/style_screen_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:layout_gravity="center_horizontal"
-                        android:padding="@dimen/topbar_title_padding"
-                        android:text="@string/superchat_title" />
-                </RelativeLayout>
-
-                <TextView
-                    android:id="@+id/id_back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="5dip"
-                    android:capitalize="characters"
-                    android:drawableLeft="@drawable/back_arrow_white"
-                    android:onClick="onBackClick"
-                    android:padding="5dp"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:visibility="visible" />
-
-                <Button
-                    android:id="@+id/id_next_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="5dip"
-                    android:background="@null"
-                    android:text="@string/save"
-                    android:textColor="@color/white"
-                    android:textColorHighlight="@color/header_color"
-                    android:visibility="gone" />
-            </RelativeLayout>
-
-            <LinearLayout
-                android:id="@+id/text_link_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/noInvitesMain"
-                android:layout_below="@+id/header_layout_top"
-                android:layout_marginTop="20dp"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:layout_marginBottom="5dp"
-                    android:text="@string/welcome"
-                    android:textColor="@color/darkest_gray"
-                    android:textSize="17sp"
-                    android:visibility="visible" />
-
-                <TextView
-                    android:id="@+id/invitee_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:layout_marginBottom="10dp"
-                    android:text="Name"
-                    android:textColor="@color/darkest_gray"
-                    android:textSize="17sp"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:layout_marginBottom="5dp"
-                    android:text="@string/select_superchat_to_join_new"
-                    android:textColor="@color/darkest_gray"
-                    android:textSize="15sp"
-                    android:visibility="visible" />
-            </LinearLayout>
-
-            <RelativeLayout
-                android:id="@+id/noInvitesMain"
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="50dp">
+                android:layout_above="@+id/id_bottom_layout"
+                android:fillViewport="true">
 
                 <RelativeLayout
-                    android:id="@+id/noInvites"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true">
+                    android:layout_height="match_parent">
 
-                    <TextView
-                        android:layout_width="match_parent"
+                    <RelativeLayout
+                        android:id="@+id/header_layout_top"
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:gravity="center"
-                        android:text="No Pending Invites!"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
+                        android:background="@color/header_footer_color">
 
-                <RelativeLayout
-                    android:id="@+id/enterAnotherSGLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/noInvites"
-                    android:layout_marginTop="30dp">
+                        <RelativeLayout
+                            android:id="@+id/historyDetailHeaderLayout"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/header_footer_color">
 
-                    <TextView
-                        android:layout_width="match_parent"
+                            <com.superchat.widgets.MyriadSemiboldTextView
+                                style="@style/style_screen_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:layout_gravity="center_horizontal"
+                                android:padding="@dimen/topbar_title_padding"
+                                android:text="@string/superchat_title" />
+                        </RelativeLayout>
+
+                        <TextView
+                            android:id="@+id/id_back"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="5dip"
+                            android:capitalize="characters"
+                            android:drawableLeft="@drawable/back_arrow_white"
+                            android:onClick="onBackClick"
+                            android:padding="5dp"
+                            android:text=""
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:visibility="visible" />
+
+                        <Button
+                            android:id="@+id/id_next_btn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="5dip"
+                            android:background="@null"
+                            android:text="@string/save"
+                            android:textColor="@color/white"
+                            android:textColorHighlight="@color/header_color"
+                            android:visibility="gone" />
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/text_link_layout"
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:layout_above="@+id/noInvitesMain"
+                        android:layout_below="@+id/header_layout_top"
+                        android:layout_marginTop="20dp"
                         android:gravity="center"
-                        android:text="Why not enter another \n SuperGroup name to join?"
-                        android:textSize="22sp" />
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_marginBottom="5dp"
+                            android:text="@string/welcome"
+                            android:textColor="@color/darkest_gray"
+                            android:textSize="17sp"
+                            android:visibility="visible" />
+
+                        <TextView
+                            android:id="@+id/invitee_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_marginBottom="10dp"
+                            android:text="Name"
+                            android:textColor="@color/darkest_gray"
+                            android:textSize="17sp"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_marginBottom="5dp"
+                            android:text="@string/select_superchat_to_join_new"
+                            android:textColor="@color/darkest_gray"
+                            android:textSize="15sp"
+                            android:visibility="visible" />
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/noInvitesMain"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="50dp">
+
+                        <RelativeLayout
+                            android:id="@+id/noInvites"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:gravity="center"
+                                android:text="No Pending Invites!"
+                                android:textSize="24sp"
+                                android:textStyle="bold" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/enterAnotherSGLabel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/noInvites"
+                            android:layout_marginTop="30dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Why not enter another \n SuperGroup name to join?"
+                                android:textSize="22sp" />
+                        </RelativeLayout>
+                    </RelativeLayout>
                 </RelativeLayout>
-            </RelativeLayout>
+            </ScrollView>
 
             <LinearLayout
                 android:id="@+id/id_bottom_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginTop="20dp"
                 android:orientation="vertical">
 
                 <com.superchat.widgets.MyriadSemiboldEditText
