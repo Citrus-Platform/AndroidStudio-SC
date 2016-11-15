@@ -140,6 +140,9 @@ public class SharedPrefManager {
 	private final String DATA_LOADED_FOR_SG = "data_loaded_for_sg";
 
 
+	private final String GROUPS_FOR_SG = "groups_for_sg";
+
+
 
 	private static SharedPrefManager sharedPrefManager;
 
@@ -1010,6 +1013,14 @@ public boolean isContactModified(){
 	public void saveGroupMemberCount(String groupname, String count) {
 		editor.putString(GROUP_MEM_COUNT+groupname, count);
 		editor.commit();
+	}
+	public void saveGroupsForSG(String sg, String group_data) {
+		editor.putString(GROUPS_FOR_SG + sg, group_data);
+		editor.commit();
+	}
+	public String getGroupsForSG(String sg) {
+		String value = pref.getString(GROUPS_FOR_SG + sg, null);
+		return value;
 	}
 	public String getUserDesignation(String userName) {
 		String value = pref.getString(USER_DESIGNATION+userName, "");

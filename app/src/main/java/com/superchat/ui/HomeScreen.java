@@ -1147,6 +1147,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					if(messageService != null) {
 						if(!dataAlreadyLoadedForSG) {
 							messageService.chatLogout();
+							ChatService.xmppConectionStatus = false;
 							messageService.chatLogin();
 						}
 					}
@@ -1272,6 +1273,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						intent.putExtra("is_vopium_user", true);
 						startActivity(intent);
 						frompush = false;
+						firstTimeAdmin = false;
 					}
 				}
 				if(!dataAlreadyLoadedForSG && selectedTab >= 0) {
@@ -1470,7 +1472,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 												wrapper.updateUserDetails(number, userDetail);
 											else
 												wrapper.updateAtMeContactStatus(number);
-											firstTimeAdmin = true;
+//											firstTimeAdmin = true;
 											continue;
 										}
 
@@ -2556,6 +2558,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 											SharedPrefManager.getInstance().saveUserGroupInfo(groupDetail.groupName, SharedPrefManager.getInstance().getUserName(), SharedPrefManager.PUBLIC_CHANNEL, true);
 										groupsData.add(groupDetail);
 									}
+									iPrefManager.saveGroupsForSG(iPrefManager.getUserDomain(), str);
 								}
 							}
 							DBWrapper.getInstance().updateSGGroupsBroadcastLoaded(iPrefManager.getUserDomain(), "true");
@@ -2871,7 +2874,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 								String number = wrapper.getContactNumber(userDetail.userName);
 								if(number!=null && !number.equals("")){
 									wrapper.updateAtMeContactStatus(number);
-									firstTimeAdmin = true;
+//									firstTimeAdmin = true;
 									continue;
 								}
 //											UserResponseDetail userDetail = loginObj.directoryUserSet.get(st);
@@ -3704,7 +3707,23 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					if(dataAlreadyLoadedForSG) {
 						if(messageService != null) {
 							messageService.chatLogout();
+							ChatService.xmppConectionStatus = false;
 							messageService.chatLogin();
+							String str = iPrefManager.getGroupsForSG(sg_name);
+							if(str != null) {
+								Gson gson = new GsonBuilder().create();
+								LoginResponseModel loginObj = gson.fromJson(str, LoginResponseModel.class);
+								if (loginObj != null) {
+									if (loginObj.directoryGroupSet != null) {
+										groupsData.clear();
+										for (GroupDetail groupDetail : loginObj.directoryGroupSet) {
+//										if(!groupDetail.memberType.equals("USER"))
+//											SharedPrefManager.getInstance().saveUserGroupInfo(groupDetail.groupName, SharedPrefManager.getInstance().getUserName(), SharedPrefManager.PUBLIC_CHANNEL, true);
+											groupsData.add(groupDetail);
+										}
+									}
+								}
+							}
 						}
 						updateUserSGData(sg_name);
 						showSelectedFragment();

@@ -1019,6 +1019,7 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
                                         HomeScreen.groupsData.add(groupDetail);
                                         Log.d(TAG, "counter check Discover response : " + groupDetail.type + "" + groupDetail.displayName + " , " + groupDetail.numberOfMembers);
                                     }
+                                    SharedPrefManager.getInstance().saveGroupsForSG(SharedPrefManager.getInstance().getUserDomain(), str);
                                 }
                             }
 

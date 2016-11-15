@@ -154,7 +154,7 @@ public class SuperChatApplication extends MultiDexApplication {
 						   		Log.d(TAG, "onChange RunningAppProcessInfo getUidForName onChange : "+ getAppNameByPID(context, id));
 					            if (getAppNameByPID(context, id).equals("com.superchat")){
 //						            iPrefManager.setContactModified(true);
-//						            Log.d(TAG, "onChange contact modifided status at application :"+selfChange);
+//						            Log.d(TAG, "onChange contact modified status at application :"+selfChange);
 //						        	if(iPrefManager.isContactModified())
 //						    		{
 //						        		iPrefManager.setContactModified(false);
