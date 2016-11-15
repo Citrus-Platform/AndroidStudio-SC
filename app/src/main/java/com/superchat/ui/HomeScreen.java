@@ -1235,8 +1235,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					}else
 						isContactSynching = false;
 					//call Once
-//					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain()) && !frompush)
-					if(!dataAlreadyLoadedForSG){
+					if(!dataAlreadyLoadedForSG && !DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain()) && !frompush){
 						getBulletinMessages();
 					}
 				}
@@ -1246,7 +1245,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				//Switch to chat
 				if(frompush) {
 //					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain())){
-					if(!dataAlreadyLoadedForSG){
+					if(!dataAlreadyLoadedForSG && !DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain())){
 //						bulletinNotLoadedAndFromPush = true;
 						getBulletinMessages();
 					}else
