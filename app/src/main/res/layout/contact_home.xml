@@ -16,132 +16,75 @@
         android:orientation="vertical"
         android:visibility="visible" >
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:background="@color/header_footer_color"
-            android:gravity="center_vertical" >
-
-            <ImageView
-                android:id="@+id/global_icon_white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:padding="10dp"
-                android:layout_marginLeft="10dp"
-                android:src="@drawable/global_icon_white"
-                android:visibility="visible" />
-
-            <com.superchat.widgets.RoundedImageView
-                android:id="@+id/id_sg_icon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_centerVertical="true"
-                android:layout_marginBottom="3dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="3dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/logo_small"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/id_sg_name_label"
-                 android:layout_width="170dp"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginLeft="20dp"
-                android:gravity="center_vertical"
-                 android:singleLine="true"
-                android:text="@string/app_name"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="normal"
-                android:visibility="visible" />
-
-            <ImageView
-                android:id="@+id/id_back_arrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:padding="5dp"
-                android:src="@drawable/back_arrow_white"
-                android:visibility="gone" />
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/heder_height"
-                android:background="@color/header_footer_color"
-                android:gravity="right|center_vertical" >
-
-                <EditText
-                    android:id="@+id/id_search_field"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/white"
-                    android:hint="@string/search"
-                    android:singleLine="true"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/gray"
-                    android:textCursorDrawable="@null"
-                    android:visibility="gone" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:background="@color/header_footer_color"
-                    android:gravity="center_vertical" >
-
-                    <ImageView
-                        android:id="@+id/id_search_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_gravity="center_vertical"
-                        android:padding="5dp"
-                        android:src="@drawable/search_icon"
-                        android:visibility="visible" />
-
-                    <ImageView
-                        android:id="@+id/sync_id"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:onClick="OnSyncClick"
-                        android:src="@drawable/contacts_sync_icon"
-                        android:visibility="visible" />
-
-                    <ImageView
-                        android:id="@+id/id_more_option1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:onClick="showPopup"
-                        android:padding="10dp"
-                        android:src="@drawable/dots"
-                        android:visibility="visible" />
-                </LinearLayout>
-            </RelativeLayout>
-        </LinearLayout>
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@color/header_footer_color" >
+            android:background="@color/header_footer_color"
+            android:orientation="horizontal"
+            android:padding="1dp">
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:local="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/toolbar_child_fragment_tab"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/home_fragments_actionbar_height"
+                    android:layout_margin="1dp"
+                    android:background="?attr/colorPrimary"
+                    android:minHeight="?attr/actionBarSize"
+                    android:visibility="gone"
+                    local:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                    local:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+                    <ImageView
+                        android:id="@+id/id_back_arrow"
+                        style="@style/home_search_back_icon"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/back_arrow_green"
+                        android:visibility="visible" />
+
+                    <EditText
+                        android:id="@+id/id_search_field"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/id_search_icon"
+                        android:layout_toRightOf="@+id/id_back_arrow"
+                        android:backgroundTint="@color/white"
+                        android:hint="@string/search"
+                        android:singleLine="true"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/white"
+                        android:textCursorDrawable="@null"
+                        android:visibility="visible" />
+
+                </android.support.v7.widget.Toolbar>
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/id_all_tab"
                 style="@style/style_screen_title"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginBottom="5dp"
                 android:gravity="center"
-                android:text="@string/contact" />
-        </LinearLayout>
+                android:text="@string/contact"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/home_fragments_actionbar_shadow"
+            android:background="@drawable/shadow" />
     </LinearLayout>
 
     <RelativeLayout

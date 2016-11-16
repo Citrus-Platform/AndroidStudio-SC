@@ -283,6 +283,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                 startActivity(intent);
                 break;
 
+            case R.id.notificationLayout:
             case R.id.notifyCurrent: {
                 showSnoozeDialog();
                 break;

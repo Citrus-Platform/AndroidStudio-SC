@@ -61,4 +61,16 @@
 
     <dimen name="EsiaChat_OverFlowTextSize">17dp</dimen>
     <dimen name="EsiaChat_OverFlowTextMargin">12dp</dimen>
+
+    <dimen name="home_search_arrow_width">44dp</dimen>
+    <dimen name="home_search_arrow_height">44dp</dimen>
+
+    <dimen name="home_fragments_actionbar_height">48dp</dimen>
+    <dimen name="home_fragments_actionbar_shadow">4dp</dimen>
+
+    <dimen name="viewpager_height">38dp</dimen>
+
+    <dimen name="chat_attach_menu_width">40dp</dimen>
+    <dimen name="chat_attach_menu_height">60dp</dimen>
+
 </resources>

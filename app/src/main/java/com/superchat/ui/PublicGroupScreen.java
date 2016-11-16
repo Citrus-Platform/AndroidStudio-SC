@@ -22,6 +22,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -77,7 +78,7 @@ import java.util.TimerTask;
 
 //import android.app.ListFragment;
 
-public class PublicGroupScreen extends ListFragment implements OnClickListener {//, OnMenuItemClickListener{
+public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClickListener {//, OnMenuItemClickListener{
     public static final String TAG = "PublicGroupScreen";
     Cursor cursor;
     //	RelativeLayout myChannelTabLayout;
@@ -85,10 +86,8 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
     LinearLayout myChannelTabLayout;
     LinearLayout allChannelTabLayout;
     RelativeLayout createGroup;
-    ImageView searchIcon;
     EditText searchEditText;
     TextView myChannelLabel, allChannelLabel;
-    ImageView createGroupIcon;
     View viewMyChannelLabel, viewAllChannelLabel;
     private static PublicGroupAdapter adapter;
     private EditText searchBoxView;
@@ -104,9 +103,6 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
     TimerTask task = null;
     boolean isSearchOn = false;
     long fireTimer;
-//    ImageView superGroupIcon;
-    TextView superGroupName;
-    ImageView global_icon_white;
     //	public static ArrayList<LoginResponseModel.GroupDetail> HomeScreen.groupsData = new ArrayList<LoginResponseModel.GroupDetail>();
     private ServiceConnection mConnection = new ServiceConnection() {
 
@@ -131,33 +127,24 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if(global_icon_white != null && searchBoxView != null){
+            if(searchBoxView != null){
 
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(searchBoxView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
                 searchEditText.setText("");
                 searchEditText.setVisibility(EditText.GONE);
-                global_icon_white.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(ImageView.GONE);
-                superGroupName.setVisibility(View.VISIBLE);
-
-                searchIcon.setVisibility(View.VISIBLE);
-
             }
         }
         else {
-            if(global_icon_white != null && searchBoxView != null){
+            if(searchBoxView != null){
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(searchBoxView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
                 searchEditText.setText("");
                 searchEditText.setVisibility(EditText.GONE);
-                global_icon_white.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(ImageView.GONE);
-                superGroupName.setVisibility(View.VISIBLE);
-
-                searchIcon.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -168,19 +155,18 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
         searchBoxView = (EditText) view.findViewById(R.id.id_search_user);
         myChannelTabLayout = (LinearLayout) view.findViewById(R.id.id_my_channel);
         allChannelTabLayout = (LinearLayout) view.findViewById(R.id.id_all_channels);
+
+        toolbar_child_fragment_tab = (Toolbar) view.findViewById(R.id.toolbar_child_fragment_tab);
+        toolbar_child_fragment_tab.setVisibility(View.GONE);
+
 //        superGroupIcon = (ImageView) view.findViewById(R.id.id_sg_icon);
-        superGroupName = (TextView) view.findViewById(R.id.id_sg_name_label);
-        global_icon_white = (ImageView) view.findViewById(R.id.global_icon_white);
-        global_icon_white.setOnClickListener(this);
         viewMyChannelLabel = (View) view.findViewById(R.id.view_contacts);
         viewAllChannelLabel = (View) view.findViewById(R.id.view_otherapps);
         myChannelLabel = (TextView) view.findViewById(R.id.text_contacts);
         allChannelLabel = (TextView) view.findViewById(R.id.text_otherapps);
-        createGroupIcon = (ImageView) view.findViewById(R.id.id_create_group_icon);
         myChannelTabLayout.setOnClickListener(this);
         allChannelTabLayout.setOnClickListener(this);
 //        superGroupIcon.setOnClickListener(this);
-        superGroupName.setOnClickListener(this);
         if (SharedPrefManager.getInstance().getAppMode() != null &&
                 SharedPrefManager.getInstance().getAppMode().equals("VirginMode") && !HomeScreen.firstTimeAdmin)
             isAllChannelTab = true;
@@ -198,42 +184,13 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
 
         createGroup = (RelativeLayout) view.findViewById(R.id.id_create_gp_layout);
 //		if(SharedPrefManager.getInstance().isDomainAdmin())
-        createGroupIcon.setVisibility(View.VISIBLE);
 //		else
 //			createGroupIcon.setVisibility(View.GONE);
         searchBoxView.setText("");
         searchBoxView.setVisibility(View.GONE);
-        global_icon_white.setVisibility(View.VISIBLE);
-        createGroupIcon.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SuperChatApplication.context, CreateGroupScreen.class);
-                intent.putExtra(Constants.CHANNEL_CREATION, true);
-                startActivity(intent);
-            }
-        });
-        searchIcon = (ImageView) view.findViewById(R.id.id_search_icon);
 
         searchEditText = (EditText) view.findViewById(R.id.id_search_field);
 
-        searchIcon.setVisibility(View.VISIBLE);
-        searchIcon.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-//				searchBoxView.setText("");		
-//				createGroup.setVisibility(View.GONE);
-                searchEditText.setVisibility(View.VISIBLE);
-                global_icon_white.setVisibility(View.GONE);
-                clearSearch.setVisibility(View.VISIBLE);
-                searchIcon.setVisibility(View.GONE);
-//                superGroupIcon.setVisibility(View.GONE);
-                superGroupName.setVisibility(View.GONE);
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(searchBoxView, InputMethodManager.SHOW_IMPLICIT);
-            }
-        });
         clearSearch = (ImageView) view.findViewById(R.id.id_back_arrow);
         clearSearch.setVisibility(View.GONE);
         clearSearch.setOnClickListener(new OnClickListener() {
@@ -243,6 +200,9 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
                 resetSearchBox();
                 InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+                hideToolbar();
+                ((HomeScreen) getActivity()).clearFunction();
             }
         });
 //		view.findViewById(R.id.id_add_icon).setOnClickListener(new OnClickListener() {
@@ -256,6 +216,17 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
 //		superGroupName.setText(SharedPrefManager.getInstance().getUserDomain());
 //		setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
         return view;
+    }
+
+    public void performSearch(){
+        try{
+            searchEditText.setVisibility(View.VISIBLE);
+            clearSearch.setVisibility(View.VISIBLE);
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(searchBoxView, InputMethodManager.SHOW_IMPLICIT);
+        } catch(Exception e){
+
+        }
     }
 
     public boolean isSearchOn(){
@@ -287,9 +258,7 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
         }else{
             searchEditText.setText("");
             searchEditText.setVisibility(View.GONE);
-            searchIcon.setVisibility(View.VISIBLE);
 //            superGroupIcon.setVisibility(View.VISIBLE);
-            superGroupName.setVisibility(View.VISIBLE);
             searchBoxView.setVisibility(View.GONE);
             clearSearch.setVisibility(View.GONE);
             isSearchOn = false;
@@ -299,9 +268,6 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
         if(searchEditText != null){
             searchEditText.setText("");
             searchEditText.setVisibility(View.GONE);
-            searchIcon.setVisibility(View.VISIBLE);
-//            superGroupIcon.setVisibility(View.VISIBLE);
-            superGroupName.setVisibility(View.VISIBLE);
             searchBoxView.setVisibility(View.GONE);
             clearSearch.setVisibility(View.GONE);
             isSearchOn = false;
@@ -446,20 +412,11 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
 
         if (v != null)
             switch (v.getId()) {
-                case R.id.id_sg_icon:
-                case R.id.id_sg_name_label:
-                    Intent intent = new Intent(getActivity(), SuperGroupProfileActivity.class);
-                    startActivity(intent);
-                    break;
                 case R.id.id_my_channel:
                     isAllChannelTab = false;
                     break;
                 case R.id.id_all_channels:
                     isAllChannelTab = true;
-                    break;
-                case R.id.global_icon_white:
-                    i++;
-                    ((HomeScreen) getActivity()).openDrawer();
                     break;
             }
 
@@ -512,8 +469,6 @@ public class PublicGroupScreen extends ListFragment implements OnClickListener {
             if (!isFirstTimeDialogShowing)
                 showDialog(getResources().getString(R.string.first_time_gp_creation_alert));
         }
-        if (superGroupName != null)
-            superGroupName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
 //        if (superGroupIcon != null && SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID") != null)
 //            setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
 

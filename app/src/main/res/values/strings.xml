@@ -645,4 +645,15 @@
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
 
+
+    <!-- Munish Thakur -->
+    <!--menu_icon-->
+    <string name="search_icon">Search</string>
+    <string name="compose_icon">Compose</string>
+    <string name="contacts_sync_icon">Sync</string>
+    <string name="id_create_group_icon">Create</string>
+    <string name="Setting">Settings</string>
+    <string name="call_icon1">Call</string>
+    <string name="poll_icon">Poll</string>
+    <string name="chat_options">Chat option</string>
 </resources>

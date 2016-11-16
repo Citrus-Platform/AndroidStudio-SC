@@ -96,7 +96,7 @@ public class SuperCharPref {
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("SkedulePref", ":save:exit");
-          //  System.exit(0);
+            //  System.exit(0);
         }
     }
 

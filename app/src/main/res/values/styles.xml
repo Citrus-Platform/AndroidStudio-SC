@@ -6,21 +6,21 @@
 
 
     -->
-<!--
-    <style name="MyMaterialTheme" parent="MyMaterialTheme.Base">
+    <!--
+        <style name="MyMaterialTheme" parent="MyMaterialTheme.Base">
 
-    </style>
+        </style>
 
-    <style name="MyMaterialTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>-->
+        <style name="MyMaterialTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+            <item name="windowNoTitle">true</item>
+            <item name="windowActionBar">false</item>
+            <item name="colorPrimary">@color/colorPrimary</item>
+            <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+            <item name="colorAccent">@color/colorAccent</item>
+        </style>-->
 
-    <style name="AppBaseTheme" parent="android:Theme.Light">
-    </style>
+    <style name="AppBaseTheme" parent="android:Theme.Light"></style>
+
     <style name="DTP">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -32,6 +32,7 @@
         <item name="android:textStyle">normal</item>
         <item name="android:gravity">center</item>
     </style>
+
     <style name="DTP.Labelleft">
         <item name="android:textSize">@dimen/text</item>
         <item name="android:textStyle">normal</item>
@@ -52,40 +53,73 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:actionButtonStyle">@style/ActionButtonStyle</item>
+        <item name="toolbarStyle">@style/myToolbarStyle</item>
+        <item name="toolbarNavigationButtonStyle">@style/myToolbarNavigationButtonStyle</item>
+
     </style>
 
     <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
-    </style>
-     <style name="CustomProgressBar" parent="android:Widget.ProgressBar.Horizontal">
-		 <item name="android:indeterminateOnly">false</item>
-          <item name="android:progressDrawable">@drawable/custom_progress_bar_horizontal</item>
-          <item name="android:minHeight">8dip</item>
-          <item name="android:maxHeight">16dip</item>
-	</style>
-	<style name="style_screen_title">
-	    <item name="android:textSize">19sp</item>
-	    <item name="android:textColor">@color/white</item>
-	    <item name="android:gravity">center</item>
-	    <item name="android:textStyle">normal</item>
-	</style>
-	<style name="style_attachment_options_title">
-	    <item name="android:textSize">12sp</item>
-	    <item name="android:textColor">@color/black</item>
-	    <item name="android:gravity">center</item>
-	</style>
-	
-	<style name="style_popup_menu" parent="@android:style/Widget.PopupMenu">
-    <item name="android:popupBackground">#7f7f7f</item>
-    <item name="android:textColor">#ffffff</item>
-    <item name="android:textSize">12sp</item>
-</style>
-<style name="style_popup_theme" parent="android:Theme.Holo.Light">
-	<item name="android:popupMenuStyle">@style/style_popup_menu</item>
-	</style>
+    <style name="AppTheme" parent="AppBaseTheme"></style>
 
-<style name="chat_bg" parent="AppBaseTheme">
-    <item name="android:windowBackground">@drawable/chat_bg_img</item>
-    <item name="android:actionModeCloseDrawable">@drawable/back_arrow_green</item>
-</style>
+    <style name="CustomProgressBar" parent="android:Widget.ProgressBar.Horizontal">
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:progressDrawable">@drawable/custom_progress_bar_horizontal</item>
+        <item name="android:minHeight">8dip</item>
+        <item name="android:maxHeight">16dip</item>
+    </style>
+
+    <style name="style_screen_title">
+        <item name="android:textSize">19sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="style_attachment_options_title">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="style_popup_menu" parent="@android:style/Widget.PopupMenu">
+        <item name="android:popupBackground">#7f7f7f</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="style_popup_theme" parent="android:Theme.Holo.Light">
+        <item name="android:popupMenuStyle">@style/style_popup_menu</item>
+    </style>
+
+    <style name="chat_bg" parent="AppBaseTheme">
+        <item name="android:windowBackground">@drawable/chat_bg_img</item>
+        <item name="android:actionModeCloseDrawable">@drawable/back_arrow_green</item>
+    </style>
+
+
+    <style name="home_search_back_icon">
+        <item name="android:layout_width">@dimen/home_search_arrow_width</item>
+        <item name="android:layout_height">@dimen/home_search_arrow_height</item>
+        <item name="android:layout_marginRight">0dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+    </style>
+
+    <style name="ActionButtonStyle" parent="@android:style/Widget.Holo.Light.ActionButton">
+        <item name="android:minWidth">0dip</item>
+        <item name="android:paddingLeft">0dip</item>
+        <item name="android:paddingRight">0dip</item>
+    </style>
+
+    <style name="myToolbarNavigationButtonStyle" parent="@style/Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="android:minWidth">0dp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:scaleType">centerInside</item>
+    </style>
+
+    <style name="myToolbarStyle" parent="@style/Widget.AppCompat.Toolbar">
+        <item name="android:paddingRight">10dp</item>
+    </style>
 </resources>

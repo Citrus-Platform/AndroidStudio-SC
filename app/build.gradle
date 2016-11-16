@@ -73,4 +73,12 @@ dependencies {
     }
     compile 'com.android.support:multidex:1.0.0'
     compile 'com.afollestad.material-dialogs:core:0.9.0.2'
+
+    compile ('com.ogaclejapan.smarttablayout:library:1.6.1@aar') {
+        transitive = true;
+    }
+
+    compile 'com.github.ozodrukh:CircularReveal:1.1.0'
+    compile "com.wefika:flowlayout:0.4.1"
+
 }

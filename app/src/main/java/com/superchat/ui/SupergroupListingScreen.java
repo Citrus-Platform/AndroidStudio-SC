@@ -1938,7 +1938,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 						e.printStackTrace();
 					}
 					if (privacy_type != null && privacy_type.equalsIgnoreCase("closed"))
-						showDialog("For this SuperGroup to join, you need an invitation. Else you can't join this SuperGroup.");
+						showDialog("This SuperGroup only accepts members by invitation");
 					else
 						showWelcomeScreen(superGroupName, sg_display_name, inviter, org_name, file_id, 0, domainType);
 				} else if (data.contains("error")) {

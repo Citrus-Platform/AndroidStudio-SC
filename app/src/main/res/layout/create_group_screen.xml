@@ -1,23 +1,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@color/screen_background_color"
     android:gravity="center_horizontal"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/id_header_view"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/home_fragments_actionbar_height"
         android:background="@color/header_footer_color"
-        android:isScrollContainer="false" >
+        android:isScrollContainer="false">
 
         <com.superchat.widgets.MyriadSemiboldTextView
             android:id="@+id/id_group_info_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_marginTop="20dip"
+            android:layout_marginTop="20dp"
             android:text="@string/create_group"
             android:textColor="@color/white"
             android:textSize="18sp"
@@ -28,44 +28,55 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dip"
+            android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/id_group_info_title"
             android:background="@drawable/red_dot"
             android:visibility="gone" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_centerVertical="true"
-            android:layout_marginTop="20dip" >
+            android:gravity="center">
 
             <com.superchat.widgets.MyriadSemiboldTextView
                 android:id="@+id/id_cancel"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="10dip"
                 android:layout_toRightOf="@id/id_back_arrow"
+                android:gravity="center"
+                android:padding="10dp"
                 android:text="@string/cancel"
                 android:textColor="@color/white"
                 android:textSize="15sp"
                 android:visibility="gone" />
 
-            <ImageView
-                android:id="@+id/id_back"
+            <LinearLayout
+                android:id="@+id/llBack"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="10dip"
-                android:background="@drawable/back_arrow_green" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="10dp">
+
+                <ImageView
+                    android:id="@+id/id_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/back_arrow_green"
+                    android:padding="10dp" />
+
+            </LinearLayout>
 
             <com.superchat.widgets.MyriadSemiboldTextView
                 android:id="@+id/id_next"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="5dip"
+                android:gravity="center"
+                android:padding="10dp"
                 android:layout_toRightOf="@id/id_back_arrow"
                 android:text="@string/next_txt"
                 android:textColor="@color/white"
@@ -74,65 +85,67 @@
     </RelativeLayout>
 
     <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="@color/screen_background_color"
-        android:gravity="center_horizontal" >
+        android:gravity="center_horizontal">
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:background="@color/screen_background_color"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="28dip"
-                android:layout_marginRight="25dip"
-                android:layout_marginTop="20dip"
+                android:layout_marginLeft="28dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginTop="20dp"
                 android:layout_weight="1"
                 android:gravity="left"
                 android:text="@string/group_title"
                 android:textAlignment="center"
                 android:textColor="@color/btn_text_color"
-                android:visibility="visible"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:visibility="visible" />
+
             <EditText
                 android:id="@+id/id_group_name"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="25dip"
-                android:layout_marginRight="25dip"
-                android:layout_marginTop="5dip"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginTop="5dp"
                 android:background="@null"
                 android:gravity="center"
                 android:hint="@string/enter_group_name_hinttxt"
                 android:inputType="textCapSentences"
                 android:maxLength="22"
-                android:padding="10dip"
+                android:padding="10dp"
                 android:text=""
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="normal" />
-		<View
-                android:layout_width="fill_parent"
+
+            <View
+                android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:background="@color/color_lite_gray" />
 
             <RelativeLayout
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:gravity="center"
                 android:layout_marginTop="10dp"
-                android:layout_height="wrap_content" >
+                android:gravity="center">
 
                 <com.superchat.widgets.RoundedImageView
                     android:id="@+id/id_group_icon"
-                    android:layout_width="90dip"
-                    android:layout_height="90dip"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
                     android:background="@drawable/icongroupimage"
                     android:visibility="visible" />
 
@@ -147,113 +160,115 @@
                     android:visibility="visible" />
             </RelativeLayout>
 
-            <requestFocus/>
-		<LinearLayout
-		    	android:id="@+id/id_group_type"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dip"
-                android:layout_marginRight="5dp"
-                android:visibility="gone"
-                android:orientation="vertical"
-                android:layout_marginTop="5dp"  >
+            <requestFocus />
 
-			<com.superchat.widgets.MyriadRegularTextView
-			    android:layout_width="fill_parent"
-			    android:layout_height="wrap_content"
-			    android:layout_marginBottom="10dp"
-			    android:layout_marginLeft="5dp"
-			    android:layout_marginRight="5dp"
-			    android:layout_marginTop="20dp"
-			    android:gravity="center"
-			    android:text="@string/select_group_type_in_creation"
-			    android:textColor="@color/text_color_grayblack"
-			    android:textSize="15sp"
-			    android:textStyle="normal" />
+            <LinearLayout
+                android:id="@+id/id_group_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.superchat.widgets.MyriadRegularTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:text="@string/select_group_type_in_creation"
+                    android:textColor="@color/text_color_grayblack"
+                    android:textSize="15sp"
+                    android:textStyle="normal" />
 
                 <RadioGroup
                     android:id="@+id/radio_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/color_call_screen_bg"
-                    android:orientation="vertical" >
+                    android:orientation="vertical">
 
                     <RadioButton
                         android:id="@+id/radio_open"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:checked="true"
                         android:layout_marginTop="6dp"
+                        android:checked="true"
                         android:drawableLeft="@drawable/iconopengroup_small"
                         android:drawablePadding="5dp"
+                        android:text="@string/open_group"
                         android:textColor="@color/white"
-                        android:textSize="14sp"
-                        android:text="@string/open_group" />
+                        android:textSize="14sp" />
 
                     <RadioButton
                         android:id="@+id/radio_closed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp"
+                        android:layout_marginTop="10dp"
+                        android:checked="false"
                         android:drawableLeft="@drawable/iconclosedgroup_small"
                         android:drawablePadding="5dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="6dp"
+                        android:text="@string/closed_supergroup"
                         android:textColor="@color/white"
-                        android:textSize="14sp"
-                        android:checked="false"
-                        android:text="@string/closed_supergroup" />
+                        android:textSize="14sp" />
                 </RadioGroup>
             </LinearLayout>
-            
-		<LinearLayout
+
+            <LinearLayout
                 android:id="@+id/id_create_open_group_subtitle"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@color/color_call_screen_bg"
-                android:visibility="gone" >
+                android:visibility="gone">
 
                 <ImageView
-                    android:layout_width="40dip"
-                    android:layout_height="40dip"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dip"
+                    android:layout_marginLeft="10dp"
                     android:background="@drawable/iconopengroup_small" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dip"
-                    android:layout_marginLeft="10dip"
-                    android:layout_marginRight="10dip"
-                    android:layout_marginTop="20dip"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="20dp"
                     android:gravity="center_vertical"
                     android:text="@string/create_open_group_subtitle"
                     android:textColor="@color/white"
                     android:textSize="15sp" />
             </LinearLayout>
-		<LinearLayout
+
+            <LinearLayout
                 android:id="@+id/id_create_closed_group_subtitle"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@color/color_call_screen_bg"
-                android:visibility="gone" >
+                android:visibility="gone">
 
                 <ImageView
-                    android:layout_width="40dip"
-                    android:layout_height="40dip"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dip"
+                    android:layout_marginLeft="10dp"
                     android:background="@drawable/iconclosedgroup_small" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dip"
-                    android:layout_marginLeft="10dip"
-                    android:layout_marginRight="10dip"
-                    android:layout_marginTop="20dip"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="20dp"
                     android:gravity="center_vertical"
                     android:text="@string/create_closed_group_subtitle"
                     android:textColor="@color/white"
@@ -264,39 +279,41 @@
                 android:id="@+id/id_create_group_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="28dip"
-                android:layout_marginRight="25dip"
-                android:layout_marginTop="20dip"
+                android:layout_marginLeft="28dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginTop="20dp"
                 android:layout_weight="1"
                 android:gravity="left"
                 android:text="@string/group_description"
                 android:textAlignment="center"
                 android:textColor="@color/btn_text_color"
-                android:visibility="visible"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:visibility="visible" />
+
             <EditText
                 android:id="@+id/id_status_message"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="25dip"
-                android:layout_marginRight="25dip"
-                android:layout_marginTop="5dip"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginTop="5dp"
                 android:background="@null"
                 android:gravity="center"
                 android:hint="@string/new_description"
                 android:inputType="textMultiLine|textCapSentences"
                 android:maxLength="500"
-                android:padding="20dip"
+                android:padding="20dp"
                 android:textColor="@color/text_color_on_dark_grey"
                 android:textSize="15sp"
                 android:textStyle="normal"
                 android:visibility="visible" />
-		<View
-                android:layout_width="fill_parent"
+
+            <View
+                android:layout_width="match_parent"
                 android:layout_height="0.5dp"
+                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginBottom="10dp"
                 android:background="@color/color_lite_gray" />
         </LinearLayout>
     </ScrollView>

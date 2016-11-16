@@ -3,6 +3,7 @@ package com.superchat.ui;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -181,12 +182,19 @@ import java.util.TimerTask;
 import java.util.UUID;
 import java.util.Vector;
 
+import io.codetail.animation.SupportAnimator;
+import io.codetail.animation.ViewAnimationUtils;
 import me.leolin.shortcutbadger.ShortcutBadger;
 import retrofit2.Response;
 
+import static com.superchat.R.id.count;
+import static com.superchat.R.id.create_doodle;
+import static com.superchat.R.id.id_attach_media;
+
 //import com.superchat.utils.SharedPrefManager;
 public class ChatListScreen extends FragmentActivity implements MultiChoiceModeListener, VoiceMediaHandler, TypingListener, ChatCountListener, ProfileUpdateListener,
-        OnClickListener, OnChatEditInterFace, ConnectionStatusListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, OnMenuItemClickListener, interfaceInstances {
+        OnClickListener, OnChatEditInterFace, ConnectionStatusListener, DatePickerDialog.OnDateSetListener,
+        TimePickerDialog.OnTimeSetListener, OnMenuItemClickListener, interfaceInstances {
     public final static String TAG = "ChatListScreen";
     public static final String CONTACT_ID = "contact_id";
     public final static String CREATE_GROUP_REQUEST = "create_group_request";
@@ -314,6 +322,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 //    RadioButton option3;
 //    RadioButton option4;
 //    RadioButton option5;
+
 
     static String openedPollID = null;
     String openedGroupName = null;
@@ -1047,6 +1056,10 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         return null;
     }
 
+
+    private LinearLayout mRevealView;
+    private boolean menuOpen = false;
+
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1534,7 +1547,58 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 createPoll.setVisibility(View.GONE);
         } else
             createPoll.setVisibility(View.GONE);
+
+
+        /**
+         * Whatsapp like menu Config
+         */
+
+        mRevealView = (LinearLayout) findViewById(R.id.the_menu);
+        mRevealView.setVisibility(View.INVISIBLE);
+
+        try {
+            ImageView recordViewNew = (ImageView) findViewById(R.id.id_audio_record);
+            ImageView attachPicViewNew = (ImageView) findViewById(R.id.id_attach_pic);
+            ImageView capturePicViewNew = (ImageView) findViewById(R.id.id_camera);
+            ImageView pollImageViewNew = (ImageView) findViewById(R.id.id_create_poll);
+            ImageView addContactViewNew = (ImageView) findViewById(R.id.id_attach_file);
+            ImageView create_doodleNew = (ImageView) findViewById(create_doodle);
+            ImageView share_locationNew = (ImageView) findViewById(R.id.share_location);
+            ImageView share_contactNew = (ImageView) findViewById(R.id.share_contact);
+
+            capturePicViewNew.setOnClickListener(this);
+            recordViewNew.setOnClickListener(this);
+            attachPicViewNew.setOnClickListener(this);
+            addContactViewNew.setOnClickListener(this);
+            pollImageViewNew.setOnClickListener(this);
+            create_doodleNew.setOnClickListener(this);
+            share_locationNew.setOnClickListener(this);
+            share_contactNew.setOnClickListener(this);
+
+            if (iChatPref.isGroupChat(userName)) {
+                pollImageViewNew.setVisibility(View.VISIBLE);
+                isPollOptionShown = true;
+            } else {
+                pollImageViewNew.setVisibility(View.INVISIBLE);
+                isPollOptionShown = false;
+            }
+        } catch (Exception e) {
+
+        }
+
+        attachMediaView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!menuOpen) {
+                    revealMenu();
+                } else {
+                    hideMenu();
+                }
+            }
+        });
     }
+
+    boolean flinging = false;
 
     private boolean isPollActive() {
         HashMap polls = getPollForGroup(openedGroupName);
@@ -1664,6 +1728,11 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
     }
 
     public void showPopup(View v) {
+
+        if (menuOpen) {
+            hideMenu();
+        }
+
         PopupMenu popup = new PopupMenu(this, v);
         popup.setOnMenuItemClickListener(this);
         popup.getMenu().add(0, 0, 0, getResources().getString(R.string.clear_chat));
@@ -3515,6 +3584,12 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
     }
 
     public void onBackPressed() {
+
+        if (menuOpen) {
+            hideMenu();
+            return;
+        }
+
         if (isPollResultPage) {
 //            pollMainLayout.setVisibility(View.GONE);
             if (poll != null)
@@ -5885,12 +5960,14 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                         }
                     }
                 }
+                hideMenu();
                 break;
             case R.id.id_attach_pic:
                 if (attachOptionsDialog != null && attachOptionsDialog.isShowing()) {
                     attachOptionsDialog.cancel();
                 }
                 AppUtil.openGallery(this, AppUtil.POSITION_GALLRY_PICTURE);
+                hideMenu();
 
                 break;
             case R.id.id_camera:
@@ -5900,6 +5977,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 if (cameraOptionsDialog != null && !cameraOptionsDialog.isShowing()) {
                     cameraOptionsDialog.show();
                 }
+                hideMenu();
 
                 break;
             case R.id.id_video_record_item:
@@ -5926,6 +6004,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                     attachOptionsDialog.cancel();
                 }
                 AppUtil.openPdf(this, AppUtil.FILE_PDF_PICKER);
+                hideMenu();
                 break;
             case R.id.id_create_poll:
                 if (!isPollOptionShown)
@@ -5935,13 +6014,15 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 }
 //                Toast.makeText(ChatListScreen.this, getString(R.string.coming_soon_lbl), Toast.LENGTH_SHORT).show();
                 onPollClicked("");
+                hideMenu();
                 break;
-            case R.id.create_doodle:
+            case create_doodle:
                 if (attachOptionsDialog != null && attachOptionsDialog.isShowing()) {
                     attachOptionsDialog.cancel();
                 }
                 Intent intent = new Intent(this, RTCanvas.class);
                 startActivityForResult(intent, POSITION_PICTURE_RT_CANVAS);
+                hideMenu();
                 break;
             case R.id.share_contact:
                 if (attachOptionsDialog != null && attachOptionsDialog.isShowing()) {
@@ -5949,6 +6030,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 }
                 intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
                 startActivityForResult(intent, PICK_CONTACT);
+                hideMenu();
                 break;
             case R.id.share_location:
                 if (attachOptionsDialog != null &&
@@ -5967,6 +6049,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 //                    e.printStackTrace();
 //                }
                 onCurrentLocationClicked(v);
+                hideMenu();
                 break;
             case R.id.id_cancel_track_dialog:
                 if (attachAudioTrackDialog != null && attachAudioTrackDialog.isShowing()) {
@@ -7133,6 +7216,147 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 //        System.out.println("+05:30 Millis = " + millis);
         return millis;
     }
+	
+	
+    /**
+     * Munish Code - Animation Menu like Whatsapp
+     */
+
+    public void revealMenu() {
+        try {
+            menuOpen = true;
+            if (mRevealView != null) {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    revealMenuBelow21();
+                } else {
+                    revealMenuAbove21();
+                }
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void hideMenu() {
+        try {
+            menuOpen = false;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                hideMenuBelow21();
+            } else {
+                hideMenuAbove21();
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    private final int animationTimeInMilliseconds = 400;
+    SupportAnimator animatorBelow21;
+    SupportAnimator animatorBelow21_reverse;
+    Animator animatorAbove21;
+
+    @TargetApi(21)
+    public void revealMenuAbove21() {
+
+        int cx = (mRevealView.getLeft() + mRevealView.getRight());
+        int cy = mRevealView.getTop();
+        int radius = Math.max(mRevealView.getWidth(), mRevealView.getHeight());
+
+        animatorAbove21 =
+                android.view.ViewAnimationUtils.createCircularReveal(mRevealView, cx, cy, 0, radius);
+        animatorAbove21.setInterpolator(new AccelerateDecelerateInterpolator());
+        animatorAbove21.setDuration(animationTimeInMilliseconds);
+
+        mRevealView.setVisibility(View.VISIBLE);
+        animatorAbove21.start();
+    }
+
+    public void revealMenuBelow21() {
+
+        int cx = (mRevealView.getLeft() + mRevealView.getRight());
+        int cy = mRevealView.getTop();
+        int radius = Math.max(mRevealView.getWidth(), mRevealView.getHeight());
+
+        animatorBelow21 =
+                ViewAnimationUtils.createCircularReveal(mRevealView, cx, cy, 0, radius);
+        animatorBelow21.setInterpolator(new AccelerateDecelerateInterpolator());
+        animatorBelow21.setDuration(animationTimeInMilliseconds);
+
+        mRevealView.setVisibility(View.VISIBLE);
+        animatorBelow21.start();
+
+    }
+
+    @TargetApi(21)
+    public void hideMenuAbove21() {
+        if (animatorAbove21 != null && !animatorAbove21.isRunning()) {
+            int reverse_startradius = Math.max(mRevealView.getWidth(), mRevealView.getHeight());
+            int reverse_endradius = 0;
+
+            int cx = (mRevealView.getLeft() + mRevealView.getRight());
+            int cy = mRevealView.getTop();
+
+
+            animatorAbove21 =
+                    android.view.ViewAnimationUtils.createCircularReveal(mRevealView, cx, cy, reverse_startradius, reverse_endradius);
+
+            animatorAbove21.addListener(new Animator.AnimatorListener() {
+
+                @Override
+                public void onAnimationStart(Animator animator) {
+                    System.out.print("onAnimationStart");
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animator) {
+                    System.out.print("onAnimationEnd");
+                    mRevealView.setVisibility(View.INVISIBLE);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animator) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animator) {
+
+                }
+            });
+            animatorAbove21.start();
+        }
+    }
+
+    public void hideMenuBelow21() {
+        if (animatorBelow21 != null && !animatorBelow21.isRunning()) {
+            animatorBelow21_reverse = animatorBelow21.reverse();
+            animatorBelow21_reverse.addListener(new SupportAnimator.AnimatorListener() {
+
+                @Override
+                public void onAnimationStart() {
+                    System.out.print("onAnimationStart");
+                }
+
+                @Override
+                public void onAnimationEnd() {
+                    System.out.print("onAnimationEnd");
+                    mRevealView.setVisibility(View.INVISIBLE);
+                }
+
+                @Override
+                public void onAnimationCancel() {
+                    System.out.print("onAnimationCancel");
+                }
+
+                @Override
+                public void onAnimationRepeat() {
+                    System.out.print("onAnimationRepeat");
+                }
+            });
+            animatorBelow21_reverse.start();
+        }
+    }
+
     //-------------------------------------------------------
     @Override
     public void onStart() {

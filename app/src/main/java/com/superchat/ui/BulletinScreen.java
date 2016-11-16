@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -60,7 +61,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-public class BulletinScreen extends ListFragment implements ChatCountListener, ConnectionStatusListener, ProfileUpdateListener, OnClickListener {//,TypingListener {
+public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountListener, ConnectionStatusListener,
+        ProfileUpdateListener {
     public static final String TAG = "BulletinScreen";
     Cursor cursor;
     BulletinScreenAdapter adapter;
@@ -70,8 +72,6 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
     EditText searchBoxView;
     ImageView clearSearch;
     ImageView searchIcon;
-    private RelativeLayout searchViewLayout;
-    private RelativeLayout headerBar;
     ImageView xmppStatusView;
     ProgressBar progressBarView;
     private ChatService service;
@@ -80,8 +80,6 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
     FragmentActivity fragmentactivity;
     String bulletinDomainName;
 //    ImageView superGroupIcon;
-    TextView superGroupName;
-    ImageView global_icon_white;
     public static final byte BULLETIN_ADMIN = 1;
     public static final byte BULLETIN_MEMBER = 2;
 
@@ -114,31 +112,27 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if(global_icon_white != null && searchBoxView != null){
+            if(searchBoxView != null){
 
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(searchBoxView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
                 searchBoxView.setText("");
                 searchBoxView.setVisibility(EditText.GONE);
-                global_icon_white.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(ImageView.GONE);
-                superGroupName.setVisibility(View.VISIBLE);
 
 //                searchIcon.setVisibility(View.VISIBLE);
 
             }
         }
         else {
-            if(global_icon_white != null && searchBoxView != null){
+            if(searchBoxView != null){
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(searchBoxView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
                 searchBoxView.setText("");
                 searchBoxView.setVisibility(EditText.GONE);
-                global_icon_white.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(ImageView.GONE);
-                superGroupName.setVisibility(View.VISIBLE);
 
 //                searchIcon.setVisibility(View.VISIBLE);
             }
@@ -154,47 +148,30 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
         searchBoxView = (EditText) view.findViewById(R.id.id_search_field);
         searchIcon = (ImageView) view.findViewById(R.id.id_search_icon);
         clearSearch = (ImageView) view.findViewById(R.id.id_back_arrow);
-        searchViewLayout = (RelativeLayout) view.findViewById(R.id.id_search_layout);
+
+        toolbar_child_fragment_tab = (Toolbar) view.findViewById(R.id.toolbar_child_fragment_tab);
+        toolbar_child_fragment_tab.setVisibility(View.GONE);
+
         xmppStatusView = (ImageView) view.findViewById(R.id.id_xmpp_status);
         progressBarView = (ProgressBar) view.findViewById(R.id.id_loading);
         progressBarView.setVisibility(ProgressBar.VISIBLE);
 //        superGroupIcon = (ImageView) view.findViewById(R.id.id_sg_icon);
-        superGroupName = (TextView) view.findViewById(R.id.id_sg_name_label);
-        global_icon_white = (ImageView) view.findViewById(R.id.global_icon_white);
-        global_icon_white.setOnClickListener(this);
-//        superGroupIcon.setOnClickListener(this);
-        superGroupName.setOnClickListener(this);
-        ((ImageView) view.findViewById(R.id.id_compose_icon)).setVisibility(View.GONE);
         ((TextView) view.findViewById(R.id.id_all_tab1)).setText(getString(R.string.bulletin_board));
         if (ChatService.xmppConectionStatus) {
             xmppStatusView.setImageResource(R.drawable.blue_dot);
         } else {
             xmppStatusView.setImageResource(R.drawable.red_dot);
         }
-//		headerBar = (RelativeLayout)view.findViewById(R.id.id_header);
 //		headerBar.setBackgroundColor(R.color.header_color);
         searchBoxView.setText("");
         searchBoxView.setVisibility(EditText.GONE);
-        global_icon_white.setVisibility(View.VISIBLE);
         clearSearch.setVisibility(ImageView.GONE);
         searchIcon.setVisibility(ImageView.GONE);
-
-        ((Button) view.findViewById(R.id.id_settings)).setVisibility(View.GONE);
 
         searchIcon.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchBoxView.setVisibility(View.VISIBLE);
-                global_icon_white.setVisibility(View.GONE);
-                clearSearch.setVisibility(View.VISIBLE);
-                searchIcon.setVisibility(View.GONE);
-//                superGroupIcon.setVisibility(View.GONE);
-                superGroupName.setVisibility(View.GONE);
-
-                searchBoxView.requestFocus();
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(searchBoxView, InputMethodManager.SHOW_IMPLICIT);
-                clearSearch.setVisibility(ImageView.VISIBLE);
+                performSearch();
             }
         });
         clearSearch.setOnClickListener(new OnClickListener() {
@@ -202,20 +179,36 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
             @Override
             public void onClick(View v) {
                 searchBoxView.setVisibility(View.GONE);
-                global_icon_white.setVisibility(View.VISIBLE);
 //                searchIcon.setVisibility(View.VISIBLE);
 //                superGroupIcon.setVisibility(View.VISIBLE);
-                superGroupName.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(View.GONE);
                 searchBoxView.setText("");
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
+                hideToolbar();
+                ((HomeScreen) getActivity()).clearFunction();
             }
         });
 
 //		superGroupName.setText(SharedPrefManager.getInstance().getUserDomain());
 //		setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
         return view;
+    }
+
+    public void performSearch() {
+        try {
+            searchBoxView.setVisibility(View.VISIBLE);
+            clearSearch.setVisibility(View.VISIBLE);
+            searchIcon.setVisibility(View.GONE);
+
+            searchBoxView.requestFocus();
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(searchBoxView, InputMethodManager.SHOW_IMPLICIT);
+            clearSearch.setVisibility(ImageView.VISIBLE);
+        } catch (Exception e) {
+
+        }
     }
 
     private String getThumbPath(String groupPicId) {
@@ -563,8 +556,6 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
 //		if(service!=null)
 //			service.setTypingListener(this);
         setProfileListener();
-        if (superGroupName != null)
-            superGroupName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
         if(searchIcon != null)
             searchIcon.setVisibility(ImageView.GONE);
 //        if (superGroupIcon != null && SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID") != null)
@@ -863,21 +854,6 @@ public class BulletinScreen extends ListFragment implements ChatCountListener, C
                     updateRow(userName, userDisplayName);
                 }
             });
-    }
-
-    @Override
-    public void onClick(View v) {
-        // TODO Auto-generated method stub
-        switch (v.getId()) {
-            case R.id.id_sg_icon:
-            case R.id.id_sg_name_label:
-                Intent intent = new Intent(getActivity(), SuperGroupProfileActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.global_icon_white:
-                ((HomeScreen) getActivity()).openDrawer();
-                break;
-        }
     }
 }
 

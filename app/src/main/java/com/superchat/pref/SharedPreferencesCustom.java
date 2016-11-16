@@ -34,10 +34,10 @@ public class SharedPreferencesCustom {
 		} catch(Exception e){
 			VALUE = null;
 		}
-		
+
 		return VALUE;
 	}
-	
+
 	private void putInSharedPreferences(final String KEY, final String VALUE){
 		try{
 			SharedPreferences SP = context.getSharedPreferences(KEY_PREFERENCE, Context.MODE_PRIVATE);
@@ -53,16 +53,16 @@ public class SharedPreferencesCustom {
 	public void putString(final String KEY, final String VALUE){
 		putInSharedPreferences(KEY, VALUE);
 	}
-	
+
 	public String getString(final String KEY){
 		return getFromSharedPreferences(KEY);
 	}
-	
+
 	public void clearSharedPreferences(){
 		try{
 			SharedPreferences SP = context.getSharedPreferences(KEY_PREFERENCE, Context.MODE_PRIVATE);
 			SP.edit().clear();
-			
+
 			Editor SP_editor = SP.edit();
 			SP_editor.clear();
 			SP_editor.commit();

@@ -359,7 +359,7 @@ public class SharedIDScreen extends Activity implements OnClickListener{//, OnMe
 	public void onClick(View v) {
 		if(v!=null)
 		switch(v.getId()){
-		case R.id.id_sg_icon:
+		//case R.id.id_sg_icon:
 		case R.id.id_sg_name_label:
 			Intent intent = new Intent(this, SuperGroupProfileActivity.class);
 			startActivity(intent);

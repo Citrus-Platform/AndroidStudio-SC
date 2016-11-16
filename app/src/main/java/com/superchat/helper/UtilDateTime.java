@@ -2,6 +2,7 @@ package com.superchat.helper;
 
 import android.util.Log;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -189,5 +190,38 @@ public class UtilDateTime {
 
     }
 
+    final static String DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
 
+    public static String getCurrentDate(){
+        DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        //get current date time with Date()
+        Date date = new Date();
+        String currDate = dateFormat.format(date);
+        return currDate;
+    }
+
+    public static Date formatStringToDate(String strDate){
+        DateFormat df = new SimpleDateFormat(DATE_FORMAT);
+        Date startDate = null;
+        try {
+            startDate = df.parse(strDate);
+            String newDateString = df.format(startDate);
+            System.out.println(newDateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return startDate;
+    }
+
+    public static int getHoursDifference(String strDate1, String strDate2) {
+        try {
+            Date date1 = formatStringToDate(strDate1);
+            Date date2 = formatStringToDate(strDate2);
+
+            final int MILLI_TO_HOUR = 1000 * 60 * 60;
+            return (int) (date1.getTime() - date2.getTime()) / MILLI_TO_HOUR;
+        } catch(Exception e){
+            return -1;
+        }
+    }
 }

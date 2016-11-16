@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rlTabMainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/viewpager_height"
+    android:background="@color/colorPrimary"
+    android:gravity="center">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp">
+
+        <RelativeLayout
+            android:id="@+id/llTabBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal"
+            android:layout_centerInParent="true">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvTabText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="BULLETIN"
+                    android:textColor="@color/white"
+                    android:textSize="12dp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:paddingRight="10dp"/>
+
+
+                <com.superchat.widgets.MyriadRegularTextView
+                    android:id="@+id/id_unseen_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginLeft="2dp"
+                    android:background="@drawable/bubble"
+                    android:gravity="center"
+                    android:text="99+"
+                    android:textColor="@color/white"
+                    android:textSize="9dp"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/llTabIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:background="@color/white"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:orientation="vertical"
+            android:visibility="visible" />
+    </RelativeLayout>
+</RelativeLayout>

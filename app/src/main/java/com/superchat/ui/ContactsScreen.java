@@ -18,6 +18,7 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -50,7 +51,7 @@ import java.io.IOException;
 
 //import android.app.ListFragment;
 
-public class ContactsScreen extends ListFragment implements ConnectionStatusListener, ProfileUpdateListener, OnClickListener {
+public class ContactsScreen extends CustomFragmentHomeTabs implements ConnectionStatusListener, ProfileUpdateListener{
     public static final String TAG = "ContactsFragment";
     Cursor cursor;
     public ContactsAdapter adapter;
@@ -60,9 +61,6 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
     private ChatService service;
     private XMPPConnection connection;
 //    ImageView superGroupIcon;
-    TextView superGroupName;
-    ImageView global_icon_white;
-    ImageView searchIcon;
     boolean isRWA = false;
     LinearLayout contactLoadingLayout;
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -91,33 +89,25 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if(global_icon_white != null && searchBoxView != null){
+            if(searchBoxView != null){
 
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(searchBoxView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
                 searchBoxView.setText("");
                 searchBoxView.setVisibility(EditText.GONE);
-                global_icon_white.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(ImageView.GONE);
-                superGroupName.setVisibility(View.VISIBLE);
-
-                searchIcon.setVisibility(View.VISIBLE);
 
             }
         }
         else {
-            if(global_icon_white != null && searchBoxView != null){
+            if(searchBoxView != null){
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(searchBoxView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
                 searchBoxView.setText("");
                 searchBoxView.setVisibility(EditText.GONE);
-                global_icon_white.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(ImageView.GONE);
-                superGroupName.setVisibility(View.VISIBLE);
-
-                searchIcon.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -126,34 +116,9 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
                              ViewGroup viewgroup, Bundle bundle) {
         View view = layoutinflater.inflate(R.layout.contact_home, null);
         searchBoxView = (EditText) view.findViewById(R.id.id_search_field);
-//        superGroupIcon = (ImageView) view.findViewById(R.id.id_sg_icon);
-        superGroupName = (TextView) view.findViewById(R.id.id_sg_name_label);
-        global_icon_white = (ImageView) view.findViewById(R.id.global_icon_white);
-        global_icon_white.setOnClickListener(this);
-        searchIcon = (ImageView) view.findViewById(R.id.id_search_icon);
-//        superGroupIcon.setOnClickListener(this);
-        superGroupName.setOnClickListener(this);
 
-        searchIcon.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//				searchViewLayout.setVisibility(View.VISIBLE);
-//				searchBoxView.setVisibility(EditText.VISIBLE);
-
-                searchBoxView.setVisibility(View.VISIBLE);
-                global_icon_white.setVisibility(View.GONE);
-                clearSearch.setVisibility(View.VISIBLE);
-                searchIcon.setVisibility(View.GONE);
-//                superGroupIcon.setVisibility(View.GONE);
-                superGroupName.setVisibility(View.GONE);
-
-                isSearchOn = true;
-                searchBoxView.requestFocus();
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(searchBoxView, InputMethodManager.SHOW_IMPLICIT);
-                clearSearch.setVisibility(ImageView.VISIBLE);
-            }
-        });
+        toolbar_child_fragment_tab = (Toolbar) view.findViewById(R.id.toolbar_child_fragment_tab);
+        toolbar_child_fragment_tab.setVisibility(View.GONE);
 
         searchBoxView.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable editable) {
@@ -198,13 +163,12 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
             public void onClick(View v) {
                 searchBoxView.setText("");
                 searchBoxView.setVisibility(View.GONE);
-                global_icon_white.setVisibility(View.VISIBLE);
-                searchIcon.setVisibility(View.VISIBLE);
-//                superGroupIcon.setVisibility(View.VISIBLE);
-                superGroupName.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(View.GONE);
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
+                hideToolbar();
+                ((HomeScreen) getActivity()).clearFunction();
             }
         });
 
@@ -224,6 +188,21 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
 //			SharedPrefManager.getInstance().setContactSynched(true);
 //		}
         return view;
+    }
+
+    public void performSearch(){
+        try{
+            searchBoxView.setVisibility(View.VISIBLE);
+            clearSearch.setVisibility(View.VISIBLE);
+
+            isSearchOn = true;
+            searchBoxView.requestFocus();
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(searchBoxView, InputMethodManager.SHOW_IMPLICIT);
+            clearSearch.setVisibility(ImageView.VISIBLE);
+        } catch(Exception e){
+
+        }
     }
 
     private String getThumbPath(String groupPicId) {
@@ -344,8 +323,6 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
             updateCursor(null, null);
             HomeScreen.refreshContactList = false;
         }
-        if (superGroupName != null)
-            superGroupName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
 
         if(HomeScreen.isContactSynching && contactLoadingLayout != null){
             contactLoadingLayout.setVisibility(View.VISIBLE);
@@ -363,7 +340,6 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
         if(searchBoxView != null){
             searchBoxView.setText("");
             searchBoxView.setVisibility(View.GONE);
-            searchIcon.setVisibility(View.VISIBLE);
             clearSearch.setVisibility(View.GONE);
             isSearchOn = false;
         }
@@ -414,7 +390,7 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
             SharedPrefManager pref = SharedPrefManager.getInstance();
             int contactsCount = DBWrapper.getInstance().getAllNumbersCount();
             pref.saveNewContactsCounter(pref.getUserDomain(), contactsCount);
-            if (pref.getNewContactsCounter(pref.getUserDomain()) >= 0 && (contactsCount - pref.getNewContactsCounter(pref.getUserDomain())) > 0) {
+           /* if (pref.getNewContactsCounter(pref.getUserDomain()) >= 0 && (contactsCount - pref.getNewContactsCounter(pref.getUserDomain())) > 0) {
                 if (pref.getChatCounter(pref.getUserDomain()) > 0) {
                     ((HomeScreen) fragmentactivity).unseenContactView.setVisibility(View.VISIBLE);
                     ((HomeScreen) fragmentactivity).unseenContactView.setText(String.valueOf(pref.getChatCounter(pref.getUserDomain())));
@@ -422,7 +398,9 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
                     ((HomeScreen) fragmentactivity).unseenContactView.setVisibility(View.GONE);
                 }
             } else
-                ((HomeScreen) fragmentactivity).unseenContactView.setVisibility(View.GONE);
+                ((HomeScreen) fragmentactivity).unseenContactView.setVisibility(View.GONE);*/
+
+            ((HomeScreen) fragmentactivity).setTabsCustom();
         } catch (Exception e) {
         }
 
@@ -543,21 +521,6 @@ public class ContactsScreen extends ListFragment implements ConnectionStatusList
         try {
             ((HomeScreen) getActivity()).notificationUI();
         } catch (Exception e) {
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        // TODO Auto-generated method stub
-        switch (v.getId()) {
-            case R.id.id_sg_icon:
-            case R.id.id_sg_name_label:
-                Intent intent = new Intent(getActivity(), SuperGroupProfileActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.global_icon_white:
-                ((HomeScreen) getActivity()).openDrawer();
-                break;
         }
     }
 }

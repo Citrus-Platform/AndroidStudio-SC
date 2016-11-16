@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -56,7 +57,8 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ChatHome extends ListFragment implements ChatCountListener, ConnectionStatusListener, ProfileUpdateListener, OnClickListener {//,TypingListener {
+public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListener, ConnectionStatusListener,
+        ProfileUpdateListener {
     public static final String TAG = "ChatFragment";
     Cursor cursor;
     ChatHomeAdapter adapter;
@@ -67,17 +69,12 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
     ImageView clearSearch;
     ImageView searchIcon;
 //    ImageView superGroupIcon;
-    TextView superGroupName;
-    ImageView global_icon_white;
-    private RelativeLayout searchViewLayout;
-    private RelativeLayout headerBar;
     ImageView xmppStatusView;
     ProgressBar progressBarView;
     private ChatService service;
     private XMPPConnection connection;
     private ListView recentList = null;
     FragmentActivity fragmentactivity;
-    TextView settings;
 
     private ServiceConnection mConnection = new ServiceConnection() {
 
@@ -215,31 +212,27 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if(global_icon_white != null && searchBoxView != null){
+            if(searchBoxView != null){
 
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(searchBoxView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
                 searchBoxView.setText("");
                 searchBoxView.setVisibility(EditText.GONE);
-                global_icon_white.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(ImageView.GONE);
-                superGroupName.setVisibility(View.VISIBLE);
 
                 searchIcon.setVisibility(View.VISIBLE);
 
             }
         }
         else {
-            if(global_icon_white != null && searchBoxView != null){
+            if(searchBoxView != null){
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(searchBoxView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
                 searchBoxView.setText("");
                 searchBoxView.setVisibility(EditText.GONE);
-                global_icon_white.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(ImageView.GONE);
-                superGroupName.setVisibility(View.VISIBLE);
 
                 searchIcon.setVisibility(View.VISIBLE);
             }
@@ -255,14 +248,12 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
         searchBoxView = (EditText) view.findViewById(R.id.id_search_field);
         searchIcon = (ImageView) view.findViewById(R.id.id_search_icon);
         clearSearch = (ImageView) view.findViewById(R.id.id_back_arrow);
-//        superGroupIcon = (ImageView) view.findViewById(R.id.id_sg_icon);
-        superGroupName = (TextView) view.findViewById(R.id.id_sg_name_label);
-        global_icon_white = (ImageView) view.findViewById(R.id.global_icon_white);
-        global_icon_white.setOnClickListener(this);
-        searchViewLayout = (RelativeLayout) view.findViewById(R.id.id_search_layout);
+
+        toolbar_child_fragment_tab = (Toolbar) view.findViewById(R.id.toolbar_child_fragment_tab);
+        toolbar_child_fragment_tab.setVisibility(View.GONE);
+
         xmppStatusView = (ImageView) view.findViewById(R.id.id_xmpp_status);
         progressBarView = (ProgressBar) view.findViewById(R.id.id_loading);
-        settings = (TextView) view.findViewById(R.id.id_settings);
         progressBarView.setVisibility(ProgressBar.VISIBLE);
         if (ChatService.xmppConectionStatus) {
             xmppStatusView.setImageResource(R.drawable.blue_dot);
@@ -273,37 +264,13 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
 //		headerBar.setBackgroundColor(R.color.header_color);
         searchBoxView.setText("");
         searchBoxView.setVisibility(EditText.GONE);
-        global_icon_white.setVisibility(View.VISIBLE);
         clearSearch.setVisibility(ImageView.GONE);
 //        superGroupIcon.setOnClickListener(this);
-        superGroupName.setOnClickListener(this);
 
         searchIcon.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-//				searchViewLayout.setVisibility(View.VISIBLE);
-//				searchBoxView.setVisibility(EditText.VISIBLE);
-
-                searchBoxView.setVisibility(View.VISIBLE);
-                global_icon_white.setVisibility(View.GONE);
-                clearSearch.setVisibility(View.VISIBLE);
-                searchIcon.setVisibility(View.GONE);
-//                superGroupIcon.setVisibility(View.GONE);
-                superGroupName.setVisibility(View.GONE);
-
-                isSearchOn = true;
-                searchBoxView.requestFocus();
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(searchBoxView, InputMethodManager.SHOW_IMPLICIT);
-                clearSearch.setVisibility(ImageView.VISIBLE);
-            }
-        });
-        settings.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MoreScreen.class);
-                startActivity(intent);
+                performSearch();
             }
         });
         clearSearch.setOnClickListener(new OnClickListener() {
@@ -311,14 +278,14 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
             @Override
             public void onClick(View v) {
                 searchBoxView.setVisibility(View.GONE);
-                global_icon_white.setVisibility(View.VISIBLE);
                 searchIcon.setVisibility(View.VISIBLE);
-//                superGroupIcon.setVisibility(View.VISIBLE);
-                superGroupName.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(View.GONE);
                 searchBoxView.setText("");
                 InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+                hideToolbar();
+                ((HomeScreen) getActivity()).clearFunction();
             }
         });
         searchBoxView.addTextChangedListener(new TextWatcher() {
@@ -367,13 +334,29 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
             searchBoxView.setVisibility(View.GONE);
             searchIcon.setVisibility(View.VISIBLE);
 
-//            superGroupIcon.setVisibility(View.VISIBLE);
-            superGroupName.setVisibility(View.VISIBLE);
             searchBoxView.setVisibility(View.GONE);
             clearSearch.setVisibility(View.GONE);
             isSearchOn = false;
         }
     }
+
+    public void performSearch(){
+        try {
+
+            searchBoxView.setVisibility(View.VISIBLE);
+            clearSearch.setVisibility(View.VISIBLE);
+            searchIcon.setVisibility(View.GONE);
+            isSearchOn = true;
+            searchBoxView.requestFocus();
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(searchBoxView, InputMethodManager.SHOW_IMPLICIT);
+            clearSearch.setVisibility(ImageView.VISIBLE);
+
+        } catch(Exception e){
+
+        }
+    }
+
 
     ProgressDialog dialog;
 
@@ -531,8 +514,6 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
 //		if(service!=null)
 //			service.setTypingListener(this);
         setProfileListener();
-        if (superGroupName != null)
-            superGroupName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
 //        if (superGroupIcon != null && SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID") != null)
 //            setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
         ((HomeScreen) getActivity()).updateSlidingDrawer(SharedPrefManager.getInstance().getCurrentSGDisplayName(), SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
@@ -823,21 +804,6 @@ public class ChatHome extends ListFragment implements ChatCountListener, Connect
                     updateRow(userName, userDisplayName);
                 }
             });
-    }
-
-    @Override
-    public void onClick(View v) {
-        // TODO Auto-generated method stub
-        switch (v.getId()) {
-            case R.id.id_sg_icon:
-            case R.id.id_sg_name_label:
-                Intent intent = new Intent(getActivity(), SuperGroupProfileActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.global_icon_white:
-                ((HomeScreen) getActivity()).openDrawer();
-                break;
-        }
     }
 }
 
