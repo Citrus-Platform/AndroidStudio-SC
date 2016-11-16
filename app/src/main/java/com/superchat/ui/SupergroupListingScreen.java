@@ -503,10 +503,14 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 					if (title_name.startsWith("Invited SuperGroups")) {
 						newUser = true;
 						showWelcomeScreen(sg_name, sg_display_name, inviter, org_name, file_id, 1, domainType);
-					} else if (title_name.startsWith("Owned SuperGroups"))
+					} else if (title_name.startsWith("Owned SuperGroups")) {
+						newUser = false;
 						showWelcomeScreen(sg_name, sg_display_name, inviter, org_name, file_id, 2, domainType);
-					else
+					}
+					else {
+						newUser = false;
 						showWelcomeScreen(sg_name, sg_display_name, inviter, org_name, file_id, 3, domainType);
+					}
 					return false;
 				}
 			});
@@ -915,7 +919,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 
 		if(isInvitedDomain(invitedDomainNameSet, super_group))
 			invitedDomainSelected = true;
-		if(ownerDomainNameSet.size() == 0 && invitedDomainNameSet.size() == 0 && joinedDomainNameSet.size() == 0)
+		if(ownerDomainNameSet.size() == 0 && /*invitedDomainNameSet.size() == 0 && */joinedDomainNameSet.size() == 0)
 			invitedDomainSelected = true;
 		RegistrationForm registrationForm = null;
 		//RegistrationForm registrationForm = new RegistrationForm(mobileNumber, "normal",imei, imsi, clientVersion);
@@ -1410,8 +1414,6 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 			} catch (Exception e) {
 				Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution Exception:" + e.toString());
 			}
-
-
 			return null;
 		}
 

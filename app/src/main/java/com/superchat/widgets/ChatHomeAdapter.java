@@ -892,6 +892,8 @@ public void loadDialog(){
 			groupPicId = SharedPrefManager.getInstance().getSharedIDFileId(userName);
 		else
 			groupPicId = SharedPrefManager.getInstance().getUserFileId(userName);
+
+//		System.out.println("userName = "+userName+", groupPicId = "+groupPicId);
 		android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(groupPicId);
 		if (bitmap != null) {
 			view_default.setVisibility(View.INVISIBLE);

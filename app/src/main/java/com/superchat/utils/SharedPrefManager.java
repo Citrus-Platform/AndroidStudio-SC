@@ -134,7 +134,13 @@ public class SharedPrefManager {
 	private final String SG_BACKUP_CHECKED = "sg_backup_checked";
 
 
+	private final String SYSTEM_MSG_FOR_SG = "system_msg_for_sg";
+
+
 	private final String DATA_LOADED_FOR_SG = "data_loaded_for_sg";
+
+
+	private final String GROUPS_FOR_SG = "groups_for_sg";
 
 
 
@@ -264,6 +270,7 @@ public class SharedPrefManager {
 		return pref.getBoolean(DATA_LOADED_FOR_SG + sg, false);
 	}
 	public void setDataLoadedForSG(String sg, boolean flag){
+		System.out.println("Data Loaded for "+sg+" = "+flag);
 		editor.putBoolean(DATA_LOADED_FOR_SG + sg, flag);
 		editor.commit();
 	}
@@ -504,6 +511,15 @@ public boolean isContactModified(){
 	public void saveDomainJoinedCount(String id) {
 		editor.putString(DOMAIN_JOINED_COUNTS, id);
 		editor.commit();
+	}
+
+	public void saveSystemMessageForSG(String sg, String message) {
+		editor.putString(SYSTEM_MSG_FOR_SG + sg, message);
+		editor.commit();
+	}
+	public String getSystemMessageForSG(String sg) {
+		String value = pref.getString(SYSTEM_MSG_FOR_SG + sg, null);
+		return value;
 	}
 	public void saveDomainUnjoinedCount(String id) {
 		editor.putString(DOMAIN_UNJOINED_COUNTS, id);
@@ -766,18 +782,19 @@ public boolean isContactModified(){
 	}
 	
 	public void saveGroupName(String groupName,String displayName) {
-		String prevName = getGroupName();
+		String sg = getUserDomain();
+		String prevName = getGroupName(sg);
 		if(prevName.contains(groupName))
 			return;
 		saveGroupDisplayName(groupName, displayName);
 		if (prevName.equals(""))
-			editor.putString(GROUP_NAME, groupName);
+			editor.putString(GROUP_NAME + sg, groupName);
 		else
-			editor.putString(GROUP_NAME, prevName + "%#%" + groupName);
+			editor.putString(GROUP_NAME + sg, prevName + "%#%" + groupName);
 		editor.commit();
 	}
-	public void removeAllGroups() {
-			editor.putString(GROUP_NAME, null);
+	public void removeAllGroups(String sg) {
+			editor.putString(GROUP_NAME + sg, null);
 			editor.commit();
 	}
 	public void saveBroadCastName(String broadCastName,String displayName) {
@@ -835,7 +852,7 @@ public boolean isContactModified(){
 	}
 	
 	public void removeGroupName(String groupName) {
-		String prevName = getGroupName();
+		String prevName = getGroupName(getUserDomain());
 		removeGroupDisplayName(groupName);
 		if (!prevName.equals("")){
 			if(prevName.contains(groupName)){
@@ -871,7 +888,7 @@ public boolean isContactModified(){
 		boolean ret = false;
 		if(groupName==null)
 			return false;
-		String groups = getGroupName();
+		String groups = getGroupName(getUserDomain());
 		if (groups != null) {
 			if (!groups.equals("") && groups.contains("%#%")) {
 				for (String name : groups.split("%#%")) {
@@ -922,8 +939,8 @@ public boolean isContactModified(){
 		String value = pref.getString(BROADCAST_USERS+broadCastName, "");
 		return value;
 	}
-	public String getGroupName() {
-		String value = pref.getString(GROUP_NAME, "");
+	public String getGroupName(String sg) {
+		String value = pref.getString(GROUP_NAME + sg, "");
 		return value;
 	}
 	public String getBroadCastName() {
@@ -932,7 +949,7 @@ public boolean isContactModified(){
 	}
 	public String[] getGroupNamesArray() {
 		String array[] = new String[1];
-		String groups = getGroupName();
+		String groups = getGroupName(getUserDomain());
 		if (groups != null) {
 			if (!groups.equals("") && groups.contains("%#%")) {
 				array = groups.split("%#%");
@@ -996,6 +1013,14 @@ public boolean isContactModified(){
 	public void saveGroupMemberCount(String groupname, String count) {
 		editor.putString(GROUP_MEM_COUNT+groupname, count);
 		editor.commit();
+	}
+	public void saveGroupsForSG(String sg, String group_data) {
+		editor.putString(GROUPS_FOR_SG + sg, group_data);
+		editor.commit();
+	}
+	public String getGroupsForSG(String sg) {
+		String value = pref.getString(GROUPS_FOR_SG + sg, null);
+		return value;
 	}
 	public String getUserDesignation(String userName) {
 		String value = pref.getString(USER_DESIGNATION+userName, "");

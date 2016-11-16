@@ -119,10 +119,12 @@
             android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.superchat.ui.SupergroupListingScreen"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateVisible"></activity>
         <activity
             android:name="com.superchat.ui.SupergroupListingScreenNew"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateVisible"></activity>
                 
         <activity
             android:name="com.superchat.ui.MobileVerificationScreen"

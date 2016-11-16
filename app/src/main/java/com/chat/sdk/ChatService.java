@@ -203,6 +203,7 @@ public class ChatService extends Service implements interfaceInstances {
 			// TODO Auto-generated method stub
 //			System.out.println("connectionClosedOnError : "+e.toString());
 			// Judge for the account has been logged
+			Log.e(TAG, "ConnectionListener :: connectionClosedOnError : "+e.getMessage());
 			boolean error = e.getMessage().equals("stream:error (conflict)");
 			if (error) {
 //				logoutForConflict();

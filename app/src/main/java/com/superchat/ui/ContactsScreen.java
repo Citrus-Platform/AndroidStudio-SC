@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.database.MergeCursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -53,7 +54,9 @@ import java.io.IOException;
 
 public class ContactsScreen extends CustomFragmentHomeTabs implements ConnectionStatusListener, ProfileUpdateListener{
     public static final String TAG = "ContactsFragment";
-    Cursor cursor;
+//    Cursor cursor;
+    MergeCursor cursor;
+    Cursor cursor1 , cursor2;
     public ContactsAdapter adapter;
     private EditText searchBoxView;
     private ImageView clearSearch;
@@ -422,8 +425,14 @@ public class ContactsScreen extends CustomFragmentHomeTabs implements Connection
 //        }
 //        cursor = DBWrapper.getInstance().query(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, null, s, as,
 //                DatabaseConstants.VOPIUM_FIELD + " ASC, " + DatabaseConstants.CONTACT_NAMES_FIELD + " COLLATE NOCASE");
-        cursor = DBWrapper.getInstance().getContactsCursor(sg);
+//        cursor = DBWrapper.getInstance().getContactsCursor(sg);
 //        System.out.println("Cursor size = "+cursor.getCount());
+
+        cursor1 = DBWrapper.getInstance().getContactsCursor(sg);
+        cursor2 = DBWrapper.getInstance().getContactsCursorWithoutShared(sg);
+
+        cursor = new MergeCursor(new Cursor[]{cursor1 , cursor2});
+
 
         if(cursor != null){
             if(cursor.getCount() > 0) {
@@ -445,11 +454,11 @@ public class ContactsScreen extends CustomFragmentHomeTabs implements Connection
             s = DatabaseConstants.VOPIUM_FIELD + "!=? AND " +  DatabaseConstants.USER_SG + "=?";
             as = (new String[] { "2", sg});
         }
-        cursor = DBWrapper.getInstance().query(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, null, s, as,
+        cursor1 = DBWrapper.getInstance().query(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, null, s, as,
                 DatabaseConstants.VOPIUM_FIELD+" ASC, "+DatabaseConstants.CONTACT_NAMES_FIELD +" COLLATE NOCASE");
-        if (cursor != null && adapter != null)
+        if (cursor1 != null && adapter != null)
         {
-            adapter.changeCursor(cursor);
+            adapter.changeCursor(cursor1);
             adapter.notifyDataSetChanged();
         }
     }

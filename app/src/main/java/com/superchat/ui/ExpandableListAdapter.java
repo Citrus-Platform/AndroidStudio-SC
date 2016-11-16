@@ -186,6 +186,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 if (active) {
                     itemControllerChild.btn_active_toggle.setVisibility(View.GONE);
                 } else{
+                    itemControllerChild.btn_active_toggle.setVisibility(View.VISIBLE);
                     itemControllerChild.btn_active_toggle.setBackgroundResource(R.drawable.refresh);
                 }
 

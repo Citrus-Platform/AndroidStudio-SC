@@ -504,7 +504,8 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
             onForeground = true;
             onNotifiUI();
         }
-        refreshList();
+        onNotifiUI();
+//        refreshList();
         if(isSearchOn){
             resetSearch();
         }
