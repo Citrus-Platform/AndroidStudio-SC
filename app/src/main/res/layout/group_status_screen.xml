@@ -3,13 +3,13 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@color/screen_background_color"
-    android:gravity="center" >
+    android:gravity="center">
 
     <RelativeLayout
         android:id="@+id/id_header_view"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/heder_height"
-        android:background="@color/header_footer_color" >
+        android:layout_height="@dimen/home_fragments_actionbar_height"
+        android:background="@color/header_footer_color">
 
         <com.superchat.widgets.MyriadSemiboldTextView
             android:id="@+id/id_group_info_title"
@@ -24,23 +24,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="5dip"
-            android:onClick="onBackClick"
-            android:padding="15dip" >
+            android:onClick="onBackClick">
 
-            <ImageView
-                android:id="@+id/id_back_arrow"
+            <LinearLayout
+                android:id="@+id/llBack"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:background="@drawable/back_arrow_white" />
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
+
+                <ImageView
+                    android:id="@+id/id_back_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/back_arrow_green" />
+            </LinearLayout>
 
             <com.superchat.widgets.MyriadSemiboldTextView
                 android:id="@+id/id_back_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toRightOf="@id/id_back_arrow"
+                android:layout_toRightOf="@id/llBack"
                 android:text=""
                 android:textColor="@color/white"
                 android:textSize="12sp"
@@ -68,27 +75,27 @@
         android:layout_centerHorizontal="true"
         android:gravity="center_horizontal"
         android:scrollbarSize="4dip"
-        android:scrollbarThumbVertical="@color/header_color" >
+        android:scrollbarThumbVertical="@color/header_color">
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_marginRight="5dip"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/id_group_info_header"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="25dip"
-                android:gravity="center" >
+                android:gravity="center">
 
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="5dp"
-                    android:orientation="vertical" >
+                    android:orientation="vertical">
 
                     <ImageView
                         android:id="@+id/id_group_icon"
@@ -103,8 +110,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/time_counter"
-                        android:visibility="gone" 
-                         android:background="@drawable/bubble_grey_right">
+                        android:background="@drawable/bubble_grey_right"
+                        android:visibility="gone">
 
                         <LinearLayout
                             android:id="@+id/left_audio_btn_layout"
@@ -114,7 +121,7 @@
                             android:layout_marginRight="5dip"
                             android:background="@drawable/round_rect_blue"
                             android:gravity="center"
-                            android:orientation="vertical" >
+                            android:orientation="vertical">
 
                             <ImageView
                                 android:id="@+id/media_play"
@@ -231,14 +238,14 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="2dip"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <RelativeLayout
                     android:id="@+id/id_owner_layout"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/round_rect"
-                    android:visibility="gone" >
+                    android:visibility="gone">
 
                     <com.superchat.widgets.MyriadSemiboldTextView
                         android:id="@+id/id_owner"
