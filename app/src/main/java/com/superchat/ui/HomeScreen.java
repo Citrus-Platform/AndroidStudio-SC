@@ -426,6 +426,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		ChatDBWrapper.getInstance(SuperChatApplication.context);
 		//Check if user is not logged
 		if (isServiceRunning("com.chat.sdk.ChatService")) {
 			System.out.println("[SERVICE RUNNING - SO STOPPING]");
@@ -451,7 +452,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		Toolbar mToolbar;
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(mToolbar);
-
 
 		drawerFragment = (FragmentDrawer)
 				getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
@@ -3696,7 +3696,12 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				if(mSinchServiceInterface != null)
 					mSinchServiceInterface.stopClient();
 				if(confirmation){
-					showCustomDialogWith2Buttons(model, "Do you want to switch?");
+//					showCustomDialogWith2Buttons(model, "Do you want to switch?");
+					isSwitchSG = true;
+					selectedTab = mViewPager.getCurrentItem();
+					drawerFragment.fragmentClose();
+					updateUserData(sg_name, model);
+					markSGActive(sg_name);
 				}else {
 					isSwitchSG = true;
 					selectedTab = mViewPager.getCurrentItem();
