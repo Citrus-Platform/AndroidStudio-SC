@@ -476,6 +476,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        ChatDBWrapper.getInstance(SuperChatApplication.context);
         //Check if user is not logged
         if (isServiceRunning("com.chat.sdk.ChatService")) {
             System.out.println("[SERVICE RUNNING - SO STOPPING]");
@@ -3785,8 +3786,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 DBWrapper.getInstance().updateSGNewMessageCount(sg_name, 0);
                 if (mSinchServiceInterface != null)
                     mSinchServiceInterface.stopClient();
-                if (confirmation) {
-                    showCustomDialogWith2Buttons(model, "Do you want to switch?");
+                if(confirmation){
+//					showCustomDialogWith2Buttons(model, "Do you want to switch?");
+                    isSwitchSG = true;
+                    selectedTab = mViewPager.getCurrentItem();
+                    drawerFragment.fragmentClose();
+                    updateUserData(sg_name, model);
+                    markSGActive(sg_name);
                 } else {
                     isSwitchSG = true;
                     selectedTab = mViewPager.getCurrentItem();
