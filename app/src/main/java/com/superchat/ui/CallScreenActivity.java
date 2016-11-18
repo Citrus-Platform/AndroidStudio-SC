@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -70,17 +71,30 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 				 Call call = mSinchServiceInterface.getCall(mCallId);
 				 if (call != null) {
 					 call.addCallListener(new SinchCallListener());
-					String myName =  iChatPref.getUserServerName(call.getRemoteUserId());
-//					String myName = chatDBWrapper.getUsersDisplayName(call.getRemoteUserId());
-					if(myName != null && myName.equals(call.getRemoteUserId()))
-						myName = iChatPref.getUserServerName(call.getRemoteUserId());
-					if(myName != null && myName.equals(call.getRemoteUserId()))
-						myName = "New User";
-					if(myName!=null && myName.contains("_"))
-						myName = "+"+myName.substring(0, myName.indexOf("_"));
-					 mCallerName.setText(myName);
-					 mCallState.setText(call.getState().toString());
-					  setProfilePic(call.getRemoteUserId());
+					 Map<String, String> header = call.getHeaders();
+					 if(header != null) {
+						 String myName = iChatPref.getUserServerName(header.get("userName"));
+						 if (myName != null && myName.equals(header.get("userName")))
+							 myName = iChatPref.getUserServerName(header.get("userName"));
+						 if (myName != null && myName.equals(header.get("userName")))
+							 myName = "New User";
+						 if (myName != null && myName.contains("_"))
+							 myName = "+" + myName.substring(0, myName.indexOf("_"));
+						 mCallerName.setText(myName);
+						 mCallState.setText(call.getState().toString());
+						 setProfilePic(header.get("userName"));
+					 }else {
+						 String myName = iChatPref.getUserServerName(call.getRemoteUserId());
+						 if (myName != null && myName.equals(call.getRemoteUserId()))
+							 myName = iChatPref.getUserServerName(call.getRemoteUserId());
+						 if (myName != null && myName.equals(call.getRemoteUserId()))
+							 myName = "New User";
+						 if (myName != null && myName.contains("_"))
+							 myName = "+" + myName.substring(0, myName.indexOf("_"));
+						 mCallerName.setText(myName);
+						 mCallState.setText(call.getState().toString());
+						 setProfilePic(call.getRemoteUserId());
+					 }
 					 audioController = mSinchServiceInterface.getAudioController();
 				 } else {
 					 Log.e(TAG, "Started with invalid callId, aborting.");

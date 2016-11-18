@@ -43,6 +43,7 @@ import com.superchat.widgets.RoundedImageView;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class IncomingCallScreenActivity extends Activity {
 
@@ -65,22 +66,41 @@ public class IncomingCallScreenActivity extends Activity {
 				 if(mSinchServiceInterface!=null){
 					 Call call = mSinchServiceInterface.getCall(mCallId);
 			        if (call != null) {
-
-			            call.addCallListener(new SinchCallListener());
-			            TextView remoteUser = (TextView) findViewById(R.id.remoteUser);
-			            String myName =  iChatPref.getUserServerName(call.getRemoteUserId());
-						if(myName != null && myName.equalsIgnoreCase(call.getRemoteUserId()))
-							myName = chatDBWrapper.getUsersDisplayName(call.getRemoteUserId());
-			            if(myName != null && myName.equals(call.getRemoteUserId())) {
-							myName = SharedPrefManager.getInstance().getUserServerName(myName);
+						call.addCallListener(new SinchCallListener());
+						TextView remoteUser = (TextView) findViewById(R.id.remoteUser);
+						Map<String, String> header = call.getHeaders();
+						if(header != null) {
+							String myName = header.get("displayName");
+							if (myName != null && myName.equalsIgnoreCase(call.getRemoteUserId()))
+								myName = chatDBWrapper.getUsersDisplayName(call.getRemoteUserId());
+							if (myName != null && myName.equals(call.getRemoteUserId())) {
+								myName = SharedPrefManager.getInstance().getUserServerName(myName);
+							}
+							if (myName != null && myName.equals(call.getRemoteUserId())) {
+								myName = "New User";
+							}
+							if (myName != null && myName.contains("_"))
+								myName = "+" + myName.substring(0, myName.indexOf("_"));
+							remoteUser.setText(myName);
+							if(header.get("picid") != null)
+								setProfilePic(header.get("fromUserName"), header.get("picid"));
+							else
+								setProfilePic(header.get("fromUserName"), null);
+						}else{
+							String myName = iChatPref.getUserServerName(call.getRemoteUserId());
+							if (myName != null && myName.equalsIgnoreCase(call.getRemoteUserId()))
+								myName = chatDBWrapper.getUsersDisplayName(call.getRemoteUserId());
+							if (myName != null && myName.equals(call.getRemoteUserId())) {
+								myName = SharedPrefManager.getInstance().getUserServerName(myName);
+							}
+							if (myName != null && myName.equals(call.getRemoteUserId())) {
+								myName = "New User";
+							}
+							if (myName != null && myName.contains("_"))
+								myName = "+" + myName.substring(0, myName.indexOf("_"));
+							remoteUser.setText(myName);
+							setProfilePic(call.getRemoteUserId(), null);
 						}
-						if(myName != null && myName.equals(call.getRemoteUserId())) {
-							myName = "New User";
-						}
-						if(myName!=null && myName.contains("_"))
-							myName = "+"+myName.substring(0, myName.indexOf("_"));
-			            remoteUser.setText(myName);
-			            setProfilePic(call.getRemoteUserId());
 			            audioController = mSinchServiceInterface.getAudioController();
 			        } else {
 			            Log.e(TAG, "Started with invalid callId, aborting");
@@ -159,8 +179,12 @@ public class IncomingCallScreenActivity extends Activity {
 		}
 		return null;
 	}
-    private boolean setProfilePic(String userName){
-		String groupPicId = SharedPrefManager.getInstance().getUserFileId(userName); 
+    private boolean setProfilePic(String userName, String pic_id){
+		String groupPicId = null;
+		if(pic_id != null)
+			groupPicId = pic_id;
+		else
+			groupPicId = SharedPrefManager.getInstance().getUserFileId(userName);
 		String img_path = getImagePath(groupPicId);
 		android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(groupPicId);
 		ImageView picView = (ImageView) findViewById(R.id.id_profile_pic);
