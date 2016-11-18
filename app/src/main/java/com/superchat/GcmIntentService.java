@@ -246,6 +246,8 @@ public class GcmIntentService extends IntentService {
 			messageNotification.setSound(alarmSound);
 		
 		String notificationSenderName = senderName;
+		if(SuperChatApplication.getInstance().getContextApplication() ==  null)
+			DBWrapper.getInstance(SuperChatApplication.context);
 			notificationSenderName = DBWrapper.getInstance().getChatName(senderName);
 			if(notificationSenderName!=null && notificationSenderName.contains("#786#"))
 				notificationSenderName = notificationSenderName.substring(0, notificationSenderName.indexOf("#786#"));
