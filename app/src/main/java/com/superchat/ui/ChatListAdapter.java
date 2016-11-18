@@ -4666,7 +4666,8 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                     }
                     if ((((ChatListScreen) context).mSinchServiceInterface) != null) {
                         try {
-                            Call call = ((ChatListScreen) context).mSinchServiceInterface.callUserWithHeader(objUserModel.iUserName, HomeScreen.createHeaderForCalling(objUserModel.iUserName));
+//                            Call call = ((ChatListScreen) context).mSinchServiceInterface.callUserWithHeader(objUserModel.iUserName, HomeScreen.createHeaderForCalling(objUserModel.iUserName));
+                            Call call = ((ChatListScreen) context).mSinchServiceInterface.callUser(objUserModel.iUserName);
                             String callId = call.getCallId();
 
                             Intent callScreen = new Intent(context, CallScreenActivity.class);
