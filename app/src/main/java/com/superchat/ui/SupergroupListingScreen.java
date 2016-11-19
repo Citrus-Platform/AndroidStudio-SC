@@ -897,6 +897,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 		SlidingMenuData slidingMenuData =  gson.fromJson(data , SlidingMenuData.class);
 		joinedDomainNameSet = slidingMenuData.getJoinedDomainNameSet();
 		invitedDomainNameSet = slidingMenuData.getInvitedDomainNameSet();
+		ownerDomainNameSet = slidingMenuData.getOwnerDomainNameSet();
 
 		////////////////////////////////////////////
 		Set<String> domainNameSet = new HashSet<String>();
