@@ -255,7 +255,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 
             boolean isWorking = false;
             ListView listView1 = (ListView) parentView.getParent();
-            System.out.println("listView1 : " + listView1.getCount());
+//            System.out.println("listView1 : " + listView1.getCount());
             if (listView1 != null) {
                 final int position = listView1.getPositionForView(parentView);
                 listView1.setItemChecked(position, !listView1.isItemChecked(position));
