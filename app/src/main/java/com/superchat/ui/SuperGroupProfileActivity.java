@@ -550,6 +550,9 @@ private static final String TAG = "SuperGroupProfileActivity";
 		return null;
 	}
 	private boolean setProfilePic(ImageView picView, String groupPicId){
+
+		groupPicId = DBWrapper.getInstance().getSGLogoFileID(SharedPrefManager.getInstance().getUserDomain());
+
 		if(groupPicId == null || groupPicId != null && (groupPicId.equals("")||groupPicId.equals("clear") || groupPicId.contains("logofileid")))
 			return false;
 		String img_path = getImagePath(groupPicId);
