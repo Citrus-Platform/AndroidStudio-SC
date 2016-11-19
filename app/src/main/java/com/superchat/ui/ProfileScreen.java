@@ -1165,7 +1165,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
     public void onCallClicked(View view) {
         if (mSinchServiceInterface != null) {
             try {
-                Call call = mSinchServiceInterface.callUser(userName);
+                Call call = mSinchServiceInterface.callUserWithHeader(userName, HomeScreen.createHeaderForCalling(userName));
                 String callId = call.getCallId();
 
                 Intent callScreen = new Intent(this, CallScreenActivity.class);

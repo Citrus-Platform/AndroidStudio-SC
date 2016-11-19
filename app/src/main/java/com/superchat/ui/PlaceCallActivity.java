@@ -113,7 +113,7 @@ public class PlaceCallActivity extends Activity {
             return;
         }
         if(mSinchServiceInterface!=null){
-	        Call call = mSinchServiceInterface.callUser(userName);
+	        Call call = mSinchServiceInterface.callUserWithHeader(userName, HomeScreen.createHeaderForCalling(userName));
 	        String callId = call.getCallId();
 	
 	        Intent callScreen = new Intent(this, CallScreenActivity.class);

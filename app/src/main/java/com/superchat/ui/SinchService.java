@@ -14,7 +14,10 @@ import com.sinch.android.rtc.SinchError;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallClient;
 import com.sinch.android.rtc.calling.CallClientListener;
+import com.superchat.data.db.DBWrapper;
 import com.superchat.utils.SharedPrefManager;
+
+import java.util.Map;
 
 public class SinchService extends Service {
 
@@ -110,6 +113,10 @@ public class SinchService extends Service {
         public Call callUser(String userId) {
             return mSinchClient.getCallClient().callUser(userId);
         }
+        public Call callUserWithHeader(String userId, Map<String, String> header) {
+            String number = DBWrapper.getInstance().getContactNumber(userId);
+            return mSinchClient.getCallClient().callUser(number, header);
+        }
 
         public String getUserName() {
             return mUserId;
@@ -125,7 +132,9 @@ public class SinchService extends Service {
         }
 
         public void startClient(String userName) {
-            start(userName);
+            String number = SharedPrefManager.getInstance().getUserPhone();
+            start(number);
+//            start(userName);
         }
 
         public void stopClient() {
@@ -218,7 +227,6 @@ public class SinchService extends Service {
      	        }
         		return;
     		}
-
             Intent intent = new Intent(SinchService.this, IncomingCallScreenActivity.class);
             intent.putExtra(CALL_ID, call.getCallId());
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);

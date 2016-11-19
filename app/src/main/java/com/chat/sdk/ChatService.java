@@ -2573,12 +2573,15 @@ public class ChatService extends Service implements interfaceInstances {
 
 							connection.connect();
 							Log.d(TAG, "[SettingsDialog] Connected to " + connection.getHost());
+
 							// ProviderManager.getInstance().addExtensionProvider("status","androidpn:iq:status",
 							// new MUCUserProvider());
-							int last_online_time = 0;
-							if(prefManager.getLastOnline(prefManager.getUserDomain()) > 0)
-							 	last_online_time = (int)((System.currentTimeMillis() - (prefManager.getLastOnline(prefManager.getUserDomain()) - (100 * 1000)))/1000);
-							System.out.println("(last_online_time) - "+last_online_time);
+
+//							int last_online_time = 0;
+//							if(prefManager.getLastOnline(prefManager.getUserDomain()) > 0)
+//							 	last_online_time = (int)((System.currentTimeMillis() - (prefManager.getLastOnline(prefManager.getUserDomain()) - (100 * 1000)))/1000);
+//							System.out.println("(last_online_time) - "+last_online_time);
+
 							if (!connection.isAuthenticated())
 								connection.login(userName, password);
 							setConnection(packetListener);
@@ -2600,8 +2603,10 @@ public class ChatService extends Service implements interfaceInstances {
 //							System.out.println("chatLogin :: total groups to join :- "+SharedPrefManager.getInstance().getGroupNamesArray().length);
 							for (String group : prefManager.getGroupNamesArray()) {
 								if (group != null && !group.equals("")){
-									if(prefManager.isGroupMemberActive(group, prefManager.getUserName()))
-										sendGroupPresence(group, (last_online_time > 0 ? last_online_time : -1));
+									if(prefManager.isGroupMemberActive(group, prefManager.getUserName())) {
+//										sendGroupPresence(group, (last_online_time > 0 ? last_online_time : -1));
+										sendGroupPresence(group, 0);
+									}
 								}
 							}
 							xmppConectionStatus = true;
@@ -3282,15 +3287,15 @@ public class ChatService extends Service implements interfaceInstances {
 
 			long currentTime = System.currentTimeMillis();
 			calender.setTimeInMillis(currentTime);
-			int date = calender.get(Calendar.DATE);
-			int oldDate = date;
-			long milis = chatDBWrapper.lastMessageInDB(oppName);
-			if(milis!=-1){
-				calender.setTimeInMillis(milis);
-				oldDate = calender.get(Calendar.DATE);
+			int new_msg_date = calender.get(Calendar.DATE);
+			int old_msg_date = 0;
+			long millis = chatDBWrapper.lastMessageInDB(oppName);
+
+			if(millis != -1){
+				calender.setTimeInMillis(millis);
+				old_msg_date = calender.get(Calendar.DATE);
 			}
-			if ((oldDate != date)
-					|| chatDBWrapper.isFirstChat(oppName)) {
+			if (old_msg_date == 0 || new_msg_date > old_msg_date) {
 				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
 				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 			} else {
@@ -3302,9 +3307,9 @@ public class ChatService extends Service implements interfaceInstances {
 					long delay_millis = 0;
 					if(del != null && del.length() > 0)
 						delay_millis = convertDelayToMillis(del);
-//					System.out.println("[Delay in Message currentTime - ] "+currentTime);
-//					System.out.println("[Delay in Message delay_millis - ] "+delay_millis);
-//					System.out.println("[Delay in Message convertCurrentTimeintoMillis GMT+530 - ] "+convertCurrentTimeintoMillis());
+//					System.out.println("[Delay in Message currentTime - ] "+currentTime/1000);
+//					System.out.println("[Delay in Message delay_millis - ] "+delay_millis/1000);
+//					System.out.println("[Delay in Message convertCurrentTimeintoMillis GMT+530 - ] "+convertCurrentTimeintoMillis()/1000);
 					if(delay_millis > 0)
 						contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, (delay_millis + convertCurrentTimeintoMillis()));
 					else
@@ -3313,14 +3318,17 @@ public class ChatService extends Service implements interfaceInstances {
 					contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
 					ex.printStackTrace();
 				}
-			}else
+			}else {
+//				System.out.println("[Delay in Message currentTime - ] "+currentTime/1000);
+//				System.out.println("[Delay in Message convertCurrentTimeintoMillis GMT+530 - ] "+convertCurrentTimeintoMillis()/1000);
 				contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
+			}
 
 			contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
 			//Save USerID and SG in DB
 			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
 			contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
-			System.out.println("ChatService - 3::saveMessage: - "+contentvalues.toString());
+//			System.out.println("ChatService - 3::saveMessage: - "+contentvalues.toString());
 			chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
 			if (chatListener != null)
 				chatListener.notifyChatRecieve(from, msg);
@@ -5150,22 +5158,41 @@ public class ChatService extends Service implements interfaceInstances {
 		try {
 			//For testing, to join directly.
 //			joinMultiUserChat2(roomName);
-			int currentTime = (int)((System.currentTimeMillis() - (prefManager.getLastOnline(prefManager.getUserDomain()) - (5 * 1000)))/1000);
-//			System.out.println("prefManager.getLastOnline() => currentTime - "+prefManager.getLastOnline());
-//			System.out.println("sendGroupPresence :: currentTime - "+currentTime);
-			if(prefManager.getLastOnline(prefManager.getUserDomain()) <= 0)
+			int currentTime = 0;
+			long last_online_time = prefManager.getLastOnline(prefManager.getUserDomain());
+			long curr_time = System.currentTimeMillis() - last_online_time;
+
+			long last_msg_time_in_db = 0;
+			if(chatDBWrapper != null)
+				last_msg_time_in_db = System.currentTimeMillis() - chatDBWrapper.lastMessageInDB(roomName);
+
+			if(last_msg_time_in_db > curr_time)
+				currentTime = (int)(last_msg_time_in_db / 1000);
+			else
+				currentTime = (int)(curr_time / 1000);
+
+			if(last_online_time == 0)
 				currentTime = 0;
-			if(historySeconds > 0)
-				currentTime = historySeconds;
-//			if(historySeconds != -1)
+
+			System.out.println("sendGroupPresence : time : "+roomName+" - "+currentTime);
+
+			if((currentTime < 0 && currentTime > -100) || currentTime < 100) {
+				currentTime = 240;
+			}
+
+
+
+//			if(prefManager.getLastOnline(prefManager.getUserDomain()) <= 0)
+//				currentTime = 0;
+//			if(historySeconds > 0)
 //				currentTime = historySeconds;
+
 			if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
 				Presence joinPresence = new Presence(Presence.Type.available);
 				String room = roomName;
 				if (!room.contains("@conference."))
 					room = roomName + "@conference." + Constants.CHAT_DOMAIN;
 				joinPresence.setTo(room + "/" + userMe);
-//				System.out.println("sendGroupPresence :: JOIN ROOM :- "+(room + "/" + userMe));
 				// Indicate the the client supports MUC
 				MUCInitialPresence initialPresence = new MUCInitialPresence();
 				MUCInitialPresence.History history = new History();

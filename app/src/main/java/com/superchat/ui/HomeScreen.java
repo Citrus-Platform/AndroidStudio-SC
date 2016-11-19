@@ -477,6 +477,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         ChatDBWrapper.getInstance(SuperChatApplication.context);
+        DBWrapper.getInstance(SuperChatApplication.context);
         //Check if user is not logged
         if (isServiceRunning("com.chat.sdk.ChatService")) {
             System.out.println("[SERVICE RUNNING - SO STOPPING]");
@@ -4180,6 +4181,23 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //        showAlertDialog(message);
     }
 
+    public static Map<String, String> createHeaderForCalling(String user){
+        Map<String, String> headers = new HashMap<String, String>();
+        SharedPrefManager pref = SharedPrefManager.getInstance();
+        try{
+            headers.put("userName", user);
+            headers.put("fromUserName", pref.getUserName());
+            headers.put("displayName", pref.getDisplayName());
+            if(pref.getUserFileId(pref.getUserName()) != null)
+                headers.put("picid", pref.getUserFileId(pref.getUserName()));
+            headers.put("userId", ""+pref.getUserId());
+            headers.put("domainName", pref.getUserDomain());
+
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return headers;
+    }
 
     private void handleMenuOptions() {
 

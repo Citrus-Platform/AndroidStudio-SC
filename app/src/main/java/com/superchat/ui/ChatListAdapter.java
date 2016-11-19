@@ -356,6 +356,9 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 if (listItemSelection())
                     return;
                 switch (v.getId()) {
+                    case R.id.send_mediavoicePlayingDialog_progressbar:
+                    case R.id.mediavoicePlayingDialog_progressbar:
+                        break;
                     case R.id.send_media_play:
                     case R.id.media_play:
                     case R.id.left_audio_btn_layout:
@@ -1242,7 +1245,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
             }
         }
         //--------------- Mahesh - My Code ---------
-		    /* Background Async Task to download file */
+            /* Background Async Task to download file */
 //		    class DownloadFileFromURL extends AsyncTask<String, String, String> {
 //		                    /*  Before starting background thread. Show Progress Bar Dialog */
 //		                    @SuppressWarnings("deprecation")
@@ -1991,7 +1994,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
         // });
     }
 
-    public Cursor getCursor(){
+    public Cursor getCursor() {
         return this.cursor;
     }
 
@@ -4277,40 +4280,53 @@ public class ChatListAdapter extends SimpleCursorAdapter {
         viewholder.playSenderSeekBar.setOnClickListener(viewholder.onVoiceClickListener);
         viewholder.voiceRecieverInnerLayout.setOnClickListener(viewholder.onVoiceClickListener);
         viewholder.voiceSenderInnerLayout.setOnClickListener(viewholder.onVoiceClickListener);
-        viewholder.playSenderSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
+        viewholder.playSenderSeekBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                viewholder.listItemSelection();
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
             }
         });
-        viewholder.playRecieverSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
+        viewholder.playRecieverSeekBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                viewholder.listItemSelection();
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
             }
         });
+//        viewholder.playSenderSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//                viewholder.listItemSelection();
+//            }
+//
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//
+//            }
+//        });
+//        viewholder.playRecieverSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//                viewholder.listItemSelection();
+//            }
+//
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//
+//            }
+//        });
         viewholder.playRecieverSeekBar.setOnClickListener(viewholder.onVoiceClickListener);
 
         viewholder.sVideoPlayImageView.setOnLongClickListener(viewholder.onLongPressListener);
@@ -4650,7 +4666,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                     }
                     if ((((ChatListScreen) context).mSinchServiceInterface) != null) {
                         try {
-                            Call call = ((ChatListScreen) context).mSinchServiceInterface.callUser(objUserModel.iUserName);
+                            Call call = ((ChatListScreen) context).mSinchServiceInterface.callUserWithHeader(objUserModel.iUserName, HomeScreen.createHeaderForCalling(objUserModel.iUserName));
                             String callId = call.getCallId();
 
                             Intent callScreen = new Intent(context, CallScreenActivity.class);
