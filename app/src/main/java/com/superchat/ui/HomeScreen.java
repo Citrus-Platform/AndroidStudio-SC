@@ -161,6 +161,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //	XmppChatClient chatClient;
 	public static boolean isforeGround = false;
 	public static boolean updateNavDrawer = false;
+	public static boolean userDeactivated;
+
 
 	public MyriadRegularTextView totalCountView;
 	public MyriadRegularTextView unseenContactView;
@@ -1135,7 +1137,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						}else if(citrusError!=null && citrusError.code.equals("20020") ){
 							showDialog(citrusError.message, citrusError.code);
 						}else if(citrusError!=null && citrusError.code.equals("20031") ){
-							showDialog(citrusError.message, citrusError.code);
+//							showDialog(citrusError.message, citrusError.code);
+							userDeactivated = true;
+							switchSG(iPrefManager.getUserDomain(), false, null, false);
 //							DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
 						}else
 							showDialog(citrusError.message, null);
@@ -1797,10 +1801,12 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		});
 		bteldialog.show();
 	}
-	public void showDeactiveDialog(String s) {
+	public void showDeactivatedDialog(String s) {
 		final Dialog dialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.setCanceledOnTouchOutside(false);
+		if(userDeactivated)
+			dialog.setCancelable(false);
 		dialog.setContentView(R.layout.deactivate_alert_dialog);
 		((ImageView)dialog.findViewById(R.id.id_menu_icon)).setOnClickListener(new OnClickListener() {
 			@Override
@@ -2061,6 +2067,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			return;
 		}else if(chatMenuLayout.isSelected() && chatFragment.isSearchOn()) {
 			chatFragment.resetSearch();
+			return;
+		}
+		if(userDeactivated){
 			return;
 		}
 		if (count == 0) {
@@ -3681,6 +3690,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			Toast.makeText(this, getString(R.string.check_net_connection), Toast.LENGTH_LONG).show();
 			return;
 		}
+		if(userDeactivated){
+			showDeactivatedDialog("");
+			return;
+		}
 		if(!sg_name.equalsIgnoreCase(iPrefManager.getUserDomain()) || sg_reg){
 			iPrefManager.setSGListData(null);
 
@@ -3743,7 +3756,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			}else{
 				//Show Alert Screen to switch Screen.
 				drawerFragment.fragmentClose();
-				showDeactiveDialog("");
+				progressDialog = ProgressDialog.show(HomeScreen.this, "", "Checking your account, please wait...", true);
+				activateSG(sg_name, "false");
+//				showDeactivatedDialog("");
 			}
 		}else{
 			drawerFragment.fragmentClose();
@@ -4031,11 +4046,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 									//iPrefManager.setAppMode("VirginMode");
 									//iPrefManager.saveUserLogedOut(false);
 									iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
-									DBWrapper.getInstance().updateSGCredentials(domain.getDomainName(), domain.getUsername(), domain.getPassword(), domain.getUserId(), domain.isActivateSuccess());
-								} else {
-									DBWrapper.getInstance().updateSGCredentials(domain.getDomainName(), domain.getUsername(), domain.getPassword(), domain.getUserId(), domain.isActivateSuccess());
-									Toast.makeText(HomeScreen.this, getString(R.string.account_deactivated), Toast.LENGTH_SHORT).show();
 								}
+								DBWrapper.getInstance().updateSGCredentials(domain.getDomainName(), domain.getUsername(), domain.getPassword(), domain.getUserId(), domain.isActivateSuccess());
 							} else {
 //								System.out.println("Domain -> " + domain.getDomainName() + ", Pass-> " + domain.getPassword() + ", userName-> " + domain.getUsername() + ", userID-> " + domain.getUserId());
 								iPrefManager.saveSGPassword(domain.getUsername(), domain.getPassword());
@@ -4043,30 +4055,34 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 								DBWrapper.getInstance().updateSGCredentials(domain.getDomainName(), domain.getUsername(), domain.getPassword(), domain.getUserId(), domain.isActivateSuccess());
 							}
 						}
+						if(firstTimeAdmin){
+							if (Build.VERSION.SDK_INT >= 11)
+								new SignInTaskOnServer(null).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+							else
+								new SignInTaskOnServer(null).execute();
+							startService(new Intent(SuperChatApplication.context, SinchService.class));
+						}
 					} else {
-						//Show Popup to switch or not - In case deactivated SG is clicked.
-	//					if(true){
-	//						iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
-	//						iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
-	//						iPrefManager.saveUserDomain(regObj.getDomainName());
-	//						iPrefManager.saveUserId(regObj.getUserId());
-	//						iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
-	//
-	//					}else
-	//						DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
-	//					}
-					}
-					if(firstTimeAdmin){
-						if (Build.VERSION.SDK_INT >= 11)
-							new SignInTaskOnServer(null).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-						else
-							new SignInTaskOnServer(null).execute();
-						startService(new Intent(SuperChatApplication.context, SinchService.class));
+						ArrayList<DomainSetObject> activateDomainDataSet = response.getActivateDomainDataSet();
+						DomainSetObject domain = activateDomainDataSet.get(0);
+						if (domain != null) {
+							if (domain.isActivateSuccess()){
+								//Save SG data
+								iPrefManager.saveSGPassword(domain.getUsername(), domain.getPassword());
+								iPrefManager.saveSGUserID(domain.getUsername(), domain.getUserId());
+								DBWrapper.getInstance().updateSGCredentials(domain.getDomainName(), domain.getUsername(), domain.getPassword(), domain.getUserId(), domain.isActivateSuccess());
+								switchSG(domain.getUsername(), false, null, false);
+							}else{
+								Toast.makeText(HomeScreen.this, getString(R.string.account_deactivated), Toast.LENGTH_SHORT).show();
+							}
+						}
 					}
 				}
 
 				@Override
 				protected void common() {
+					if(progressDialog != null && all.equals("false"))
+						progressDialog.dismiss();
 
 				}
 			});
@@ -4096,8 +4112,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 	@Subscribe(threadMode = ThreadMode.MAIN)
 	public void onMessage(String message) {
 		System.out.println("threadMode = ThreadMode.MAIN : Message - "+message);
-		showDialogWithPositive(message);
-//        showAlertDialog(message);
+		if(message != null && message.startsWith("[Deactivated] : ")){
+			userDeactivated = true;
+			switchSG(iPrefManager.getUserDomain(), false, null, false);
+		}else if(message != null && message.startsWith("[Activated] : ")){
+			userDeactivated = false;
+		}else {
+			showDialogWithPositive(message);
+		}
 	}
 
 	public static Map<String, String> createHeaderForCalling(String user){
