@@ -143,6 +143,7 @@ import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -3365,8 +3366,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     private void getBulletinMessages() {
         try {
             retrofit2.Call call = null;
-			if(!dataAlreadyLoadedForSG)
-            progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading bulletin messages. Please wait...", true);
+			if(!dataAlreadyLoadedForSG) {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        progressDialog = ProgressDialog.show(HomeScreen.this, "", "Loading bulletin messages. Please wait...", true);
+                    }
+                });
+            }
             final SharedPrefManager pref = SharedPrefManager.getInstance();
             call = objApi.getApi(this).getBulletinMessages("" + 10);
             call.enqueue(new RetrofitRetrofitCallback<BulletinGetMessageDataModel>(this) {
@@ -3517,13 +3523,11 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
                 @Override
                 protected void common() {
-//                    progressDialog.cancel();
-//					if(bulletinNotLoadedAndFromPush)
-                    {
-//						bulletinNotLoadedAndFromPush = false;
-                        DBWrapper.getInstance().updateSGBulletinLoaded(iPrefManager.getUserDomain(), "true");
+                    try{
                         if (progressDialog != null)
                             progressDialog.dismiss();
+                    }catch (Exception ex){
+                        ex.printStackTrace();
                     }
                 }
 

@@ -3106,14 +3106,16 @@ public class ChatService extends Service implements interfaceInstances {
 		contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
 
 		//Add SG Name and user ID
-		if(from != null && from.contains("_"))
-			actual_domain = from.substring(from.indexOf('_') + 1);
+			if(!prefManager.isGroupChat(from)) {
+				if (from != null && from.contains("_"))
+					actual_domain = from.substring(from.indexOf('_') + 1);
 
-		if(actual_domain.equals(prefManager.getUserDomain()))
-			contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
-		else
-			contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
-
+				if (actual_domain.equals(prefManager.getUserDomain()))
+					contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+				else
+					contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+			}else
+				contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
 
 		long insertId = chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_STATUS_INFO, contentvalues);
 		if(insertId == -1){
@@ -3154,6 +3156,7 @@ public class ChatService extends Service implements interfaceInstances {
 		String groupSenderDisplayName = message.getDisplayName();
 		Message.MessageDelay delay  = message.getMessageDelay();
 		String actual_domain = null;
+		String sender_user_name = null;
 //		if(groupSenderDisplayName!=null && !groupSenderDisplayName.equals("")){
 //			displayName = groupSenderDisplayName;
 //		}
@@ -3163,6 +3166,7 @@ public class ChatService extends Service implements interfaceInstances {
 				displayName = tmpFrom.substring(0, tmpFrom.indexOf('@'));
 			}else if(tmpFrom != null && tmpFrom.contains("/") && tmpFrom.length()>(tmpFrom.indexOf("/")+1))
 				displayName = groupSenderDisplayName+"#786#"+tmpFrom.substring(tmpFrom.indexOf("/")+1);
+			sender_user_name = tmpFrom.substring(tmpFrom.indexOf("/") + 1);
 		}
 		try {
 			String captionTag  = message.getMediaTagMessage();
@@ -3345,14 +3349,16 @@ public class ChatService extends Service implements interfaceInstances {
 			//Save USerID and SG in DB
 			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
 			//Add SG Name and user ID
-			if(from != null && from.contains("_"))
-				actual_domain = from.substring(from.indexOf('_') + 1);
+			if(sender_user_name != null) {
+				if (sender_user_name != null && sender_user_name.contains("_"))
+					actual_domain = sender_user_name.substring(sender_user_name.indexOf('_') + 1);
 
-			if(actual_domain.equals(prefManager.getUserDomain()))
+				if (actual_domain.equals(prefManager.getUserDomain()))
+					contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+				else
+					contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+			}else
 				contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
-			else
-				contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
-//			System.out.println("ChatService - 3::saveMessage: - "+contentvalues.toString());
 			chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
 			if (chatListener != null)
 				chatListener.notifyChatRecieve(from, msg);
@@ -5645,13 +5651,16 @@ public class ChatService extends Service implements interfaceInstances {
 			//Save USerID and SG in DB
 			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
 			//Add SG Name and user ID
-			if(from != null && from.contains("_"))
-				actual_domain = from.substring(from.indexOf('_') + 1);
+			if(!prefManager.isGroupChat(from)) {
+				if (from != null && from.contains("_"))
+					actual_domain = from.substring(from.indexOf('_') + 1);
 
-			if(actual_domain.equals(prefManager.getUserDomain()))
+				if (actual_domain.equals(prefManager.getUserDomain()))
+					contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+				else
+					contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+			}else
 				contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
-			else
-				contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
 			chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
 //			if (chatListener != null)
 //				chatListener.notifyChatRecieve(from,msg);
@@ -5704,13 +5713,17 @@ public class ChatService extends Service implements interfaceInstances {
 			//Save USerID and SG in DB
 			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
 			//Add SG Name and user ID
-			if(from != null && from.contains("_"))
-				actual_domain = from.substring(from.indexOf('_') + 1);
+			if(!prefManager.isGroupChat(from)) {
+				if (from != null && from.contains("_"))
+					actual_domain = from.substring(from.indexOf('_') + 1);
 
-			if(actual_domain.equals(prefManager.getUserDomain()))
+				if (actual_domain.equals(prefManager.getUserDomain()))
+					contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+				else
+					contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+			}else
 				contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
-			else
-				contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+
 			chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
 			if (chatListener != null)
 				chatListener.notifyChatRecieve(from,msg);

@@ -1566,10 +1566,10 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 				}
 				if(!SuperChatApplication.isNetworkConnected()){
 					Toast.makeText(SupergroupListingScreen.this, getString(R.string.check_net_connection), Toast.LENGTH_LONG).show();
-					return false;
+				}else {
+					bteldialog.cancel();
+					registerUserOnServer(superGroupName, sg_display_name, v);
 				}
-				bteldialog.cancel();
-				registerUserOnServer(superGroupName, sg_display_name, v);
 				return false;
 			}
 		});

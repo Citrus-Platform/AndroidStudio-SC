@@ -2360,7 +2360,10 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 						 contentvalues.put(ChatDBConstants.TO_USER_FIELD, pref.getUserName());
 
 					 //Add SG Name and user ID
-					 if(message_data.fromUserName != null && message_data.fromUserName.contains("_"))
+					 if(pref.isGroupChat(message_data.fromUserName) && message_data.fromGroupUserName != null && message_data.fromGroupUserName.lastIndexOf('#') != -1) {
+						 actual_domain = message_data.fromGroupUserName.substring(message_data.fromGroupUserName.lastIndexOf('#') + 1);
+						 actual_domain = actual_domain.substring(actual_domain.indexOf('_') + 1);
+					 }else if(message_data.fromUserName != null && message_data.fromUserName.contains("_"))
 					 	actual_domain = message_data.fromUserName.substring(message_data.fromUserName.indexOf('_') + 1);
 
 					 if(actual_domain.equals(pref.getUserDomain()))
