@@ -2335,12 +2335,14 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 //			 Iterator full_data = data.iterator();
 			String contact_name = null;
 			boolean is_bulletin_msg = false;
+			String actual_domain = null;
 			SharedPrefManager pref = SharedPrefManager.getInstance();
 			 for (int i = 0; i < data.length(); i++){
 //		        JSONObject message = (JSONObject) full_data.next();
 		        JSONObject message = data.getJSONObject(i);
 		        System.out.println("Message ==> "+(i+1)+":: "+message.toString());
 				 MessageDataModel message_data = gson.fromJson(message.toString(), MessageDataModel.class);
+				 actual_domain = null;
 
 				ContentValues contentvalues = new ContentValues();
 				 if(message_data.messageType == 3 ||
@@ -2356,9 +2358,18 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 							 contentvalues.put(ChatDBConstants.TO_USER_FIELD, message_data.toUserName);
 					 } else
 						 contentvalues.put(ChatDBConstants.TO_USER_FIELD, pref.getUserName());
+
 					 //Add SG Name and user ID
-					 contentvalues.put(ChatDBConstants.USER_SG, pref.getUserDomain());
+					 if(message_data.fromUserName != null && message_data.fromUserName.contains("_"))
+					 	actual_domain = message_data.fromUserName.substring(message_data.fromUserName.indexOf('_') + 1);
+
+					 if(actual_domain.equals(pref.getUserDomain()))
+						 contentvalues.put(ChatDBConstants.USER_SG, pref.getUserDomain());
+					 else
+						 contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+
 					 contentvalues.put(ChatDBConstants.USER_ID, pref.getUserId());
+
 //					 System.out.println("=======>ANDROID:: USER_SG : "+message_data.getSgName()+", USER_ID : "+message_data.getUserID());
 
 					 if (message_data.fromGroupUserName == null)
@@ -2435,7 +2446,14 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 							 	contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message_data.roomID);
 						 }
 						 //Add SG Name and user ID
-						 contentvalues.put(ChatDBConstants.USER_SG, pref.getUserDomain());
+						 if(message_data.fromUserName != null && message_data.fromUserName.contains("_"))
+							 actual_domain = message_data.fromUserName.substring(message_data.fromUserName.indexOf('_') + 1);
+
+						 if(actual_domain.equals(pref.getUserDomain()))
+							 contentvalues.put(ChatDBConstants.USER_SG, pref.getUserDomain());
+						 else
+							 contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+
 						 contentvalues.put(ChatDBConstants.USER_ID, pref.getUserId());
 
 //						 System.out.println("=======>ANDROID:: USER_SG : "+message_data.getSgName()+", USER_ID : "+message_data.getUserID());

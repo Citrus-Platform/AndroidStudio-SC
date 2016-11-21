@@ -1,5 +1,6 @@
 package com.superchat.ui;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
@@ -14,12 +15,19 @@ import com.sinch.android.rtc.SinchError;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallClient;
 import com.sinch.android.rtc.calling.CallClientListener;
+import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
+import com.superchat.interfaces.interfaceInstances;
+import com.superchat.model.UserProfileModel;
+import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.utils.SharedPrefManager;
 
 import java.util.Map;
 
-public class SinchService extends Service {
+import retrofit2.Response;
+
+
+public class SinchService extends Service implements interfaceInstances{
 
 //    private static final String APP_KEY = "enter-application-key";
 //    private static final String APP_SECRET = "enter-application-secret";
@@ -38,6 +46,8 @@ public class SinchService extends Service {
     private SinchServiceInterface mSinchServiceInterface = new SinchServiceInterface();
     private static SinchClient mSinchClient;
     private String mUserId;
+
+    private Context context;
 
     private StartFailedListener mListener;
 
@@ -86,6 +96,7 @@ public class SinchService extends Service {
         mSinchClient.start();
 
         Log.d(TAG, "SinchClient start 4");
+
     }
 
     private void stop() {
@@ -233,5 +244,32 @@ public class SinchService extends Service {
             SinchService.this.startActivity(intent);
         }
     }
-
+//--------------------------------------------------------------------------------------------------------------
+//        private void getUserProfile(final String userName){
+//        try{
+//            Call call = (Call) objApi.getApi(context).getUserProfile(userName);
+//            System.out.println("Retrofit : Start ");
+//            call.enqueue(new RetrofitRetrofitCallback<UserProfileModel>(context) {
+//                @Override
+//                protected void onResponseVoidzResponse(Call call, Response response) {
+//                    System.out.println("Retrofit : onResponseVoidzResponse 1 - "+response.toString());
+//
+//                }
+//
+//                @Override
+//                protected void onResponseVoidzObject(Call call, UserProfileModel response) {
+//                    System.out.println("Retrofit : onResponseVoidzObject 2 - "+response.toString());
+//
+//                }
+//
+//                @Override
+//                protected void common() {
+//
+//                }
+//            });
+//        } catch(Exception e){
+//            objExceptione.printStackTrace(e);
+//
+//        }
+//    }
 }

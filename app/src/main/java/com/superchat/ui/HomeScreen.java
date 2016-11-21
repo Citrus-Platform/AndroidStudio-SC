@@ -1347,7 +1347,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 					}else
 						isContactSynching = false;
 					//call Once
-					if(!dataAlreadyLoadedForSG && !DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain()) && !frompush){
+                    System.out.println("==>"+iPrefManager.getUserDomain()+" : "+dataAlreadyLoadedForSG);
+					if(!dataAlreadyLoadedForSG /*&& !DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain()) */&& !frompush){
 						getBulletinMessages();
 					}
 				}
@@ -1357,6 +1358,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				//Switch to chat
 				if(frompush) {
 //					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain())){
+                    System.out.println("Push ==>"+iPrefManager.getUserDomain()+" : "+dataAlreadyLoadedForSG);
 					if(!dataAlreadyLoadedForSG && !DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain())){
 //						bulletinNotLoadedAndFromPush = true;
 						getBulletinMessages();
@@ -2166,8 +2168,12 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //					    startActivity(intent);
                         backUpFound = true;
                         startActivityForResult(intent, 111);
-                    } else
+                    } else {
                         addNewGroupsAndBroadcastsToDB();
+                        if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain()) && !frompush){
+                            getBulletinMessages();
+                        }
+                    }
 
                 } catch (JSONException e) {
 
@@ -2361,6 +2367,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                     if (mViewPager.getCurrentItem() == 2)
                         contactsFragment.showAllContacts();
                     addNewGroupsAndBroadcastsToDB();
+                    if(!dataAlreadyLoadedForSG && !frompush){
+                        getBulletinMessages();
+                    }
                     break;
             }
     }
@@ -3512,6 +3521,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //					if(bulletinNotLoadedAndFromPush)
                     {
 //						bulletinNotLoadedAndFromPush = false;
+                        DBWrapper.getInstance().updateSGBulletinLoaded(iPrefManager.getUserDomain(), "true");
                         if (progressDialog != null)
                             progressDialog.dismiss();
                     }

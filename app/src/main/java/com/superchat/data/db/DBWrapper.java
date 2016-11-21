@@ -2058,7 +2058,7 @@ public boolean isContactModified(String rawId, int version){
 	 * @param sg_name
 	 * @param value
      */
-	public void updateSGActiveStatus(String sg_name, String value){
+	public void updateSGActiveStatus(String sg_name, boolean value){
 		try{
 			ContentValues contentvalues = new ContentValues();
 			contentvalues.put(DatabaseConstants.DOMAIN_ACTIVATE_STATUS, value);

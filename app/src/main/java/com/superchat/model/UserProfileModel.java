@@ -9,9 +9,15 @@ public class UserProfileModel {
 //	public UserBaseAPI iUserBaseApi;
 //
 //	public static class UserBaseAPI {
+
+
+		@SerializedName("clientVersion")
+		public String clientVersion;
+
+
 		@SerializedName("userId")
 		public String iUserId;
-		
+
 		@SerializedName("empId")
 		public String empId;
 		

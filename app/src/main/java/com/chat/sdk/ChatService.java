@@ -97,6 +97,7 @@ import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -244,6 +245,7 @@ public class ChatService extends Service implements interfaceInstances {
 				prefManager.clearSharedPref();
 				ChatDBWrapper.getInstance().clearMessageDB();
 				DBWrapper.getInstance().clearAllDB();
+				stopService(new Intent(this, ChatService.class));
 			}
 			try{
 				Intent intent1 = new Intent(context, ChatService.class);
@@ -1279,6 +1281,8 @@ public class ChatService extends Service implements interfaceInstances {
 					if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeActivateUser.ordinal()){
 						String captionTag  = message.getMediaTagMessage();
 						prefManager.saveUserExistence(captionTag, true);
+						DBWrapper.getInstance().updateSGActiveStatus(prefManager.getUserDomain(), true);
+						EventBus.getDefault().post("[Activated] : "+captionTag);
 						return;
 					}else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeMakeSGSubAdmin.ordinal()){
                         prefManager.setAsDomainSubAdmin(prefManager.getUserDomain(), true);
@@ -1310,32 +1314,33 @@ public class ChatService extends Service implements interfaceInstances {
 						Log.d(TAG, "atMeXmppMessageTypeDeactivateUser: User deactivated.");
 						String captionTag  = message.getMediaTagMessage();
 						prefManager.saveUserExistence(captionTag, false);
-//						prefManager.saveMyExistence(false);
 						if (captionTag.equals(userMe)) {
-							// Close the connection and logout as another user has logged in
-							String mobileNumber = prefManager.getUserPhone();
-							if(mobileNumber!=null && !mobileNumber.equals("")){
-//								prefManager.saveUserLogedOut(false);
-//								prefManager.setMobileVerified(mobileNumber, false);
-//								prefManager.setMobileRegistered(mobileNumber, false);
-								prefManager.clearSharedPref();
-								ChatDBWrapper.getInstance().clearMessageDB();
-								DBWrapper.getInstance().clearAllDB();
-								
-							}
-			                Intent intent = new Intent(context, RegistrationOptions.class);
-			                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-			                intent.putExtra("CONFLICT_LOGOUT", true);
-							if(HomeScreen.sharedIDData != null && !HomeScreen.sharedIDData.isEmpty())
-								HomeScreen.sharedIDData.clear();
-			        		startActivity(intent);
-			        		try{
-								 Intent intent1 = new Intent(context, ChatService.class);
-								 if(intent1!=null)
-								 ((SuperChatApplication)context).stopService(intent1);
-							}catch(Exception ex){
-								
-							}
+
+							//Show tha deactivate screen & switch to home.
+							DBWrapper.getInstance().updateSGActiveStatus(prefManager.getUserDomain(), false);
+							EventBus.getDefault().post("[Deactivated] : "+captionTag);
+
+//							// Close the connection and logout as another user has logged in
+//							String mobileNumber = prefManager.getUserPhone();
+//							if(mobileNumber!=null && !mobileNumber.equals("")){
+//								prefManager.clearSharedPref();
+//								ChatDBWrapper.getInstance().clearMessageDB();
+//								DBWrapper.getInstance().clearAllDB();
+//
+//							}
+//			                Intent intent = new Intent(context, RegistrationOptions.class);
+//			                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+//			                intent.putExtra("CONFLICT_LOGOUT", true);
+//							if(HomeScreen.sharedIDData != null && !HomeScreen.sharedIDData.isEmpty())
+//								HomeScreen.sharedIDData.clear();
+//			        		startActivity(intent);
+//			        		try{
+//								 Intent intent1 = new Intent(context, ChatService.class);
+//								 if(intent1!=null)
+//								 ((SuperChatApplication)context).stopService(intent1);
+//							}catch(Exception ex){
+//
+//							}
 						}
 						return;
 					}else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeUserProfileUpdate.ordinal()){
@@ -3078,6 +3083,7 @@ public class ChatService extends Service implements interfaceInstances {
 	}
 	public void saveGroupOrBroadcastStatus(String from, String packetId, Message.SeenState state) {
 		try{
+			String actual_domain = null;
 		ContentValues contentvalues = new ContentValues();
 		contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
 		if(packetId.contains("("))
@@ -3098,7 +3104,17 @@ public class ChatService extends Service implements interfaceInstances {
 //		contentvalues.put(ChatDBConstants.GROUP_UUID_FIELD, groupUUID);
 		//Save USerID and SG in DB
 		contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
-		contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+
+		//Add SG Name and user ID
+		if(from != null && from.contains("_"))
+			actual_domain = from.substring(from.indexOf('_') + 1);
+
+		if(actual_domain.equals(prefManager.getUserDomain()))
+			contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+		else
+			contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+
+
 		long insertId = chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_STATUS_INFO, contentvalues);
 		if(insertId == -1){
 			chatDBWrapper.updateGroupOrBroadCastSeenStatus(from,"(\"" + packetId + "\")", state,currentTime);
@@ -3137,6 +3153,7 @@ public class ChatService extends Service implements interfaceInstances {
 			String msg, Message message) {
 		String groupSenderDisplayName = message.getDisplayName();
 		Message.MessageDelay delay  = message.getMessageDelay();
+		String actual_domain = null;
 //		if(groupSenderDisplayName!=null && !groupSenderDisplayName.equals("")){
 //			displayName = groupSenderDisplayName;
 //		}
@@ -3327,7 +3344,14 @@ public class ChatService extends Service implements interfaceInstances {
 			contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
 			//Save USerID and SG in DB
 			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
-			contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+			//Add SG Name and user ID
+			if(from != null && from.contains("_"))
+				actual_domain = from.substring(from.indexOf('_') + 1);
+
+			if(actual_domain.equals(prefManager.getUserDomain()))
+				contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+			else
+				contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
 //			System.out.println("ChatService - 3::saveMessage: - "+contentvalues.toString());
 			chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
 			if (chatListener != null)
@@ -3345,6 +3369,7 @@ public class ChatService extends Service implements interfaceInstances {
 		String fileName  = message.getMediaFileName();
 		String locationMsg  = message.getLocationMessage();
         boolean is_sent_from_console = false;
+		String actual_domain = null;
         if(message.isConsoleMessage() != null && message.isConsoleMessage().equalsIgnoreCase("true"))
             is_sent_from_console = true;
 		if(jsonBody != null){
@@ -3596,7 +3621,14 @@ public class ChatService extends Service implements interfaceInstances {
 				contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
 			//Save USerID and SG in DB
 			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
-			contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+			//Add SG Name and user ID
+			if(from != null && from.contains("_"))
+				actual_domain = from.substring(from.indexOf('_') + 1);
+
+			if(actual_domain.equals(prefManager.getUserDomain()))
+				contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+			else
+				contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
 			System.out.println("ChatService - 2::saveMessage: - "+contentvalues.toString());
 			long insertedInfo = chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 			Log.e(TAG, "insertedInfo during message save: " + insertedInfo + " , " + contentvalues.valueSet().toArray());
@@ -5162,16 +5194,17 @@ public class ChatService extends Service implements interfaceInstances {
 			long last_online_time = prefManager.getLastOnline(prefManager.getUserDomain());
 			long curr_time = System.currentTimeMillis() - last_online_time;
 
-			long last_msg_time_in_db = 0;
+			long last_msg_time_diff_from_curr = 0;
+			long last_msg_time = chatDBWrapper.lastMessageInDB(roomName);
 			if(chatDBWrapper != null)
-				last_msg_time_in_db = System.currentTimeMillis() - chatDBWrapper.lastMessageInDB(roomName);
+				last_msg_time_diff_from_curr = System.currentTimeMillis() - last_msg_time;
 
-			if(last_msg_time_in_db > curr_time)
-				currentTime = (int)(last_msg_time_in_db / 1000);
+			if(last_msg_time_diff_from_curr > curr_time)
+				currentTime = (int)(last_msg_time_diff_from_curr / 1000);
 			else
 				currentTime = (int)(curr_time / 1000);
 
-			if(last_online_time == 0)
+			if(last_online_time == 0 || last_msg_time == 0)
 				currentTime = 0;
 
 			System.out.println("sendGroupPresence : time : "+roomName+" - "+currentTime);
@@ -5546,6 +5579,7 @@ public class ChatService extends Service implements interfaceInstances {
 		}
 		try {
 //			ChatDBWrapper chatDBWrapper = chatDBWrapper;
+			String actual_domain = null;
 			ContentValues contentvalues = new ContentValues();
 			String myName = SharedPrefManager.getInstance().getUserName();
             if(SharedPrefManager.getInstance().isBroadCast(from)) {
@@ -5610,7 +5644,14 @@ public class ChatService extends Service implements interfaceInstances {
 			    contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
 			//Save USerID and SG in DB
 			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
-			contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+			//Add SG Name and user ID
+			if(from != null && from.contains("_"))
+				actual_domain = from.substring(from.indexOf('_') + 1);
+
+			if(actual_domain.equals(prefManager.getUserDomain()))
+				contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+			else
+				contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
 			chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
 //			if (chatListener != null)
 //				chatListener.notifyChatRecieve(from,msg);
@@ -5623,6 +5664,7 @@ public class ChatService extends Service implements interfaceInstances {
 			return;
 		}
 		try {
+			String actual_domain = null;
 			ContentValues contentvalues = new ContentValues();
 			String myName = SharedPrefManager.getInstance().getUserName();
 			contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
@@ -5661,7 +5703,14 @@ public class ChatService extends Service implements interfaceInstances {
 			contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
 			//Save USerID and SG in DB
 			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
-			contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+			//Add SG Name and user ID
+			if(from != null && from.contains("_"))
+				actual_domain = from.substring(from.indexOf('_') + 1);
+
+			if(actual_domain.equals(prefManager.getUserDomain()))
+				contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+			else
+				contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
 			chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
 			if (chatListener != null)
 				chatListener.notifyChatRecieve(from,msg);
@@ -5933,31 +5982,31 @@ public class ChatService extends Service implements interfaceInstances {
 	}
 
     //]]]]]]]]]]]]
-//    private void getUserProfile(final String userName){
-//        try{
-//            Call call = objApi.getApi(context).getUserProfile(userName);
-//            System.out.println("Retrofit : Start ");
-//            call.enqueue(new RetrofitRetrofitCallback<UserProfileModel>(context) {
-//                @Override
-//                protected void onResponseVoidzResponse(Call call, Response response) {
-//                    System.out.println("Retrofit : onResponseVoidzResponse 1 - "+response.toString());
-//
-//                }
-//
-//                @Override
-//                protected void onResponseVoidzObject(Call call, UserProfileModel response) {
-//                    System.out.println("Retrofit : onResponseVoidzObject 2 - "+response.toString());
-//
-//                }
-//
-//                @Override
-//                protected void common() {
-//
-//                }
-//            });
-//        } catch(Exception e){
-//            objExceptione.printStackTrace(e);
-//
-//        }
-//    }
+    private void getUserProfile(final String userName){
+        try{
+            Call call = objApi.getApi(context).getUserProfile(userName);
+            System.out.println("Retrofit : Start ");
+            call.enqueue(new RetrofitRetrofitCallback<UserProfileModel>(context) {
+                @Override
+                protected void onResponseVoidzResponse(Call call, Response response) {
+                    System.out.println("Retrofit : onResponseVoidzResponse 1 - "+response.toString());
+
+                }
+
+                @Override
+                protected void onResponseVoidzObject(Call call, UserProfileModel response) {
+                    System.out.println("Retrofit : onResponseVoidzObject 2 - "+response.toString());
+
+                }
+
+                @Override
+                protected void common() {
+
+                }
+            });
+        } catch(Exception e){
+            objExceptione.printStackTrace(e);
+
+        }
+    }
 }
