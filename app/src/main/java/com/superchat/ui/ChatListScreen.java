@@ -1502,6 +1502,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         //Check if group is deactivated
         if ((iChatPref.isGroupChat(userName) && !iChatPref.isGroupMemberActive(userName, iChatPref.getUserName()))) {
             ((RelativeLayout) findViewById(R.id.bottom_write_bar1)).setVisibility(View.GONE);
+            attachMediaView.setVisibility(View.GONE);
         }
         if (!iChatPref.isUserExistence(userName)) {
             callOption.setVisibility(View.GONE);
@@ -1518,8 +1519,11 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         if (isBulletinBroadcast) {
             if (isBulletinBroadcastForAdmin()) {
                 ((RelativeLayout) findViewById(R.id.bottom_write_bar1)).setVisibility(View.VISIBLE);
-            } else
+                attachMediaView.setVisibility(View.VISIBLE);
+            } else {
                 ((RelativeLayout) findViewById(R.id.bottom_write_bar1)).setVisibility(View.GONE);
+                attachMediaView.setVisibility(View.GONE);
+            }
         }
 //       if((isSharedIDMessage && iChatPref.isDomainAdmin()) || isSharedIDDeactivated || isSharedIDAdmin){
 //    	   ((RelativeLayout)findViewById(R.id.bottom_write_bar1)).setVisibility(View.GONE);
@@ -5681,6 +5685,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         }
         if (iChatPref.isGroupChat(userName) && !iChatPref.isGroupMemberActive(userName, iChatPref.getUserName())) {
             ((RelativeLayout) findViewById(R.id.bottom_write_bar1)).setVisibility(View.GONE);
+            attachMediaView.setVisibility(View.GONE);
             chatList.setFastScrollEnabled(true);
             chatAdapter.setEditableChat(false);
             chatAdapter.notifyDataSetChanged();
@@ -5692,6 +5697,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         }
         if (!iChatPref.isUserExistence(userName)) {
             ((RelativeLayout) findViewById(R.id.bottom_write_bar1)).setVisibility(View.GONE);
+            attachMediaView.setVisibility(View.GONE);
             callOption.setBackgroundResource(R.drawable.call_icon);
             callOption.setVisibility(View.GONE);
             showDialog(iChatPref.getUserServerName(userName) + " has been removed.");

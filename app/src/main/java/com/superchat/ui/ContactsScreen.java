@@ -164,13 +164,7 @@ public class ContactsScreen extends CustomFragmentHomeTabs implements Connection
 
             @Override
             public void onClick(View v) {
-                searchBoxView.setText("");
-                searchBoxView.setVisibility(View.GONE);
-                clearSearch.setVisibility(View.GONE);
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-
-                hideToolbar();
+                clearSearchOfFragment();
                 ((HomeScreen) getActivity()).clearFunction();
             }
         });
@@ -191,6 +185,16 @@ public class ContactsScreen extends CustomFragmentHomeTabs implements Connection
 //			SharedPrefManager.getInstance().setContactSynched(true);
 //		}
         return view;
+    }
+
+    public void clearSearchOfFragment(){
+        searchBoxView.setText("");
+        searchBoxView.setVisibility(View.GONE);
+        clearSearch.setVisibility(View.GONE);
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
+        hideToolbar();
     }
 
     public void performSearch(){

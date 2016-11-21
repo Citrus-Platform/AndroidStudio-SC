@@ -133,14 +133,14 @@ public class ContactViewScreen extends FragmentActivity implements OnClickListen
 			textView.setLayoutParams((new   ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)));
 			textView.setGravity(Gravity.CENTER_HORIZONTAL);
 			textView.setText(tmpText);
-			textView.setBackgroundResource(R.color.gray);
+			textView.setBackgroundColor(Color.GRAY);
 			textView.setTextColor(Color.WHITE);
-			textView.setTextSize(19);
+			textView.setTextSize(16);
 			textView.setBottom(2);
 			mainLayout.addView(textView);
 			View view = new View(this);
 			view.setLayoutParams((new   ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, 1)));
-			view.setBackgroundColor(Color.BLACK);
+			//view.setBackgroundColor(Color.BLACK);
 			mainLayout.addView(view);
 	}
 	private void addTextView(LinearLayout mainLayout, ArrayList<String> list){
@@ -152,7 +152,7 @@ public class ContactViewScreen extends FragmentActivity implements OnClickListen
 			textView.setText(tmpText);
 //			textView.setBackgroundResource(R.drawable.round_rect);
 			textView.setTextColor(Color.GRAY);
-			textView.setTextSize(19);
+			textView.setTextSize(15);
 			textView.setBottom(2);
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 			params.setMargins(20,20,20,20);

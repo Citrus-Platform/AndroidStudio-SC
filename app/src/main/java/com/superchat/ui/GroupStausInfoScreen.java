@@ -1121,7 +1121,7 @@ private void getServerGroupProfile(String groupName){
 			textView.setBackgroundColor(Color.WHITE);
 			textView.setTextColor(Color.DKGRAY);
 			textView.setPadding(10, 0, 0, 0);
-			textView.setTextSize(19);
+			textView.setTextSize(14);
 			if(statusText!=null){
 				statusTextView.setText(statusText);
 	//			statusTextView.setBackgroundResource(R.drawable.round_rect);

@@ -55,17 +55,17 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical" 
             android:background="@color/white">
 
             <com.superchat.widgets.RoundedImageView
                 android:id="@+id/id_profile_pic"
-                android:layout_width="58.0dip"
-                android:layout_height="58.0dip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:onClick="onProfileImagePicClick"
                 android:scaleType="fitXY"
-                android:layout_margin="5dip"
-                android:src="@drawable/avatar" />
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/chart_profile_white" />
 
             <com.superchat.widgets.MyriadSemiboldTextView
                 android:id="@+id/id_display_name_field"
@@ -82,7 +82,7 @@
                 android:padding="10dip"
                 android:singleLine="true"
                 android:text=""
-                android:textColor="@color/header_color"
+                android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="normal" />
 
