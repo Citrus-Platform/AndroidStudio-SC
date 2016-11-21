@@ -4539,10 +4539,24 @@ public class ChatListAdapter extends SimpleCursorAdapter {
     private Bitmap createThumbFromByteArray(String baseData) {
         Bitmap bmp = null;
         byte[] data = MyBase64.decode(baseData);
-        if (data != null)
+        try {
+            if (data != null)
+                bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+            return bmp;
+        }catch (OutOfMemoryError e) {
+        e.printStackTrace();
+
+        System.gc();
+
+        try {
             bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-        return bmp;
+        } catch (OutOfMemoryError e2) {
+            e2.printStackTrace();
+            // handle gracefully.
+        }
     }
+    return bmp;
+}
 
     private Bitmap createVideoThumbFromByteArray(String baseData) {
         if (baseData == null)

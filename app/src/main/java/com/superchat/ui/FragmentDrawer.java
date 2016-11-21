@@ -559,12 +559,13 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 adapter.notifyDataSetChanged();
-
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView
                         .getLayoutManager();
                 layoutManager.scrollToPositionWithOffset(SharedPrefManager.getInstance().getSelectedIndexNav(), 0);
-
                 getActivity().invalidateOptionsMenu();
+                if(HomeScreen.userDeactivated){
+                    ((HomeScreen) getActivity()).switchSG(SharedPrefManager.getInstance().getUserDomain(), false, null, false);
+                }
             }
 
             @Override
