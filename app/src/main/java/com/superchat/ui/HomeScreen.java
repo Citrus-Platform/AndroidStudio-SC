@@ -2171,9 +2171,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                         startActivityForResult(intent, 111);
                     } else {
                         addNewGroupsAndBroadcastsToDB();
-                        if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain()) && !frompush){
-                            getBulletinMessages();
-                        }
+//                        if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain()) && !frompush){
+//                            getBulletinMessages();
+//                        }
                     }
 
                 } catch (JSONException e) {
@@ -2368,9 +2368,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                     if (mViewPager.getCurrentItem() == 2)
                         contactsFragment.showAllContacts();
                     addNewGroupsAndBroadcastsToDB();
-                    if(!dataAlreadyLoadedForSG && !frompush){
-                        getBulletinMessages();
-                    }
                     break;
             }
     }

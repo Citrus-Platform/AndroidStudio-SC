@@ -5136,6 +5136,19 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 //                            	 sendVoiceMessage(mediaUrl);
                                     if (captionDialogNew != null && !captionDialogNew.isShowing()) {
                                         taggingType = AUDIO_TAGGING;
+                                        if(playSenderMaxTimeText != null){
+                                            totalAudioLength = getAudioFileDuration(mediaUrl) / 1000;
+                                            if (totalAudioLength > 0) {
+                                                final byte min = (byte) (totalAudioLength / 60);
+                                                final byte sec = (byte) (totalAudioLength % 60);
+                                                globalSeekBarValue = 0;
+                                                globalSeekBarMaxValue = 0;
+                                                if (min < 9)
+                                                    playSenderMaxTimeText.setText("0" + min + ":" + ((sec < 10) ? ("0" + sec) : sec));
+                                                else
+                                                    playSenderMaxTimeText.setText(min + ":" + ((sec < 10) ? ("0" + sec) : sec));
+                                            }
+                                        }
                                         captionDialogNew.show();
                                     } else {
                                         captionDialogNew = createCaptionDialogNew();

@@ -3350,6 +3350,8 @@ public class ChatService extends Service implements interfaceInstances {
 			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
 			//Add SG Name and user ID
 			if(sender_user_name != null) {
+				if(prefManager.getUserServerName(sender_user_name).equals(sender_user_name) || prefManager.getUserServerName(sender_user_name) == null)
+					prefManager.saveUserServerName(sender_user_name, message.getDisplayName());
 				if (sender_user_name != null && sender_user_name.contains("_"))
 					actual_domain = sender_user_name.substring(sender_user_name.indexOf('_') + 1);
 
@@ -3360,6 +3362,7 @@ public class ChatService extends Service implements interfaceInstances {
 			}else
 				contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
 			chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
+			if(message.getDisplayName() != null)
 			if (chatListener != null)
 				chatListener.notifyChatRecieve(from, msg);
 		} catch (Exception e) {
@@ -3635,6 +3638,8 @@ public class ChatService extends Service implements interfaceInstances {
 				contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
 			else
 				contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+			if(prefManager.getUserServerName(from).equals(from) || prefManager.getUserServerName(from) == null)
+				prefManager.saveUserServerName(from, message.getDisplayName());
 			System.out.println("ChatService - 2::saveMessage: - "+contentvalues.toString());
 			long insertedInfo = chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
 			Log.e(TAG, "insertedInfo during message save: " + insertedInfo + " , " + contentvalues.valueSet().toArray());
@@ -5054,7 +5059,7 @@ public class ChatService extends Service implements interfaceInstances {
 				msg.setBody("Sent you a xls");
 			else if(mediaType == XMPPMessageType.atMeXmppMessageTypePPT)
 				msg.setBody("Sent you a ppt");
-			else if(mediaType == XMPPMessageType.atMeXmppMessageTypeAudio){
+			if(mediaType == XMPPMessageType.atMeXmppMessageTypeAudio){
 				try{
 					if(fileName != null)//Here caption is used for actual local audio file path to get duration
 						audio_length = MediaPlayer.create(context, Uri.fromFile(new File(fileName))).getDuration()/1000;
