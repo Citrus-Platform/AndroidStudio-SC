@@ -1168,6 +1168,10 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                     Toast.makeText(SupergroupListingScreenNew.this, getString(R.string.display_name_hint), Toast.LENGTH_SHORT).show();
                     return false;
                 }
+                if(!SuperChatApplication.isNetworkConnected()){
+                    Toast.makeText(SupergroupListingScreenNew.this, getString(R.string.check_net_connection), Toast.LENGTH_LONG).show();
+                    return false;
+                }
                 bteldialog.cancel();
                 registerUserOnServer(superGroupName, sg_display_name, v);
                 return false;

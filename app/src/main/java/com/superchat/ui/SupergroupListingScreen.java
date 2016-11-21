@@ -1376,19 +1376,33 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 //										iPrefManager.saveUserLogedOut(false);
 											iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
 											current_user_id = regObj.getUserId();
-											DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
+											try {
+												System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
+												DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
+											}catch(Exception ex){
+												ex.printStackTrace();
+											}
 										}else{
-											DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
+											try {
+												System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
+												DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
+											}catch(Exception ex){
+												ex.printStackTrace();
+											}
 											if(welcomeDialog != null)
 												welcomeDialog.dismiss();
-											Toast.makeText(SupergroupListingScreen.this, getString(R.string.account_deactivated), Toast.LENGTH_SHORT).show();
+//											Toast.makeText(SupergroupListingScreen.this, getString(R.string.account_deactivated), Toast.LENGTH_SHORT).show();
 										}
 									}else{
-										regObj = regObjRes.getActivateDomainDataSet().get(i);
-//										System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
-										iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
-										iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
-										DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
+										try {
+											regObj = regObjRes.getActivateDomainDataSet().get(i);
+											System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
+											iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
+											iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
+											 DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
+										}catch(Exception ex){
+											ex.printStackTrace();
+										}
 									}
 								}
 								if(backFromProfile){
@@ -1399,7 +1413,14 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 								}else {
 									if(current_user_id == 0)
 										current_user_id = registrationForm.getiUserId();
-									verifyUserSG(current_user_id);
+									//Check f selected SG is activated.
+									if(DBWrapper.getInstance().isSGActive(registrationForm.getDomainName()))
+										verifyUserSG(current_user_id);
+									else{
+										//Show Group deactivated dialog.
+										return "deactivated";
+//										showDialog(getResources().getString(R.string.deactivated_alert));
+									}
 								}
 							}
 						}
@@ -1413,6 +1434,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 			} catch (UnsupportedEncodingException e1) {
 				Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution UnsupportedEncodingException:" + e1.toString());
 			} catch (Exception e) {
+				e.printStackTrace();
 				Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution Exception:" + e.toString());
 			}
 			return null;
@@ -1453,8 +1475,10 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 						showDialog(errorModel.message);
 				} else
 					showDialog("Please try again later.");
+			}else if (str != null && str.contains("deactivated")){
+				showDialog(getResources().getString(R.string.account_deactivated));
 			}
-			super.onPostExecute(str);
+				super.onPostExecute(str);
 		}
 	}
 
@@ -1540,6 +1564,10 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 					Toast.makeText(SupergroupListingScreen.this, getString(R.string.display_name_hint), Toast.LENGTH_SHORT).show();
 					return false;
 				}
+				if(!SuperChatApplication.isNetworkConnected()){
+					Toast.makeText(SupergroupListingScreen.this, getString(R.string.check_net_connection), Toast.LENGTH_LONG).show();
+					return false;
+				}
 				bteldialog.cancel();
 				registerUserOnServer(superGroupName, sg_display_name, v);
 				return false;
@@ -1608,7 +1636,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 			public void onSuccess(int arg0, String arg1) {
 //				if(welcomeDialog != null)
 //					welcomeDialog.cancel();
-				Log.i(TAG, "verifyUserSG :: reponse : " + arg1);
+				Log.i(TAG, "verifyUserSG :: response : " + arg1);
 				Gson gson = new GsonBuilder().create();
 				final RegMatchCodeModel objUserModel = gson.fromJson(arg1, RegMatchCodeModel.class);
 				if (objUserModel.iStatus != null
