@@ -1633,7 +1633,7 @@ public class ChatService extends Service implements interfaceInstances {
 						return;
 					}else if(xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSharedIDDeleted.ordinal()){
 
-						Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeUserRegistered: "+ xMPPMessageType);
+						Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeSharedIDDeleted: "+ xMPPMessageType);
 						String captionTag  = message.getMediaTagMessage();
 						String userName = null;
 						String displayname = null;

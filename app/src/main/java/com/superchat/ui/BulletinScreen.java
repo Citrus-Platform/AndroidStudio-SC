@@ -550,7 +550,7 @@ public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountL
 
     }
 
-    private void onNotifiUI() {
+    public void onNotifiUI() {
         new Timer().schedule(new TimerTask() {
 
             @Override

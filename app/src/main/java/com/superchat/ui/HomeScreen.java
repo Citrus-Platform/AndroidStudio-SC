@@ -1087,7 +1087,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                         }
                                     }
                                     DBWrapper.getInstance().updateSGContactsLoaded(iPrefManager.getUserDomain(), "true");
-                                    iPrefManager.setContactSynched(iPrefManager.getUserDomain(), true);
+//                                    iPrefManager.setContactSynched(iPrefManager.getUserDomain(), true);
                                 }
                                 directoryGroupSet = loginObj.directoryGroupSet;
                                 if (directoryGroupSet != null) {
@@ -3527,6 +3527,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                         } else {
                             pref.saveBulletinNextURL(iPrefManager.getUserDomain(), "0");
                         }
+                        if(bulletinFragment != null)
+                         bulletinFragment.onNotifiUI();
                         if (bulletinNotLoadedAndFromPush) {
                             frompush = false;
                             Intent intent = new Intent(SuperChatApplication.context, ChatListScreen.class);
@@ -3835,7 +3837,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         if (!sg_name.equalsIgnoreCase(iPrefManager.getUserDomain()) || sg_reg) {
             iPrefManager.setSGListData(null);
 
-            if (isContactSynching || isSwitchingSG) {
+            if ((!dataAlreadyLoadedForSG && isContactSynching) || isSwitchingSG) {
                 drawerFragment.fragmentClose();
                 Toast.makeText(this, "Loading some data, please wait.", Toast.LENGTH_LONG).show();
                 return;
