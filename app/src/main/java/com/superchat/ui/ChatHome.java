@@ -84,6 +84,7 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
             if (service != null) {
                 connection = service.getconnection();
                 service.setChatListener(ChatHome.this);
+                service.setChatCountListener(ChatHome.this);
                 service.setProfileUpdateListener(ChatHome.this);
 //				service.setTypingListener(ChatHome.this);
                 service.clearAllNotifications();
