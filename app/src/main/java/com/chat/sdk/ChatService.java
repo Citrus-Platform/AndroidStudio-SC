@@ -3582,17 +3582,33 @@ public class ChatService extends Service implements interfaceInstances {
 					contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
 				}
 			}else {
-				int date = calender.get(Calendar.DATE);
-				int oldDate = date;
-				long milis = chatDBWrapper.lastMessageInDB(oppName);
-				if(milis!=-1){
-					calender.setTimeInMillis(milis);
-					oldDate = calender.get(Calendar.DATE);
+//				int date = calender.get(Calendar.DATE);
+//				int oldDate = date;
+//				long milis = chatDBWrapper.lastMessageInDB(oppName);
+//				if(milis!=-1){
+//					calender.setTimeInMillis(milis);
+//					oldDate = calender.get(Calendar.DATE);
+//				}
+//				if (((oldDate != date) || chatDBWrapper.isFirstChat(oppName))
+//						&& message.getStatusMessageType().ordinal() != Message.StatusMessageType.broadcasttoall.ordinal()
+//						&& !prefManager.isSharedIDContact(to)) {
+////				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
+//				} else {
+//					contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
+//				}
+
+				int new_msg_date = calender.get(Calendar.DATE);
+				int old_msg_date = 0;
+				long millis = chatDBWrapper.lastMessageInDB(oppName);
+
+				if(millis != -1){
+					calender.setTimeInMillis(millis);
+					old_msg_date = calender.get(Calendar.DATE);
 				}
-				if (((oldDate != date) || chatDBWrapper.isFirstChat(oppName))
+				if ((old_msg_date == 0 || new_msg_date > old_msg_date)
 						&& message.getStatusMessageType().ordinal() != Message.StatusMessageType.broadcasttoall.ordinal()
 						&& !prefManager.isSharedIDContact(to)) {
-//				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
+					contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
 				} else {
 					contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
 				}
