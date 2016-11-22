@@ -378,6 +378,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             Log.d("Service", "Connected");
             xmppConnection = messageService.getconnection();
             messageService.setChatListener(ChatListScreen.this);
+            messageService.setChatCountListener(ChatListScreen.this);
             messageService.setTypingListener(ChatListScreen.this);
             messageService.setProfileUpdateListener(ChatListScreen.this);
             sendSeenStatus();
