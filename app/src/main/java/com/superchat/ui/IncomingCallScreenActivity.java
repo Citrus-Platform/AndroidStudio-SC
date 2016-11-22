@@ -68,6 +68,7 @@ public class IncomingCallScreenActivity extends Activity {
 			        if (call != null) {
 						call.addCallListener(new SinchCallListener());
 						TextView remoteUser = (TextView) findViewById(R.id.remoteUser);
+						TextView sg_name = (TextView) findViewById(R.id.sg_name);
 						Map<String, String> header = call.getHeaders();
 						if(header != null) {
 							String myName = header.get("displayName");
@@ -101,6 +102,10 @@ public class IncomingCallScreenActivity extends Activity {
 							remoteUser.setText(myName);
 							setProfilePic(call.getRemoteUserId(), null);
 						}
+						if(SharedPrefManager.getInstance().getCurrentSGDisplayName() != null && SharedPrefManager.getInstance().getCurrentSGDisplayName().trim().length() > 0)
+							sg_name.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
+						else
+							sg_name.setText(SharedPrefManager.getInstance().getUserDomain());
 			            audioController = mSinchServiceInterface.getAudioController();
 			        } else {
 			            Log.e(TAG, "Started with invalid callId, aborting");

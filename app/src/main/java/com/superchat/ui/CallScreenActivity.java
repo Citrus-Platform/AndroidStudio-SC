@@ -53,6 +53,7 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 	private TextView mCallDuration;
 	private TextView mCallState;
 	private TextView mCallerName;
+	private TextView sgName;
 	SharedPrefManager iChatPref;
 	ChatDBWrapper chatDBWrapper;
 	ImageView muteButton;
@@ -95,6 +96,10 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 						 mCallState.setText(call.getState().toString());
 						 setProfilePic(call.getRemoteUserId());
 					 }
+					 if(SharedPrefManager.getInstance().getCurrentSGDisplayName() != null && SharedPrefManager.getInstance().getCurrentSGDisplayName().trim().length() > 0)
+						 sgName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
+					 else
+						 sgName.setText(SharedPrefManager.getInstance().getUserDomain());
 					 audioController = mSinchServiceInterface.getAudioController();
 				 } else {
 					 Log.e(TAG, "Started with invalid callId, aborting.");
@@ -160,6 +165,7 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 		mAudioPlayer = new AudioPlayer(this);
 		mCallDuration = (TextView) findViewById(R.id.callDuration);
 		mCallerName = (TextView) findViewById(R.id.remoteUser);
+		sgName = (TextView) findViewById(R.id.sg_name);
 		mCallState = (TextView) findViewById(R.id.callState);
 		Button endCallButton = (Button) findViewById(R.id.hangupButton);
 		isMute = false;
