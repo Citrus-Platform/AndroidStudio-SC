@@ -1710,7 +1710,8 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                         //This is new member, show him different view
                         listView = (ListView) findViewById(R.id.id_contacts_list);
                         if (size > 0) {
-//                            setContentView(R.layout.sg_listing_for_invites_from_lhs);
+                            if(invitedSG != null && invitedSG.size() > 0)
+                                setContentView(R.layout.sg_listing_for_invites_from_lhs);
                             expandableListView = (ExpandableListView) findViewById(R.id.expandableListView);
                             expandableListDetail = new HashMap<String, ArrayList<InvitedDomainNameSet>>();
                             int list_size = invitedDomainNameSet != null ? invitedDomainNameSet.size() : 0;

@@ -322,47 +322,11 @@ public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountL
 
     public void onActivityCreated(Bundle bundle) {
         onForeground = true;
-//		if(service!=null)
-//			service.setTypingListener(this);
-//		 chatClient = new XmppChatClient();
-//		 SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
-//			chatClient.setCustomChatNotification(R.layout.message_notifier, R.id.chat_person_name, R.id.chat_message, R.id.chat_notification_bubble_text, R.drawable.chatgreen);
-//			XmppChatClient.initChatService(EsiaChatApplication.context, iPrefManager.getUserName(), iPrefManager.getUserPassword(), Constants.CHAT_SERVER_URL);
-
-
-//		ChatDBWrapper wraper = ChatDBWrapper.getInstance(EsiaChatApplication.context);
-//		 cursor = wraper.getRecentChatList(null);
-//		 recentList = getListView();
-//		 if(cursor!=null && cursor.getCount() > 0){
-//			 	noneMessageView.setVisibility(TextView.GONE);
-//				String as[] = { DatabaseConstants.FROM_USER_FIELD};
-//				int ai[] = new int[1];
-//				ai[0] = R.id.chat_person_name;
-//				adapter = new ChatHomeAdapter(fragmentactivity,R.layout.chat_history_item, cursor, as, ai, 0,ChatHome.this);
-//				getListView().setAdapter(adapter);
-//
-//	    		if(ChatService.xmppConectionStatus){
-//					xmppStatusView.setImageResource(R.drawable.blue_dot);
-//				}else{
-//					xmppStatusView.setImageResource(R.drawable.red_dot);
-//					}	
-//		 }else
-//			noneMessageView.setVisibility(View.VISIBLE);
-
-//		new Timer().schedule(new TimerTask() {
-//			
-//			@Override
-//			public void run() {
-//				notifyActivityCreatedHandler.sendEmptyMessage(0);
-//			}
-//		}, 10);
-//		notifyActivityCreatedHandler.sendEmptyMessage(0);
         recentList = getListView();
-        if (Build.VERSION.SDK_INT >= 11)
-            new YourAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        else
-            new YourAsyncTask().execute();
-//			chatClient.startClient(this);
+//        if (Build.VERSION.SDK_INT >= 11)
+//            new YourAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//        else
+//            new YourAsyncTask().execute();
         super.onActivityCreated(bundle);
     }
 
@@ -376,6 +340,7 @@ public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountL
 
         protected String doInBackground(String... args) {
             ChatDBWrapper wraper = ChatDBWrapper.getInstance(SuperChatApplication.context);
+
             if (SharedPrefManager.getInstance().isDomainAdminORSubAdmin()) {
                 cursor = wraper.getBulletinList(BULLETIN_ADMIN);
                 if (cursor != null && cursor.getCount() == 0 && !HomeScreen.isBulletinMsgFound) {
@@ -545,6 +510,10 @@ public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountL
 
     public void onResume() {
         // ChatClient.getInstance().clearAllNotifications();
+        if (Build.VERSION.SDK_INT >= 11)
+            new YourAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        else
+            new YourAsyncTask().execute();
         getActivity().bindService(new Intent(getActivity(), ChatService.class), mConnection, Context.BIND_AUTO_CREATE);
         if (!onForeground) {
             onForeground = true;

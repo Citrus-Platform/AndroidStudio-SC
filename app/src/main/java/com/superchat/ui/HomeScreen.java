@@ -1347,20 +1347,20 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						}
 					}else
 						isContactSynching = false;
-					//call Once
-                    System.out.println("==>"+iPrefManager.getUserDomain()+" : "+dataAlreadyLoadedForSG);
-					if(!dataAlreadyLoadedForSG /*&& !DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain()) */&& !frompush){
-						getBulletinMessages();
-					}
 				}
-			}
+                //call Once
+                System.out.println("==>"+iPrefManager.getUserDomain()+" : "+dataAlreadyLoadedForSG);
+                if(!iPrefManager.isBulletinLoaded(iPrefManager.getUserDomain()) && !frompush){
+                    getBulletinMessages();
+                }
+            }
 			if(isSwitchSG){
 				isSwitchSG = false;
 				//Switch to chat
 				if(frompush) {
 //					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain())){
                     System.out.println("Push ==>"+iPrefManager.getUserDomain()+" : "+dataAlreadyLoadedForSG);
-					if(!dataAlreadyLoadedForSG && !DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain())){
+					if(!iPrefManager.isBulletinLoaded(iPrefManager.getUserDomain())){
 //						bulletinNotLoadedAndFromPush = true;
 						getBulletinMessages();
 					}
@@ -1382,7 +1382,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						frompush = false;
 						firstTimeAdmin = false;
 					}
-				}
+				}else if(!iPrefManager.isBulletinLoaded(iPrefManager.getUserDomain())){
+                    getBulletinMessages();
+                }
 				if(!dataAlreadyLoadedForSG && selectedTab >= 0) {
 					if(firstTimeAdmin || new_user){
 						mViewPager.setCurrentItem(1);
@@ -2170,8 +2172,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                         backUpFound = true;
                         startActivityForResult(intent, 111);
                     } else {
-                        addNewGroupsAndBroadcastsToDB();
-//                        if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain()) && !frompush){
+//                        if(!iPrefManager.isBulletinLoaded(iPrefManager.getUserDomain()) && !frompush){
 //                            getBulletinMessages();
 //                        }
                     }
@@ -2367,7 +2368,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                     isContactSynching = false;
                     if (mViewPager.getCurrentItem() == 2)
                         contactsFragment.showAllContacts();
-                    addNewGroupsAndBroadcastsToDB();
+//                    if(!iPrefManager.isBulletinLoaded(iPrefManager.getUserDomain()) && !frompush){
+//                        getBulletinMessages();
+//                    }
+//                    addNewGroupsAndBroadcastsToDB();
                     break;
             }
     }
@@ -3360,9 +3364,12 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     }
 
     //-----------------------------------------------
+    public static final byte BULLETIN_ADMIN = 1;
+    public static final byte BULLETIN_MEMBER = 2;
     private void getBulletinMessages() {
         try {
             retrofit2.Call call = null;
+            iPrefManager.setBulletinLoaded(iPrefManager.getUserDomain(), true);
 			if(!dataAlreadyLoadedForSG) {
                 runOnUiThread(new Runnable() {
                     public void run() {
@@ -3388,104 +3395,130 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                         int type = 0;
                         String caption = null;
                         String extension = null;
+//                        iPrefManager.setBulletinLoaded(iPrefManager.getUserDomain(), true);
+//                        DBWrapper.getInstance().updateSGBulletinLoaded(iPrefManager.getUserDomain(), "true");
                         next_url = response.getNextUrl();
                         if (!messages.isEmpty()) {
-                            LinkedList<BulletinGetMessageDataModel.MessageData> list = new LinkedList<BulletinGetMessageDataModel.MessageData>(messages);
-                            Iterator<BulletinGetMessageDataModel.MessageData> itr = list.descendingIterator();
-                            while (itr.hasNext()) {
-                                BulletinGetMessageDataModel.MessageData message = itr.next();
-                                json_body = message.getJsonBody();
-                                ContentValues contentvalues = new ContentValues();
-                                contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message.getSender());
-                                contentvalues.put(ChatDBConstants.TO_USER_FIELD, pref.getUserDomain() + "-all");
-                                contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, message.getSenderName() + "#786#" + message.getSender());
-                                contentvalues.put(ChatDBConstants.MESSAGE_TYPE, 3);//3 - For all Bulletin Messages
-                                contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, pref.getUserDomain() + "-all");
-                                contentvalues.put(ChatDBConstants.SEEN_FIELD, "1");
-                                contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, (message.getText() != null) ? message.getText() : "");
-                                contentvalues.put(ChatDBConstants.MESSAGE_ID, message.getPacketId());
-                                contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID.randomUUID().toString());
+                            try {
+                                LinkedList<BulletinGetMessageDataModel.MessageData> list = new LinkedList<BulletinGetMessageDataModel.MessageData>(messages);
+                                Iterator<BulletinGetMessageDataModel.MessageData> itr = list.descendingIterator();
+                                while (itr.hasNext()) {
+                                    BulletinGetMessageDataModel.MessageData message = itr.next();
+                                    json_body = message.getJsonBody();
+                                    ContentValues contentvalues = new ContentValues();
+                                    contentvalues.put(ChatDBConstants.FROM_USER_FIELD, message.getSender());
+                                    contentvalues.put(ChatDBConstants.TO_USER_FIELD, pref.getUserDomain() + "-all");
+                                    contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, message.getSenderName() + "#786#" + message.getSender());
+                                    contentvalues.put(ChatDBConstants.MESSAGE_TYPE, 3);//3 - For all Bulletin Messages
+                                    contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, pref.getUserDomain() + "-all");
+                                    contentvalues.put(ChatDBConstants.SEEN_FIELD, "1");
+                                    contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, (message.getText() != null) ? message.getText() : "");
+                                    contentvalues.put(ChatDBConstants.MESSAGE_ID, message.getPacketId());
+                                    contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID.randomUUID().toString());
 //								System.out.println("[Creaton Date ] "+message.getCreatedDate());
 
 
-                                //Here message comes in reverse order to check care fully
-                                Calendar calender = Calendar.getInstance();
-                                calender.setTimeInMillis(convertTomilliseconds(message.getCreatedDate()));
+                                    //Here message comes in reverse order to check care fully
+                                    Calendar calender = Calendar.getInstance();
+                                    calender.setTimeInMillis(convertTomilliseconds(message.getCreatedDate()));
 
-                                int new_msg_date = calender.get(Calendar.DATE);
-                                ;
-                                int old_msg_date = 0;
+                                    int new_msg_date = calender.get(Calendar.DATE);
+                                    ;
+                                    int old_msg_date = 0;
 
-                                String oppName = message.getSender();
-                                long millis = ChatDBWrapper.getInstance().latestMessageInDBForBulletin();
-                                if (millis > 0) {
-                                    calender.setTimeInMillis(millis);
-                                    old_msg_date = calender.get(Calendar.DATE);
-                                }
+                                    String oppName = message.getSender();
+                                    long millis = ChatDBWrapper.getInstance().latestMessageInDBForBulletin();
+                                    if (millis > 0) {
+                                        calender.setTimeInMillis(millis);
+                                        old_msg_date = calender.get(Calendar.DATE);
+                                    }
 
 //								System.out.println("new_msg_date = "+new_msg_date+", old_msg_date = "+old_msg_date);
-                                if (old_msg_date == 0 || new_msg_date > old_msg_date) {
-                                    contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "1");
-                                } else {
-                                    contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "0");
-                                }
-
-                                contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, convertTomilliseconds(message.getCreatedDate()));
-                                if (message.getType() != null) {
-                                    try {
-                                        type = Integer.parseInt(message.getType());
-                                    } catch (NumberFormatException nex) {
-                                        nex.printStackTrace();
-                                        type = 0;
+                                    if (old_msg_date == 0 || new_msg_date > old_msg_date) {
+                                        contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "1");
+                                    } else {
+                                        contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "0");
                                     }
-                                }
-                                contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getType());
-                                contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD, new Integer(1));
-                                media_url = message.getFileId();
-                                if (media_url != null && media_url.length() > 0)
-                                    media_url = Constants.LIVE_DOMAIN + "/rtMediaServer/get/" + media_url;
-                                if (json_body != null && json_body.trim().length() > 0) {
+
+                                    contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, convertTomilliseconds(message.getCreatedDate()));
+                                    if (message.getType() != null) {
+                                        try {
+                                            type = Integer.parseInt(message.getType());
+                                        } catch (NumberFormatException nex) {
+                                            nex.printStackTrace();
+                                            type = 0;
+                                        }
+                                    }
+                                    contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getType());
+                                    contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD, new Integer(1));
+                                    media_url = message.getFileId();
+                                    if (media_url != null && media_url.length() > 0)
+                                        media_url = Constants.LIVE_DOMAIN + "/rtMediaServer/get/" + media_url;
+                                    if (json_body != null && json_body.trim().length() > 0) {
 //									System.out.println("json_body = " + json_body);
-                                    JSONObject jsonobj = null;
-                                    try {
-                                        jsonobj = new JSONObject(json_body);
-                                        if (jsonobj.has("caption") && jsonobj.getString("caption").toString().trim().length() > 0)
-                                            caption = jsonobj.getString("caption").toString();
+                                        JSONObject jsonobj = null;
+                                        try {
+                                            jsonobj = new JSONObject(json_body);
+                                            if (jsonobj.has("caption") && jsonobj.getString("caption").toString().trim().length() > 0)
+                                                caption = jsonobj.getString("caption").toString();
 //                                        if((type == XMPPMessageType.atMeXmppMessageTypeImage.ordinal()
 //                                                || type == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()
 //                                                || type == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()) && caption != null)
-                                        contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, caption);
+                                            contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, caption);
 
-                                        if (jsonobj.has("fileName") && jsonobj.getString("fileName").toString().trim().length() > 0)
-                                            contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, jsonobj.getString("fileName").toString());
-                                        if (jsonobj.has("ext") && jsonobj.getString("ext").toString().trim().length() > 0) {
-                                            extension = jsonobj.getString("ext").toString().trim();
-                                            if (extension != null && extension.equals("caf"))
-                                                media_url = media_url + ".amr";
-                                            else
-                                                media_url = media_url + "." + extension;
+                                            if (jsonobj.has("fileName") && jsonobj.getString("fileName").toString().trim().length() > 0)
+                                                contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, jsonobj.getString("fileName").toString());
+                                            if (jsonobj.has("ext") && jsonobj.getString("ext").toString().trim().length() > 0) {
+                                                extension = jsonobj.getString("ext").toString().trim();
+                                                if (extension != null && extension.equals("caf"))
+                                                    media_url = media_url + ".amr";
+                                                else
+                                                    media_url = media_url + "." + extension;
+                                            }
+
+                                            if (jsonobj.has("location") && jsonobj.getString("location").toString().trim().length() > 0)
+                                                contentvalues.put(ChatDBConstants.MESSAGE_TYPE_LOCATION, jsonobj.getString("location").toString());
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
                                         }
-
-                                        if (jsonobj.has("location") && jsonobj.getString("location").toString().trim().length() > 0)
-                                            contentvalues.put(ChatDBConstants.MESSAGE_TYPE_LOCATION, jsonobj.getString("location").toString());
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
                                     }
+                                    contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, media_url);
+                                    //Save USerID and SG in DB
+                                    contentvalues.put(ChatDBConstants.USER_ID, SharedPrefManager.getInstance().getUserId());
+                                    contentvalues.put(ChatDBConstants.USER_SG, SharedPrefManager.getInstance().getUserDomain());
+                                    ChatDBWrapper.getInstance().insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
+                                    media_url = caption = null;
+                                    json_body = null;
+                                    type = 0;
                                 }
-                                contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, media_url);
-                                //Save USerID and SG in DB
-                                contentvalues.put(ChatDBConstants.USER_ID, SharedPrefManager.getInstance().getUserId());
-                                contentvalues.put(ChatDBConstants.USER_SG, SharedPrefManager.getInstance().getUserDomain());
-                                ChatDBWrapper.getInstance().insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
-                                media_url = caption = null;
-                                json_body = null;
-                                type = 0;
+                                System.out.println("[HomeScreen : Bulletin  : Done for - " + iPrefManager.getUserDomain());
+//                                iPrefManager.setBulletinLoaded(iPrefManager.getUserDomain(), true);
+//                                DBWrapper.getInstance().updateSGBulletinLoaded(iPrefManager.getUserDomain(), "true");
+                                isBulletinMsgFound = true;
+                            }catch(Exception ex){
+                                ex.printStackTrace();
                             }
-                            System.out.println("[HomeScreen : Bulletin  : Done for - " + iPrefManager.getUserDomain());
-                            DBWrapper.getInstance().updateSGBulletinLoaded(iPrefManager.getUserDomain(), "true");
-                            isBulletinMsgFound = true;
                         } else {
                             isBulletinMsgFound = false;
+                            ChatDBWrapper wraper = ChatDBWrapper.getInstance(SuperChatApplication.context);
+                            Cursor cursor = null;
+                            String bulletinDomainName = iPrefManager.getUserDomain() + "-all";
+
+                            if (SharedPrefManager.getInstance().isDomainAdminORSubAdmin()) {
+                                cursor = wraper.getBulletinList(BULLETIN_ADMIN);
+                                if (cursor != null && cursor.getCount() == 0 && !isBulletinMsgFound) {
+                                    saveMessage(bulletinDomainName, bulletinDomainName, getString(R.string.bulleting_welcome1) + iPrefManager.getUserDomain() + "'s" + getString(R.string.bulleting_welcome2));
+                                    cursor = wraper.getBulletinList(BULLETIN_ADMIN);
+                                }
+                            } else {
+                                cursor = wraper.getBulletinList(BULLETIN_MEMBER);
+                                if (cursor != null && cursor.getCount() == 0)
+                                    cursor = wraper.getBulletinList(BULLETIN_ADMIN);
+                                if (cursor != null && cursor.getCount() == 0 && !isBulletinMsgFound) {
+                                    saveMessage(bulletinDomainName, bulletinDomainName, getString(R.string.bulleting_welcome1) + iPrefManager.getUserDomain() + "'s" + getString(R.string.bulleting_welcome2));
+                                    cursor = wraper.getBulletinList(BULLETIN_MEMBER);
+                                }
+                            }
                         }
                         if (next_url != null) {
                             //Save this url is shared preferences for next hit
