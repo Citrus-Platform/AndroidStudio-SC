@@ -5786,10 +5786,14 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 if (captionDialog != null && captionDialog.isShowing()) {
                     captionDialog.cancel();
                     taggingType = NO_TAGGING;
+                    if(captionField != null)
+                        captionField.setText("");
                 }
                 if (captionDialogNew != null && captionDialogNew.isShowing()) {
                     captionDialogNew.cancel();
                     taggingType = NO_TAGGING;
+                    if(captionField != null)
+                        captionField.setText("");
                 }
                 if (isPlaying)
                     myVoicePlayer.reset();

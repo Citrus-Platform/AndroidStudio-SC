@@ -126,6 +126,14 @@ public class SinchService extends Service implements interfaceInstances{
         }
         public Call callUserWithHeader(String userId, Map<String, String> header) {
             String number = DBWrapper.getInstance().getContactNumber(userId);
+            if(number == null){
+                String cc = SharedPrefManager.getInstance().getUserCountryCode();
+                if(cc != null && userId.startsWith(cc)) {
+                    number = userId.substring(0, userId.indexOf("_"));
+                    number = cc + "-" +number.substring(number.indexOf(cc) + 2);
+                }
+                return mSinchClient.getCallClient().callUser(number, header);
+            }
             return mSinchClient.getCallClient().callUser(number, header);
         }
 

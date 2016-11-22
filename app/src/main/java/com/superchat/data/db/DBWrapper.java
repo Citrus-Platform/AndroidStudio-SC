@@ -286,11 +286,12 @@ public class DBWrapper {
 	public String getContactNumber(String userName) {
 		String contactNumber = null;
 		Cursor cursor = null;
+		String sg = SharedPrefManager.getInstance().getUserDomain();
 		try{
 			 cursor = DBWrapper.getInstance().query(
 					DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,
 					new String[] { DatabaseConstants.CONTACT_NUMBERS_FIELD },
-					DatabaseConstants.USER_NAME_FIELD + "='" + userName + "'",
+					DatabaseConstants.USER_NAME_FIELD + "='" + userName + "' AND "+DatabaseConstants.USER_SG + "='" + sg + "'",
 					null, null);
 			if (cursor != null) {
 				Log.d(TAG, "Total contact numbers with respect of " + userName
@@ -301,7 +302,7 @@ public class DBWrapper {
 							.getColumnIndex(DatabaseConstants.CONTACT_NUMBERS_FIELD));
 			}
 		}catch(Exception e){
-			
+			e.printStackTrace();
 		}
 		finally{
 			if (cursor != null)
