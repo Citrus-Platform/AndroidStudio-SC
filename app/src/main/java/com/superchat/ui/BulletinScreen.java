@@ -334,7 +334,8 @@ public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountL
 
         protected void onPreExecute() {
 //			dialog = ProgressDialog.show(getActivity(), "","Loading. Please wait...", true);
-            progressBarView.setVisibility(ProgressBar.VISIBLE);
+            if(progressBarView != null)
+             progressBarView.setVisibility(ProgressBar.VISIBLE);
             super.onPreExecute();
         }
 
@@ -387,7 +388,8 @@ public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountL
             } else {
                 xmppStatusView.setImageResource(R.drawable.red_dot);
             }
-            progressBarView.setVisibility(ProgressBar.GONE);
+            if(progressBarView != null)
+                progressBarView.setVisibility(ProgressBar.GONE);
             super.onPostExecute(result);
         }
     }

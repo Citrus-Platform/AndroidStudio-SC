@@ -3508,7 +3508,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                 cursor = wraper.getBulletinList(BULLETIN_ADMIN);
                                 if (cursor != null && cursor.getCount() == 0 && !isBulletinMsgFound) {
                                     saveMessage(bulletinDomainName, bulletinDomainName, getString(R.string.bulleting_welcome1) + iPrefManager.getUserDomain() + "'s" + getString(R.string.bulleting_welcome2));
-                                    cursor = wraper.getBulletinList(BULLETIN_ADMIN);
                                 }
                             } else {
                                 cursor = wraper.getBulletinList(BULLETIN_MEMBER);
@@ -3516,7 +3515,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                     cursor = wraper.getBulletinList(BULLETIN_ADMIN);
                                 if (cursor != null && cursor.getCount() == 0 && !isBulletinMsgFound) {
                                     saveMessage(bulletinDomainName, bulletinDomainName, getString(R.string.bulleting_welcome1) + iPrefManager.getUserDomain() + "'s" + getString(R.string.bulleting_welcome2));
-                                    cursor = wraper.getBulletinList(BULLETIN_MEMBER);
                                 }
                             }
                         }
@@ -3527,8 +3525,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                         } else {
                             pref.saveBulletinNextURL(iPrefManager.getUserDomain(), "0");
                         }
-                        if(bulletinFragment != null)
-                         bulletinFragment.onNotifiUI();
+                        if(bulletinFragment != null) {
+                            bulletinFragment.onResume();
+                        }else
+                            bulletinFragment = new BulletinScreen();
                         if (bulletinNotLoadedAndFromPush) {
                             frompush = false;
                             Intent intent = new Intent(SuperChatApplication.context, ChatListScreen.class);
