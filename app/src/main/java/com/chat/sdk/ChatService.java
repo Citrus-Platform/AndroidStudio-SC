@@ -2167,7 +2167,7 @@ public class ChatService extends Service implements interfaceInstances {
 				DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
 
 		}catch(Exception ex){
-
+			ex.printStackTrace();
 		}
 	}
 
@@ -4486,7 +4486,7 @@ public class ChatService extends Service implements interfaceInstances {
 				}
 				bulletin_message.setFileId(file_id);
 			}
-			if(file_name != null)
+			if(file_name != null && message_type != XMPPMessageType.atMeXmppMessageTypeAudio.ordinal())
 				bulletin_message.setFilename(file_name);
 			Map<String,String> json_data = new HashMap<String,String>();
 

@@ -1257,13 +1257,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						}
 					}
 					//Reset Sinch Service
-					if(mSinchServiceInterface != null && !frompush) {
-						try {
-							mSinchServiceInterface.startClient(sharedPrefManager.getUserName());
-						}catch(Exception ex){
-							ex.printStackTrace();
-						}
-					}
+//					if(mSinchServiceInterface != null && !frompush) {
+//						try {
+//							mSinchServiceInterface.startClient(sharedPrefManager.getUserName());
+//						}catch(Exception ex){
+//							ex.printStackTrace();
+//						}
+//					}
 				}
 //				if(iPrefManager.isContactSynched(iPrefManager.getUserDomain()) && !DBWrapper.getInstance().isSGSharedIDLoaded(iPrefManager.getUserDomain())){
 				if(!dataAlreadyLoadedForSG){
@@ -3849,8 +3849,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 //Update SG counter for clicked SG
                 isSwitchingSG = true;
                 DBWrapper.getInstance().updateSGNewMessageCount(sg_name, 0);
-                if (mSinchServiceInterface != null)
-                    mSinchServiceInterface.stopClient();
+//                if (mSinchServiceInterface != null)
+//                    mSinchServiceInterface.stopClient();
                 if(confirmation){
 //					showCustomDialogWith2Buttons(model, "Do you want to switch?");
                     isSwitchSG = true;
