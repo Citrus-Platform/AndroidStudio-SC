@@ -132,6 +132,7 @@ public class SharedPrefManager {
 	private final String SG_PASSWORD = "sg_password";
 	private final String SG_USER_ID = "sg_userid";
 	private final String SG_BACKUP_CHECKED = "sg_backup_checked";
+	private final String SG_BULLETIN_LOADED = "sg_bulletin_loaded";
 
 
 	private final String SYSTEM_MSG_FOR_SG = "system_msg_for_sg";
@@ -263,6 +264,13 @@ public class SharedPrefManager {
 	}
 	public void setBackupCheckedForSG(String sg,boolean flag){
 		editor.putBoolean(SG_BACKUP_CHECKED + sg, flag);
+		editor.commit();
+	}
+	public boolean isBulletinLoaded(String sg){
+		return pref.getBoolean(SG_BULLETIN_LOADED + sg, false);
+	}
+	public void setBulletinLoaded(String sg,boolean flag){
+		editor.putBoolean(SG_BULLETIN_LOADED + sg, flag);
 		editor.commit();
 	}
 
