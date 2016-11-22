@@ -492,6 +492,8 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
             if (adapter != null) {
                 adapter.notifyDataSetChanged();
                 adapter.notifyDataSetInvalidated();
+
+                onNotifiUI();
             }
         } catch (Exception e) {
             e.printStackTrace();

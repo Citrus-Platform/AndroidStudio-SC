@@ -34,16 +34,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="5dip"
-            android:padding="15dip"
             android:onClick="onBackClick" >
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
             <ImageView
                 android:id="@+id/id_back_arrow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:background="@drawable/back_arrow_white" />
+            </LinearLayout>
 
             <com.superchat.widgets.MyriadSemiboldTextView
                 android:id="@+id/id_back_title"
@@ -97,8 +102,6 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="1dip"
-                android:layout_marginLeft="18dip"
-                android:layout_marginRight="18dip"
                 android:background="@drawable/round_rect"
                 android:gravity="center_vertical"
                 android:paddingBottom="5dip"
@@ -245,8 +248,6 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="18dip"
-                android:layout_marginRight="18dip"
                 android:layout_marginTop="25dip"
                 android:background="@drawable/round_rect"
                 android:orientation="vertical"
@@ -313,8 +314,6 @@
                 android:id="@+id/id_clear_chat"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="18dip"
-                android:layout_marginRight="18dip"
                 android:layout_marginTop="5dp"
                 android:background="@drawable/round_rect"
                 android:gravity="center_vertical"
@@ -329,8 +328,6 @@
                 android:id="@+id/id_block_user"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="18dip"
-                android:layout_marginRight="18dip"
                 android:layout_marginTop="5dp"
                 android:background="@drawable/round_rect"
                 android:gravity="center_vertical"
