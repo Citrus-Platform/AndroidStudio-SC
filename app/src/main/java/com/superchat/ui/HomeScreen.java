@@ -1280,8 +1280,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				if(mViewPager!=null && mAdapter!=null && isforeGround){
 					if(!dataAlreadyLoadedForSG)
 						mViewPager.setAdapter(mAdapter);
-					if(iPrefManager.isFirstTime()
-							&& iPrefManager.getAppMode() != null && iPrefManager.getAppMode().equals("VirginMode")){
+					if(invitedUserFromInside || (iPrefManager.isFirstTime()
+							&& iPrefManager.getAppMode() != null && iPrefManager.getAppMode().equals("VirginMode"))){
 //						if(isContactSync || firstTimeAdmin){
                         if (isContactSync) {
 							mViewPager.setCurrentItem(2);
@@ -1419,7 +1419,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				else
 					new GetSharedIDListFromServer().execute();
 			}
-			if(new_user && messageService != null){
+			if((new_user || invitedUserFromInside) && messageService != null){
 				String json = finalJSONbject.toString();
 				Log.i(TAG, "Final JSON :  " + json);
 //				json = json.replace("\"", "&quot;");
@@ -1433,6 +1433,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				messageService.sendSpecialMessageToAllDomainMembers(sharedPrefManager.getUserDomain() + "-system", json, XMPPMessageType.atMeXmppMessageTypeUserRegistered);
 				json = null;
 				new_user = false;
+                invitedUserFromInside = false;
 			}
 			isSwitchingSG = false;
 			if(!dataAlreadyLoadedForSG)
@@ -3814,6 +3815,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     boolean isSwitchSG;
     int selectedTab = 0;
 	boolean dataAlreadyLoadedForSG;
+    boolean invitedUserFromInside;
 
     /**
      * When next Supergroup is clicked to change
@@ -3852,6 +3854,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 if(confirmation){
 //					showCustomDialogWith2Buttons(model, "Do you want to switch?");
                     isSwitchSG = true;
+                    invitedUserFromInside = true;
                     selectedTab = mViewPager.getCurrentItem();
                     drawerFragment.fragmentClose();
                     updateUserData(sg_name, model);

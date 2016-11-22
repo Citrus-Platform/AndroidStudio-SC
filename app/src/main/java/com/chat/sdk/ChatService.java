@@ -1519,7 +1519,7 @@ public class ChatService extends Service implements interfaceInstances {
 						prefManager.saveUserInvited(userName, false);
 
 						//Need to add that contact in DB
-						if(message.getDisplayName() != null && !userName.equals(prefManager.getUserName()))
+						if(message.getDisplayName() != null && userName != null && !userName.equals(prefManager.getUserName()))
 							updateContactcInDB(userName, message.getDisplayName(), mobile_number, 1);
 //						if (chatCountListener != null)
 //							chatCountListener.notifyChatRecieve(userName,null);
