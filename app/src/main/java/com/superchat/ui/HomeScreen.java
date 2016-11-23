@@ -3644,6 +3644,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
                 @Override
                 protected void common() {
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
+                        progressDialog = null;
+                    }
                 }
 
                 @Override
