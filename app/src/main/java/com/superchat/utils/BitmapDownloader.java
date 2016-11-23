@@ -158,7 +158,7 @@ public class BitmapDownloader extends AsyncTask<String, Integer, String>{
 		  // input stream to read file - with 8k buffer
 		  InputStream input = new BufferedInputStream(url.openStream());
 		  // Output stream to write file
-			  System.out.println("[ filename - ] "+filename);
+//			  System.out.println("[ filename - ] "+filename);
 		  OutputStream output = new FileOutputStream(filename);
 		  Environment.getExternalStorageDirectory().getPath();
 		  byte data[] = new byte[4096]; 
@@ -267,8 +267,8 @@ public class BitmapDownloader extends AsyncTask<String, Integer, String>{
 					else if(adapter instanceof ContactsAdapter)
 						((ContactsAdapter)adapter).updateUI();
 					if(imageView.getTag() != null) {
-						System.out.println("[[[[[ELSE CASE imageView.getTag() - ]]]]]] " + imageView.getTag());
-						System.out.println("[[[[[ELSE CASE fileId - ]]]]]] " + fileId);
+//						System.out.println("[[[[[ELSE CASE imageView.getTag() - ]]]]]] " + imageView.getTag());
+//						System.out.println("[[[[[ELSE CASE fileId - ]]]]]] " + fileId);
 					}
 //					if(defaultViewReference!=null){
 //						defaultView = defaultViewReference.get();
@@ -280,13 +280,13 @@ public class BitmapDownloader extends AsyncTask<String, Integer, String>{
 //						}
 //					}else
 					{
-						System.out.println("[[[[[ELSE CASE - 3]]]]]]");
+//						System.out.println("[[[[[ELSE CASE - 3]]]]]]");
 						if(defaultView != null) {
-							System.out.println("[[[[[ELSE CASE - 4]]]]]]");
+//							System.out.println("[[[[[ELSE CASE - 4]]]]]]");
 							imageView.setVisibility(View.VISIBLE);
 							defaultView.setVisibility(View.VISIBLE);
 						}else {
-							System.out.println("[[[[[ELSE CASE - 5]]]]]]");
+//							System.out.println("[[[[[ELSE CASE - 5]]]]]]");
 							imageView.setVisibility(View.VISIBLE);
 //							if (imageView.getTag() != null){
 //								if(adapter instanceof ChatHomeAdapter)

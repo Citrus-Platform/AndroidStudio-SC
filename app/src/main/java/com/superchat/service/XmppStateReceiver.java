@@ -41,6 +41,9 @@ public class XmppStateReceiver  extends BroadcastReceiver  {
 				ChatService.xmppConectionStatus = false;
 				if(ChatService.connectionStatusListener!=null)
 					ChatService.connectionStatusListener.notifyConnectionChange();
+
+			 System.out.println("XmppStateReceiver connectivity changed."+isConnectingOrConnected+" , "+isConnectingOrConnected);
+			 System.out.println("isProfileAdded = "+pref.isProfileAdded(pref.getUserDomain()));
 				if(isConnected && pref.isProfileAdded(pref.getUserDomain())){
 					    isConnectedCalled = true;
 						context.startService(new Intent(SuperChatApplication.context, ChatService.class));
@@ -53,7 +56,6 @@ public class XmppStateReceiver  extends BroadcastReceiver  {
 //					if(ChatService.connectionStatusListener!=null)
 //						ChatService.connectionStatusListener.notifyConnectionChange();
 				}
-				System.out.println("XmppStateReceiver connectivity changed."+isConnectingOrConnected+" , "+isConnectingOrConnected);
 		 }
 		
 	}

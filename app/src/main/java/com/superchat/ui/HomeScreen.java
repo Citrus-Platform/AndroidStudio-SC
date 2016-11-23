@@ -1001,6 +1001,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                             System.out.println("HomeScreen :: SignInTaskOnServer : response : " + str);
                             Log.e("here", "respo : " + str);
                             Gson gson = new GsonBuilder().create();
+                            String actual_domain = null;
                             LoginResponseModel loginObj = gson.fromJson(str, LoginResponseModel.class);
                             if (loginObj != null && loginObj.status != null && loginObj.status.equals("success")) {
                                 if (isSwitchSG) {
@@ -1029,37 +1030,45 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                 } else
                                     sharedPrefManager.setAsDomainAdmin(sharedPrefManager.getUserDomain(), false);
 
-                                if (loginObj.directoryUserSet != null) {
+                                if (loginObj.directoryUserSet != null && !sharedPrefManager.isContactSynched(sharedPrefManager.getUserDomain())) {
                                     System.out.println("HomeScreen :: SignInTaskOnServer : Writing in TABLE_NAME_CONTACT_NUMBERS.");
                                     for (UserResponseDetail userDetail : loginObj.directoryUserSet) {
                                         String number = DBWrapper.getInstance().getContactNumber(userDetail.userName);
                                         if (number != null && !number.equals(""))
                                             continue;
-                                        //										UserResponseDetail userDetail = loginObj.directoryUserSet.get(st);
-                                        if (!sharedPrefManager.isContactSynched(sharedPrefManager.getUserDomain())) {
-                                            ContentValues contentvalues = new ContentValues();
-                                            contentvalues.put(DatabaseConstants.USER_NAME_FIELD, userDetail.userName);
-                                            contentvalues.put(DatabaseConstants.VOPIUM_FIELD, Integer.valueOf(1));
-                                            contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, userDetail.mobileNumber);
-                                            int id = userDetail.userName.hashCode();
-                                            if (id < -1)
-                                                id = -(id);
-                                            contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD, Integer.valueOf(id));
-                                            contentvalues.put(DatabaseConstants.RAW_CONTACT_ID, Integer.valueOf(id));
-                                            contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, userDetail.name);
-                                            contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD, Integer.valueOf(0));
+                                        ContentValues contentvalues = new ContentValues();
+                                        contentvalues.put(DatabaseConstants.USER_NAME_FIELD, userDetail.userName);
+                                        contentvalues.put(DatabaseConstants.VOPIUM_FIELD, Integer.valueOf(1));
+                                        contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, userDetail.mobileNumber);
+                                        int id = userDetail.userName.hashCode();
+                                        if (id < -1)
+                                            id = -(id);
+                                        contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD, Integer.valueOf(id));
+                                        contentvalues.put(DatabaseConstants.RAW_CONTACT_ID, Integer.valueOf(id));
+                                        contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, userDetail.name);
+                                        contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD, Integer.valueOf(0));
 
-                                            contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
-                                            contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
-                                            contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
-                                            contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
-                                            //Save USerID and SG in DB
-                                            contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
+                                        contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
+                                        contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
+                                        contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
+                                        contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
+
+                                        //Save USerID and SG in DB
+                                        contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
+
+                                        //Add SG Name and user ID
+                                        if(userDetail.userName != null && userDetail.userName.contains("_")) {
+                                            actual_domain = userDetail.userName.substring(userDetail.userName.indexOf('_') + 1);
+
+                                            if (actual_domain.equals(iPrefManager.getUserDomain()))
+                                                contentvalues.put(ChatDBConstants.USER_SG, iPrefManager.getUserDomain());
+                                            else
+                                                contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+                                        }else
                                             contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
-//											System.out.println("TABLE_NAME_CONTACT_NUMBERS : " + contentvalues.toString());
-                                            DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
-                                        }
+                                        System.out.println("TABLE_NAME_CONTACT_NUMBERS [CLOSE] : " + contentvalues.toString());
+                                        DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
 
                                         if (userDetail.currentStatus != null)
                                             sharedPrefManager.saveUserStatusMessage(userDetail.userName, userDetail.currentStatus);
@@ -1191,15 +1200,30 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                     }
                 } catch (ClientProtocolException e) {
                     Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());
+                    if(progressDialog != null)
+                        progressDialog.dismiss();
+                    if(isSwitchSG){
+                        isSwitchingSG = isContactSynching = false;
+                    }
                 } catch (IOException e) {
                     Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());
                 }
 
             } catch (UnsupportedEncodingException e1) {
                 Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution UnsupportedEncodingException:" + e1.toString());
+                if(progressDialog != null)
+                    progressDialog.dismiss();
+                if(isSwitchSG){
+                    isSwitchingSG = isContactSynching = false;
+                }
             } catch (Exception e) {
                 Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution Exception:" + e.toString());
                 e.printStackTrace();
+                if(progressDialog != null)
+                    progressDialog.dismiss();
+                if(isSwitchSG){
+                    isSwitchingSG = isContactSynching = false;
+                }
             }
             return str;
         }
@@ -1570,6 +1594,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                         if (str != null && !str.equals("")) {
                             Gson gson = new GsonBuilder().create();
                             LoginResponseModel loginObj = gson.fromJson(str, LoginResponseModel.class);
+                            String actual_domain = null;
                             if (loginObj != null) {
                                 DBWrapper wrapper = DBWrapper.getInstance();
                                 if (loginObj.directoryUserSet != null) {
@@ -1619,10 +1644,19 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
                                             //Save USerID and SG in DB
                                             contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
-                                            contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
+                                            //Add SG Name and user ID
+                                            if(userDetail.userName != null && userDetail.userName.contains("_")) {
+                                                actual_domain = userDetail.userName.substring(userDetail.userName.indexOf('_') + 1);
+
+                                                if (actual_domain.equals(iPrefManager.getUserDomain()))
+                                                    contentvalues.put(ChatDBConstants.USER_SG, iPrefManager.getUserDomain());
+                                                else
+                                                    contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+                                            }else
+                                                contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
                                             contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
-//											System.out.println("TABLE_NAME_CONTACT_NUMBERS : " + contentvalues.toString());
+											System.out.println("TABLE_NAME_CONTACT_NUMBERS [CLOSE] : "+contentvalues.toString());
 											isContactSynching = true;
                                             if (!userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName()))
                                                 wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
@@ -1673,12 +1707,30 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                     }
                 } catch (ClientProtocolException e) {
                     Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
+                    }
+                    if(isSwitchSG){
+                        isSwitchingSG = isContactSynching = false;
+                    }
                 } catch (IOException e) {
                     Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
+                    }
+                    if(isSwitchSG){
+                        isSwitchingSG = isContactSynching = false;
+                    }
                 }
             } catch (Exception e) {
                 Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution Exception:" + e.toString());
                 e.printStackTrace();
+                if (progressDialog != null) {
+                    progressDialog.dismiss();
+                }
+                if(isSwitchSG){
+                    isSwitchingSG = isContactSynching = false;
+                }
             }
             return null;
         }
@@ -3008,6 +3060,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                         }
 
                         ContactUpDatedModel updatedModel = gson.fromJson(str, ContactUpDatedModel.class);
+                        String actual_domain = null;
                         if (updatedModel != null) {
                             DBWrapper wrapper = DBWrapper.getInstance();
                             for (String st : updatedModel.mobileNumberUserBaseMap.keySet()) {
@@ -3055,9 +3108,17 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                 contentvalues.put(DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
                                 //Save USerID and SG in DB
                                 contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
-                                contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
+                                //Add SG Name and user ID
+                                if(userDetail.userName != null && userDetail.userName.contains("_")) {
+                                    actual_domain = userDetail.userName.substring(userDetail.userName.indexOf('_') + 1);
+                                    if (actual_domain.equals(iPrefManager.getUserDomain()))
+                                        contentvalues.put(ChatDBConstants.USER_SG, iPrefManager.getUserDomain());
+                                    else
+                                        contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+                                }else
+                                    contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
-//								System.out.println("TABLE_NAME_CONTACT_NUMBERS : "+contentvalues.toString());
+								System.out.println("TABLE_NAME_CONTACT_NUMBERS [OPEN] : "+contentvalues.toString());
                                 if (!userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
                                     wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
                                 if (userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
@@ -3100,16 +3161,46 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 }
             } catch (ClientProtocolException e) {
 //						contactSyncState = CONTACT_SYNC_FAILED;
+                if (progressDialog != null) {
+                    progressDialog.dismiss();
+                }
+                if(isSwitchSG){
+                    isSwitchingSG = isContactSynching = false;
+                }
             } catch (IOException e) {
 //						contactSyncState = CONTACT_SYNC_FAILED;
+                if (progressDialog != null) {
+                    progressDialog.dismiss();
+                }
+                if(isSwitchSG){
+                    isSwitchingSG = isContactSynching = false;
+                }
             } catch (Exception e) {
 //						contactSyncState = CONTACT_SYNC_FAILED;
+                if (progressDialog != null) {
+                    progressDialog.dismiss();
+                }
+                if(isSwitchSG){
+                    isSwitchingSG = isContactSynching = false;
+                }
             }
 
         } catch (UnsupportedEncodingException e1) {
 //					contactSyncState = CONTACT_SYNC_FAILED;
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+            }
+            if(isSwitchSG){
+                isSwitchingSG = isContactSynching = false;
+            }
         } catch (Exception e) {
 //					contactSyncState = CONTACT_SYNC_FAILED;
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+            }
+            if(isSwitchSG){
+                isSwitchingSG = isContactSynching = false;
+            }
         }
         System.out.println("[HomeScreen : Contacts ID : Done for - " + iPrefManager.getUserDomain());
 		iPrefManager.setContactSynched(iPrefManager.getUserDomain(), true);
@@ -3553,16 +3644,16 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
                 @Override
                 protected void common() {
-                    try{
-                        if (progressDialog != null)
-                            progressDialog.dismiss();
-                    }catch (Exception ex){
-                        ex.printStackTrace();
-                    }
                 }
 
                 @Override
                 public void onFailure(retrofit2.Call call, Throwable t) {
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
+                        if(isSwitchSG){
+                            isSwitchingSG = isContactSynching = false;
+                        }
+                    }
                     super.onFailure(call, t);
                 }
             });
@@ -3991,8 +4082,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
                 @Override
                 protected void common() {
-//					System.out.println("Retrofit : onResponseVoidzObject 3 - ");
-
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
+                        progressDialog = null;
+                    }
                 }
             });
         } catch (Exception e) {
