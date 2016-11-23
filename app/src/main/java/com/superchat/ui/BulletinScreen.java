@@ -511,26 +511,24 @@ public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountL
     }
 
     public void onResume() {
-        // ChatClient.getInstance().clearAllNotifications();
-        if (Build.VERSION.SDK_INT >= 11)
-            new YourAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        else
-            new YourAsyncTask().execute();
-        getActivity().bindService(new Intent(getActivity(), ChatService.class), mConnection, Context.BIND_AUTO_CREATE);
-        if (!onForeground) {
+        try {
+            if (Build.VERSION.SDK_INT >= 11)
+                new YourAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            else
+                new YourAsyncTask().execute();
+            getActivity().bindService(new Intent(getActivity(), ChatService.class), mConnection, Context.BIND_AUTO_CREATE);
+            if (!onForeground) {
+                onForeground = true;
+                onNotifiUI();
+            }
             onForeground = true;
-            onNotifiUI();
+            ChatService.setConnectionStatusListener(this);
+            setProfileListener();
+            if (searchIcon != null)
+                searchIcon.setVisibility(ImageView.GONE);
+        }catch(Exception ex){
+            ex.printStackTrace();
         }
-//		getShareInfo();
-        onForeground = true;
-        ChatService.setConnectionStatusListener(this);
-//		if(service!=null)
-//			service.setTypingListener(this);
-        setProfileListener();
-        if(searchIcon != null)
-            searchIcon.setVisibility(ImageView.GONE);
-//        if (superGroupIcon != null && SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID") != null)
-//            setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
         super.onResume();
     }
 

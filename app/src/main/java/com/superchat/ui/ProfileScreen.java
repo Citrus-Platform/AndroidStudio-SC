@@ -1719,6 +1719,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                 unbindService(mCallConnection);
             } catch (Exception e) {
                 // Just ignore that
+                e.printStackTrace();
             }
     }
 

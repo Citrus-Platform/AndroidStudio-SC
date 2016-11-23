@@ -755,8 +755,8 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 		Cursor cursor = null;
 		try {
 			if (type == 1) {
-				sql = "SELECT " + "DISTINCT("
-						+ ChatDBConstants.CONTACT_NAMES_FIELD + "), "
+				sql = "SELECT "
+						+ ChatDBConstants.CONTACT_NAMES_FIELD + ","
 						+ ChatDBConstants._ID + ", "
 						+ ChatDBConstants.FROM_USER_FIELD + ", "
 						+ ChatDBConstants.TO_USER_FIELD + ", "
@@ -775,8 +775,8 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 						+ ChatDBConstants.MESSAGE_TYPE + " ORDER BY "
 						+ ChatDBConstants.LAST_UPDATE_FIELD + " DESC";//
 			} else
-				sql = "SELECT " + "DISTINCT("
-						+ ChatDBConstants.CONTACT_NAMES_FIELD + "), "
+				sql = "SELECT "
+						+ ChatDBConstants.CONTACT_NAMES_FIELD + ","
 						+ ChatDBConstants._ID + ", "
 						+ ChatDBConstants.FROM_USER_FIELD + ", "
 						+ ChatDBConstants.TO_USER_FIELD + ", "

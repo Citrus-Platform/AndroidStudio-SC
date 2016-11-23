@@ -888,10 +888,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     public void updateUserSGData(String sg_name) {
         try {
             SharedPrefManager prefManager = SharedPrefManager.getInstance();
-//			String sg_name = user.substring(user.indexOf("_") + 1);
             prefManager.saveUserDomain(sg_name);
-//			prefManager.saveCurrentSGDisplayName(sg_name);
-
             if (DBWrapper.getInstance().getSGDisplayName(sg_name) != null &&
                     DBWrapper.getInstance().getSGDisplayName(sg_name).trim().length() > 0) {
                 prefManager.saveCurrentSGDisplayName(DBWrapper.getInstance().getSGDisplayName(sg_name));
