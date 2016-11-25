@@ -87,6 +87,7 @@ import com.superchat.model.LoginResponseModel.UserResponseDetail;
 import com.superchat.model.MarkSGActive;
 import com.superchat.model.RegistrationForm;
 import com.superchat.model.RegistrationFormResponse;
+import com.superchat.model.UserProfileModel;
 import com.superchat.model.multiplesg.InviteJoinDataModel;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.utils.BitmapDownloader;
@@ -418,6 +419,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             Toast.makeText(this, getString(R.string.check_net_connection), Toast.LENGTH_LONG).show();
             return;
         }
+        if(isContactSynching)
+            return;
         if (syncAnimation == null) {
             syncAnimation = ObjectAnimator.ofFloat(view, "rotation", 360);
             //syncAnimation.setDuration(1000);
@@ -1071,7 +1074,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                             contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
 //                                        System.out.println("TABLE_NAME_CONTACT_NUMBERS [CLOSE] : " + contentvalues.toString());
-                                        DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
+                                        if (!DBWrapper.getInstance().isContactExists(userDetail.userName))
+                                            DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
 
                                         if (userDetail.currentStatus != null)
                                             sharedPrefManager.saveUserStatusMessage(userDetail.userName, userDetail.currentStatus);
@@ -1473,7 +1477,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		@Override
 		protected void onPreExecute() {
 			isContactSynching = true;
-			if(!firstTimeAdmin && !dataAlreadyLoadedForSG)
+			if((!firstTimeAdmin && !dataAlreadyLoadedForSG) || isContactSync)
 				progressDialog = ProgressDialog.show(HomeScreen.this, "", "Contact loading. Please wait...", true);
 			super.onPreExecute();
 		}
@@ -1566,7 +1570,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         @Override
         protected void onPreExecute() {
 //			if(iPrefManager.isFirstTime()|| isContactSync)
-//				progressDialog = ProgressDialog.show(HomeScreen.this, "", "Contact refreshing. Please wait...", true);
+            if(isContactSync)
+				progressDialog = ProgressDialog.show(HomeScreen.this, "", "Contact refreshing. Please wait...", true);
             isContactSynching = true;
             if (isContactSync)
                 syncProcessStart(true);
@@ -1622,7 +1627,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                         //Alter Table for the values.
 //									wrapper.alterTable(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, new String[]{DatabaseConstants.FLAT_NUMBER, DatabaseConstants.BUILDING_NUMBER,
 //											DatabaseConstants.ADDRESS, DatabaseConstants.RESIDENCE_TYPE});
-                                        if (!sharedPrefManager.isContactSynched(sharedPrefManager.getUserDomain())) {
+//                                        if (!sharedPrefManager.isContactSynched(sharedPrefManager.getUserDomain()))
+                                        {
                                             ContentValues contentvalues = new ContentValues();
                                             contentvalues.put(DatabaseConstants.USER_NAME_FIELD, userDetail.userName);
                                             contentvalues.put(DatabaseConstants.VOPIUM_FIELD, Integer.valueOf(1));
@@ -1662,7 +1668,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                             contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
 											System.out.println("TABLE_NAME_CONTACT_NUMBERS [CLOSE] : "+contentvalues.toString());
 											isContactSynching = true;
-                                            if (!userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName()))
+                                            if (!wrapper.isContactExists(userDetail.userName) && !userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName()))
                                                 wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
                                         }
 
@@ -3116,7 +3122,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                     contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
 								System.out.println("TABLE_NAME_CONTACT_NUMBERS [OPEN] : "+contentvalues.toString());
-                                if (!userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
+                                if (!wrapper.isContactExists(userDetail.userName) && !userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
                                     wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
                                 if (userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
                                     iPrefManager.saveDisplayName((userDetail.name != null ? userDetail.name : ""));
@@ -4649,13 +4655,91 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     }
 
     private String getTabText(final int position) {
-
         String inboxString = "Inbox";
         String bulletinString = "Bulletin";
         String contactString = "Contacts";
-
         String[] titles = new String[]{"" + inboxString, "Groups", "" + contactString, "" + bulletinString};
-
         return titles[position].toUpperCase();
+    }
+    public static void checkForCall(final String userName, final Context context, final SinchService.SinchServiceInterface mSinchServiceInterface){
+        try{
+            final ProgressDialog call_dialog = ProgressDialog.show(context, "", "Checking..", true);
+            Call call = objApi.getApi(SuperChatApplication.context).getUserProfile(userName);
+            System.out.println("Retrofit : Start ");
+            call.enqueue(new RetrofitRetrofitCallback<UserProfileModel>(context) {
+                @Override
+                protected void onResponseVoidzResponse(Call call, Response response) {
+                    System.out.println("Retrofit : onResponseVoidzResponse 1 - "+response.toString());
+
+                }
+
+                @Override
+                protected void onResponseVoidzObject(Call call, UserProfileModel response) {
+                    if(response != null){
+                        String android = "Android_";
+                        if(response.iStatus != null && response.iStatus.equals("success")){
+                            String version =  response.clientVersion;
+                            Log.e(TAG, "Client Version : "+version);
+                            int versionInt = 0;
+                            boolean call_allowed = false;
+                            if(version != null) {
+                                try {
+                                    if (version.startsWith(android)) {//Android_4_0_2
+                                        version = version.substring(version.indexOf(android) + android.length());
+                                        version = version.replace("_", "");
+                                        versionInt = Integer.parseInt(version);
+                                        if(versionInt > 401)
+                                            call_allowed = true;
+
+                                    } else {//SuperChat_iphone_4.0.1
+                                        version = version.substring(version.lastIndexOf('_') + 1);
+                                        version = version.replace(".", "");
+                                        versionInt = Integer.parseInt(version);
+                                        if(versionInt > 400)
+                                            call_allowed = true;
+                                    }
+                                    if(call_allowed){
+                                        com.sinch.android.rtc.calling.Call callz = mSinchServiceInterface.callUserWithHeader(userName, createHeaderForCalling(userName));
+                                        String callId = callz.getCallId();
+                                        Intent callScreen = new Intent(context, CallScreenActivity.class);
+                                        callScreen.putExtra(SinchService.CALL_ID, callId);
+                                        context.startActivity(callScreen);
+                                    }else{
+                                        final Dialog dialog = new Dialog(context);
+                                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                        dialog.setCanceledOnTouchOutside(false);
+                                        dialog.setContentView(R.layout.custom_dialog);
+                                        ((TextView) dialog.findViewById(R.id.id_dialog_message)).setText("Call not possible to the user as user not updated to latest Version.");
+                                        ((TextView) dialog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
+
+                                            @Override
+                                            public boolean onTouch(View v, MotionEvent event) {
+                                                dialog.cancel();
+                                                return false;
+                                            }
+                                        });
+                                        dialog.show();
+                                    }
+                                }catch (NumberFormatException nex){
+                                    nex.printStackTrace();
+                                }
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                @Override
+                protected void common() {
+                    if(call_dialog != null)
+                        call_dialog.dismiss();
+
+                }
+            });
+        } catch(Exception e){
+            objExceptione.printStackTrace(e);
+        }
     }
 }

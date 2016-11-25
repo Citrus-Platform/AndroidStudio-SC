@@ -1516,6 +1516,18 @@ public boolean isContactModified(String rawId, int version){
 		Log.d("DBWrapper", "isNumberExists query: " + isNumberExists+" , "+sql);
 		return isNumberExists;
 	}
+	public boolean isContactExists(String user_name) {
+		boolean username = true;
+		String sql = "SELECT * FROM "
+				+ DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS + " WHERE "
+				+ DatabaseConstants.USER_NAME_FIELD + "='" + user_name+"'";
+
+		Cursor cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
+		if(cursor == null || cursor.getCount()==0)
+			username = false;
+		Log.d("DBWrapper", "isContactExists query: user_name = " +user_name + "=" + username+" , "+sql);
+		return username;
+	}
 	public boolean deleteDuplicateRow(int contactRawId) {
 		String sql = "DELETE FROM "
 				+ DatabaseConstants.TABLE_NAME_CONTACT_NAMES + " WHERE "
