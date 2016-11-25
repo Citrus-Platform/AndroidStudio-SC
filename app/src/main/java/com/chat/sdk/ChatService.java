@@ -1996,7 +1996,7 @@ public class ChatService extends Service implements interfaceInstances {
 			//Save that message in shared pref.
 			savePoll(from, PollID, captionTag);
 		}else
-			saveMessage(displayName, from, userMe, msg, message);
+			saveP2PMessage(displayName, from, userMe, msg, message);
 		//Save that user in DB
 		String number = senderName;
 		if(number.indexOf('_') != -1)
@@ -3151,7 +3151,7 @@ public class ChatService extends Service implements interfaceInstances {
 
 		}
 	}
-	public void saveMessage(String displayName, String from, String to,
+	public void saveP2PMessage(String displayName, String from, String to,
 							String msg, Message message) {
 		String groupSenderDisplayName = message.getDisplayName();
 		Message.MessageDelay delay  = message.getMessageDelay();
@@ -3164,9 +3164,11 @@ public class ChatService extends Service implements interfaceInstances {
 			String tmpFrom = message.getFrom();
 			if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal()){
 				displayName = tmpFrom.substring(0, tmpFrom.indexOf('@'));
-			}else if(tmpFrom != null && tmpFrom.contains("/") && tmpFrom.length()>(tmpFrom.indexOf("/")+1))
-				displayName = groupSenderDisplayName+"#786#"+tmpFrom.substring(tmpFrom.indexOf("/")+1);
-			sender_user_name = tmpFrom.substring(tmpFrom.indexOf("/") + 1);
+			}else {
+				if (tmpFrom != null && tmpFrom.contains("/") && tmpFrom.length() > (tmpFrom.indexOf("/") + 1))
+					displayName = groupSenderDisplayName + "#786#" + tmpFrom.substring(tmpFrom.indexOf("/") + 1);
+				sender_user_name = tmpFrom.substring(tmpFrom.indexOf("/") + 1);
+			}
 		}
 		try {
 			String captionTag  = message.getMediaTagMessage();
@@ -3366,6 +3368,7 @@ public class ChatService extends Service implements interfaceInstances {
 				if (chatListener != null)
 					chatListener.notifyChatRecieve(from, msg);
 		} catch (Exception e) {
+			e.printStackTrace();
 			Log.d(TAG, "Exception during save message" + from + "-" + to + "-"+ msg);
 		}
 	}
@@ -4583,7 +4586,7 @@ public class ChatService extends Service implements interfaceInstances {
 
 	public void sendMessage(String userName, String message) {
 		boolean isGroupChat = false;
-		System.out.println("sendMessage :: userName = "+userName);
+//		System.out.println("sendMessage :: userName = "+userName);
 		if (SharedPrefManager.getInstance().isGroupChat(userName)
 				&& !message.equals("You are welcome in " + userName + " group.")) {
 			isGroupChat = true;

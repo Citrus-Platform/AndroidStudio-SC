@@ -187,9 +187,7 @@ import io.codetail.animation.ViewAnimationUtils;
 import me.leolin.shortcutbadger.ShortcutBadger;
 import retrofit2.Response;
 
-import static com.superchat.R.id.count;
 import static com.superchat.R.id.create_doodle;
-import static com.superchat.R.id.id_attach_media;
 
 //import com.superchat.utils.SharedPrefManager;
 public class ChatListScreen extends FragmentActivity implements MultiChoiceModeListener, VoiceMediaHandler, TypingListener, ChatCountListener, ProfileUpdateListener,

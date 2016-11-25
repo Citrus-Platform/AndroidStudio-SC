@@ -165,7 +165,7 @@ public static final byte MEDIA_FAILED = 4;
 			+ DatabaseConstants._ID
 			+ " INTEGER PRIMARY KEY AUTOINCREMENT,"
 			+ DatabaseConstants.CONTACT_NUMBERS_FIELD
-			+ " LONG UNIQUE NOT NULL,"
+			+ " LONG NOT NULL,"
 			+ DatabaseConstants.DISPLAY_NUMBERS_FIELD
 			+ " TEXT,"
 			+ DatabaseConstants.RAW_CONTACT_ID
@@ -197,8 +197,9 @@ public static final byte MEDIA_FAILED = 4;
 			+ "("
 			+ DatabaseConstants._ID
 			+ " INTEGER PRIMARY KEY AUTOINCREMENT,"
+			+ DatabaseConstants.USER_NAME_FIELD
+			+ " TEXT NOT NULL,"
 			+ DatabaseConstants.CONTACT_NUMBERS_FIELD
-//			+ " LONG UNIQUE NOT NULL,"
 			+ " LONG NOT NULL,"
 			+ DatabaseConstants.DISPLAY_NUMBERS_FIELD
 			+ " TEXT,"
@@ -210,8 +211,6 @@ public static final byte MEDIA_FAILED = 4;
 			+ " TEXT,"
 			+ DatabaseConstants.CONTACT_COMPOSITE_FIELD
 			+ " TEXT, "
-			+ DatabaseConstants.USER_NAME_FIELD
-			+ " TEXT NOT NULL,"
 			+ DatabaseConstants.VOPIUM_FIELD
 			+ " BOOLEAN,"
 			+ DatabaseConstants.DATA_ID_FIELD
