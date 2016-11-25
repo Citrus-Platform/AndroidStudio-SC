@@ -3,8 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_margin="1dip"
-    android:gravity="center" 
-    >
+    android:gravity="center">
 
     <RelativeLayout
         android:id="@+id/left_right_composite"
@@ -12,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/midle_block_layout"
         android:layout_marginBottom="2dip"
-        android:layout_marginTop="2dip" 
+        android:layout_marginTop="2dip"
         android:background="@drawable/chat_list_selector">
 
         <CheckBox
@@ -26,37 +25,43 @@
             android:visibility="gone" />
 
         <RelativeLayout
-            android:id="@+id/id_left_pic_layout"
+            android:id="@+id/rlRightChatBlock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/receiver_sel_box" >
+            android:layout_toRightOf="@+id/receiver_sel_box">
 
-            <com.superchat.widgets.RoundedImageView
-                android:id="@+id/id_left_pic"
-                android:layout_width="40dip"
-                android:layout_height="40dip"
-                android:padding="2.0dip"
-                android:src="@drawable/avtar_background"
-                android:visibility="gone" />
+            <RelativeLayout
+                android:id="@+id/id_left_pic_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/id_left_default_pic"
-                android:layout_width="40dip"
-                android:layout_height="40dip"
-                android:padding="2.0dip"
-                android:src="@drawable/avtar_background"
-                android:visibility="gone" />
+                <com.superchat.widgets.RoundedImageView
+                    android:id="@+id/id_left_pic"
+                    android:layout_width="40dip"
+                    android:layout_height="40dip"
+                    android:padding="2.0dip"
+                    android:src="@drawable/avtar_background"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/id_left_default_pic"
+                    android:layout_width="40dip"
+                    android:layout_height="40dip"
+                    android:padding="2.0dip"
+                    android:src="@drawable/avtar_background"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <include
+                android:id="@+id/left_block_layout"
+                layout="@layout/left_chat_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dip"
+                android:layout_marginTop="1dip"
+                android:layout_toRightOf="@+id/id_left_pic_layout"
+                android:visibility="visible" />
         </RelativeLayout>
-
-        <include
-            android:id="@+id/left_block_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="1dip"
-            android:layout_marginTop="1dip"
-            android:layout_toRightOf="@+id/id_left_pic_layout"
-            layout="@layout/left_chat_item"
-            android:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/right_block_linear_layout"
@@ -67,12 +72,13 @@
             android:layout_marginLeft="20dp"
             android:layout_marginTop="2dip"
             android:background="@drawable/bubble_grey_right"
+            android:longClickable="true"
             android:minWidth="120dip"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content">
 
                 <RelativeLayout
                     android:id="@+id/right_block_layout"
@@ -83,12 +89,12 @@
                     android:layout_marginTop="1dp"
                     android:layout_toLeftOf="@+id/sender_sel_box"
                     android:gravity="right|bottom"
-                    android:visibility="visible" >
+                    android:visibility="visible">
 
                     <FrameLayout
                         android:id="@+id/right_image_frame"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" >
+                        android:layout_height="wrap_content">
 
                         <ImageView
                             android:id="@+id/right_image_view"
@@ -109,10 +115,10 @@
                         android:id="@+id/contact_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:background="@drawable/round_rect_profile_bg"
                         android:gravity="top"
                         android:orientation="horizontal"
-                        android:background="@drawable/round_rect_profile_bg"
-                        android:visibility="gone" >
+                        android:visibility="gone">
 
                         <com.superchat.widgets.RoundedImageView
                             android:id="@+id/contact_icon"
@@ -139,7 +145,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="top"
                         android:orientation="vertical"
-                        android:visibility="gone" >
+                        android:visibility="gone">
 
                         <TextView
                             android:id="@+id/poll_title"
@@ -170,7 +176,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="top"
                         android:orientation="vertical"
-                        android:visibility="gone" >
+                        android:visibility="gone">
 
                         <ImageView
                             android:id="@+id/mapview_sender"
@@ -181,7 +187,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/mapview_sender"
-                            android:orientation="vertical" >
+                            android:orientation="vertical">
 
                             <TextView
                                 android:id="@+id/location_name"
@@ -219,7 +225,6 @@
                         android:textStyle="normal"
                         android:visibility="gone" />
 
-                   
 
                     <ImageView
                         android:id="@+id/sender_video_play"
@@ -237,18 +242,20 @@
                         android:layout_centerInParent="true"
                         android:indeterminate="false"
                         android:max="100"
-				        android:progressDrawable="@drawable/style_circular_progressbar"
-				        android:secondaryProgress="100"
+                        android:progressDrawable="@drawable/style_circular_progressbar"
+                        android:secondaryProgress="100"
                         android:visibility="gone" />
-					 <ProgressBar
-					        android:id="@+id/right_progress_image_indeterminate"
-					        android:layout_width="wrap_content"
-					        android:layout_height="wrap_content"
-					        android:layout_centerInParent="true"
-					        android:indeterminate="true"
-					        android:secondaryProgress="100" 
-					        android:visibility="gone"/>
-					  <TextView
+
+                    <ProgressBar
+                        android:id="@+id/right_progress_image_indeterminate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:indeterminate="true"
+                        android:secondaryProgress="100"
+                        android:visibility="gone" />
+
+                    <TextView
                         android:id="@+id/right_loading_percent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -257,6 +264,7 @@
                         android:textColor="@color/white"
                         android:textSize="12sp"
                         android:visibility="gone" />
+
                     <com.superchat.emojicon.EmojiconTextView
                         android:id="@+id/right_video_tag"
                         android:layout_width="200dp"
@@ -306,7 +314,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="bottom|right"
                 android:orientation="horizontal"
-                android:visibility="visible" >
+                android:visibility="visible">
 
                 <LinearLayout
                     android:id="@+id/inner_layout02"
@@ -314,14 +322,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="right|bottom"
-                    android:orientation="vertical" >
+                    android:orientation="vertical">
 
                     <LinearLayout
                         android:id="@+id/right_audio_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:visibility="gone" >
+                        android:visibility="gone">
 
                         <LinearLayout
                             android:id="@+id/send_time_counter"
@@ -329,7 +337,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:orientation="vertical"
-                            android:visibility="gone" >
+                            android:visibility="gone">
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -338,7 +346,7 @@
                                 android:layout_marginLeft="30dp"
                                 android:gravity="center"
                                 android:orientation="horizontal"
-                                android:visibility="gone" >
+                                android:visibility="gone">
 
                                 <TextView
                                     android:id="@+id/send_audio_counter_time"
@@ -361,14 +369,15 @@
                             </LinearLayout>
                         </LinearLayout>
 
-                        <RelativeLayout android:id="@+id/right_audio_control_layout"
+                        <RelativeLayout
+                            android:id="@+id/right_audio_control_layout"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/time_counter"
                             android:layout_gravity="right"
                             android:layout_margin="0dip"
                             android:orientation="horizontal"
-                            android:visibility="visible" >
+                            android:visibility="visible">
 
                             <LinearLayout
                                 android:id="@+id/right_audio_btn_layout"
@@ -378,7 +387,7 @@
                                 android:layout_marginRight="5dip"
                                 android:background="@drawable/round_rect_blue"
                                 android:gravity="center"
-                                android:orientation="vertical" >
+                                android:orientation="vertical">
 
                                 <ImageView
                                     android:id="@+id/send_media_play"
@@ -403,7 +412,7 @@
                                 android:layout_marginTop="5dip"
                                 android:layout_toRightOf="@id/right_audio_btn_layout"
                                 android:addStatesFromChildren="true"
-                                android:orientation="horizontal" >
+                                android:orientation="horizontal">
 
                                 <SeekBar
                                     android:id="@+id/send_mediavoicePlayingDialog_progressbar"
@@ -424,42 +433,45 @@
                                 android:layout_height="50dp"
                                 android:layout_centerInParent="true"
                                 android:indeterminate="false"
-                                 android:secondaryProgress="100" 
                                 android:progressDrawable="@drawable/style_circular_progressbar_small"
+                                android:secondaryProgress="100"
                                 android:visibility="visible" />
+
                             <ProgressBar
-						        android:id="@+id/audio_upload_bar_indeterminate"
-						        android:layout_width="wrap_content"
-						        android:layout_height="wrap_content"
-						        android:layout_centerInParent="true"
-						        android:indeterminate="true"
-						        android:secondaryProgress="100" 
-						        android:visibility="visible"/>
-                             <TextView
-			                        android:id="@+id/audio_upload_percent"
-			                        android:layout_width="wrap_content"
-			                        android:layout_height="wrap_content"
-			                        android:layout_centerInParent="true"
-			                        android:text="0%"
-			                        android:textColor="@color/white"
-			                        android:textSize="12sp"
-			                        android:visibility="gone" />
-                     <com.superchat.emojicon.EmojiconTextView
-                             android:id="@+id/audio_tag_sender"
-                             android:layout_width="wrap_content"
-                             android:layout_height="wrap_content"
-                             android:layout_below="@+id/right_audio_btn_layout"
-                             android:layout_marginLeft="6dp"
-                             android:layout_marginTop="3dp"
-                             android:autoLink="all"
-                             android:shadowColor="@color/textShadow"
-                             android:shadowDx="1"
-                             android:shadowDy="1"
-                             android:text="Audio Tag"
-                             android:textColor="@color/black"
-                             android:textSize="16sp"
-                             android:textStyle="normal"
-                             android:visibility="gone" />
+                                android:id="@+id/audio_upload_bar_indeterminate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:indeterminate="true"
+                                android:secondaryProgress="100"
+                                android:visibility="visible" />
+
+                            <TextView
+                                android:id="@+id/audio_upload_percent"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:text="0%"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                android:visibility="gone" />
+
+                            <com.superchat.emojicon.EmojiconTextView
+                                android:id="@+id/audio_tag_sender"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/right_audio_btn_layout"
+                                android:layout_marginLeft="6dp"
+                                android:layout_marginTop="3dp"
+                                android:autoLink="all"
+                                android:shadowColor="@color/textShadow"
+                                android:shadowDx="1"
+                                android:shadowDy="1"
+                                android:text="Audio Tag"
+                                android:textColor="@color/black"
+                                android:textSize="16sp"
+                                android:textStyle="normal"
+                                android:visibility="gone" />
                         </RelativeLayout>
                     </LinearLayout>
 
@@ -479,18 +491,18 @@
 
             <include
                 android:id="@+id/id_right_file_layout"
+                layout="@layout/file_chat_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="1dip"
                 android:layout_marginTop="1dip"
-                layout="@layout/file_chat_item"
                 android:visibility="gone" />
 
             <RelativeLayout
                 android:id="@+id/send_date_time_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="visible" >
+                android:visibility="visible">
 
                 <TextView
                     android:id="@+id/id_right_file_type"
@@ -536,7 +548,7 @@
         android:layout_marginTop="2dp"
         android:background="@drawable/round_rect"
         android:gravity="center"
-        android:visibility="visible" >
+        android:visibility="visible">
 
         <com.superchat.emojicon.EmojiconTextView
             android:id="@+id/midle_block_text"

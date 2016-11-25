@@ -124,7 +124,9 @@ import com.superchat.emojicon.emoji.Emojicon;
 import com.superchat.interfaces.OnChatEditInterFace;
 import com.superchat.interfaces.interfaceInstances;
 import com.superchat.model.BulletinGetMessageDataModel;
+import com.superchat.model.GroupChatMetaInfo;
 import com.superchat.model.GroupChatServerModel;
+import com.superchat.model.SuperGroupSubAdminStatusChange;
 import com.superchat.model.UserProfileModel;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.time.RadialPickerLayout;
@@ -187,6 +189,7 @@ import io.codetail.animation.ViewAnimationUtils;
 import me.leolin.shortcutbadger.ShortcutBadger;
 import retrofit2.Response;
 
+import static android.R.id.toggle;
 import static com.superchat.R.id.count;
 import static com.superchat.R.id.create_doodle;
 import static com.superchat.R.id.id_attach_media;
@@ -1501,10 +1504,8 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 
 
         //Check if group is deactivated
-        if ((iChatPref.isGroupChat(userName) && !iChatPref.isGroupMemberActive(userName, iChatPref.getUserName()))) {
-            ((RelativeLayout) findViewById(R.id.bottom_write_bar1)).setVisibility(View.GONE);
-            attachMediaView.setVisibility(View.GONE);
-        }
+        setUIChat(false);
+
         if (!iChatPref.isUserExistence(userName)) {
             callOption.setVisibility(View.GONE);
         }
@@ -2993,6 +2994,8 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         }
         if (isSharedIDDeactivated)
             Toast.makeText(this, "This Official ID is deactivated!", Toast.LENGTH_SHORT).show();
+
+        setBroadCastScreenMode(null);
     }
 
     public static int prevIndex = 0;
@@ -4958,7 +4961,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 switch (requestCode) {
                     case PICK_CONTACT:
                         String contact_json = getVCard(data);
-                        if(contact_json != null) {
+                        if (contact_json != null) {
                             sendContact(contact_json, XMPPMessageType.atMeXmppMessageTypeContact);
                         } else {
                             // Show Error to user
@@ -5137,7 +5140,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 //                            	 sendVoiceMessage(mediaUrl);
                                     if (captionDialogNew != null && !captionDialogNew.isShowing()) {
                                         taggingType = AUDIO_TAGGING;
-                                        if(playSenderMaxTimeText != null){
+                                        if (playSenderMaxTimeText != null) {
                                             totalAudioLength = getAudioFileDuration(mediaUrl) / 1000;
                                             if (totalAudioLength > 0) {
                                                 final byte min = (byte) (totalAudioLength / 60);
@@ -5786,13 +5789,13 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 if (captionDialog != null && captionDialog.isShowing()) {
                     captionDialog.cancel();
                     taggingType = NO_TAGGING;
-                    if(captionField != null)
+                    if (captionField != null)
                         captionField.setText("");
                 }
                 if (captionDialogNew != null && captionDialogNew.isShowing()) {
                     captionDialogNew.cancel();
                     taggingType = NO_TAGGING;
-                    if(captionField != null)
+                    if (captionField != null)
                         captionField.setText("");
                 }
                 if (isPlaying)
@@ -5827,7 +5830,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 }
                 break;
             case R.id.id_send_chat:
-            	if(!ChatService.xmppConectionStatus) {
+                if (!ChatService.xmppConectionStatus) {
                     Toast.makeText(getApplicationContext(), "Connecting..", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -6942,12 +6945,12 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         final int checkedCount = chatList.getCheckedItemCount();
 //        Cursor cursor = (Cursor) chatAdapter.getItem(position);
         Cursor cursor = null;
-        if(isBulletinBroadcast)
+        if (isBulletinBroadcast)
             cursor = chatAdapter.getCursor();
         else
-            cursor = (Cursor)chatAdapter.getItem(position);
-        if(cursor.isClosed())
-            cursor = (Cursor)chatAdapter.getItem(position);
+            cursor = (Cursor) chatAdapter.getItem(position);
+        if (cursor.isClosed())
+            cursor = (Cursor) chatAdapter.getItem(position);
         boolean isOwnSentMessage = false;
         boolean isAllTextMessages = true;
         if (cursor != null) {
@@ -7014,6 +7017,11 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             else
                 infoView.setVisibility(View.GONE);
         }
+
+/*
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        System.out.println(stackTraceElements.toString());
+        System.out.println(stackTraceElements.toString());*/
     }
 
     //-------------------------------------------------------------------
@@ -7242,8 +7250,8 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 //        System.out.println("+05:30 Millis = " + millis);
         return millis;
     }
-	
-	
+
+
     /**
      * Munish Code - Animation Menu like Whatsapp
      */
@@ -7389,6 +7397,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         super.onStart();
         EventBus.getDefault().register(this);
     }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -7401,9 +7410,11 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         showDialogWithPositive(message);
 //        showAlertDialog(message);
     }
+
     Dialog systemMessageDialog;
+
     public void showDialogWithPositive(String s) {
-        if(systemMessageDialog != null)
+        if (systemMessageDialog != null)
             systemMessageDialog.dismiss();
         systemMessageDialog = new Dialog(ChatListScreen.this);
         try {
@@ -7421,8 +7432,67 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 }
             });
             systemMessageDialog.show();
-        }catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+
+    // Munish Code
+
+    private void setUIChat(boolean isBroadcastScreenMode) {
+        try {
+            if(isBroadcastScreenMode){
+                ((RelativeLayout) findViewById(R.id.bottom_write_bar1)).setVisibility(View.GONE);
+                attachMediaView.setVisibility(View.GONE);
+                return;
+            } else {
+                ((RelativeLayout) findViewById(R.id.bottom_write_bar1)).setVisibility(View.VISIBLE);
+                attachMediaView.setVisibility(View.VISIBLE);
+            }
+
+            if ((iChatPref.isGroupChat(userName) && !iChatPref.isGroupMemberActive(userName, iChatPref.getUserName()))) {
+                ((RelativeLayout) findViewById(R.id.bottom_write_bar1)).setVisibility(View.GONE);
+                attachMediaView.setVisibility(View.GONE);
+            }
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    private void setUIBroascastMode(boolean isBroadcastScreenMode) {
+        try {
+            if (isBroadcastScreenMode) {
+                chatOptions.setVisibility(View.GONE);
+            } else {
+                chatOptions.setVisibility(View.VISIBLE);
+            }
+
+            setUIChat(isBroadcastScreenMode);
+        } catch (Exception e) {
+
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void setBroadCastScreenMode(SuperGroupSubAdminStatusChange superGroupSubAdminStatusChange) {
+
+        String groupName = userName;
+
+        GroupChatMetaInfo groupChatMetaInfo = iChatPref.getSubGroupMetaData(groupName);
+        if(groupChatMetaInfo != null && groupChatMetaInfo.isBroadCastActive()) {
+            if (iChatPref.isGroupChat(userName) && !isBulletinBroadcast) {
+                if (iChatPref.isDomainAdminORSubAdmin() || isSharedIDAdmin) {
+                    Toast.makeText(this, "You are NOW admin or Subadmin", Toast.LENGTH_SHORT).show();
+                    setUIBroascastMode(false);
+                } else {
+                    Toast.makeText(this, "You are NOT authorized to edit", Toast.LENGTH_SHORT).show();
+                    setUIBroascastMode(true);
+                }
+            } else {
+                Toast.makeText(this, "This is not group :-P", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

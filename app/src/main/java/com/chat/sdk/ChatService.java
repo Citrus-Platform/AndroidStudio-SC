@@ -84,6 +84,7 @@ import com.superchat.model.LoginResponseModel;
 import com.superchat.model.LoginResponseModel.UserResponseDetail;
 import com.superchat.model.RegistrationForm;
 import com.superchat.model.RegistrationFormResponse;
+import com.superchat.model.SuperGroupSubAdminStatusChange;
 import com.superchat.model.UserProfileModel;
 import com.superchat.model.multiplesg.JoinedDomainNameSet;
 import com.superchat.model.multiplesg.OwnerDomainName;
@@ -1255,6 +1256,13 @@ public class ChatService extends Service implements interfaceInstances {
 		}
 	};
 
+	private void eventMakeremoveSGSubAdmin(boolean isSGSubAdmin){
+		SuperGroupSubAdminStatusChange obj = new SuperGroupSubAdminStatusChange();
+		obj.setSGSubAdmin(isSGSubAdmin);
+
+		EventBus.getDefault().post(obj);
+	}
+
 	PacketListener packetListener = new PacketListener() {
 
 		@Override
@@ -1286,9 +1294,11 @@ public class ChatService extends Service implements interfaceInstances {
 						return;
 					}else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeMakeSGSubAdmin.ordinal()){
 						prefManager.setAsDomainSubAdmin(prefManager.getUserDomain(), true);
+						eventMakeremoveSGSubAdmin(true);
 						return;
 					}else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeRemoveSGSubAdmin.ordinal()){
 						prefManager.setAsDomainSubAdmin(prefManager.getUserDomain(), false);
+						eventMakeremoveSGSubAdmin(false);
 						return;
 					}else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSGUpdate.ordinal()){
 						String captionTag  = message.getMediaTagMessage();

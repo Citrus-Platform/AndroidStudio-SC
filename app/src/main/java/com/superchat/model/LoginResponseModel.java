@@ -106,9 +106,12 @@ public class LoginResponseModel {
 
 		@SerializedName(value = "userName")
 		public String userName = null;
-		
+
 		@SerializedName(value = "description")
 		public String description = null;
+
+		@SerializedName(value = "mode")
+		public String mode = null;
 		
 		@SerializedName(value = "memberUserSet")
 		public List<String> memberUserSet = null;

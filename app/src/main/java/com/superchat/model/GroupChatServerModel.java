@@ -9,7 +9,7 @@ public class GroupChatServerModel {
 	public String groupName;
 	@SerializedName(value = "broadcastGroupName") 
 	public String broadcastGroupName;	
-	@SerializedName(value = "type") 
+	@SerializedName(value = "type")
 	private String type;
 	public String getType() {
 		return type;
@@ -119,4 +119,16 @@ public class GroupChatServerModel {
 	public GroupChatServerModel() {
         super();
     }
+
+
+	// Munish
+	private String mode;
+
+	public String getMode() {
+		return mode;
 	}
+
+	public void setMode(String mode) {
+		this.mode = mode;
+	}
+}

@@ -79,6 +79,7 @@ import com.superchat.model.ContactUpDatedModel;
 import com.superchat.model.ContactUploadModel;
 import com.superchat.model.DomainSetObject;
 import com.superchat.model.ErrorModel;
+import com.superchat.model.GroupChatMetaInfo;
 import com.superchat.model.LoginModel;
 import com.superchat.model.LoginResponseModel;
 import com.superchat.model.LoginResponseModel.BroadcastGroupDetail;
@@ -1096,6 +1097,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                     boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(groupDetail.groupName);
                                     if (isFirstChat)
                                         saveMessage(groupDetail.displayName, groupDetail.groupName, "Group created by " + groupDetail.userDisplayName);
+
+                                    // Save Meta info of group
+                                    {
+                                        GroupChatMetaInfo groupChatMetaInfo = new GroupChatMetaInfo();
+                                        groupChatMetaInfo.setBroadCastActive(groupDetail.mode);
+                                        sharedPrefManager.setSubGroupMetaData(groupDetail.groupName, groupChatMetaInfo);
+                                    }
 
                                     sharedPrefManager.saveGroupInfo(groupDetail.groupName, SharedPrefManager.GROUP_ACTIVE_INFO, true);
                                     sharedPrefManager.saveGroupName(groupDetail.groupName, groupDetail.displayName);

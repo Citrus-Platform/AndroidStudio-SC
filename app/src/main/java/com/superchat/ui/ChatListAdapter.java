@@ -3052,7 +3052,6 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 } catch (NumberFormatException ex) {
 
                 }
-//				
             }
             viewholder.leftPersonPicLayout.setVisibility(View.GONE);
             viewholder.rightFileLayout.setVisibility(View.GONE);
