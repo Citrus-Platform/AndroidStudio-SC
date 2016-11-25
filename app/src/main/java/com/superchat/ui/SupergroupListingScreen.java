@@ -1705,6 +1705,8 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 				} else {
 					runOnUiThread(new Runnable() {
 						public void run() {
+							if(dialog != null)
+								dialog.dismiss();
 							showDialog(objUserModel.iMessage);
 						}
 					});

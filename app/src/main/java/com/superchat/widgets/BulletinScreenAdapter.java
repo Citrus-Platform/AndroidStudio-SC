@@ -379,7 +379,7 @@ public class BulletinScreenAdapter extends SimpleCursorAdapter implements OnClic
         String caption = cursor.getString(cursor.getColumnIndex(ChatDBConstants.MEDIA_CAPTION_TAG));
 //        int message_type = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE));
         String displayName = null;
-        System.out.println("fromName = "+fromName+",  toUserName = "+toUserName+",  name = "+name);
+//        System.out.println("fromName = "+fromName+",  toUserName = "+toUserName+",  name = "+name);
 //        Log.i("ChatHomeAdapter", "caption : "+caption);
         String groupMsgSenderName = cursor.getString(cursor.getColumnIndex(ChatDBConstants.FROM_GROUP_USER_FIELD));
         viewholder.isBroadCast = SharedPrefManager.getInstance().isBroadCast(toUserName);

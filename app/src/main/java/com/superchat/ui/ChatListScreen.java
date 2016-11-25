@@ -1140,10 +1140,10 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         setAudioRecorderUIPoint();
         if (ChatService.xmppConectionStatus) {
             networkConnection.setVisibility(View.GONE);
-            xmppStatusView.setImageResource(R.drawable.blue_dot);
+//            xmppStatusView.setImageResource(R.drawable.blue_dot);
         } else {
             networkConnection.setVisibility(View.VISIBLE);
-            xmppStatusView.setImageResource(R.drawable.red_dot);
+//            xmppStatusView.setImageResource(R.drawable.red_dot);
         }
 //        userIcon.setOnClickListener(this);
 //        bottomPanel =  ((RelativeLayout)findViewById(R.id.bottom_write_bar1));
@@ -1512,11 +1512,11 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         if (ChatService.xmppConectionStatus) {
             networkConnection.setVisibility(View.GONE);
 //       		bottomPanel.setVisibility(View.VISIBLE);
-            xmppStatusView.setImageResource(R.drawable.blue_dot);
+//            xmppStatusView.setImageResource(R.drawable.blue_dot);
         } else {
             networkConnection.setVisibility(View.VISIBLE);
 //       		bottomPanel.setVisibility(View.GONE);
-            xmppStatusView.setImageResource(R.drawable.red_dot);
+//            xmppStatusView.setImageResource(R.drawable.red_dot);
         }
         if (isBulletinBroadcast) {
             if (isBulletinBroadcastForAdmin()) {
@@ -5830,8 +5830,8 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 }
                 break;
             case R.id.id_send_chat:
-                if (!ChatService.xmppConectionStatus) {
-                    Toast.makeText(getApplicationContext(), "Connecting..", Toast.LENGTH_SHORT).show();
+            	if(!ChatService.xmppConectionStatus) {
+                    Toast.makeText(getApplicationContext(), "Connecting please wait..", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 String newMessage = typingEditText.getText().toString().trim();
@@ -6645,15 +6645,15 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                     if (ChatService.xmppConectionStatus) {
                         if (networkConnection != null)
                             networkConnection.setVisibility(View.GONE);
-                        if (xmppStatusView != null)
-                            xmppStatusView.setImageResource(R.drawable.blue_dot);
+//                        if (xmppStatusView != null)
+//                            xmppStatusView.setImageResource(R.drawable.blue_dot);
 //	            	 if(bottomPanel != null)
 //	            		 bottomPanel.setVisibility(View.VISIBLE);
                     } else {
                         if (networkConnection != null)
                             networkConnection.setVisibility(View.VISIBLE);
-                        if (xmppStatusView != null)
-                            xmppStatusView.setImageResource(R.drawable.red_dot);
+//                        if (xmppStatusView != null)
+//                            xmppStatusView.setImageResource(R.drawable.red_dot);
 //	            	 if(bottomPanel != null)
 //	            		 bottomPanel.setVisibility(View.GONE);
                     }
@@ -6667,10 +6667,10 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         public void handleMessage(android.os.Message msg) {
             if (ChatService.xmppConectionStatus) {
                 networkConnection.setVisibility(View.GONE);
-                xmppStatusView.setImageResource(R.drawable.blue_dot);
+//                xmppStatusView.setImageResource(R.drawable.blue_dot);
             } else {
                 networkConnection.setVisibility(View.VISIBLE);
-                xmppStatusView.setImageResource(R.drawable.red_dot);
+//                xmppStatusView.setImageResource(R.drawable.red_dot);
             }
 
         }
