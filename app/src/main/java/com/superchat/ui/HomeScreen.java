@@ -414,24 +414,30 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         }
     }
 
+
     public void OnSyncClick(View view) {
         if (!SuperChatApplication.isNetworkConnected()) {
             Toast.makeText(this, getString(R.string.check_net_connection), Toast.LENGTH_LONG).show();
             return;
         }
-        if(isContactSynching)
+        dataAlreadyLoadedForSG = iPrefManager.isDataLoadedForSG(iPrefManager.getUserDomain());
+        if ((!dataAlreadyLoadedForSG && isContactSynching) || isSwitchingSG) {
+            drawerFragment.fragmentClose();
+            Toast.makeText(this, "Loading some data, please wait.", Toast.LENGTH_LONG).show();
             return;
+        }
         if (syncAnimation == null) {
             syncAnimation = ObjectAnimator.ofFloat(view, "rotation", 360);
             //syncAnimation.setDuration(1000);
 //			syncAnimation.setRepeatMode(ValueAnimator.REVERSE);
             syncAnimation.setRepeatCount(Animation.ABSOLUTE);
         }
-        if(Build.VERSION.SDK_INT >= 11)
-            new GetSharedIDListFromServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        else
-            new GetSharedIDListFromServer().execute();
-
+        if(!dataAlreadyLoadedForSG) {
+            if (Build.VERSION.SDK_INT >= 11)
+                new GetSharedIDListFromServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            else
+                new GetSharedIDListFromServer().execute();
+        }
         if (SharedPrefManager.getInstance().isOpenDomain()) {
             isContactSync = true;
             isLoginProcessing = true;
@@ -1063,15 +1069,15 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                         contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
 
                                         //Add SG Name and user ID
-                                        if(userDetail.userName != null && userDetail.userName.contains("_")) {
-                                            actual_domain = userDetail.userName.substring(userDetail.userName.indexOf('_') + 1);
-
-                                            if (actual_domain.equals(iPrefManager.getUserDomain()))
-                                                contentvalues.put(ChatDBConstants.USER_SG, iPrefManager.getUserDomain());
-                                            else
-                                                contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
-                                        }else
-                                            contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
+//                                        if(userDetail.userName != null && userDetail.userName.contains("_")) {
+//                                            actual_domain = userDetail.userName.substring(userDetail.userName.indexOf('_') + 1);
+//
+//                                            if (actual_domain.equals(iPrefManager.getUserDomain()))
+//                                                contentvalues.put(ChatDBConstants.USER_SG, iPrefManager.getUserDomain());
+//                                            else
+//                                                contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+//                                        }else
+                                        contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
 //                                        System.out.println("TABLE_NAME_CONTACT_NUMBERS [CLOSE] : " + contentvalues.toString());
                                         if (!DBWrapper.getInstance().isContactExists(userDetail.userName))
@@ -2908,8 +2914,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             super.onPostExecute(str);
         }
     }
-
-    //-------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
     public static void parseSharedIDData(String str) {
         try {
             SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance();
@@ -2918,7 +2923,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             if (loginObj != null) {
                 if (loginObj.directoryBroadcastGroupSet != null && loginObj.directoryBroadcastGroupSet.size() > 0) {
                     sharedIDData.clear();
-//                    System.out.println("HomeScreen :: SignInTaskOnServer : Writing Official ID Data..");
                     for (BroadcastGroupDetail shared_id_detail : loginObj.directoryBroadcastGroupSet) {
                         if (sharedPrefManager.getSharedIDDisplayName(shared_id_detail.broadcastGroupName) == null) {
 //							System.out.println("Shared ID :: "+shared_id_detail.displayName+" : "+shared_id_detail.broadcastGroupName);
@@ -2947,7 +2951,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                             contentvalues.put(DatabaseConstants.USER_ID, sharedPrefManager.getUserId());
                             contentvalues.put(DatabaseConstants.USER_SG, sharedPrefManager.getUserDomain());
                             contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, "9999999999");
-                            DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
+                            if (!DBWrapper.getInstance().isContactExists(shared_id_detail.broadcastGroupName))
+                                DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
                         }
                         sharedIDData.add(shared_id_detail);
                     }

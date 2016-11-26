@@ -1006,7 +1006,8 @@ public boolean isContactModified(){
 		return list;
 	}
 	public String getDisplayName() {
-		String value = pref.getString(USER_DISPLAY_NAME, null);
+		String sg = getUserDomain();
+		String value = pref.getString(USER_DISPLAY_NAME + sg, null);
 		return value;
 	}
 
@@ -1074,7 +1075,8 @@ public boolean isContactModified(){
 	}
 
 	public void saveDisplayName(String name) {
-		editor.putString(USER_DISPLAY_NAME, name);
+		String sg = getUserDomain();
+		editor.putString(USER_DISPLAY_NAME + sg, name);
 		editor.commit();
 	}
 	public String getUserServerName(String userName) {

@@ -1624,7 +1624,8 @@ public class ChatService extends Service implements interfaceInstances {
 								contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
 								contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
 								contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, "9999999999");
-								DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
+								if (!DBWrapper.getInstance().isContactExists(sharedIDName))
+									DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
 								HomeScreen.refreshContactList = true;
 							}
 						}
@@ -2163,7 +2164,7 @@ public class ChatService extends Service implements interfaceInstances {
 			//Save USerID and SG in DB
 			contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
 			contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
-			if(!username.equalsIgnoreCase(SharedPrefManager.getInstance().getUserName()))
+			if(!username.equalsIgnoreCase(SharedPrefManager.getInstance().getUserName()) && !DBWrapper.getInstance().isContactExists(username))
 				DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
 
 		}catch(Exception ex){
@@ -3146,9 +3147,10 @@ public class ChatService extends Service implements interfaceInstances {
 			//Save USerID and SG in DB
 			contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
 			contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
-			DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
+			if (!DBWrapper.getInstance().isContactExists(tmpUserName))
+				DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
 		}catch(Exception e){
-
+			e.printStackTrace();
 		}
 	}
 	public void saveP2PMessage(String displayName, String from, String to,

@@ -973,7 +973,7 @@ private void getServerGroupProfile(String groupName){
 		//Save USerID and SG in DB
 		contentvalues.put(DatabaseConstants.USER_ID, iChatPref.getUserId());
 		contentvalues.put(DatabaseConstants.USER_SG, iChatPref.getUserDomain());
-		if(!username.equalsIgnoreCase(SharedPrefManager.getInstance().getUserName()))
+		if(!username.equalsIgnoreCase(SharedPrefManager.getInstance().getUserName()) && !DBWrapper.getInstance().isContactExists(username))
 			DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
 
 		}catch(Exception ex){
