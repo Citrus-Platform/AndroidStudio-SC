@@ -275,16 +275,6 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 setEditableChat(true);
                 listItemSelection();
                 Log.d(TAG, "long press key : " + key);
-//				if(v.getTag()!=null && !iChatPref.isBlocked(chatName)){
-//					checkedTagMap.put(key, true);
-//					if(checkedTagMap.get(key) && totalItemChecked() == 1 && !receiverName.equals(SharedPrefManager.getInstance().getUserName())&&(groupMsgSenderName== null || groupMsgSenderName.equals("") || groupMsgSenderName.contains(SharedPrefManager.getInstance().getUserName()))){
-//						if(!isBulletinBroadcast && !isBroadCastChat){
-//							((ChatListScreen) context).chatInfoIv.setVisibility(View.VISIBLE);
-//							((ChatListScreen) context).chatInfoIv.setTag(key);
-//						}
-//						}
-//					iEditListener.onChatEditEnable((String) v.getTag());
-//					}
                 return false;
             }
         };
@@ -4679,12 +4669,13 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                     }
                     if ((((ChatListScreen) context).mSinchServiceInterface) != null) {
                         try {
-                            Call call = ((ChatListScreen) context).mSinchServiceInterface.callUserWithHeader(objUserModel.iUserName, HomeScreen.createHeaderForCalling(objUserModel.iUserName));
-                            String callId = call.getCallId();
-
-                            Intent callScreen = new Intent(context, CallScreenActivity.class);
-                            callScreen.putExtra(SinchService.CALL_ID, callId);
-                            ((ChatListScreen) context).startActivity(callScreen);
+                            HomeScreen.checkForCall(objUserModel.iUserName, context, ((ChatListScreen) context).mSinchServiceInterface);
+//                            Call call = ((ChatListScreen) context).mSinchServiceInterface.callUserWithHeader(objUserModel.iUserName, HomeScreen.createHeaderForCalling(objUserModel.iUserName));
+//                            String callId = call.getCallId();
+//
+//                            Intent callScreen = new Intent(context, CallScreenActivity.class);
+//                            callScreen.putExtra(SinchService.CALL_ID, callId);
+//                            ((ChatListScreen) context).startActivity(callScreen);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import static android.R.attr.value;
+
 public class SharedPrefManager {
 
     private SharedPreferences pref;
@@ -1162,7 +1164,8 @@ public class SharedPrefManager {
     }
 
     public String getDisplayName() {
-        String value = pref.getString(USER_DISPLAY_NAME, null);
+        String sg = getUserDomain();
+        String value = pref.getString(USER_DISPLAY_NAME + sg, null);
         return value;
     }
 
@@ -1237,7 +1240,8 @@ public class SharedPrefManager {
     }
 
     public void saveDisplayName(String name) {
-        editor.putString(USER_DISPLAY_NAME, name);
+        String sg = getUserDomain();
+        editor.putString(USER_DISPLAY_NAME + sg, name);
         editor.commit();
     }
 

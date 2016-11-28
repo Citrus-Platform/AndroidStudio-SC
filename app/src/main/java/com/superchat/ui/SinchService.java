@@ -252,32 +252,4 @@ public class SinchService extends Service implements interfaceInstances{
             SinchService.this.startActivity(intent);
         }
     }
-//--------------------------------------------------------------------------------------------------------------
-//        private void getUserProfile(final String userName){
-//        try{
-//            Call call = (Call) objApi.getApi(context).getUserProfile(userName);
-//            System.out.println("Retrofit : Start ");
-//            call.enqueue(new RetrofitRetrofitCallback<UserProfileModel>(context) {
-//                @Override
-//                protected void onResponseVoidzResponse(Call call, Response response) {
-//                    System.out.println("Retrofit : onResponseVoidzResponse 1 - "+response.toString());
-//
-//                }
-//
-//                @Override
-//                protected void onResponseVoidzObject(Call call, UserProfileModel response) {
-//                    System.out.println("Retrofit : onResponseVoidzObject 2 - "+response.toString());
-//
-//                }
-//
-//                @Override
-//                protected void common() {
-//
-//                }
-//            });
-//        } catch(Exception e){
-//            objExceptione.printStackTrace(e);
-//
-//        }
-//    }
 }

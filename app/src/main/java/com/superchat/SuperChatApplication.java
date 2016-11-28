@@ -731,8 +731,9 @@ public class SuperChatApplication extends MultiDexApplication {
 										//Save USerID and SG in DB
 										contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
 										contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
-										
-										DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues); // central
+
+										if (!DBWrapper.getInstance().isContactExists(userDetail.userName))
+											DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues); // central
 										 
 										if(userDetail!=null && userDetail.imageFileId!=null && !userDetail.imageFileId.equals("")){
 											if(iPrefManager.getUserFileId(userDetail.userName) == null || !iPrefManager.getUserFileId(userDetail.userName).equals(userDetail.imageFileId))

@@ -1516,6 +1516,18 @@ public boolean isContactModified(String rawId, int version){
 		Log.d("DBWrapper", "isNumberExists query: " + isNumberExists+" , "+sql);
 		return isNumberExists;
 	}
+	public boolean isContactExists(String user_name) {
+		boolean username = true;
+		String sql = "SELECT * FROM "
+				+ DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS + " WHERE "
+				+ DatabaseConstants.USER_NAME_FIELD + "='" + user_name+"'";
+
+		Cursor cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
+		if(cursor == null || cursor.getCount()==0)
+			username = false;
+		Log.d("DBWrapper", "isContactExists query: user_name = " +user_name + "=" + username+" , "+sql);
+		return username;
+	}
 	public boolean deleteDuplicateRow(int contactRawId) {
 		String sql = "DELETE FROM "
 				+ DatabaseConstants.TABLE_NAME_CONTACT_NAMES + " WHERE "
@@ -1868,15 +1880,15 @@ public boolean isContactModified(String rawId, int version){
 //	}
 
 	public Cursor getContactsCursor(String sg){
+		String supergroup = SharedPrefManager.getInstance().getUserDomain();
 		Cursor cursor = null;
 		try{
-			/*cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM " +DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS + " WHERE "
-                + DatabaseConstants.VOPIUM_FIELD + "!=2 AND "+ DatabaseConstants.USER_SG + "='"+ sg + "'", null);*/
+			String query = "SELECT * FROM " +DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS + " WHERE "
+					+ DatabaseConstants.VOPIUM_FIELD + "!=2 AND "+ DatabaseConstants.USER_SG + "='"+ supergroup + "' AND "
+					+ DatabaseConstants.CONTACT_NAMES_FIELD + " LIKE '"+ Constants.SHARED_ID_START_STRING + "%' ORDER BY "
+					+ DatabaseConstants.CONTACT_NAMES_FIELD +" COLLATE NOCASE" +" ASC";
 
-			cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM " +DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS + " WHERE "
-					+ DatabaseConstants.VOPIUM_FIELD + "!=2 AND "+ DatabaseConstants.USER_SG + "='"+ sg + "' AND "
-					+ DatabaseConstants.CONTACT_NAMES_FIELD + " LIKE '%"+ Constants.SHARED_ID_START_STRING + "%' ORDER BY "
-					+ DatabaseConstants.CONTACT_NAMES_FIELD +" COLLATE NOCASE" +" ASC", null);
+			cursor = dbHelper.getWritableDatabase().rawQuery(query, null);
 
 		}catch(Exception ex){
 			ex.printStackTrace();
@@ -1885,15 +1897,39 @@ public boolean isContactModified(String rawId, int version){
 	}
 
 	public Cursor getContactsCursorWithoutShared(String sg){
+		String supergroup = SharedPrefManager.getInstance().getUserDomain();
 		Cursor cursor = null;
 		try{
-			/*cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM " +DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS + " WHERE "
-                + DatabaseConstants.VOPIUM_FIELD + "!=2 AND "+ DatabaseConstants.USER_SG + "='"+ sg + "'", null);*/
+			String query = "SELECT " + "DISTINCT("
+					+ DatabaseConstants.USER_NAME_FIELD + "), "
+					+ DatabaseConstants._ID + ", "
+					+ DatabaseConstants.CONTACT_NUMBERS_FIELD + ", "
+					+ DatabaseConstants.DISPLAY_NUMBERS_FIELD + ", "
+					+ DatabaseConstants.RAW_CONTACT_ID + ", "
+					+ DatabaseConstants.CONTACT_NAMES_FIELD + ", "
+					+ DatabaseConstants.CONTACT_TYPE_FIELD + ", "
+					+ DatabaseConstants.CONTACT_COMPOSITE_FIELD + ", "
+					+ DatabaseConstants.VOPIUM_FIELD + ", "
+					+ DatabaseConstants.DATA_ID_FIELD + ", "
+					+ DatabaseConstants.NAME_CONTACT_ID_FIELD + ", "
+					+ DatabaseConstants.PHONE_NUMBER_TYPE_FIELD + ", "
+					+ DatabaseConstants.IS_FAVOURITE_FIELD + ", "
+					+ DatabaseConstants.FLAT_NUMBER + ", "
+					+ DatabaseConstants.BUILDING_NUMBER + ", "
+					+ DatabaseConstants.ADDRESS + ", "
+					+ DatabaseConstants.RESIDENCE_TYPE + ", "
+					+ DatabaseConstants.USER_ID + ", "
+					+ DatabaseConstants.USER_SG + ", "
+					+ DatabaseConstants.STATE_FIELD
 
-			cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM " +DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS + " WHERE "
-					+ DatabaseConstants.VOPIUM_FIELD + "!=2 AND "+ DatabaseConstants.USER_SG + "='"+ sg + "' AND "
-					+ DatabaseConstants.CONTACT_NAMES_FIELD + " NOT LIKE '%"+ Constants.SHARED_ID_START_STRING + "%' ORDER BY "
-					+ DatabaseConstants.CONTACT_NAMES_FIELD +" COLLATE NOCASE" +" ASC", null);
+					+ " FROM " +DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS + " WHERE "
+					+ DatabaseConstants.VOPIUM_FIELD + "!=2 AND "+ DatabaseConstants.USER_SG + "='"+ supergroup + "' AND "
+					+ DatabaseConstants.USER_NAME_FIELD + " LIKE '%" + supergroup + "' AND "
+					+ DatabaseConstants.CONTACT_NAMES_FIELD + " NOT LIKE '"+ Constants.SHARED_ID_START_STRING + "%' ORDER BY "
+					+ DatabaseConstants.CONTACT_NAMES_FIELD +" COLLATE NOCASE" +" ASC";
+
+
+			cursor = dbHelper.getWritableDatabase().rawQuery(query, null);
 
 		}catch(Exception ex){
 			ex.printStackTrace();

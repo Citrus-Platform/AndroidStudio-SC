@@ -3088,12 +3088,13 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             }
             if (mSinchServiceInterface != null) {
                 try {
-                    Call call = mSinchServiceInterface.callUserWithHeader(userName, HomeScreen.createHeaderForCalling(userName));
-                    String callId = call.getCallId();
-
-                    Intent callScreen = new Intent(this, CallScreenActivity.class);
-                    callScreen.putExtra(SinchService.CALL_ID, callId);
-                    startActivity(callScreen);
+                    HomeScreen.checkForCall(userName, this, mSinchServiceInterface);
+//                    Call call = mSinchServiceInterface.callUserWithHeader(userName, HomeScreen.createHeaderForCalling(userName));
+//                    String callId = call.getCallId();
+//
+//                    Intent callScreen = new Intent(this, CallScreenActivity.class);
+//                    callScreen.putExtra(SinchService.CALL_ID, callId);
+//                    startActivity(callScreen);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -5676,7 +5677,8 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         contentvalues.put(DatabaseConstants.USER_ID, iChatPref.getUserId());
         contentvalues.put(DatabaseConstants.USER_SG, iChatPref.getUserDomain());
 
-        DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
+        if (!DBWrapper.getInstance().isContactExists(tmpUserName))
+          DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
     }
 
     boolean isPlaying = false;

@@ -359,7 +359,7 @@ public class ChatHomeAdapter extends SimpleCursorAdapter implements OnClickListe
 		calander = Calendar.getInstance(TimeZone.getDefault());
 		currentCalender = Calendar.getInstance(TimeZone.getDefault());
 		currentCalender.setTimeInMillis(System.currentTimeMillis());
-		userMe = com.superchat.utils.SharedPrefManager.getInstance().getUserName();
+		userMe = iChatPref.getUserName();
 		mDrawableBuilder = TextDrawable.builder()
                 .beginConfig().toUpperCase()
             .endConfig()
@@ -798,6 +798,7 @@ public void loadDialog(){
 
 	public View newView(Context context1, Cursor cursor, ViewGroup viewgroup) {
 		myParent = viewgroup;
+		userMe = iChatPref.getUserName();
 		View view = LayoutInflater.from(context).inflate(layout, null);
 		ViewHolder viewholder = new ViewHolder();
 		viewholder.lastMessage = (TextView) view.findViewById(R.id.id_last_message);

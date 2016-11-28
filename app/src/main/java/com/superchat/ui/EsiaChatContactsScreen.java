@@ -1661,7 +1661,8 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                         contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
                         contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
-                        DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
+                        if (!DBWrapper.getInstance().isContactExists(sharedid.broadcastGroupName))
+                            DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
                         HomeScreen.refreshContactList = true;
                     } catch (JSONException e1) {
                         // TODO Auto-generated catch block

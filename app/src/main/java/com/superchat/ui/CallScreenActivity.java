@@ -73,28 +73,40 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 				 if (call != null) {
 					 call.addCallListener(new SinchCallListener());
 					 Map<String, String> header = call.getHeaders();
-					 if(header != null) {
-						 String myName = iChatPref.getUserServerName(header.get("userName"));
-						 if (myName != null && myName.equals(header.get("userName")))
-							 myName = iChatPref.getUserServerName(header.get("userName"));
-						 if (myName != null && myName.equals(header.get("userName")))
-							 myName = "New User";
-						 if (myName != null && myName.contains("_"))
-							 myName = "+" + myName.substring(0, myName.indexOf("_"));
+					 if(header != null && !header.get("fromUserName").equals(iChatPref.getUserName())) {
+						 String myName = header.get("displayName");
+						 if(myName != null){
+							 setProfilePic(header.get("fromUserName"));
+						 }else {
+							 myName = iChatPref.getUserServerName(header.get("fromUserName"));
+
+							 if (myName != null && myName.equals(header.get("userName")))
+								 myName = iChatPref.getUserServerName(header.get("userName"));
+							 if (myName != null && myName.equals(header.get("userName")))
+								 myName = "New User";
+							 if (myName != null && myName.contains("_"))
+								 myName = "+" + myName.substring(0, myName.indexOf("_"));
+							 setProfilePic(header.get("userName"));
+						 }
 						 mCallerName.setText(myName);
 						 mCallState.setText(call.getState().toString());
-						 setProfilePic(header.get("userName"));
 					 }else {
-						 String myName = iChatPref.getUserServerName(call.getRemoteUserId());
-						 if (myName != null && myName.equals(call.getRemoteUserId()))
+						 String myName = null;
+						 if(header != null && header.get("fromUserName").equals(iChatPref.getUserName())) {
+							 myName = iChatPref.getUserServerName(header.get("userName"));
+							 setProfilePic(header.get("userName"));
+						 }else {
 							 myName = iChatPref.getUserServerName(call.getRemoteUserId());
-						 if (myName != null && myName.equals(call.getRemoteUserId()))
-							 myName = "New User";
-						 if (myName != null && myName.contains("_"))
-							 myName = "+" + myName.substring(0, myName.indexOf("_"));
+							 if (myName != null && myName.equals(call.getRemoteUserId()))
+								 myName = iChatPref.getUserServerName(call.getRemoteUserId());
+							 if (myName != null && myName.equals(call.getRemoteUserId()))
+								 myName = "New User";
+							 if (myName != null && myName.contains("_"))
+								 myName = "+" + myName.substring(0, myName.indexOf("_"));
+							 setProfilePic(call.getRemoteUserId());
+						 }
 						 mCallerName.setText(myName);
 						 mCallState.setText(call.getState().toString());
-						 setProfilePic(call.getRemoteUserId());
 					 }
 					 if(SharedPrefManager.getInstance().getCurrentSGDisplayName() != null && SharedPrefManager.getInstance().getCurrentSGDisplayName().trim().length() > 0)
 						 sgName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());

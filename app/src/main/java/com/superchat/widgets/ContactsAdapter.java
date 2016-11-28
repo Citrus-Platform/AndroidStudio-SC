@@ -360,7 +360,8 @@ public class ContactsAdapter extends SimpleCursorAdapter
 		ViewHolder viewholder = (ViewHolder)view.getTag();
 		viewholder.userNames = cursor.getString(cursor.getColumnIndex(DatabaseConstants.USER_NAME_FIELD));
 		String s = cursor.getString(cursor.getColumnIndex(DatabaseConstants.NAME_CONTACT_ID_FIELD));
-		viewholder.nameText =cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD));		
+		String sg = cursor.getString(cursor.getColumnIndex(DatabaseConstants.USER_SG));
+		viewholder.nameText =cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD));
 		viewholder.userType =cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_TYPE_FIELD));		
 		viewholder.voipumValue = cursor.getString(cursor.getColumnIndex(DatabaseConstants.VOPIUM_FIELD));
 		if(SharedPrefManager.getInstance().getDomainType().equals("rwa")){
@@ -372,6 +373,7 @@ public class ContactsAdapter extends SimpleCursorAdapter
 		boolean isSharedIDContact = false;
 //		if(phone_type != null && phone_type.equals("2"))
 //			continue;
+		System.out.println("=== User SG = "+sg+ ", viewholder.userNames = "+viewholder.userNames+", viewholder.nameText = "+viewholder.nameText);
 		viewholder.compositeNumber = cursor.getString( cursor.getColumnIndex(DatabaseConstants.CONTACT_NUMBERS_FIELD));
 //		Log.d(TAG, "Contacts - "+viewholder.nameText);
 		viewholder.id = s;

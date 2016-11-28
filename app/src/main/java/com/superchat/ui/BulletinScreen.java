@@ -358,10 +358,14 @@ public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountL
                 }
             }
             if (cursor != null && cursor.getCount() > 0) {
-                String as[] = {DatabaseConstants.FROM_USER_FIELD};
-                int ai[] = new int[1];
-                ai[0] = R.id.chat_person_name;
-                adapter = new BulletinScreenAdapter(fragmentactivity, R.layout.bulletin_broadcast_list_item, cursor, as, ai, 0, BulletinScreen.this);
+                try {
+                    String as[] = {DatabaseConstants.FROM_USER_FIELD};
+                    int ai[] = new int[1];
+                    ai[0] = R.id.chat_person_name;
+                    adapter = new BulletinScreenAdapter(fragmentactivity, R.layout.bulletin_broadcast_list_item, cursor, as, ai, 0, BulletinScreen.this);
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
 //					getListView().setAdapter(adapter);
             }
             return null;

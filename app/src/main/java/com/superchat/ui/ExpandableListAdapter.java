@@ -164,7 +164,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                 //notify or not////////////
                 int countId = DBWrapper.getInstance().getNewMessageCountForSG(item.actualName);
-                if (countId == 0) {
+                if (countId == 0 || item.actualName.equalsIgnoreCase(SharedPrefManager.getInstance().getUserDomain())) {
 //                    itemControllerChild.countContainer.setVisibility(View.GONE);
                     itemControllerChild.child_notificationCount.setText("");
                 } else {

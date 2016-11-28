@@ -72,16 +72,16 @@ public class IncomingCallScreenActivity extends Activity {
 						Map<String, String> header = call.getHeaders();
 						if(header != null) {
 							String myName = header.get("displayName");
-							if (myName != null && myName.equalsIgnoreCase(call.getRemoteUserId()))
-								myName = chatDBWrapper.getUsersDisplayName(call.getRemoteUserId());
-							if (myName != null && myName.equals(call.getRemoteUserId())) {
-								myName = SharedPrefManager.getInstance().getUserServerName(myName);
-							}
-							if (myName != null && myName.equals(call.getRemoteUserId())) {
-								myName = "New User";
-							}
-							if (myName != null && myName.contains("_"))
-								myName = "+" + myName.substring(0, myName.indexOf("_"));
+//							if (myName != null && myName.equalsIgnoreCase(call.getRemoteUserId()))
+//								myName = chatDBWrapper.getUsersDisplayName(call.getRemoteUserId());
+//							if (myName != null && myName.equals(call.getRemoteUserId())) {
+//								myName = SharedPrefManager.getInstance().getUserServerName(myName);
+//							}
+//							if (myName != null && myName.equals(call.getRemoteUserId())) {
+//								myName = "New User";
+//							}
+//							if (myName != null && myName.contains("_"))
+//								myName = "+" + myName.substring(0, myName.indexOf("_"));
 							remoteUser.setText(myName);
 							if(header.get("picid") != null)
 								setProfilePic(header.get("fromUserName"), header.get("picid"));

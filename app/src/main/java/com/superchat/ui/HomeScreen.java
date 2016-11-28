@@ -88,6 +88,7 @@ import com.superchat.model.LoginResponseModel.UserResponseDetail;
 import com.superchat.model.MarkSGActive;
 import com.superchat.model.RegistrationForm;
 import com.superchat.model.RegistrationFormResponse;
+import com.superchat.model.UserProfileModel;
 import com.superchat.model.multiplesg.InviteJoinDataModel;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.utils.BitmapDownloader;
@@ -414,9 +415,16 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         }
     }
 
+
     public void OnSyncClick(View view) {
         if (!SuperChatApplication.isNetworkConnected()) {
             Toast.makeText(this, getString(R.string.check_net_connection), Toast.LENGTH_LONG).show();
+            return;
+        }
+        dataAlreadyLoadedForSG = iPrefManager.isDataLoadedForSG(iPrefManager.getUserDomain());
+        if ((!dataAlreadyLoadedForSG && isContactSynching) || isSwitchingSG) {
+            drawerFragment.fragmentClose();
+            Toast.makeText(this, "Loading some data, please wait.", Toast.LENGTH_LONG).show();
             return;
         }
         if (syncAnimation == null) {
@@ -425,8 +433,12 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //			syncAnimation.setRepeatMode(ValueAnimator.REVERSE);
             syncAnimation.setRepeatCount(Animation.ABSOLUTE);
         }
-//			syncAnimation.cancel();
-
+        if(!dataAlreadyLoadedForSG) {
+            if (Build.VERSION.SDK_INT >= 11)
+                new GetSharedIDListFromServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            else
+                new GetSharedIDListFromServer().execute();
+        }
         if (SharedPrefManager.getInstance().isOpenDomain()) {
             isContactSync = true;
             isLoginProcessing = true;
@@ -482,10 +494,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         ChatDBWrapper.getInstance(SuperChatApplication.context);
         DBWrapper.getInstance(SuperChatApplication.context);
         //Check if user is not logged
-        if (isServiceRunning("com.chat.sdk.ChatService")) {
-            System.out.println("[SERVICE RUNNING - SO STOPPING]");
-            stopService(new Intent(this, ChatService.class));
-        }
+//        if (isServiceRunning("com.chat.sdk.ChatService")) {
+//            System.out.println("[SERVICE RUNNING - SO STOPPING]");
+//            stopService(new Intent(this, ChatService.class));
+//        }
         iPrefManager = SharedPrefManager.getInstance();
         if (iPrefManager.getUserName() == null) {
             startActivity(new Intent(this, RegistrationOptions.class));
@@ -860,9 +872,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				String pass = model.getInviteUserPassword();
 				userID = model.getInviteUserID();
 
-                System.out.println("[UserID - ] " + userID);
-                System.out.println("[Pass - ] " + pass);
-                System.out.println("<< mobileNumber :: Switch :: " + model.getInviteMobileNumber());
+//                System.out.println("[UserID - ] " + userID);
+//                System.out.println("[Pass - ] " + pass);
+//                System.out.println("<< mobileNumber :: Switch :: " + model.getInviteMobileNumber());
 
                 prefManager.saveUserId(userID);
                 prefManager.saveUserName(username);
@@ -872,9 +884,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //				String sg_name = username.substring(username.indexOf("_") + 1);
                 userID = prefManager.getSGUserID(username);
 
-                System.out.println("[UserID - ] " + userID);
-                System.out.println("[Pass - ] " + prefManager.getSGPassword(username));
-                System.out.println("<< mobileNumber :: Switch :: " + prefManager.getUserPhone());
+//                System.out.println("[UserID - ] " + userID);
+//                System.out.println("[Pass - ] " + prefManager.getSGPassword(username));
+//                System.out.println("<< mobileNumber :: Switch :: " + prefManager.getUserPhone());
 
                 prefManager.saveUserId(userID);
                 prefManager.saveUserName(username);
@@ -978,8 +990,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 			String JSONstring = new Gson().toJson(loginForm);
 			DefaultHttpClient client1 = new DefaultHttpClient();
 
-            System.out.println("HomeScreen :: SignInTaskOnServer : URL : " + (Constants.SERVER_URL + "/tiger/rest/user/login"));
-            System.out.println("HomeScreen :: SignInTaskOnServer : serverUpdateCreateGroupInfo request: " + JSONstring);
+//            System.out.println("HomeScreen :: SignInTaskOnServer : URL : " + (Constants.SERVER_URL + "/tiger/rest/user/login"));
+//            System.out.println("HomeScreen :: SignInTaskOnServer : serverUpdateCreateGroupInfo request: " + JSONstring);
 
             HttpPost httpPost = new HttpPost(Constants.SERVER_URL + "/tiger/rest/user/login");
             HttpResponse response = null;
@@ -999,7 +1011,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                             str += line;
                         }
                         if (str != null && !str.equals("")) {
-                            System.out.println("HomeScreen :: SignInTaskOnServer : response : " + str);
+//                            System.out.println("HomeScreen :: SignInTaskOnServer : response : " + str);
                             Log.e("here", "respo : " + str);
                             Gson gson = new GsonBuilder().create();
                             String actual_domain = null;
@@ -1007,7 +1019,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                             if (loginObj != null && loginObj.status != null && loginObj.status.equals("success")) {
                                 if (isSwitchSG) {
                                     //Important lines, this will remove all the groups of previous SG from Shared - Otherwise that will be joined.
-                                    System.out.println("(Removing all groups from Shared Pref.)");
+//                                    System.out.println("(Removing all groups from Shared Pref.)");
                                     sharedPrefManager.removeAllGroups(sharedPrefManager.getUserDomain());
                                 }
                                 if (loginObj.getDomainType() != null && !loginObj.getDomainType().equals(""))
@@ -1032,7 +1044,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                     sharedPrefManager.setAsDomainAdmin(sharedPrefManager.getUserDomain(), false);
 
                                 if (loginObj.directoryUserSet != null && !sharedPrefManager.isContactSynched(sharedPrefManager.getUserDomain())) {
-                                    System.out.println("HomeScreen :: SignInTaskOnServer : Writing in TABLE_NAME_CONTACT_NUMBERS.");
+//                                    System.out.println("HomeScreen :: SignInTaskOnServer : Writing in TABLE_NAME_CONTACT_NUMBERS.");
                                     for (UserResponseDetail userDetail : loginObj.directoryUserSet) {
                                         String number = DBWrapper.getInstance().getContactNumber(userDetail.userName);
                                         if (number != null && !number.equals(""))
@@ -1058,18 +1070,19 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                         contentvalues.put(DatabaseConstants.USER_ID, iPrefManager.getUserId());
 
                                         //Add SG Name and user ID
-                                        if(userDetail.userName != null && userDetail.userName.contains("_")) {
-                                            actual_domain = userDetail.userName.substring(userDetail.userName.indexOf('_') + 1);
+//                                        if(userDetail.userName != null && userDetail.userName.contains("_")) {
+//                                            actual_domain = userDetail.userName.substring(userDetail.userName.indexOf('_') + 1);
+//
+//                                            if (actual_domain.equals(iPrefManager.getUserDomain()))
+//                                                contentvalues.put(ChatDBConstants.USER_SG, iPrefManager.getUserDomain());
+//                                            else
+//                                                contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+//                                        }else
+                                        contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
-                                            if (actual_domain.equals(iPrefManager.getUserDomain()))
-                                                contentvalues.put(ChatDBConstants.USER_SG, iPrefManager.getUserDomain());
-                                            else
-                                                contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
-                                        }else
-                                            contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
-
-                                        System.out.println("TABLE_NAME_CONTACT_NUMBERS [CLOSE] : " + contentvalues.toString());
-                                        DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
+//                                        System.out.println("TABLE_NAME_CONTACT_NUMBERS [CLOSE] : " + contentvalues.toString());
+                                        if (!DBWrapper.getInstance().isContactExists(userDetail.userName))
+                                            DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
 
                                         if (userDetail.currentStatus != null)
                                             sharedPrefManager.saveUserStatusMessage(userDetail.userName, userDetail.currentStatus);
@@ -1097,9 +1110,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //                                    iPrefManager.setContactSynched(iPrefManager.getUserDomain(), true);
                                 }
                                 directoryGroupSet = loginObj.directoryGroupSet;
-                                if (directoryGroupSet != null) {
-                                    System.out.println("HomeScreen :: SignInTaskOnServer : Writing Groups..");
-                                }
+//                                if (directoryGroupSet != null) {
+//                                    System.out.println("HomeScreen :: SignInTaskOnServer : Writing Groups..");
+//                                }
                                 for (GroupDetail groupDetail : loginObj.directoryGroupSet) {
 //										Log.d(TAG, "counter check  Login response : "+groupDetail.type+""+groupDetail.displayName+" , "+groupDetail.numberOfMembers);
 //										writeLogsToFile(groupDetail.groupName+" - "+groupDetail.displayName);
@@ -1145,9 +1158,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //										DBWrapper.getInstance().updateSGGroupsBroadcastLoaded(iPrefManager.getUserDomain(), "true");
                                 }
                                 directoryBroadcastGroupSet = loginObj.directoryBroadcastGroupSet;
-                                if (directoryBroadcastGroupSet != null) {
-                                    System.out.println("HomeScreen :: SignInTaskOnServer : Writing Broadcast..");
-                                }
+//                                if (directoryBroadcastGroupSet != null) {
+//                                    System.out.println("HomeScreen :: SignInTaskOnServer : Writing Broadcast..");
+//                                }
                                 for (BroadcastGroupDetail broadcastGroupDetail : loginObj.directoryBroadcastGroupSet) {
 
                                     boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(broadcastGroupDetail.broadcastGroupName);
@@ -1378,7 +1391,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						isContactSynching = false;
 				}
                 //call Once
-                System.out.println("==>"+iPrefManager.getUserDomain()+" : "+dataAlreadyLoadedForSG);
+//                System.out.println("==>"+iPrefManager.getUserDomain()+" : "+dataAlreadyLoadedForSG);
                 if(!iPrefManager.isBulletinLoaded(iPrefManager.getUserDomain()) && !frompush){
                     getBulletinMessages();
                 }
@@ -1388,7 +1401,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 				//Switch to chat
 				if(frompush) {
 //					if(!DBWrapper.getInstance().isSGBulletinLoaded(iPrefManager.getUserDomain())){
-                    System.out.println("Push ==>"+iPrefManager.getUserDomain()+" : "+dataAlreadyLoadedForSG);
+//                    System.out.println("Push ==>"+iPrefManager.getUserDomain()+" : "+dataAlreadyLoadedForSG);
 					if(!iPrefManager.isBulletinLoaded(iPrefManager.getUserDomain())){
 //						bulletinNotLoadedAndFromPush = true;
 						getBulletinMessages();
@@ -1478,7 +1491,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 		@Override
 		protected void onPreExecute() {
 			isContactSynching = true;
-			if(!firstTimeAdmin && !dataAlreadyLoadedForSG)
+			if((!firstTimeAdmin && !dataAlreadyLoadedForSG) || isContactSync)
 				progressDialog = ProgressDialog.show(HomeScreen.this, "", "Contact loading. Please wait...", true);
 			super.onPreExecute();
 		}
@@ -1571,7 +1584,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         @Override
         protected void onPreExecute() {
 //			if(iPrefManager.isFirstTime()|| isContactSync)
-//				progressDialog = ProgressDialog.show(HomeScreen.this, "", "Contact refreshing. Please wait...", true);
+            if(isContactSync)
+				progressDialog = ProgressDialog.show(HomeScreen.this, "", "Contact refreshing. Please wait...", true);
             isContactSynching = true;
             if (isContactSync)
                 syncProcessStart(true);
@@ -1599,6 +1613,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
                             str += line;
                         }
+                        Log.i(TAG, "DomainsUserTaskOnServer :: doInBackground : Response Data = "+str);
                         if (str != null && !str.equals("")) {
                             Gson gson = new GsonBuilder().create();
                             LoginResponseModel loginObj = gson.fromJson(str, LoginResponseModel.class);
@@ -1626,7 +1641,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                         //Alter Table for the values.
 //									wrapper.alterTable(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, new String[]{DatabaseConstants.FLAT_NUMBER, DatabaseConstants.BUILDING_NUMBER,
 //											DatabaseConstants.ADDRESS, DatabaseConstants.RESIDENCE_TYPE});
-                                        if (!sharedPrefManager.isContactSynched(sharedPrefManager.getUserDomain())) {
+//                                        if (!sharedPrefManager.isContactSynched(sharedPrefManager.getUserDomain()))
+                                        {
                                             ContentValues contentvalues = new ContentValues();
                                             contentvalues.put(DatabaseConstants.USER_NAME_FIELD, userDetail.userName);
                                             contentvalues.put(DatabaseConstants.VOPIUM_FIELD, Integer.valueOf(1));
@@ -1666,7 +1682,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                             contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, userDetail.mobileNumber);
 											System.out.println("TABLE_NAME_CONTACT_NUMBERS [CLOSE] : "+contentvalues.toString());
 											isContactSynching = true;
-                                            if (!userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName()))
+                                            if (!wrapper.isContactExists(userDetail.userName) && !userDetail.userName.equalsIgnoreCase(sharedPrefManager.getUserName()))
                                                 wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
                                         }
 
@@ -2204,7 +2220,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             String fileid = null;
             String lastdate = null;
             if (data != null) {
-                System.out.println("Response======>" + data);
+//                System.out.println("Response======>" + data);
                 backupData = data;
                 try {
                     JSONObject jsonobj = new JSONObject(data);
@@ -2849,22 +2865,16 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         @Override
         protected String doInBackground(String... params) {
             // TODO Auto-generated method stub
-//				String shared_id_name = "";
-//				if(params != null && params.length > 0){
-////					shared_id_name = "text="+params[0]+"&";
-//					shared_id_name = params[0];
-//				}
+            String url = Constants.SERVER_URL + "/tiger/rest/sharedid/getall?domainName=" + sharedPrefManager.getUserDomain();
             DefaultHttpClient client1 = new DefaultHttpClient();
-            //http://52.88.175.48/tiger/rest/sharedid/getall?domainName=p5domain
-            HttpPost httpPost = new HttpPost(Constants.SERVER_URL + "/tiger/rest/sharedid/getall?domainName=" + sharedPrefManager.getUserDomain());
+            HttpPost httpPost = new HttpPost(url);
             httpPost = SuperChatApplication.addHeaderInfo(httpPost, true);
             HttpResponse response = null;
-
             try {
                 try {
                     response = client1.execute(httpPost);
                     final int statusCode = response.getStatusLine().getStatusCode();
-                    if (statusCode == HttpStatus.SC_OK) { //new1
+                    if (statusCode == HttpStatus.SC_OK) {
                         HttpEntity entity = response.getEntity();
                         BufferedReader rd = new BufferedReader(new InputStreamReader(entity.getContent()));
                         String line = "";
@@ -2879,13 +2889,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 } catch (IOException e) {
                     Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());
                 }
-
             } catch (Exception e) {
                 Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution Exception:" + e.toString());
                 e.printStackTrace();
             }
-
-
             return null;
         }
 
@@ -2896,6 +2903,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 progressDialog = null;
             }
             if (str != null && str.length() > 0) {
+                Log.i(TAG, "GetSharedIDListFromServer :: onPostExecute : Response = "+str);
                 try {
                     JSONObject jsonobj = new JSONObject(str);
                     if (jsonobj != null && jsonobj.getString("status") != null
@@ -2914,8 +2922,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             super.onPostExecute(str);
         }
     }
-
-    //-------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
     public static void parseSharedIDData(String str) {
         try {
             SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance();
@@ -2924,7 +2931,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             if (loginObj != null) {
                 if (loginObj.directoryBroadcastGroupSet != null && loginObj.directoryBroadcastGroupSet.size() > 0) {
                     sharedIDData.clear();
-                    System.out.println("HomeScreen :: SignInTaskOnServer : Writing Official ID Data..");
                     for (BroadcastGroupDetail shared_id_detail : loginObj.directoryBroadcastGroupSet) {
                         if (sharedPrefManager.getSharedIDDisplayName(shared_id_detail.broadcastGroupName) == null) {
 //							System.out.println("Shared ID :: "+shared_id_detail.displayName+" : "+shared_id_detail.broadcastGroupName);
@@ -2953,7 +2959,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                             contentvalues.put(DatabaseConstants.USER_ID, sharedPrefManager.getUserId());
                             contentvalues.put(DatabaseConstants.USER_SG, sharedPrefManager.getUserDomain());
                             contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, "9999999999");
-                            DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
+                            if (!DBWrapper.getInstance().isContactExists(shared_id_detail.broadcastGroupName))
+                                DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
                         }
                         sharedIDData.add(shared_id_detail);
                     }
@@ -3066,6 +3073,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //										Log.d(TAG,"serverUpdateContactsInfo onSuccess error comming : "	+ str);
                             return;
                         }
+                    Log.i(TAG, "serverUpdateContactsInfo : Response Data = "+str);
 
                         ContactUpDatedModel updatedModel = gson.fromJson(str, ContactUpDatedModel.class);
                         String actual_domain = null;
@@ -3127,7 +3135,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                     contentvalues.put(DatabaseConstants.USER_SG, iPrefManager.getUserDomain());
 
 								System.out.println("TABLE_NAME_CONTACT_NUMBERS [OPEN] : "+contentvalues.toString());
-                                if (!userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
+                                if (!wrapper.isContactExists(userDetail.userName) && !userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
                                     wrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
                                 if (userDetail.userName.equalsIgnoreCase(iPrefManager.getUserName()))
                                     iPrefManager.saveDisplayName((userDetail.name != null ? userDetail.name : ""));
@@ -3210,7 +3218,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 isSwitchingSG = isContactSynching = false;
             }
         }
-        System.out.println("[HomeScreen : Contacts ID : Done for - " + iPrefManager.getUserDomain());
+//        System.out.println("[HomeScreen : Contacts ID : Done for - " + iPrefManager.getUserDomain());
 		iPrefManager.setContactSynched(iPrefManager.getUserDomain(), true);
         DBWrapper.getInstance().updateSGContactsLoaded(iPrefManager.getUserDomain(), "true");
     }
@@ -3588,7 +3596,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                     json_body = null;
                                     type = 0;
                                 }
-                                System.out.println("[HomeScreen : Bulletin  : Done for - " + iPrefManager.getUserDomain());
+//                                System.out.println("[HomeScreen : Bulletin  : Done for - " + iPrefManager.getUserDomain());
 //                                iPrefManager.setBulletinLoaded(iPrefManager.getUserDomain(), true);
 //                                DBWrapper.getInstance().updateSGBulletinLoaded(iPrefManager.getUserDomain(), "true");
                                 isBulletinMsgFound = true;
@@ -3645,7 +3653,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                         }
                     } else {
                         String errorMessage = response.getMessage() != null ? response.getMessage() : "Please try later";
-                        System.out.println("Bulletin Response : " + errorMessage);
+//                        System.out.println("Bulletin Response : " + errorMessage);
 //						showDialog(errorMessage);
                     }
                 }
@@ -3683,7 +3691,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //            System.out.println("GMT offset is "+currentLocalTime.getTime());
         DateFormat datef = new SimpleDateFormat("Z");
         String localTime = datef.format(currentLocalTime);
-        System.out.println("GMT offset is " + localTime);
+//        System.out.println("GMT offset is " + localTime);
 
         time_millis = date.getTime();
         return time_millis;
@@ -3928,8 +3936,18 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             contactsFragment.resetSearch();
         }
 		dataAlreadyLoadedForSG = iPrefManager.isDataLoadedForSG(sg_name);
-		if(!dataAlreadyLoadedForSG && !SuperChatApplication.isNetworkConnected()){
+		if((!dataAlreadyLoadedForSG || frompush) && !SuperChatApplication.isNetworkConnected()){
 			Toast.makeText(this, getString(R.string.check_net_connection), Toast.LENGTH_LONG).show();
+            if(frompush){
+                frompush = false;
+                isSwitchingSG = false;
+                isSwitchSG = false;
+                switchUserScreenName = null;
+                switchUserName = null;
+                switchUserDisplayName = null;
+                systemMessage = false;
+                bulletinNotLoadedAndFromPush = false;
+            }
 			return;
 		}
         if(userDeactivated){
@@ -3992,6 +4010,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 						if(!SuperChatApplication.isNetworkConnected()) {
 							isContactSynching = false;
 							isSwitchingSG = false;
+                            frompush = false;
+                            switchUserScreenName = null;
 						}
 					}
                     markSGActive(sg_name);
@@ -4346,7 +4366,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     // Called in Android UI's main thread
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessage(String message) {
-        System.out.println("threadMode = ThreadMode.MAIN : Message - "+message);
+//        System.out.println("threadMode = ThreadMode.MAIN : Message - "+message);
         if(message != null && message.startsWith("[Deactivated] : ")){
             userDeactivated = true;
             switchSG(iPrefManager.getUserDomain(), false, null, false);
@@ -4648,13 +4668,91 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     }
 
     private String getTabText(final int position) {
-
         String inboxString = "Inbox";
         String bulletinString = "Bulletin";
         String contactString = "Contacts";
-
         String[] titles = new String[]{"" + inboxString, "Groups", "" + contactString, "" + bulletinString};
-
         return titles[position].toUpperCase();
+    }
+    public static void checkForCall(final String userName, final Context context, final SinchService.SinchServiceInterface mSinchServiceInterface){
+        try{
+            final ProgressDialog call_dialog = ProgressDialog.show(context, "", "Checking..", true);
+            Call call = objApi.getApi(SuperChatApplication.context).getUserProfile(userName);
+            System.out.println("Retrofit : Start ");
+            call.enqueue(new RetrofitRetrofitCallback<UserProfileModel>(context) {
+                @Override
+                protected void onResponseVoidzResponse(Call call, Response response) {
+                    System.out.println("Retrofit : onResponseVoidzResponse 1 - "+response.toString());
+
+                }
+
+                @Override
+                protected void onResponseVoidzObject(Call call, UserProfileModel response) {
+                    if(response != null){
+                        String android = "Android_";
+                        if(response.iStatus != null && response.iStatus.equals("success")){
+                            String version =  response.clientVersion;
+                            Log.e(TAG, "Client Version : "+version);
+                            int versionInt = 0;
+                            boolean call_allowed = false;
+                            if(version != null) {
+                                try {
+                                    if (version.startsWith(android)) {//Android_4_0_2
+                                        version = version.substring(version.indexOf(android) + android.length());
+                                        version = version.replace("_", "");
+                                        versionInt = Integer.parseInt(version);
+                                        if(versionInt > 401)
+                                            call_allowed = true;
+
+                                    } else {//SuperChat_iphone_4.0.1
+                                        version = version.substring(version.lastIndexOf('_') + 1);
+                                        version = version.replace(".", "");
+                                        versionInt = Integer.parseInt(version);
+                                        if(versionInt > 400)
+                                            call_allowed = true;
+                                    }
+                                    if(call_allowed){
+                                        com.sinch.android.rtc.calling.Call callz = mSinchServiceInterface.callUserWithHeader(userName, createHeaderForCalling(userName));
+                                        String callId = callz.getCallId();
+                                        Intent callScreen = new Intent(context, CallScreenActivity.class);
+                                        callScreen.putExtra(SinchService.CALL_ID, callId);
+                                        context.startActivity(callScreen);
+                                    }else{
+                                        final Dialog dialog = new Dialog(context);
+                                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                        dialog.setCanceledOnTouchOutside(false);
+                                        dialog.setContentView(R.layout.custom_dialog);
+                                        ((TextView) dialog.findViewById(R.id.id_dialog_message)).setText("Call not possible to the user as user not updated to latest Version.");
+                                        ((TextView) dialog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
+
+                                            @Override
+                                            public boolean onTouch(View v, MotionEvent event) {
+                                                dialog.cancel();
+                                                return false;
+                                            }
+                                        });
+                                        dialog.show();
+                                    }
+                                }catch (NumberFormatException nex){
+                                    nex.printStackTrace();
+                                }
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                @Override
+                protected void common() {
+                    if(call_dialog != null)
+                        call_dialog.dismiss();
+
+                }
+            });
+        } catch(Exception e){
+            objExceptione.printStackTrace(e);
+        }
     }
 }

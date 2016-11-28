@@ -221,7 +221,7 @@ class PacketReader {
         try {
             int eventType = parser.getEventType();
             do {
-            	Log.d("PacketReader", "PacketReader tag name: "+parser.getName());
+//            	Log.d("PacketReader", "PacketReader tag name: "+parser.getName());
                 if (eventType == XmlPullParser.START_TAG) {
                     if (parser.getName().equals("message")) {
                         processPacket(PacketParserUtils.parseMessage(parser));

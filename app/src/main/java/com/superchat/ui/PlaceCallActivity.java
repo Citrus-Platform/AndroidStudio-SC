@@ -113,12 +113,13 @@ public class PlaceCallActivity extends Activity {
             return;
         }
         if(mSinchServiceInterface!=null){
-	        Call call = mSinchServiceInterface.callUserWithHeader(userName, HomeScreen.createHeaderForCalling(userName));
-	        String callId = call.getCallId();
-	
-	        Intent callScreen = new Intent(this, CallScreenActivity.class);
-	        callScreen.putExtra(SinchService.CALL_ID, callId);
-	        startActivity(callScreen);
+            HomeScreen.checkForCall(userName, this, mSinchServiceInterface);
+//	        Call call = mSinchServiceInterface.callUserWithHeader(userName, HomeScreen.createHeaderForCalling(userName));
+//	        String callId = call.getCallId();
+//
+//	        Intent callScreen = new Intent(this, CallScreenActivity.class);
+//	        callScreen.putExtra(SinchService.CALL_ID, callId);
+//	        startActivity(callScreen);
         }
     }
 

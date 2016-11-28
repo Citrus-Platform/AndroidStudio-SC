@@ -1678,7 +1678,8 @@ public class ChatService extends Service implements interfaceInstances {
                                 contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
                                 contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
                                 contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, "9999999999");
-                                DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
+                                if (!DBWrapper.getInstance().isContactExists(sharedIDName))
+                                    DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
                                 HomeScreen.refreshContactList = true;
                             }
                         }
@@ -2050,7 +2051,7 @@ public class ChatService extends Service implements interfaceInstances {
             //Save that message in shared pref.
             savePoll(from, PollID, captionTag);
         } else
-            saveMessage(displayName, from, userMe, msg, message);
+            saveP2PMessage(displayName, from, userMe, msg, message);
         //Save that user in DB
         String number = senderName;
         if (number.indexOf('_') != -1)
@@ -2218,7 +2219,7 @@ public class ChatService extends Service implements interfaceInstances {
             //Save USerID and SG in DB
             contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
             contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
-            if (!username.equalsIgnoreCase(SharedPrefManager.getInstance().getUserName()))
+            if(!username.equalsIgnoreCase(SharedPrefManager.getInstance().getUserName()) && !DBWrapper.getInstance().isContactExists(username))
                 DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
 
         } catch (Exception ex) {
@@ -3217,13 +3218,14 @@ public class ChatService extends Service implements interfaceInstances {
             //Save USerID and SG in DB
             contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
             contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
-            DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
+            if (!DBWrapper.getInstance().isContactExists(tmpUserName))
+                DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
-    public void saveMessage(String displayName, String from, String to,
+    public void saveP2PMessage(String displayName, String from, String to,
                             String msg, Message message) {
         String groupSenderDisplayName = message.getDisplayName();
         Message.MessageDelay delay = message.getMessageDelay();
@@ -3232,13 +3234,15 @@ public class ChatService extends Service implements interfaceInstances {
 //		if(groupSenderDisplayName!=null && !groupSenderDisplayName.equals("")){
 //			displayName = groupSenderDisplayName;
 //		}
-        if (groupSenderDisplayName != null && !groupSenderDisplayName.equals("") && !groupSenderDisplayName.equals("#786#")) {
+        if(groupSenderDisplayName!=null && !groupSenderDisplayName.equals("") && !groupSenderDisplayName.equals("#786#")){
             String tmpFrom = message.getFrom();
-            if (message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal()) {
+            if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal()){
                 displayName = tmpFrom.substring(0, tmpFrom.indexOf('@'));
-            } else if (tmpFrom != null && tmpFrom.contains("/") && tmpFrom.length() > (tmpFrom.indexOf("/") + 1))
-                displayName = groupSenderDisplayName + "#786#" + tmpFrom.substring(tmpFrom.indexOf("/") + 1);
-            sender_user_name = tmpFrom.substring(tmpFrom.indexOf("/") + 1);
+            }else {
+                if (tmpFrom != null && tmpFrom.contains("/") && tmpFrom.length() > (tmpFrom.indexOf("/") + 1))
+                    displayName = groupSenderDisplayName + "#786#" + tmpFrom.substring(tmpFrom.indexOf("/") + 1);
+                sender_user_name = tmpFrom.substring(tmpFrom.indexOf("/") + 1);
+            }
         }
         try {
             String captionTag = message.getMediaTagMessage();
@@ -4739,7 +4743,7 @@ public class ChatService extends Service implements interfaceInstances {
 
     public void sendMessage(String userName, String message) {
         boolean isGroupChat = false;
-        System.out.println("sendMessage :: userName = " + userName);
+        //System.out.println("sendMessage :: userName = " + userName);
         if (SharedPrefManager.getInstance().isGroupChat(userName)
                 && !message.equals("You are welcome in " + userName + " group.")) {
             isGroupChat = true;
