@@ -541,9 +541,9 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
             String urlInfo = "update";
             switch (requestType) {
                 case Constants.GROUP_USER_CHAT_CREATE:
-                    model.setMode(mode);
                     model.setDomainName(iPrefManager.getUserDomain());
                     model.setDescription(groupDiscription);
+                    model.setMode(mode);
                     if (urls != null && urls[0] != null && !urls[0].equals(""))
                         model.setFileId(urls[0]);
                     // this will be unique id
@@ -614,8 +614,6 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
 //						showDialog(line,"Ok");
                     }
 
-                    Log.d(TAG, "serverUpdateCreateGroupInfo response 1 : " + response.toString());
-                    Log.d(TAG, "serverUpdateCreateGroupInfo response 2 : " + responseMsg);
                     //else
 //						showDialog("Network error in add participant.","Ok");
                 } catch (ClientProtocolException e) {
@@ -680,6 +678,7 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
                     messageService.updateGroupDisplayName(groupUUID, displayName, json);
                     json = null;
                 }
+
                 if (groupDiscription != null)
                     SharedPrefManager.getInstance().saveUserStatusMessage(groupUUID, groupDiscription);
                 if (urlss != null && urlss[0] != null && !urlss[0].equals(""))
@@ -692,18 +691,31 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
                     messageService.saveInfoMessage(displayName, groupUUID, "You updated broadcast info.", UUID.randomUUID().toString());
                 }
 
-                // Save Meta info of group
-                {
-                    if (mode != null) {
-                        GroupChatMetaInfo groupChatMetaInfo = new GroupChatMetaInfo();
-                        groupChatMetaInfo.setBroadCastActive(mode);
-                        SharedPrefManager.getInstance().setSubGroupMetaData(groupUUID, groupChatMetaInfo);
-                    }
-                }
-
                 setResult(RESULT_OK, new Intent(CreateGroupScreen.this, GroupProfileScreen.class));
                 finish();
             }
+
+
+            // Save Meta info of group
+            {
+                if (mode != null) {
+                    GroupChatMetaInfo groupChatMetaInfo = new GroupChatMetaInfo();
+                    groupChatMetaInfo.setBroadCastActive(mode);
+                    SharedPrefManager.getInstance().setSubGroupMetaData(groupUUID, groupChatMetaInfo);
+
+                    GroupChatMetaInfo.GroupPermissions permissionMode;
+                    if(groupChatMetaInfo.isBroadCastActive()){
+                        permissionMode = GroupChatMetaInfo.GroupPermissions.SCGroupPermissionAllowedAdmins;
+                    } else {
+                        permissionMode = GroupChatMetaInfo.GroupPermissions.SCGroupPermissionAllowedAll;
+                    }
+
+                    if(permissionMode != null) {
+                        messageService.updateGroupType(groupUUID, displayName, permissionMode);
+                    }
+                }
+            }
+
             super.onPostExecute(response);
         }
     }

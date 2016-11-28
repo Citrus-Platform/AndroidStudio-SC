@@ -126,7 +126,7 @@ import com.superchat.interfaces.interfaceInstances;
 import com.superchat.model.BulletinGetMessageDataModel;
 import com.superchat.model.GroupChatMetaInfo;
 import com.superchat.model.GroupChatServerModel;
-import com.superchat.model.SuperGroupSubAdminStatusChange;
+import com.superchat.model.GroupChatBroadcastInfo;
 import com.superchat.model.UserProfileModel;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.time.RadialPickerLayout;
@@ -189,10 +189,7 @@ import io.codetail.animation.ViewAnimationUtils;
 import me.leolin.shortcutbadger.ShortcutBadger;
 import retrofit2.Response;
 
-import static android.R.id.toggle;
-import static com.superchat.R.id.count;
 import static com.superchat.R.id.create_doodle;
-import static com.superchat.R.id.id_attach_media;
 
 //import com.superchat.utils.SharedPrefManager;
 public class ChatListScreen extends FragmentActivity implements MultiChoiceModeListener, VoiceMediaHandler, TypingListener, ChatCountListener, ProfileUpdateListener,
@@ -7476,7 +7473,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void setBroadCastScreenMode(SuperGroupSubAdminStatusChange superGroupSubAdminStatusChange) {
+    public void setBroadCastScreenMode(GroupChatBroadcastInfo groupChatBroadcastInfo) {
 
         String groupName = userName;
 
@@ -7493,6 +7490,8 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             } else {
                 Toast.makeText(this, "This is not group :-P", Toast.LENGTH_SHORT).show();
             }
+        } else {
+            setUIBroascastMode(false);
         }
     }
 }

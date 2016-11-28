@@ -9,6 +9,11 @@ import static com.superchat.utils.Constants.KEY_GROUP_NORMAL;
 
 public class GroupChatMetaInfo {
 
+	public enum GroupPermissions{
+		SCGroupPermissionAllowedAll,
+		SCGroupPermissionAllowedAdmins,
+		SCGroupPermissionAllowedOwnerOnly
+	}
 
 	boolean isBroadCastActive = false;
 

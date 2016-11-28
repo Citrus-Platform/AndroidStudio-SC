@@ -5,7 +5,6 @@ import android.app.ActivityManager.RunningServiceInfo;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
@@ -78,16 +77,14 @@ import com.superchat.data.db.DBWrapper;
 import com.superchat.data.db.DatabaseConstants;
 import com.superchat.interfaces.interfaceInstances;
 import com.superchat.model.BulletinMessageDataModel;
-import com.superchat.model.DomainSetObject;
+import com.superchat.model.GroupChatMetaInfo;
+import com.superchat.model.GroupChatXmppCaption;
+import com.superchat.model.GroupChatXmppCaptionData;
 import com.superchat.model.LoginModel;
 import com.superchat.model.LoginResponseModel;
 import com.superchat.model.LoginResponseModel.UserResponseDetail;
-import com.superchat.model.RegistrationForm;
-import com.superchat.model.RegistrationFormResponse;
-import com.superchat.model.SuperGroupSubAdminStatusChange;
+import com.superchat.model.GroupChatBroadcastInfo;
 import com.superchat.model.UserProfileModel;
-import com.superchat.model.multiplesg.JoinedDomainNameSet;
-import com.superchat.model.multiplesg.OwnerDomainName;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.ui.ChatListScreen;
 import com.superchat.ui.HomeScreen;
@@ -125,56 +122,59 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static com.superchat.utils.Constants.KEY_GROUP_BROADCAST;
+import static com.superchat.utils.Constants.KEY_GROUP_NORMAL;
+
 public class ChatService extends Service implements interfaceInstances {
-	private final String TAG = "ChatService";
-	public static XMPPConnection connection;
-	//	Roster roster;
-	private static NotificationManager notificationManager;
-	private Builder messageNotification;
-	public ChatCountListener chatCountListener;
-	private static ChatCountListener chatListener;
-	private static TypingListener typingNotifier;
-	public ProfileUpdateListener profileUpdateNotifier;
-	// Presence presence;
-	SharedPrefManager prefManager;
-	static String userMe = "";
-	String displayUserName = "";
-	Calendar calender;
-	boolean onForeground;
-	String currentUser = "";
-	public static Context context;
-	static String notificationPackage = "";
-	ChatDBWrapper chatDBWrapper;
-	static String notificationActivity = ".ui.ChatListScreen";
-	public static final String MEDIA_TYPE =  ".amr";//".m4a";
-	public static boolean xmppConectionStatus = false;
-	private static String notificationAllMessage="";
-	static boolean isFirstMessage = true;
-	static String previousUser = "";
-	RosterListener rosterListener = new RosterListener(){
+    private final String TAG = "ChatService";
+    public static XMPPConnection connection;
+    //	Roster roster;
+    private static NotificationManager notificationManager;
+    private Builder messageNotification;
+    public ChatCountListener chatCountListener;
+    private static ChatCountListener chatListener;
+    private static TypingListener typingNotifier;
+    public ProfileUpdateListener profileUpdateNotifier;
+    // Presence presence;
+    SharedPrefManager prefManager;
+    static String userMe = "";
+    String displayUserName = "";
+    Calendar calender;
+    boolean onForeground;
+    String currentUser = "";
+    public static Context context;
+    static String notificationPackage = "";
+    ChatDBWrapper chatDBWrapper;
+    static String notificationActivity = ".ui.ChatListScreen";
+    public static final String MEDIA_TYPE = ".amr";//".m4a";
+    public static boolean xmppConectionStatus = false;
+    private static String notificationAllMessage = "";
+    static boolean isFirstMessage = true;
+    static String previousUser = "";
+    RosterListener rosterListener = new RosterListener() {
 
-		@Override
-		public void entriesAdded(Collection<String> addresses) {
-			// TODO Auto-generated method stub
+        @Override
+        public void entriesAdded(Collection<String> addresses) {
+            // TODO Auto-generated method stub
 
-		}
+        }
 
-		@Override
-		public void entriesUpdated(Collection<String> addresses) {
-			// TODO Auto-generated method stub
+        @Override
+        public void entriesUpdated(Collection<String> addresses) {
+            // TODO Auto-generated method stub
 
-		}
+        }
 
-		@Override
-		public void entriesDeleted(Collection<String> addresses) {
-			// TODO Auto-generated method stub
+        @Override
+        public void entriesDeleted(Collection<String> addresses) {
+            // TODO Auto-generated method stub
 
-		}
+        }
 
-		@Override
-		public void presenceChanged(Presence presence) {
+        @Override
+        public void presenceChanged(Presence presence) {
 
-			Log.alltime(TAG, "presenceChanged: "+presence.getFrom());
+            Log.alltime(TAG, "presenceChanged: " + presence.getFrom());
 //			 for(RosterEntry entry: roster.getEntries()) {
 //
 //	                if(roster.getPresence(entry.getUser()).equals(Presence.Type.available)) {
@@ -186,161 +186,169 @@ public class ChatService extends Service implements interfaceInstances {
 //	                }
 //	            }
 
-		}};
-	ConnectionListener connectionListener = new ConnectionListener(){
+        }
+    };
+    ConnectionListener connectionListener = new ConnectionListener() {
 
-		//		  @Override
+        //		  @Override
 //		    public void connected(final XMPPConnection connection){
 //		        if(!connection.isAuthenticated())
 //		            login(connection, loginUser, passwordUser);
 //		    }
-		@Override
-		public void connectionClosed() {
-			// TODO Auto-generated method stub
+        @Override
+        public void connectionClosed() {
+            // TODO Auto-generated method stub
 //			System.out.println("connectionClosed");
-		}
+        }
 
-		@Override
-		public void connectionClosedOnError(Exception e) {
-			// TODO Auto-generated method stub
+        @Override
+        public void connectionClosedOnError(Exception e) {
+            // TODO Auto-generated method stub
 //			System.out.println("connectionClosedOnError : "+e.toString());
-			// Judge for the account has been logged
-			Log.e(TAG, "ConnectionListener :: connectionClosedOnError : "+e.getMessage());
-			boolean error = e.getMessage().equals("stream:error (conflict)");
-			if (error) {
+            // Judge for the account has been logged
+            Log.e(TAG, "ConnectionListener :: connectionClosedOnError : " + e.getMessage());
+            boolean error = e.getMessage().equals("stream:error (conflict)");
+            if (error) {
 //				logoutForConflict();
-				validateConflictLogout();
-			}
-		}
+                validateConflictLogout();
+            }
+        }
 
-		@Override
-		public void reconnectingIn(int seconds) {
-			// TODO Auto-generated method stub
+        @Override
+        public void reconnectingIn(int seconds) {
+            // TODO Auto-generated method stub
 //			System.out.println("reconnectingIn in :- "+seconds);
-		}
+        }
 
-		@Override
-		public void reconnectionSuccessful() {
-			// TODO Auto-generated method stub
+        @Override
+        public void reconnectionSuccessful() {
+            // TODO Auto-generated method stub
 //			System.out.println("reconnectionSuccessful");
-		}
+        }
 
-		@Override
-		public void reconnectionFailed(Exception e) {
-			// TODO Auto-generated method stub
+        @Override
+        public void reconnectionFailed(Exception e) {
+            // TODO Auto-generated method stub
 //			System.out.println("reconnectionSuccessful");
-		}
+        }
 
-	};
+    };
 
-	/**
-	 * This call will log you out
-	 */
-	public void logoutForConflict(){
-		try{
-			String mobileNumber = prefManager.getUserPhone();
-			if(mobileNumber!=null && !mobileNumber.equals("")){
+    /**
+     * This call will log you out
+     */
+    public void logoutForConflict() {
+        try {
+            String mobileNumber = prefManager.getUserPhone();
+            if (mobileNumber != null && !mobileNumber.equals("")) {
 //					prefManager.setMobileRegistered(mobileNumber, false);
-				//Do not clean here - check at the login time,
-				//if number is same then don't delete - else delete.
-				prefManager.clearSharedPref();
-				ChatDBWrapper.getInstance().clearMessageDB();
-				DBWrapper.getInstance().clearAllDB();
-				stopService(new Intent(this, ChatService.class));
-			}
-			try{
-				Intent intent1 = new Intent(context, ChatService.class);
-				if(intent1!=null)
-					((SuperChatApplication)context).stopService(intent1);
-			}catch(Exception ex){
+                //Do not clean here - check at the login time,
+                //if number is same then don't delete - else delete.
+                prefManager.clearSharedPref();
+                ChatDBWrapper.getInstance().clearMessageDB();
+                DBWrapper.getInstance().clearAllDB();
+                stopService(new Intent(this, ChatService.class));
+            }
+            try {
+                Intent intent1 = new Intent(context, ChatService.class);
+                if (intent1 != null)
+                    ((SuperChatApplication) context).stopService(intent1);
+            } catch (Exception ex) {
 
-			}
-			Intent intent = new Intent(context, RegistrationOptions.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-			intent.putExtra("CONFLICT_LOGOUT", true);
-			if(HomeScreen.sharedIDData != null && !HomeScreen.sharedIDData.isEmpty())
-				HomeScreen.sharedIDData.clear();
-			startActivity(intent);
-		}catch(Exception ex){
-			ex.printStackTrace();
-		}
-	}
+            }
+            Intent intent = new Intent(context, RegistrationOptions.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("CONFLICT_LOGOUT", true);
+            if (HomeScreen.sharedIDData != null && !HomeScreen.sharedIDData.isEmpty())
+                HomeScreen.sharedIDData.clear();
+            startActivity(intent);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
-	public static ConnectionStatusListener connectionStatusListener;
-	public static ConnectionStatusListener getConnectionStatusListener() {
-		return connectionStatusListener;
-	}
-	public static void setConnectionStatusListener(
-			ConnectionStatusListener connectionStatusListener) {
-		ChatService.connectionStatusListener = connectionStatusListener;
-	}
-	// PacketFilter invitationFilter = new PacketExtensionFilter("x",
-	// "jabber:x:conference");
-	private static final int WIDTH = 50;
-	private static final int HEIGHT = 50;
-	private static final int STRIDE = 64;   // must be >= WIDTH
-	private static int[] createColors() {
+    public static ConnectionStatusListener connectionStatusListener;
 
-		int[] colors = new int[STRIDE * HEIGHT];
-		for (int y = 0; y < HEIGHT; y++) {
-			for (int x = 0; x < WIDTH; x++) {
-				int r = x * 255 / (WIDTH - 1);
-				int g = y * 255 / (HEIGHT - 1);
-				int b = 255 - Math.min(r, g);
-				int a = Math.max(r, g);
-				colors[y * STRIDE + x] = (a << 24) | (r << 16) | (g << 8) | b;
-			}
-		}
-		return colors;
-	}
-	PacketFilter invitationFilter = new PacketExtensionFilter("x",
-			"http://jabber.org/protocol/muc#user");
-	private final IBinder mBinder = new MyBinder();
+    public static ConnectionStatusListener getConnectionStatusListener() {
+        return connectionStatusListener;
+    }
 
-	public void setChatVisibilty(boolean onForeground){
-		this.onForeground = onForeground;
-	}
-	public void setChatPerson(String currentUser){
-		this.currentUser = currentUser;
-	}
-	PacketListener invitationListener = new PacketListener() {
-		public void processPacket(Packet packet) {
-			Log.i(TAG, "Got invitation packet " + packet.toXML() + " -- " + packet.getPacketID());
-			MUCUser mucUser = (MUCUser) packet.getExtension("x", "http://jabber.org/protocol/muc#user");
-			// mucUser.getInvite().getReason()
-			String reason = "";
-			if (mucUser != null) {
-				String groupUUID = null;
-				if(packet.toXML().startsWith("<presence")){
-					Presence presence = (Presence)packet;
-					if(presence.getError() != null && presence.getError().getCode() == 404){
-						Log.i(TAG, "Got Error code : " + presence.getError().getCode());
-						if(presence.getError().getMessage() != null)
-							Toast.makeText(context, "Error in joining : 404 -  " + presence.getError().getMessage(), 1000).show();
-						else
-							Toast.makeText(context, "Error in joining group : 404 -  " + presence.getFrom(), 1000).show();
-						return;
-					}
-					String senderPerson = "";
-					String fromName = presence.getFrom();
+    public static void setConnectionStatusListener(
+            ConnectionStatusListener connectionStatusListener) {
+        ChatService.connectionStatusListener = connectionStatusListener;
+    }
 
-					if (fromName != null && fromName.contains("@")) {
-						groupUUID = fromName.substring(0, fromName.indexOf('@'));
-						if(fromName.contains("/")){
-							senderPerson =  fromName.substring(fromName.indexOf("/")+1);
-						}
-						// fromName = AtmeChatClient.getChatDBWrapper().getChatName(user);
-					}
-					if(groupUUID!=null){
-						boolean isGroup = prefManager.isGroupChat(groupUUID);
-						if(isGroup){
-							String affiliation = mucUser.getItem().getAffiliation();
-							String role = mucUser.getItem().getRole();
-							if(affiliation!=null){
-								//No Need to add this code here, as its already being added at the time of login and also when get profile is done.
+    // PacketFilter invitationFilter = new PacketExtensionFilter("x",
+    // "jabber:x:conference");
+    private static final int WIDTH = 50;
+    private static final int HEIGHT = 50;
+    private static final int STRIDE = 64;   // must be >= WIDTH
+
+    private static int[] createColors() {
+
+        int[] colors = new int[STRIDE * HEIGHT];
+        for (int y = 0; y < HEIGHT; y++) {
+            for (int x = 0; x < WIDTH; x++) {
+                int r = x * 255 / (WIDTH - 1);
+                int g = y * 255 / (HEIGHT - 1);
+                int b = 255 - Math.min(r, g);
+                int a = Math.max(r, g);
+                colors[y * STRIDE + x] = (a << 24) | (r << 16) | (g << 8) | b;
+            }
+        }
+        return colors;
+    }
+
+    PacketFilter invitationFilter = new PacketExtensionFilter("x",
+            "http://jabber.org/protocol/muc#user");
+    private final IBinder mBinder = new MyBinder();
+
+    public void setChatVisibilty(boolean onForeground) {
+        this.onForeground = onForeground;
+    }
+
+    public void setChatPerson(String currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    PacketListener invitationListener = new PacketListener() {
+        public void processPacket(Packet packet) {
+            Log.i(TAG, "Got invitation packet " + packet.toXML() + " -- " + packet.getPacketID());
+            MUCUser mucUser = (MUCUser) packet.getExtension("x", "http://jabber.org/protocol/muc#user");
+            // mucUser.getInvite().getReason()
+            String reason = "";
+            if (mucUser != null) {
+                String groupUUID = null;
+                if (packet.toXML().startsWith("<presence")) {
+                    Presence presence = (Presence) packet;
+                    if (presence.getError() != null && presence.getError().getCode() == 404) {
+                        Log.i(TAG, "Got Error code : " + presence.getError().getCode());
+                        if (presence.getError().getMessage() != null)
+                            Toast.makeText(context, "Error in joining : 404 -  " + presence.getError().getMessage(), 1000).show();
+                        else
+                            Toast.makeText(context, "Error in joining group : 404 -  " + presence.getFrom(), 1000).show();
+                        return;
+                    }
+                    String senderPerson = "";
+                    String fromName = presence.getFrom();
+
+                    if (fromName != null && fromName.contains("@")) {
+                        groupUUID = fromName.substring(0, fromName.indexOf('@'));
+                        if (fromName.contains("/")) {
+                            senderPerson = fromName.substring(fromName.indexOf("/") + 1);
+                        }
+                        // fromName = AtmeChatClient.getChatDBWrapper().getChatName(user);
+                    }
+                    if (groupUUID != null) {
+                        boolean isGroup = prefManager.isGroupChat(groupUUID);
+                        if (isGroup) {
+                            String affiliation = mucUser.getItem().getAffiliation();
+                            String role = mucUser.getItem().getRole();
+                            if (affiliation != null) {
+                                //No Need to add this code here, as its already being added at the time of login and also when get profile is done.
 //								if(affiliation.equals("owner"))
 //									prefManager.saveUserGroupInfo(groupUUID, senderPerson, SharedPrefManager.GROUP_OWNER_INFO, true);
-								prefManager.saveGroupInfo(groupUUID,SharedPrefManager.GROUP_ACTIVE_INFO,true);
+                                prefManager.saveGroupInfo(groupUUID, SharedPrefManager.GROUP_ACTIVE_INFO, true);
 //								else if(affiliation.equals("none"))
 //									prefManager.saveUserGroupInfo(groupUUID, senderPerson, SharedPrefManager.GROUP_OWNER_INFO, false);
 //								prefManager.saveUserGroupInfo(groupUUID,senderPerson,SharedPrefManager.GROUP_ACTIVE_INFO,true);
@@ -350,985 +358,1022 @@ public class ChatService extends Service implements interfaceInstances {
 //									// TODO Auto-generated catch block
 //									e.printStackTrace();
 //								}
-							}
-							if(role!=null){
-								if(role.equals("moderator"))
-									prefManager.saveUserGroupInfo(groupUUID, senderPerson, SharedPrefManager.GROUP_ADMIN_INFO, true);
-								else if(role.equals("participant"))
-									prefManager.saveUserGroupInfo(groupUUID, senderPerson, SharedPrefManager.GROUP_ADMIN_INFO, false);
-								prefManager.saveUserGroupInfo(groupUUID,senderPerson,SharedPrefManager.GROUP_ACTIVE_INFO,true);
-								prefManager.saveGroupInfo(groupUUID,SharedPrefManager.GROUP_ACTIVE_INFO,true);
+                            }
+                            if (role != null) {
+                                if (role.equals("moderator"))
+                                    prefManager.saveUserGroupInfo(groupUUID, senderPerson, SharedPrefManager.GROUP_ADMIN_INFO, true);
+                                else if (role.equals("participant"))
+                                    prefManager.saveUserGroupInfo(groupUUID, senderPerson, SharedPrefManager.GROUP_ADMIN_INFO, false);
+                                prefManager.saveUserGroupInfo(groupUUID, senderPerson, SharedPrefManager.GROUP_ACTIVE_INFO, true);
+                                prefManager.saveGroupInfo(groupUUID, SharedPrefManager.GROUP_ACTIVE_INFO, true);
 //								try {
 //									roster.createEntry(senderPerson, prefManager.getUserServerName(senderPerson), new String[]{groupUUID});
 //								} catch (XMPPException e) {
 //									// TODO Auto-generated catch block
 //									e.printStackTrace();
 //								}
-							}
-						}
-					}
-					Log.i(TAG, "Got Affiliation and Status: " + mucUser.getStatus().getCode());
-					Log.d(TAG, "Got Affiliation and Role: " + presence.getFrom());
-					Log.d(TAG, "Got Affiliation and Role: " + mucUser.getItem().getAffiliation()+" , "+mucUser.getItem().getRole());
-				}
-				Invite invite = mucUser.getInvite();
-				if (invite != null) {
+                            }
+                        }
+                    }
+                    Log.i(TAG, "Got Affiliation and Status: " + mucUser.getStatus().getCode());
+                    Log.d(TAG, "Got Affiliation and Role: " + presence.getFrom());
+                    Log.d(TAG, "Got Affiliation and Role: " + mucUser.getItem().getAffiliation() + " , " + mucUser.getItem().getRole());
+                }
+                Invite invite = mucUser.getInvite();
+                if (invite != null) {
 
-					reason = invite.getReason();
-					if (reason != null && reason.contains(">>>")){
-						if(groupUUID!=null){
-							SharedPrefManager.getInstance().saveUserStatusMessage(groupUUID, reason.substring(reason.indexOf(">>>")));
-						}
-						reason = reason.substring(0, reason.indexOf(">>>"));
-					}
-				}
+                    reason = invite.getReason();
+                    if (reason != null && reason.contains(">>>")) {
+                        if (groupUUID != null) {
+                            SharedPrefManager.getInstance().saveUserStatusMessage(groupUUID, reason.substring(reason.indexOf(">>>")));
+                        }
+                        reason = reason.substring(0, reason.indexOf(">>>"));
+                    }
+                }
 
-			}
-			// Check if the MUCUser extension includes an invitation
-			GroupChatInvitation roomAddressObj = (GroupChatInvitation) packet.getExtension("x", "jabber:x:conference");
-			String roomAddress = roomAddressObj.getRoomAddress();
-			Log.d(TAG, "Got roomAddress packet " + roomAddress);
-			if (roomAddress != null && !roomAddress.equals("")) {
-				sendGroupPresence(roomAddress,0);
-				String fromName = StringUtils.parseBareAddress(roomAddress);
-				// Log.d(TAG, "Got text [" + message.getBody()
-				// + "] from [" + fromName + "]");
-				String groupUUID = fromName;
-				String senderPerson = "";
-				if (fromName != null && fromName.contains("@")) {
-					groupUUID = fromName.substring(0, fromName.indexOf('@'));
-					if(fromName.contains("\\")){
-						senderPerson =  fromName.substring(fromName.indexOf("\\")+1);
-					}
-					// fromName = AtmeChatClient.getChatDBWrapper().getChatName(user);
-				}
-				if (reason.equals(""))
-					reason = groupUUID;
-				Log.d(TAG, "Got Affiliation and Role: " + reason);
-				// atMEMulti
-				if(reason!=null && reason.equals("atMEMulti"))
-					reason = "Multi Chat Room";
+            }
+            // Check if the MUCUser extension includes an invitation
+            GroupChatInvitation roomAddressObj = (GroupChatInvitation) packet.getExtension("x", "jabber:x:conference");
+            String roomAddress = roomAddressObj.getRoomAddress();
+            Log.d(TAG, "Got roomAddress packet " + roomAddress);
+            if (roomAddress != null && !roomAddress.equals("")) {
+                sendGroupPresence(roomAddress, 0);
+                String fromName = StringUtils.parseBareAddress(roomAddress);
+                // Log.d(TAG, "Got text [" + message.getBody()
+                // + "] from [" + fromName + "]");
+                String groupUUID = fromName;
+                String senderPerson = "";
+                if (fromName != null && fromName.contains("@")) {
+                    groupUUID = fromName.substring(0, fromName.indexOf('@'));
+                    if (fromName.contains("\\")) {
+                        senderPerson = fromName.substring(fromName.indexOf("\\") + 1);
+                    }
+                    // fromName = AtmeChatClient.getChatDBWrapper().getChatName(user);
+                }
+                if (reason.equals(""))
+                    reason = groupUUID;
+                Log.d(TAG, "Got Affiliation and Role: " + reason);
+                // atMEMulti
+                if (reason != null && reason.equals("atMEMulti"))
+                    reason = "Multi Chat Room";
 
-				SharedPrefManager.getInstance().saveGroupName(groupUUID, reason);
+                SharedPrefManager.getInstance().saveGroupName(groupUUID, reason);
 //				String userDisplayName = AtmeChatClient.getChatDBWrapper().getChatName(
 //						senderPerson);
-				if(senderPerson!=null && !senderPerson.equals("")){
-					prefManager.saveUsersOfGroup(groupUUID, senderPerson);
+                if (senderPerson != null && !senderPerson.equals("")) {
+                    prefManager.saveUsersOfGroup(groupUUID, senderPerson);
 //					try {
 //						roster.createEntry(senderPerson, prefManager.getUserServerName(senderPerson), new String[]{groupUUID});
 //					} catch (XMPPException e) {
 //						// TODO Auto-generated catch block
 //						e.printStackTrace();
 //					}
-				}
-				sendGroupPresence(groupUUID,0);
-				joinMultiUserChat(groupUUID);
-			}
-			// if (mucUser.getInvite() != null &&
-			// ((Message) packet).getType() != Message.Type.error) {
-			// Log.d(TAG,
-			// "Got invitation packet " + mucUser.getInvite().getFrom() + " -- "
-			// + mucUser.getInvite().getReason());
-			// String groupName = mucUser.getInvite().getFrom();
-			// SharedPrefManager.getInstance().saveGroupName(groupName);
-			// sendMessage(groupName, userMe+" has joined "+" "+groupName+".");
-			// }
-			if(prefManager!=null) //new1
-				prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
-		}
-	};
-	PacketListener groupPacketListener = new PacketListener() {
-		@Override
-		public void processPacket(Packet packet) {
-			System.out.println("Got group packet " + packet.toXML() + " -- " + packet.getPacketID());
+                }
+                sendGroupPresence(groupUUID, 0);
+                joinMultiUserChat(groupUUID);
+            }
+            // if (mucUser.getInvite() != null &&
+            // ((Message) packet).getType() != Message.Type.error) {
+            // Log.d(TAG,
+            // "Got invitation packet " + mucUser.getInvite().getFrom() + " -- "
+            // + mucUser.getInvite().getReason());
+            // String groupName = mucUser.getInvite().getFrom();
+            // SharedPrefManager.getInstance().saveGroupName(groupName);
+            // sendMessage(groupName, userMe+" has joined "+" "+groupName+".");
+            // }
+            if (prefManager != null) //new1
+                prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
+        }
+    };
+    PacketListener groupPacketListener = new PacketListener() {
+        @Override
+        public void processPacket(Packet packet) {
+            System.out.println("Got group packet " + packet.toXML() + " -- " + packet.getPacketID());
 
-			if (!packet.toXML().contains("<message"))
-				return;
-			try {
-				final Message message = (Message) packet;
-				boolean console_msg = false;
-				int xMPPMessageType = message.getXMPPMessageType().ordinal();
-				if(message.isConsoleMessage() != null && message.isConsoleMessage().equalsIgnoreCase("true"))
-					console_msg = true;
-				Log.d(TAG,
-						"Message Seen State processPacket: "
-								+ message.getMessageSeenState()+" ,, "+xMPPMessageType);
-				// Log.d(TAG, "message body " + message.getBody());
-				String fromName = null;
-				if (message != null) {
-					String from = message.getFrom();
-					fromName = StringUtils.parseBareAddress(from);
-					String senderName = "";
-					if (from != null && from.contains("/")) {
-						senderName = from.substring(from.indexOf("/") + 1);
-					}
-					// Log.d(TAG, "Got text [" + message.getBody()
-					// + "] from [" + fromName + "]");
+            if (!packet.toXML().contains("<message"))
+                return;
+            try {
+                final Message message = (Message) packet;
+                boolean console_msg = false;
+                int xMPPMessageType = message.getXMPPMessageType().ordinal();
+                if (message.isConsoleMessage() != null && message.isConsoleMessage().equalsIgnoreCase("true"))
+                    console_msg = true;
+                Log.d(TAG,
+                        "Message Seen State processPacket: "
+                                + message.getMessageSeenState() + " ,, " + xMPPMessageType);
+                // Log.d(TAG, "message body " + message.getBody());
+                String fromName = null;
+                if (message != null) {
+                    String from = message.getFrom();
+                    fromName = StringUtils.parseBareAddress(from);
+                    String senderName = "";
+                    if (from != null && from.contains("/")) {
+                        senderName = from.substring(from.indexOf("/") + 1);
+                    }
+                    // Log.d(TAG, "Got text [" + message.getBody()
+                    // + "] from [" + fromName + "]");
 
-					String user = fromName;
-					if (fromName != null && fromName.contains("@")) {
-						user = fromName.substring(0, fromName.indexOf('@'));
-						fromName = DBWrapper.getInstance().getChatName(
-								senderName);
-					}
+                    String user = fromName;
+                    if (fromName != null && fromName.contains("@")) {
+                        user = fromName.substring(0, fromName.indexOf('@'));
+                        fromName = DBWrapper.getInstance().getChatName(
+                                senderName);
+                    }
 
-					if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeGroupName.ordinal()) {
-						Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeGroupName: "+ xMPPMessageType);
-						String inviter = senderName;
+                    if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeGroupName.ordinal()) {
+                        Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeGroupName: " + xMPPMessageType);
+                        String inviter = senderName;
 
-						String captionTag  = message.getMediaTagMessage();
-						String description = null;
-						String fileId = null;
-						if(captionTag != null){
-							if(captionTag.contains("&quot;"))
-								captionTag = captionTag.replace("&quot;", "\"");
-							try {
-								JSONObject jsonobj = new JSONObject(captionTag);
-								if(jsonobj.has("description") && jsonobj.getString("description").toString().trim().length() > 0) {
-									description = jsonobj.getString("description").toString();
-								}
-								if(jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
-									fileId = jsonobj.getString("fileId").toString();
-								}
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-						}
+                        String captionTag = message.getMediaTagMessage();
+                        String description = null;
+                        String fileId = null;
+                        if (captionTag != null) {
+                            if (captionTag.contains("&quot;"))
+                                captionTag = captionTag.replace("&quot;", "\"");
 
-						if(userMe.equals(inviter))
-							inviter = "You";
-						else
-							inviter = DBWrapper.getInstance().getChatName(senderName);
 
-						if(inviter!=null && inviter.contains("#786#"))
-							inviter = inviter.substring(0, inviter.indexOf("#786#"));
+                            try {
+                                GroupChatXmppCaption caption = new Gson().fromJson(captionTag, GroupChatXmppCaption.class);
+                                if (caption != null) {
+                                    int permissionType = Integer.parseInt(caption.getCaption().getGroupPermissionType());
+                                    String groupName = caption.getCaption().getDisplayName();
+                                    String groupMode = "";
+                                    if (permissionType == GroupChatMetaInfo.GroupPermissions.SCGroupPermissionAllowedAdmins.ordinal()){
+                                        groupMode = KEY_GROUP_BROADCAST;
+                                    } else if(permissionType == GroupChatMetaInfo.GroupPermissions.SCGroupPermissionAllowedAll.ordinal()) {
+                                        groupMode = KEY_GROUP_NORMAL;
+                                    } else {
+                                        groupMode = KEY_GROUP_NORMAL;
+                                    }
 
-						String newGroupName = message.getBody();
-						if(senderName.equals(inviter)){
-							if(inviter.contains("_"))
-								getUserProfileAsynch(inviter);
-							inviter = "+"+inviter.substring(0, inviter.indexOf("_"));
+
+                                    // Save Meta info of group
+                                    {
+                                        GroupChatMetaInfo groupChatMetaInfo = new GroupChatMetaInfo();
+                                        groupChatMetaInfo.setBroadCastActive(groupMode);
+                                        SharedPrefManager.getInstance().setSubGroupMetaData(groupName, groupChatMetaInfo);
+                                    }
+
+                                    eventsetGroupBroadcastMode();
+                                }
+                                return;
+                            } catch(Exception e){
+
+                            }
+
+
+                            try {
+                                JSONObject jsonobj = new JSONObject(captionTag);
+                                if (jsonobj.has("description") && jsonobj.getString("description").toString().trim().length() > 0) {
+                                    description = jsonobj.getString("description").toString();
+                                }
+                                if (jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
+                                    fileId = jsonobj.getString("fileId").toString();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        if (userMe.equals(inviter))
+                            inviter = "You";
+                        else
+                            inviter = DBWrapper.getInstance().getChatName(senderName);
+
+                        if (inviter != null && inviter.contains("#786#"))
+                            inviter = inviter.substring(0, inviter.indexOf("#786#"));
+
+                        String newGroupName = message.getBody();
+                        if (senderName.equals(inviter)) {
+                            if (inviter.contains("_"))
+                                getUserProfileAsynch(inviter);
+                            inviter = "+" + inviter.substring(0, inviter.indexOf("_"));
 //							inviter = inviter.replaceFirst("m", "+");
-						}
-						String message_ID = message.getPacketID();
-						if(message_ID!=null && !message_ID.equals("")){
-							boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message_ID);
-							if(!isDuplicate){
-								boolean isChannel = SharedPrefManager.getInstance().isPublicGroup(user);
-								if(inviter.equals("You")){
-									String tmpText = " updated group info.";
-									if(isChannel)
-										tmpText = " updated open group info.";
-									saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, inviter+tmpText,message_ID);
-								}else{
-									String tmpText = " updated group info.";
-									if(isChannel)
-										tmpText = " updated open group info.";
-									saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, inviter+tmpText,message_ID);
-								}
-							}
-						}
-						prefManager.saveGroupName(user,newGroupName);
-						//Save group Name
-						prefManager.saveGroupDisplayName(user,newGroupName);
-						//Save Group Description
-						if(description != null)
-							prefManager.saveUserStatusMessage(user, description);
-						//Save group picture
-						if(fileId != null)
-							prefManager.saveUserFileId(user, fileId);
-						if(typingNotifier!=null)
-							typingNotifier.refreshSubjectOfGroup();
-						if (profileUpdateNotifier != null)
-							profileUpdateNotifier.notifyProfileUpdate(user, description, newGroupName);
-						return;
-					} else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeMemberList.ordinal()) {
-						String message_ID = message.getPacketID();
-						String captionTag  = message.getMediaTagMessage();
-						String description = null;
-						String memberCounts = null;
-						String fileId = null;
-						if(captionTag != null){
-							if(captionTag.contains("&quot;"))
-								captionTag = captionTag.replace("&quot;", "\"");
-							try {
-								JSONObject jsonobj = new JSONObject(captionTag);
-								if(jsonobj.has("description") && jsonobj.getString("description").toString().trim().length() > 0) {
-									description = jsonobj.getString("description").toString();
-								}
-								if(jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
-									fileId = jsonobj.getString("fileId").toString();
-								}
-								if(jsonobj.has("memberCount") && jsonobj.getString("memberCount").toString().trim().length() > 0) {
-									memberCounts = jsonobj.getString("memberCount").toString();
-									if(memberCounts!=null && !memberCounts.equals("")){
-										int membersSize = Integer.parseInt(memberCounts);
+                        }
+                        String message_ID = message.getPacketID();
+                        if (message_ID != null && !message_ID.equals("")) {
+                            boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message_ID);
+                            if (!isDuplicate) {
+                                boolean isChannel = SharedPrefManager.getInstance().isPublicGroup(user);
+                                if (inviter.equals("You")) {
+                                    String tmpText = " updated group info.";
+                                    if (isChannel)
+                                        tmpText = " updated open group info.";
+                                    saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, inviter + tmpText, message_ID);
+                                } else {
+                                    String tmpText = " updated group info.";
+                                    if (isChannel)
+                                        tmpText = " updated open group info.";
+                                    saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, inviter + tmpText, message_ID);
+                                }
+                            }
+                        }
+                        prefManager.saveGroupName(user, newGroupName);
+                        //Save group Name
+                        prefManager.saveGroupDisplayName(user, newGroupName);
+                        //Save Group Description
+                        if (description != null)
+                            prefManager.saveUserStatusMessage(user, description);
+                        //Save group picture
+                        if (fileId != null)
+                            prefManager.saveUserFileId(user, fileId);
+                        if (typingNotifier != null)
+                            typingNotifier.refreshSubjectOfGroup();
+                        if (profileUpdateNotifier != null)
+                            profileUpdateNotifier.notifyProfileUpdate(user, description, newGroupName);
+
+                        return;
+                    }  else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeMemberList.ordinal()) {
+                        String message_ID = message.getPacketID();
+                        String captionTag = message.getMediaTagMessage();
+                        String description = null;
+                        String memberCounts = null;
+                        String fileId = null;
+                        if (captionTag != null) {
+                            if (captionTag.contains("&quot;"))
+                                captionTag = captionTag.replace("&quot;", "\"");
+                            try {
+                                JSONObject jsonobj = new JSONObject(captionTag);
+                                if (jsonobj.has("description") && jsonobj.getString("description").toString().trim().length() > 0) {
+                                    description = jsonobj.getString("description").toString();
+                                }
+                                if (jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
+                                    fileId = jsonobj.getString("fileId").toString();
+                                }
+                                if (jsonobj.has("memberCount") && jsonobj.getString("memberCount").toString().trim().length() > 0) {
+                                    memberCounts = jsonobj.getString("memberCount").toString();
+                                    if (memberCounts != null && !memberCounts.equals("")) {
+                                        int membersSize = Integer.parseInt(memberCounts);
 //										String storedCount = prefManager.getGroupMemberCount(user);
-										prefManager.saveGroupMemberCount(user, String.valueOf(membersSize));
+                                        prefManager.saveGroupMemberCount(user, String.valueOf(membersSize));
 //										if(storedCount!=null && !storedCount.equals("")){
 //											membersSize = membersSize + Integer.parseInt(storedCount);
 //											prefManager.saveGroupMemberCount(user, String.valueOf(membersSize));
 //										}else{
 //											prefManager.saveGroupMemberCount(user, String.valueOf(membersSize));
 //										}
-									}
-								}
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-						}
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
 
-						boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message_ID);
-						if(isDuplicate){
-							if(prefManager!=null) //new1
-								prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
-							return;
-						}
-						Log.d(TAG,
-								"XMPPMessageType atMeXmppMessageTypeMemberList: "
-										+ xMPPMessageType+""+message.getBody());
-						String list = message.getBody();
-						if(captionTag!=null){
-							try {
-								JSONObject jsonobj = new JSONObject(captionTag);
-								if(jsonobj.has("Members") && jsonobj.getString("Members").toString().trim().length() > 0) {
-									list = jsonobj.getString("Members").toString();
-								}
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-						}
-						if(list!=null && !list.equals("")){
+                        boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message_ID);
+                        if (isDuplicate) {
+                            if (prefManager != null) //new1
+                                prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
+                            return;
+                        }
+                        Log.d(TAG,
+                                "XMPPMessageType atMeXmppMessageTypeMemberList: "
+                                        + xMPPMessageType + "" + message.getBody());
+                        String list = message.getBody();
+                        if (captionTag != null) {
+                            try {
+                                JSONObject jsonobj = new JSONObject(captionTag);
+                                if (jsonobj.has("Members") && jsonobj.getString("Members").toString().trim().length() > 0) {
+                                    list = jsonobj.getString("Members").toString();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        if (list != null && !list.equals("")) {
 
 
-							for(String gp:list.split(",")){
-								String tmpUser = gp;
+                            for (String gp : list.split(",")) {
+                                String tmpUser = gp;
 //                                getUserProfile(tmpUser);
 //                                getUserProfileAsynch(tmpUser);
-								if(SharedPrefManager.getInstance().isUserInvited(tmpUser)){
-									System.out.println("[USER IS INVITED, MESSAGE WILL NOT GO :: "+tmpUser);
-									continue;
-								}
+                                if (SharedPrefManager.getInstance().isUserInvited(tmpUser)) {
+                                    System.out.println("[USER IS INVITED, MESSAGE WILL NOT GO :: " + tmpUser);
+                                    continue;
+                                }
 //								boolean isNewAdded =  prefManager.saveUsersOfGroup(user, gp);
-								if(!prefManager.isGroupMemberActive(user, gp))
-								{
-									prefManager.saveUserGroupInfo(user,gp,SharedPrefManager.GROUP_ACTIVE_INFO,true);
-									prefManager.saveGroupInfo(user,SharedPrefManager.GROUP_ACTIVE_INFO,true);
-									if(!userMe.equals(gp))
-										gp = DBWrapper.getInstance().getChatName(gp);
-									else
-										gp = "You";
-									String inviter = senderName;
-									if(userMe.equals(inviter))
-										inviter = "You";
-									else
-										inviter = DBWrapper.getInstance().getChatName(senderName);
-									if(inviter!=null && inviter.contains("#786#")){
-										inviter = inviter.substring(0, inviter.indexOf("#786#"));
-									}
-									if(gp!=null && gp.contains("#786#"))
-										gp = gp.substring(0, gp.indexOf("#786#"));
+                                if (!prefManager.isGroupMemberActive(user, gp)) {
+                                    prefManager.saveUserGroupInfo(user, gp, SharedPrefManager.GROUP_ACTIVE_INFO, true);
+                                    prefManager.saveGroupInfo(user, SharedPrefManager.GROUP_ACTIVE_INFO, true);
+                                    if (!userMe.equals(gp))
+                                        gp = DBWrapper.getInstance().getChatName(gp);
+                                    else
+                                        gp = "You";
+                                    String inviter = senderName;
+                                    if (userMe.equals(inviter))
+                                        inviter = "You";
+                                    else
+                                        inviter = DBWrapper.getInstance().getChatName(senderName);
+                                    if (inviter != null && inviter.contains("#786#")) {
+                                        inviter = inviter.substring(0, inviter.indexOf("#786#"));
+                                    }
+                                    if (gp != null && gp.contains("#786#"))
+                                        gp = gp.substring(0, gp.indexOf("#786#"));
 
-									if(!gp.equalsIgnoreCase(inviter) && !gp.equals("")){
-										Log.d(TAG,gp+" group persons added "+ SharedPrefManager.getInstance().getGroupDisplayName(user));
-										if(tmpUser.equals(gp)){
-											tmpUser = SharedPrefManager.getInstance().getUserServerName(tmpUser);
-											if(tmpUser.equals(SharedPrefManager.getInstance().getUserServerName(tmpUser))) {
+                                    if (!gp.equalsIgnoreCase(inviter) && !gp.equals("")) {
+                                        Log.d(TAG, gp + " group persons added " + SharedPrefManager.getInstance().getGroupDisplayName(user));
+                                        if (tmpUser.equals(gp)) {
+                                            tmpUser = SharedPrefManager.getInstance().getUserServerName(tmpUser);
+                                            if (tmpUser.equals(SharedPrefManager.getInstance().getUserServerName(tmpUser))) {
 //                                                tmpUser = "+" + gp.substring(0, gp.indexOf("_"));
-												getUserProfileAsynch(tmpUser);
-												tmpUser = "New User";
-											}
+                                                getUserProfileAsynch(tmpUser);
+                                                tmpUser = "New User";
+                                            }
 //											tmpUser = gp.replaceFirst("m", "+");
-										}else
-											tmpUser = gp;
-										if(senderName.equals(inviter)){
-											getUserProfileAsynch(tmpUser);
-											if(inviter.contains("_"))
-												getUserProfileAsynch(inviter);
-											inviter = "+"+inviter.substring(0, inviter.indexOf("_"));
+                                        } else
+                                            tmpUser = gp;
+                                        if (senderName.equals(inviter)) {
+                                            getUserProfileAsynch(tmpUser);
+                                            if (inviter.contains("_"))
+                                                getUserProfileAsynch(inviter);
+                                            inviter = "+" + inviter.substring(0, inviter.indexOf("_"));
 //											inviter = inviter.replaceFirst("m", "+");
-										}
-										saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, inviter+" added \""+tmpUser+"\".",message_ID);
-										prefManager.saveUsersOfGroup(user, gp);
-										if (chatListener != null)
-											chatListener.notifyChatRecieve(user, "");
-									}
-								}
-							}
+                                        }
+                                        saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, inviter + " added \"" + tmpUser + "\".", message_ID);
+                                        prefManager.saveUsersOfGroup(user, gp);
+                                        if (chatListener != null)
+                                            chatListener.notifyChatRecieve(user, "");
+                                    }
+                                }
+                            }
 
-						}
+                        }
 
-						//Save Group Description
-						if(description != null)
-							prefManager.saveUserStatusMessage(user, description);
-						//Save group picture
-						if(fileId != null)
-							prefManager.saveUserFileId(user, fileId);
-						if(typingNotifier!=null)
-							typingNotifier.refreshOnlineGroupUser();
-						return;
-					} else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeJoinGroup
-							.ordinal()) {
-						Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeJoinGroup: "
-								+ xMPPMessageType);
-						return;
-					} else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeLeftGroup.ordinal()) {
-						Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeLeftGroup: " + xMPPMessageType);
-						String list = message.getBody();
-						String captionTag = message.getMediaTagMessage();
-						String removed_user = null;
-						try {
-							if(captionTag.contains("&quot;"))
-								captionTag = captionTag.replace("&quot;", "\"");
-							JSONObject jsonobj = new JSONObject(captionTag);
-							if(jsonobj.has("userName") && jsonobj.getString("userName").toString().trim().length() > 0) {
-								removed_user = jsonobj.getString("userName").toString();
-							}
-							if(removed_user != null && jsonobj.has("displayName") && jsonobj.getString("displayName").toString().trim().length() > 0) {
+                        //Save Group Description
+                        if (description != null)
+                            prefManager.saveUserStatusMessage(user, description);
+                        //Save group picture
+                        if (fileId != null)
+                            prefManager.saveUserFileId(user, fileId);
+                        if (typingNotifier != null)
+                            typingNotifier.refreshOnlineGroupUser();
+                        return;
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeJoinGroup
+                            .ordinal()) {
+                        Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeJoinGroup: "
+                                + xMPPMessageType);
+                        return;
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeLeftGroup.ordinal()) {
+                        Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeLeftGroup: " + xMPPMessageType);
+                        String list = message.getBody();
+                        String captionTag = message.getMediaTagMessage();
+                        String removed_user = null;
+                        try {
+                            if (captionTag.contains("&quot;"))
+                                captionTag = captionTag.replace("&quot;", "\"");
+                            JSONObject jsonobj = new JSONObject(captionTag);
+                            if (jsonobj.has("userName") && jsonobj.getString("userName").toString().trim().length() > 0) {
+                                removed_user = jsonobj.getString("userName").toString();
+                            }
+                            if (removed_user != null && jsonobj.has("displayName") && jsonobj.getString("displayName").toString().trim().length() > 0) {
 //								displayname = jsonobj.getString("displayname").toString();
-								prefManager.saveUserServerName(removed_user, jsonobj.getString("displayName").toString());
-							}
-							if(removed_user != null && jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
+                                prefManager.saveUserServerName(removed_user, jsonobj.getString("displayName").toString());
+                            }
+                            if (removed_user != null && jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
 //								fileId = jsonobj.getString("fileId").toString();
-								prefManager.saveUserFileId(removed_user, jsonobj.getString("fileId").toString());
-							}
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
-						String persons = "";
-						boolean isGroupDeactivated = false;
-						int membersSize = 1;//list.split(",").length;
-						String storedCount = prefManager.getGroupMemberCount(user);
-						if(!userMe.equals(senderName))
-							if(storedCount!=null && !storedCount.equals("")){
-								membersSize = Integer.parseInt(storedCount);
-								if(membersSize>0)
-									membersSize = membersSize - 1;
-								prefManager.saveGroupMemberCount(user, String.valueOf(membersSize));
-							}
-						if(list!=null && !list.equals("")){
+                                prefManager.saveUserFileId(removed_user, jsonobj.getString("fileId").toString());
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        String persons = "";
+                        boolean isGroupDeactivated = false;
+                        int membersSize = 1;//list.split(",").length;
+                        String storedCount = prefManager.getGroupMemberCount(user);
+                        if (!userMe.equals(senderName))
+                            if (storedCount != null && !storedCount.equals("")) {
+                                membersSize = Integer.parseInt(storedCount);
+                                if (membersSize > 0)
+                                    membersSize = membersSize - 1;
+                                prefManager.saveGroupMemberCount(user, String.valueOf(membersSize));
+                            }
+                        if (list != null && !list.equals("")) {
 
-							for(String gp:list.split(",")){
-								String tmpUser = gp;
+                            for (String gp : list.split(",")) {
+                                String tmpUser = gp;
 
-								if(prefManager.isOwner(user, tmpUser)){
-									isGroupDeactivated = true;
-									prefManager.saveUserGroupInfo(user,userMe,SharedPrefManager.GROUP_ACTIVE_INFO,false);
-									prefManager.saveGroupInfo(user,SharedPrefManager.GROUP_ACTIVE_INFO,false);
-								}
-								prefManager.saveUserGroupInfo(user,gp,SharedPrefManager.GROUP_ACTIVE_INFO,false);
-								if(!userMe.equals(gp))
-									persons += DBWrapper.getInstance().getChatName(gp);
-								else
-									persons += "You";
-								if(persons!=null && persons.contains("#786#"))
-									persons = persons.substring(0, persons.indexOf("#786#"));
-								if(tmpUser.equals(persons)){
-									tmpUser = prefManager.getUserServerName(tmpUser);
-									if(tmpUser.contains("_"))
-										tmpUser = "+"+persons.substring(0, persons.indexOf("_"));
+                                if (prefManager.isOwner(user, tmpUser)) {
+                                    isGroupDeactivated = true;
+                                    prefManager.saveUserGroupInfo(user, userMe, SharedPrefManager.GROUP_ACTIVE_INFO, false);
+                                    prefManager.saveGroupInfo(user, SharedPrefManager.GROUP_ACTIVE_INFO, false);
+                                }
+                                prefManager.saveUserGroupInfo(user, gp, SharedPrefManager.GROUP_ACTIVE_INFO, false);
+                                if (!userMe.equals(gp))
+                                    persons += DBWrapper.getInstance().getChatName(gp);
+                                else
+                                    persons += "You";
+                                if (persons != null && persons.contains("#786#"))
+                                    persons = persons.substring(0, persons.indexOf("#786#"));
+                                if (tmpUser.equals(persons)) {
+                                    tmpUser = prefManager.getUserServerName(tmpUser);
+                                    if (tmpUser.contains("_"))
+                                        tmpUser = "+" + persons.substring(0, persons.indexOf("_"));
 //										tmpUser = persons.replaceFirst("m", "+");
-								}else
-									tmpUser = persons;
-								if(isGroupDeactivated){
-									String message_ID = message.getPacketID();
-									boolean isChannel = SharedPrefManager.getInstance().isPublicGroup(user);
-									if(message_ID!=null && !message_ID.equals("")){
-										boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message_ID);
-										String tmpText = "Group has been deactivated.";
-										if(isChannel)
-											tmpText = "Open group has been deactivated.";
-										if(!isDuplicate)
-											saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, tmpText,message_ID);
-									}else{
-										String tmpText = "Group has been deactivated.";
-										if(isChannel)
-											tmpText = "Open group has been deactivated.";
-										saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, tmpText);
-									}
-								}else if(gp.equals(senderName)){
+                                } else
+                                    tmpUser = persons;
+                                if (isGroupDeactivated) {
+                                    String message_ID = message.getPacketID();
+                                    boolean isChannel = SharedPrefManager.getInstance().isPublicGroup(user);
+                                    if (message_ID != null && !message_ID.equals("")) {
+                                        boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message_ID);
+                                        String tmpText = "Group has been deactivated.";
+                                        if (isChannel)
+                                            tmpText = "Open group has been deactivated.";
+                                        if (!isDuplicate)
+                                            saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, tmpText, message_ID);
+                                    } else {
+                                        String tmpText = "Group has been deactivated.";
+                                        if (isChannel)
+                                            tmpText = "Open group has been deactivated.";
+                                        saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, tmpText);
+                                    }
+                                } else if (gp.equals(senderName)) {
 
 
-									boolean isAdmin = prefManager.isAdmin(user, gp);
-									if(isAdmin){
-										prefManager.saveUserGroupInfo(user,gp,SharedPrefManager.GROUP_ADMIN_INFO,false);
+                                    boolean isAdmin = prefManager.isAdmin(user, gp);
+                                    if (isAdmin) {
+                                        prefManager.saveUserGroupInfo(user, gp, SharedPrefManager.GROUP_ADMIN_INFO, false);
 //										prefManager.saveUserGroupInfo(user,gp,SharedPrefManager.GROUP_OWNER_INFO,false);
-									}
-									prefManager.removeUsersFromGroup(user,gp);
+                                    }
+                                    prefManager.removeUsersFromGroup(user, gp);
 
-									if(isAdmin && userMe.equals(gp)){
-										ArrayList<String> userList = prefManager.getGroupUsersList(user);
-										boolean isChannel = SharedPrefManager.getInstance().isPublicGroup(user);
-										String tmpText = " left the group.";
-										if(isChannel)
-											tmpText = " left the open group.";
-										if(userList!=null && !userList.isEmpty()){
-											String newAdmin = userList.get(0);
-											sendInfoMessage(user,newAdmin,Message.XMPPMessageType.atMeXmppMessageTypeGroupAdminUpdate);
+                                    if (isAdmin && userMe.equals(gp)) {
+                                        ArrayList<String> userList = prefManager.getGroupUsersList(user);
+                                        boolean isChannel = SharedPrefManager.getInstance().isPublicGroup(user);
+                                        String tmpText = " left the group.";
+                                        if (isChannel)
+                                            tmpText = " left the open group.";
+                                        if (userList != null && !userList.isEmpty()) {
+                                            String newAdmin = userList.get(0);
+                                            sendInfoMessage(user, newAdmin, Message.XMPPMessageType.atMeXmppMessageTypeGroupAdminUpdate);
 //											prefManager.saveUserGroupInfo(user,newAdmin,SharedPrefManager.GROUP_ADMIN_INFO,true);
 //											prefManager.saveUserGroupInfo(user,newAdmin,SharedPrefManager.GROUP_OWNER_INFO,true);
-										}else
-											saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, tmpUser+tmpText);
-									}else{
-										boolean isChannel = SharedPrefManager.getInstance().isPublicGroup(user);
-										String tmpText = " left the group.";
-										if(isChannel)
-											tmpText = " left the open group.";
-										saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, tmpUser+tmpText);
-									}
-								}else if(userMe.equals(senderName)){
-									String message_ID = message.getPacketID();
-									boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message_ID);
-									if(isDuplicate){
-										if(prefManager!=null) //new1
-											prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
-										return;
-									}
-									prefManager.removeUsersFromGroup(user,gp);
-									String name = SharedPrefManager.getInstance().getUserServerName(gp);
-									if(tmpUser != null && (name.equalsIgnoreCase("null") || name.equalsIgnoreCase(gp)))
-										name = "Superchatter";
-									saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, "You removed \""+name+"\".",message_ID);
-								}else{
-									String message_ID = message.getPacketID();
-									boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message_ID);
-									if(isDuplicate){
-										if(prefManager!=null) //new1
-											prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
-										return;
-									}
-									prefManager.removeUsersFromGroup(user,gp);
-									if(fromName!=null && fromName.contains("#786#"))
-										fromName = fromName.substring(0, fromName.indexOf("#786#"));
-									if(tmpUser.equalsIgnoreCase(user))
-										tmpUser = SharedPrefManager.getInstance().getUserServerName(tmpUser);
-									saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, fromName+" removed \""+tmpUser+"\".",message_ID);
-									if (chatListener != null)
-										chatListener.notifyChatRecieve(user, "");
-								}
-							}
+                                        } else
+                                            saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, tmpUser + tmpText);
+                                    } else {
+                                        boolean isChannel = SharedPrefManager.getInstance().isPublicGroup(user);
+                                        String tmpText = " left the group.";
+                                        if (isChannel)
+                                            tmpText = " left the open group.";
+                                        saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, tmpUser + tmpText);
+                                    }
+                                } else if (userMe.equals(senderName)) {
+                                    String message_ID = message.getPacketID();
+                                    boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message_ID);
+                                    if (isDuplicate) {
+                                        if (prefManager != null) //new1
+                                            prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
+                                        return;
+                                    }
+                                    prefManager.removeUsersFromGroup(user, gp);
+                                    String name = SharedPrefManager.getInstance().getUserServerName(gp);
+                                    if (tmpUser != null && (name.equalsIgnoreCase("null") || name.equalsIgnoreCase(gp)))
+                                        name = "Superchatter";
+                                    saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, "You removed \"" + name + "\".", message_ID);
+                                } else {
+                                    String message_ID = message.getPacketID();
+                                    boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message_ID);
+                                    if (isDuplicate) {
+                                        if (prefManager != null) //new1
+                                            prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
+                                        return;
+                                    }
+                                    prefManager.removeUsersFromGroup(user, gp);
+                                    if (fromName != null && fromName.contains("#786#"))
+                                        fromName = fromName.substring(0, fromName.indexOf("#786#"));
+                                    if (tmpUser.equalsIgnoreCase(user))
+                                        tmpUser = SharedPrefManager.getInstance().getUserServerName(tmpUser);
+                                    saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, fromName + " removed \"" + tmpUser + "\".", message_ID);
+                                    if (chatListener != null)
+                                        chatListener.notifyChatRecieve(user, "");
+                                }
+                            }
 //							if(persons.contains(","))
 //								persons = persons.substring(0, persons.length()-1);
-						}
-						//fromName senderName
+                        }
+                        //fromName senderName
 
-						if(typingNotifier!=null)
-							typingNotifier.refreshOnlineGroupUser();
-						return;
-					} else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeGroupAdminUpdate
-							.ordinal()) {
-						Log.d(TAG,
-								"XMPPMessageType atMeXmppMessageTypeGroupAdminUpdate: "
-										+ xMPPMessageType);
-						String list = message.getBody();
-						if(list!=null && !list.equals("")){  //vikash has left the group and promoted prakash as admin
-							String persons = "";
-							if(!userMe.equals(list))
-								persons += DBWrapper.getInstance().getChatName(list);
-							else
-								persons += "You";
+                        if (typingNotifier != null)
+                            typingNotifier.refreshOnlineGroupUser();
+                        return;
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeGroupAdminUpdate
+                            .ordinal()) {
+                        Log.d(TAG,
+                                "XMPPMessageType atMeXmppMessageTypeGroupAdminUpdate: "
+                                        + xMPPMessageType);
+                        String list = message.getBody();
+                        if (list != null && !list.equals("")) {  //vikash has left the group and promoted prakash as admin
+                            String persons = "";
+                            if (!userMe.equals(list))
+                                persons += DBWrapper.getInstance().getChatName(list);
+                            else
+                                persons += "You";
 
-							if(persons!=null && persons.contains("#786#"))
-								persons = persons.substring(0, persons.indexOf("#786#"));
-							if(fromName!=null && fromName.contains("#786#"))
-								fromName = fromName.substring(0, fromName.indexOf("#786#"));
-							String tmpUser = persons;
-							if(tmpUser.equals(list)){
-								if(tmpUser.contains("_"))
-									tmpUser = "+"+persons.substring(0, persons.indexOf("_"));
+                            if (persons != null && persons.contains("#786#"))
+                                persons = persons.substring(0, persons.indexOf("#786#"));
+                            if (fromName != null && fromName.contains("#786#"))
+                                fromName = fromName.substring(0, fromName.indexOf("#786#"));
+                            String tmpUser = persons;
+                            if (tmpUser.equals(list)) {
+                                if (tmpUser.contains("_"))
+                                    tmpUser = "+" + persons.substring(0, persons.indexOf("_"));
 //									tmpUser = persons.replaceFirst("m", "+");
-							}else
-								tmpUser = persons;
-							String tmpFromName = fromName;
-							if(senderName.equals(fromName) && tmpFromName.contains("_")){
-								tmpFromName = "+"+tmpFromName.substring(0, tmpFromName.indexOf("_"));
+                            } else
+                                tmpUser = persons;
+                            String tmpFromName = fromName;
+                            if (senderName.equals(fromName) && tmpFromName.contains("_")) {
+                                tmpFromName = "+" + tmpFromName.substring(0, tmpFromName.indexOf("_"));
 //								 tmpFromName = tmpFromName.replaceFirst("m", "+");
-							}
-							boolean isChannel = SharedPrefManager.getInstance().isPublicGroup(user);
+                            }
+                            boolean isChannel = SharedPrefManager.getInstance().isPublicGroup(user);
 
-							if(userMe.equals(senderName)){
-								String tmpText = "You left the group and promoted  \"";
-								if(isChannel)
-									tmpText = "You left the open group and promoted  \"";
-								saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, tmpText+tmpUser+"\" as admin.");
-							}else{
-								String tmpText = " left the group and promoted  \"";
-								if(isChannel)
-									tmpText = " left the open group and promoted  \"";
-								saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, tmpFromName+tmpText+tmpUser+"\" as admin.");
-							}
-							prefManager.saveUserGroupInfo(user,list,SharedPrefManager.GROUP_ADMIN_INFO,true);
-							prefManager.saveUserGroupInfo(user,list,SharedPrefManager.GROUP_OWNER_INFO,true);
-						}
-						return;
-					}else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeGroupWelcomeMessage.ordinal()) {
-						if(!userMe.equals(senderName)){
-							if(message.getPacketID()!=null){
-								boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message.getPacketID());
-								if(isDuplicate)
-									return;
-							}
-							String welcomeMessage = "You are welcome in "+SharedPrefManager.getInstance().getGroupDisplayName(user);
-							String message_ID = message.getPacketID();
-							if (message.getBody() != null
-									&& !message.getBody().equals("")) {
-								welcomeMessage = message.getBody();
-							}
-							saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, welcomeMessage,message_ID);
+                            if (userMe.equals(senderName)) {
+                                String tmpText = "You left the group and promoted  \"";
+                                if (isChannel)
+                                    tmpText = "You left the open group and promoted  \"";
+                                saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, tmpText + tmpUser + "\" as admin.");
+                            } else {
+                                String tmpText = " left the group and promoted  \"";
+                                if (isChannel)
+                                    tmpText = " left the open group and promoted  \"";
+                                saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, tmpFromName + tmpText + tmpUser + "\" as admin.");
+                            }
+                            prefManager.saveUserGroupInfo(user, list, SharedPrefManager.GROUP_ADMIN_INFO, true);
+                            prefManager.saveUserGroupInfo(user, list, SharedPrefManager.GROUP_OWNER_INFO, true);
+                        }
+                        return;
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeGroupWelcomeMessage.ordinal()) {
+                        if (!userMe.equals(senderName)) {
+                            if (message.getPacketID() != null) {
+                                boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message.getPacketID());
+                                if (isDuplicate)
+                                    return;
+                            }
+                            String welcomeMessage = "You are welcome in " + SharedPrefManager.getInstance().getGroupDisplayName(user);
+                            String message_ID = message.getPacketID();
+                            if (message.getBody() != null
+                                    && !message.getBody().equals("")) {
+                                welcomeMessage = message.getBody();
+                            }
+                            saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(user), user, welcomeMessage, message_ID);
 
-						}
-						return;
-					}
-					if (senderName.equals(userMe)
-							|| !prefManager.isGroupChat(
-							user) || !prefManager.isGroupMemberActive(user, userMe)) {
-						Log.d(TAG, "Self messaging is not allowed.");
-						return;
-					}
+                        }
+                        return;
+                    }
+                    if (senderName.equals(userMe)
+                            || !prefManager.isGroupChat(
+                            user) || !prefManager.isGroupMemberActive(user, userMe)) {
+                        Log.d(TAG, "Self messaging is not allowed.");
+                        return;
+                    }
 
-					// if (message.getMessageSeenState() ==
-					// Message.SeenState.recieved
-					// || message.getMessageSeenState() ==
-					// Message.SeenState.seen) {
-					// AtmeChatClient.getChatDBWrapper().updateSeenStatus(user,
-					// convertStringToWhereAs(message.getPacketID()),
-					// message.getMessageSeenState());
-					// if (chatCountListener != null)
-					// chatCountListener.notifyChatRecieve();
-					// if (chatListener != null)
-					// chatListener.notifyChatRecieve();
-					// return;
-					// }
-					if (message.getBody() != null && !message.getBody().equals("")) {
-						if(!console_msg) {
-							prefManager.saveChatCounter(prefManager.getUserDomain(), prefManager.getChatCounter(prefManager.getUserDomain()) + 1);
-							int messageCount = prefManager.getChatCounter(prefManager.getUserDomain());
-							ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
-							prefManager.saveChatCountOfUser(user, prefManager.getChatCountOfUser(user) + 1);
-						}
+                    // if (message.getMessageSeenState() ==
+                    // Message.SeenState.recieved
+                    // || message.getMessageSeenState() ==
+                    // Message.SeenState.seen) {
+                    // AtmeChatClient.getChatDBWrapper().updateSeenStatus(user,
+                    // convertStringToWhereAs(message.getPacketID()),
+                    // message.getMessageSeenState());
+                    // if (chatCountListener != null)
+                    // chatCountListener.notifyChatRecieve();
+                    // if (chatListener != null)
+                    // chatListener.notifyChatRecieve();
+                    // return;
+                    // }
+                    if (message.getBody() != null && !message.getBody().equals("")) {
+                        if (!console_msg) {
+                            prefManager.saveChatCounter(prefManager.getUserDomain(), prefManager.getChatCounter(prefManager.getUserDomain()) + 1);
+                            int messageCount = prefManager.getChatCounter(prefManager.getUserDomain());
+                            ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
+                            prefManager.saveChatCountOfUser(user, prefManager.getChatCountOfUser(user) + 1);
+                        }
 
-						if(prefManager.getUserFileId(senderName) == null && message.getPicId() != null)
-							prefManager.saveUserFileId(senderName, message.getPicId());
-						message.setMessageSeenState(Message.SeenState.recieved);
-						if(fromName.equals(senderName)){
-							if(senderName.contains("_"))
-								fromName = "+"+senderName.substring(0, senderName.indexOf("_"));//senderName.replaceFirst("m", "+");
-						}
-						String me = prefManager.getUserName();
-						if(!me.equals(senderName)){
-							boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message.getPacketID());
-							if(isDuplicate){
-								if(prefManager!=null) //new1
-									prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
-								return;
-							}
-						}
-						showNotificationForMessage(senderName, user, fromName, message.getBody(), message);
-						if (chatCountListener != null)
-							chatCountListener.notifyChatRecieve(user,message.getBody());
-						if (((ChatListScreen.onForeground && !ChatListScreen.currentUser.equals(user)) || !ChatListScreen.onForeground)) {
-							List<String> strList = new ArrayList<String>();
-							strList.add(message.getPacketID());
-							sendGroupOrBroadcastAck(senderName, strList, Message.SeenState.recieved,user);
-						}
-					}
+                        if (prefManager.getUserFileId(senderName) == null && message.getPicId() != null)
+                            prefManager.saveUserFileId(senderName, message.getPicId());
+                        message.setMessageSeenState(Message.SeenState.recieved);
+                        if (fromName.equals(senderName)) {
+                            if (senderName.contains("_"))
+                                fromName = "+" + senderName.substring(0, senderName.indexOf("_"));//senderName.replaceFirst("m", "+");
+                        }
+                        String me = prefManager.getUserName();
+                        if (!me.equals(senderName)) {
+                            boolean isDuplicate = chatDBWrapper.isDuplicateMessage(user, message.getPacketID());
+                            if (isDuplicate) {
+                                if (prefManager != null) //new1
+                                    prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
+                                return;
+                            }
+                        }
+                        showNotificationForMessage(senderName, user, fromName, message.getBody(), message);
+                        if (chatCountListener != null)
+                            chatCountListener.notifyChatRecieve(user, message.getBody());
+                        if (((ChatListScreen.onForeground && !ChatListScreen.currentUser.equals(user)) || !ChatListScreen.onForeground)) {
+                            List<String> strList = new ArrayList<String>();
+                            strList.add(message.getPacketID());
+                            sendGroupOrBroadcastAck(senderName, strList, Message.SeenState.recieved, user);
+                        }
+                    }
 
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				Log.d(TAG,
-						"Exception occured during processPacket."
-								+ e.toString());
-			}
-			if(prefManager!=null) //new1
-				prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
-		}
-	};
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.d(TAG,
+                        "Exception occured during processPacket."
+                                + e.toString());
+            }
+            if (prefManager != null) //new1
+                prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
+        }
+    };
 
-	PacketListener typingListener = new PacketListener() {
-		public void processPacket(Packet packet) {
-			//For group
-			//<message to="919910068484_readmark@52.88.175.48/Smack" from="mahesh_test_group_readmark@conference.52.88.175.48/918884786865_readmark"
-			//status="1" XMPPMessageType="0"status_message_type="0" type="groupchat"><composing xmlns="http://jabber.org/protocol/chatstates" /></message>
+    PacketListener typingListener = new PacketListener() {
+        public void processPacket(Packet packet) {
+            //For group
+            //<message to="919910068484_readmark@52.88.175.48/Smack" from="mahesh_test_group_readmark@conference.52.88.175.48/918884786865_readmark"
+            //status="1" XMPPMessageType="0"status_message_type="0" type="groupchat"><composing xmlns="http://jabber.org/protocol/chatstates" /></message>
 
-			//For Individual
-			//<message to="919910068484_readmark@52.88.175.48" from="918884786865_readmark@52.88.175.48/fc4c4d30"
-			//status="1" XMPPMessageType="0"status_message_type="0" type="chat"><composing xmlns="http://jabber.org/protocol/chatstates" /></message>
+            //For Individual
+            //<message to="919910068484_readmark@52.88.175.48" from="918884786865_readmark@52.88.175.48/fc4c4d30"
+            //status="1" XMPPMessageType="0"status_message_type="0" type="chat"><composing xmlns="http://jabber.org/protocol/chatstates" /></message>
 
-			Log.d(TAG, "typingListener: " + packet.toXML());
+            Log.d(TAG, "typingListener: " + packet.toXML());
 
-			Message message = (Message) packet;
-			String msgFrom = message.getFrom();
+            Message message = (Message) packet;
+            String msgFrom = message.getFrom();
 //			String groupSender = msgFrom.substring(msgFrom.lastIndexOf('/') + 1);
-			Type type = message.getType();
+            Type type = message.getType();
 
 //			boolean isGroup = SharedPrefManager.getInstance().isGroupChat(groupSender);//msgFrom.substring(msgFrom.lastIndexOf('/') + 1));
 
-			//Message.Type.groupchat
-			// Log.d(TAG, "who is typing now : " + msgFrom);
-			if (msgFrom != null && msgFrom.contains("@")  && type == Message.Type.chat) {
+            //Message.Type.groupchat
+            // Log.d(TAG, "who is typing now : " + msgFrom);
+            if (msgFrom != null && msgFrom.contains("@") && type == Message.Type.chat) {
 
-				msgFrom = msgFrom.substring(0, msgFrom.indexOf('@'));
-				Log.i(TAG, "typingListener: For P2P : msgFrom : " + msgFrom);
-				startUserTyping(msgFrom);
-			}
-			if(prefManager!=null) //new1
-				prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
-		}
+                msgFrom = msgFrom.substring(0, msgFrom.indexOf('@'));
+                Log.i(TAG, "typingListener: For P2P : msgFrom : " + msgFrom);
+                startUserTyping(msgFrom);
+            }
+            if (prefManager != null) //new1
+                prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
+        }
 
-	};
-	PacketListener typingGroupListener = new PacketListener() {
-		public void processPacket(Packet packet) {
-			//For group
-			//<message to="919910068484_readmark@52.88.175.48/Smack" from="mahesh_test_group_readmark@conference.52.88.175.48/918884786865_readmark"
-			//status="1" XMPPMessageType="0"status_message_type="0" type="groupchat"><composing xmlns="http://jabber.org/protocol/chatstates" /></message>
+    };
+    PacketListener typingGroupListener = new PacketListener() {
+        public void processPacket(Packet packet) {
+            //For group
+            //<message to="919910068484_readmark@52.88.175.48/Smack" from="mahesh_test_group_readmark@conference.52.88.175.48/918884786865_readmark"
+            //status="1" XMPPMessageType="0"status_message_type="0" type="groupchat"><composing xmlns="http://jabber.org/protocol/chatstates" /></message>
 
-			//For Individual
-			//<message to="919910068484_readmark@52.88.175.48" from="918884786865_readmark@52.88.175.48/fc4c4d30"
-			//status="1" XMPPMessageType="0"status_message_type="0" type="chat"><composing xmlns="http://jabber.org/protocol/chatstates" /></message>
+            //For Individual
+            //<message to="919910068484_readmark@52.88.175.48" from="918884786865_readmark@52.88.175.48/fc4c4d30"
+            //status="1" XMPPMessageType="0"status_message_type="0" type="chat"><composing xmlns="http://jabber.org/protocol/chatstates" /></message>
 
-			Log.d(TAG, "typingGroupListener: " + packet.toXML());
+            Log.d(TAG, "typingGroupListener: " + packet.toXML());
 
-			Message message = (Message) packet;
-			String msgFrom = message.getFrom();
-			String groupSender = msgFrom.substring(msgFrom.lastIndexOf('/') + 1);
-			Type type = message.getType();
-			//Message.Type.groupchat
-			// Log.d(TAG, "who is typing now : " + msgFrom);
-			if (msgFrom != null && msgFrom.contains("@") && type == Message.Type.groupchat) {
+            Message message = (Message) packet;
+            String msgFrom = message.getFrom();
+            String groupSender = msgFrom.substring(msgFrom.lastIndexOf('/') + 1);
+            Type type = message.getType();
+            //Message.Type.groupchat
+            // Log.d(TAG, "who is typing now : " + msgFrom);
+            if (msgFrom != null && msgFrom.contains("@") && type == Message.Type.groupchat) {
 //				if(isGroup){//isGroup != null && isGroup.length() > 12 && isGroup.indexOf('_') != -1){
-				msgFrom = msgFrom.substring(0, msgFrom.indexOf('@'));
+                msgFrom = msgFrom.substring(0, msgFrom.indexOf('@'));
 //					msgFrom = msgFrom + "@" + isGroup;
-				Log.i(TAG, "typingListener: For Group : msgFrom : " + msgFrom+" , "+groupSender);
-				if(!groupSender.equals(SharedPrefManager.getInstance().getUserName()))
-					startUserTypingForGroup(msgFrom, groupSender);
+                Log.i(TAG, "typingListener: For Group : msgFrom : " + msgFrom + " , " + groupSender);
+                if (!groupSender.equals(SharedPrefManager.getInstance().getUserName()))
+                    startUserTypingForGroup(msgFrom, groupSender);
 //				}
 
-			}
-			if(prefManager!=null) //new1
-				prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
-		}
+            }
+            if (prefManager != null) //new1
+                prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
+        }
 
-	};
-	Timer timer = null;
-	TimerTask timerTask;
-	public void startUserTyping(final String user) {
-		if(timer == null){
-			timer = new Timer();
-			timerTask = new TimerTask() {
+    };
+    Timer timer = null;
+    TimerTask timerTask;
 
-				@Override
-				public void run() {
-					SharedPrefManager.getInstance().saveUserTypingStatus(user, false);
-					if (chatListener != null)
-						chatListener.notifyChatHome(user,null);
-					if (typingNotifier != null)
-						typingNotifier.notifyTypingRecieve(user);
-					cancel();
-					timer = null;
-					timerTask = null;
-				}
-			};
-			SharedPrefManager.getInstance().saveUserTypingStatus(user, true);
+    public void startUserTyping(final String user) {
+        if (timer == null) {
+            timer = new Timer();
+            timerTask = new TimerTask() {
 
-			if (chatListener != null)
-				chatListener.notifyChatHome(user,null);
-			if (typingNotifier != null)
-				typingNotifier.notifyTypingRecieve(user);
-			timer.schedule(timerTask, 3000);
-		}
-	}
-	public void startUserTypingForGroup(final String group, final String user) {
-		if(timer == null){
-			timer = new Timer();
-			timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    SharedPrefManager.getInstance().saveUserTypingStatus(user, false);
+                    if (chatListener != null)
+                        chatListener.notifyChatHome(user, null);
+                    if (typingNotifier != null)
+                        typingNotifier.notifyTypingRecieve(user);
+                    cancel();
+                    timer = null;
+                    timerTask = null;
+                }
+            };
+            SharedPrefManager.getInstance().saveUserTypingStatus(user, true);
 
-				@Override
-				public void run() {
-					SharedPrefManager.getInstance().saveUserTypingStatusForGroup(group, null);
-					if (chatListener != null)
-						chatListener.notifyChatHome(user,null);
-					if (typingNotifier != null)
-						typingNotifier.notifyTypingRecieve(user);
-					cancel();
-					timer = null;
-					timerTask = null;
-				}
-			};
-			SharedPrefManager.getInstance().saveUserTypingStatusForGroup(group, user);
+            if (chatListener != null)
+                chatListener.notifyChatHome(user, null);
+            if (typingNotifier != null)
+                typingNotifier.notifyTypingRecieve(user);
+            timer.schedule(timerTask, 3000);
+        }
+    }
 
-			if (chatListener != null)
-				chatListener.notifyChatHome(user,null);
-			if (typingNotifier != null)
-				typingNotifier.notifyTypingRecieve(user);
-			timer.schedule(timerTask, 3000);
-		}
-	}
+    public void startUserTypingForGroup(final String group, final String user) {
+        if (timer == null) {
+            timer = new Timer();
+            timerTask = new TimerTask() {
 
-	PacketListener recordStatusListener = new PacketListener() {
-		public void processPacket(Packet packet) {
-			Log.d(TAG, "recordStatusListener: " + packet.toXML());
+                @Override
+                public void run() {
+                    SharedPrefManager.getInstance().saveUserTypingStatusForGroup(group, null);
+                    if (chatListener != null)
+                        chatListener.notifyChatHome(user, null);
+                    if (typingNotifier != null)
+                        typingNotifier.notifyTypingRecieve(user);
+                    cancel();
+                    timer = null;
+                    timerTask = null;
+                }
+            };
+            SharedPrefManager.getInstance().saveUserTypingStatusForGroup(group, user);
 
-			Message message = (Message) packet;
-			String msgFrom = message.getFrom();
-			String isGroup = msgFrom.substring(msgFrom.lastIndexOf('/') + 1);
-			Type type = message.getType();
-			// Log.d(TAG, "who is typing now : " + msgFrom);
-			if (msgFrom != null && msgFrom.contains("@")) {
-				if(type == Message.Type.groupchat){//isGroup != null && isGroup.length() > 12 && isGroup.indexOf('_') != -1){
-					msgFrom = msgFrom.substring(0, msgFrom.indexOf('@'));
+            if (chatListener != null)
+                chatListener.notifyChatHome(user, null);
+            if (typingNotifier != null)
+                typingNotifier.notifyTypingRecieve(user);
+            timer.schedule(timerTask, 3000);
+        }
+    }
+
+    PacketListener recordStatusListener = new PacketListener() {
+        public void processPacket(Packet packet) {
+            Log.d(TAG, "recordStatusListener: " + packet.toXML());
+
+            Message message = (Message) packet;
+            String msgFrom = message.getFrom();
+            String isGroup = msgFrom.substring(msgFrom.lastIndexOf('/') + 1);
+            Type type = message.getType();
+            // Log.d(TAG, "who is typing now : " + msgFrom);
+            if (msgFrom != null && msgFrom.contains("@")) {
+                if (type == Message.Type.groupchat) {//isGroup != null && isGroup.length() > 12 && isGroup.indexOf('_') != -1){
+                    msgFrom = msgFrom.substring(0, msgFrom.indexOf('@'));
 //					msgFrom = msgFrom + "@" + isGroup;
-					Log.i(TAG, "typingListener: For Group : msgFrom : " + msgFrom);
-					if(!isGroup.equals(SharedPrefManager.getInstance().getUserName()))
-						startUserRecordStatusForGroup(msgFrom, isGroup);
-				}
+                    Log.i(TAG, "typingListener: For Group : msgFrom : " + msgFrom);
+                    if (!isGroup.equals(SharedPrefManager.getInstance().getUserName()))
+                        startUserRecordStatusForGroup(msgFrom, isGroup);
+                }
 //				else{
 //					msgFrom = msgFrom.substring(0, msgFrom.indexOf('@'));
 //					startUserRecordStatus(msgFrom);
 //				}
-			}
-			if(prefManager!=null) //new1
-				prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
-		}
+            }
+            if (prefManager != null) //new1
+                prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
+        }
 
-	};
-	Timer timerRecordStatus = null;
-	TimerTask timerTaskRecordStatus;
-	public void startUserRecordStatus(final String user) {
-		if(timerRecordStatus == null){
-			timerRecordStatus = new Timer();
-			timerTaskRecordStatus = new TimerTask() {
+    };
+    Timer timerRecordStatus = null;
+    TimerTask timerTaskRecordStatus;
 
-				@Override
-				public void run() {
-					SharedPrefManager.getInstance().saveUserRecordingStatus(user, false);
-					if (chatListener != null)
-						chatListener.notifyChatHome(user,null);
-					if (typingNotifier != null)
-						typingNotifier.notifyRecordStatusRecieve(user);
-					cancel();
-					timerRecordStatus = null;
-					timerTaskRecordStatus = null;
-				}
-			};
-			SharedPrefManager.getInstance().saveUserRecordingStatus(user, true);
+    public void startUserRecordStatus(final String user) {
+        if (timerRecordStatus == null) {
+            timerRecordStatus = new Timer();
+            timerTaskRecordStatus = new TimerTask() {
 
-			if (chatListener != null)
-				chatListener.notifyChatHome(user,null);
-			if (typingNotifier != null)
-				typingNotifier.notifyRecordStatusRecieve(user);
-			timerRecordStatus.schedule(timerTaskRecordStatus, 3000);
-		}
-	}
-	public void startUserRecordStatusForGroup(final String group, final String user) {
-		if(timerRecordStatus == null){
-			timerRecordStatus = new Timer();
-			timerTaskRecordStatus = new TimerTask() {
+                @Override
+                public void run() {
+                    SharedPrefManager.getInstance().saveUserRecordingStatus(user, false);
+                    if (chatListener != null)
+                        chatListener.notifyChatHome(user, null);
+                    if (typingNotifier != null)
+                        typingNotifier.notifyRecordStatusRecieve(user);
+                    cancel();
+                    timerRecordStatus = null;
+                    timerTaskRecordStatus = null;
+                }
+            };
+            SharedPrefManager.getInstance().saveUserRecordingStatus(user, true);
 
-				@Override
-				public void run() {
-					SharedPrefManager.getInstance().saveUserRecordingStatusForGroup(group, null);
-					if (chatListener != null)
-						chatListener.notifyChatRecieve(user,null);
-					if (typingNotifier != null)
-						typingNotifier.notifyRecordStatusRecieve(user);
-					cancel();
-					timerRecordStatus = null;
-					timerTaskRecordStatus = null;
-				}
-			};
-			SharedPrefManager.getInstance().saveUserRecordingStatusForGroup(group, user);
+            if (chatListener != null)
+                chatListener.notifyChatHome(user, null);
+            if (typingNotifier != null)
+                typingNotifier.notifyRecordStatusRecieve(user);
+            timerRecordStatus.schedule(timerTaskRecordStatus, 3000);
+        }
+    }
 
-			if (chatListener != null)
-				chatListener.notifyChatRecieve(user,null);
-			if (typingNotifier != null)
-				typingNotifier.notifyRecordStatusRecieve(user);
-			timerRecordStatus.schedule(timerTaskRecordStatus, 3000);
-		}
-	}
+    public void startUserRecordStatusForGroup(final String group, final String user) {
+        if (timerRecordStatus == null) {
+            timerRecordStatus = new Timer();
+            timerTaskRecordStatus = new TimerTask() {
 
-	PacketListener listeningStatusListener = new PacketListener() {
-		public void processPacket(Packet packet) {
-			Log.d(TAG, "listeningStatusListener: " + packet.toXML());
+                @Override
+                public void run() {
+                    SharedPrefManager.getInstance().saveUserRecordingStatusForGroup(group, null);
+                    if (chatListener != null)
+                        chatListener.notifyChatRecieve(user, null);
+                    if (typingNotifier != null)
+                        typingNotifier.notifyRecordStatusRecieve(user);
+                    cancel();
+                    timerRecordStatus = null;
+                    timerTaskRecordStatus = null;
+                }
+            };
+            SharedPrefManager.getInstance().saveUserRecordingStatusForGroup(group, user);
 
-			Message message = (Message) packet;
-			String msgFrom = message.getFrom();
-			String isGroup = msgFrom.substring(msgFrom.lastIndexOf('/') + 1);
-			Type type = message.getType();
-			// Log.d(TAG, "who is typing now : " + msgFrom);
-			if (msgFrom != null && msgFrom.contains("@")) {
-				if(type == Message.Type.groupchat){//if(isGroup != null && isGroup.length() > 12 && isGroup.indexOf('_') != -1){
-					msgFrom = msgFrom.substring(0, msgFrom.indexOf('@'));
+            if (chatListener != null)
+                chatListener.notifyChatRecieve(user, null);
+            if (typingNotifier != null)
+                typingNotifier.notifyRecordStatusRecieve(user);
+            timerRecordStatus.schedule(timerTaskRecordStatus, 3000);
+        }
+    }
+
+    PacketListener listeningStatusListener = new PacketListener() {
+        public void processPacket(Packet packet) {
+            Log.d(TAG, "listeningStatusListener: " + packet.toXML());
+
+            Message message = (Message) packet;
+            String msgFrom = message.getFrom();
+            String isGroup = msgFrom.substring(msgFrom.lastIndexOf('/') + 1);
+            Type type = message.getType();
+            // Log.d(TAG, "who is typing now : " + msgFrom);
+            if (msgFrom != null && msgFrom.contains("@")) {
+                if (type == Message.Type.groupchat) {//if(isGroup != null && isGroup.length() > 12 && isGroup.indexOf('_') != -1){
+                    msgFrom = msgFrom.substring(0, msgFrom.indexOf('@'));
 //					msgFrom = msgFrom + "@" + isGroup;
-					Log.i(TAG, "typingListener: For Group : msgFrom : " + msgFrom);
-					if(!isGroup.equals(SharedPrefManager.getInstance().getUserName()))
-						startUserListeningStatusForGroup(msgFrom, isGroup);
-				}
+                    Log.i(TAG, "typingListener: For Group : msgFrom : " + msgFrom);
+                    if (!isGroup.equals(SharedPrefManager.getInstance().getUserName()))
+                        startUserListeningStatusForGroup(msgFrom, isGroup);
+                }
 //				else{
 //					msgFrom = msgFrom.substring(0, msgFrom.indexOf('@'));
 //					startUserListeningStatus(msgFrom);
 //				}
-			}
-			if(prefManager!=null) //new1
-				prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
-		}
+            }
+            if (prefManager != null) //new1
+                prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
+        }
 
-	};
-	Timer timerListeningStatus = null;
-	TimerTask timerTaskListeningStatus;
-	public void startUserListeningStatus(final String user) {
-		if(timerListeningStatus == null){
-			timerListeningStatus = new Timer();
-			timerTaskListeningStatus = new TimerTask() {
+    };
+    Timer timerListeningStatus = null;
+    TimerTask timerTaskListeningStatus;
 
-				@Override
-				public void run() {
-					SharedPrefManager.getInstance().saveUserListeningStatus(user, false);
-					if (chatListener != null)
-						chatListener.notifyChatHome(user,null);
-					if (typingNotifier != null)
-						typingNotifier.notifyListeningStatusRecieve(user);
-					cancel();
-					timerListeningStatus = null;
-					timerTaskListeningStatus = null;
-				}
-			};
-			SharedPrefManager.getInstance().saveUserListeningStatus(user, true);
+    public void startUserListeningStatus(final String user) {
+        if (timerListeningStatus == null) {
+            timerListeningStatus = new Timer();
+            timerTaskListeningStatus = new TimerTask() {
 
-			if (chatListener != null)
-				chatListener.notifyChatHome(user,null);
-			if (typingNotifier != null)
-				typingNotifier.notifyListeningStatusRecieve(user);
-			timerListeningStatus.schedule(timerTaskListeningStatus, 3000);
-		}
-	}
-	public void startUserListeningStatusForGroup(final String group, final String user) {
-		if(timerListeningStatus == null){
-			timerListeningStatus = new Timer();
-			timerTaskListeningStatus = new TimerTask() {
+                @Override
+                public void run() {
+                    SharedPrefManager.getInstance().saveUserListeningStatus(user, false);
+                    if (chatListener != null)
+                        chatListener.notifyChatHome(user, null);
+                    if (typingNotifier != null)
+                        typingNotifier.notifyListeningStatusRecieve(user);
+                    cancel();
+                    timerListeningStatus = null;
+                    timerTaskListeningStatus = null;
+                }
+            };
+            SharedPrefManager.getInstance().saveUserListeningStatus(user, true);
 
-				@Override
-				public void run() {
-					SharedPrefManager.getInstance().saveUserListeningStatusForGroup(group, "");
-					if (chatListener != null)
-						chatListener.notifyChatHome(user,null);
-					if (typingNotifier != null)
-						typingNotifier.notifyListeningStatusRecieve(user);
-					cancel();
-					timerListeningStatus = null;
-					timerTaskListeningStatus = null;
-				}
-			};
-			SharedPrefManager.getInstance().saveUserListeningStatusForGroup(group, user);
+            if (chatListener != null)
+                chatListener.notifyChatHome(user, null);
+            if (typingNotifier != null)
+                typingNotifier.notifyListeningStatusRecieve(user);
+            timerListeningStatus.schedule(timerTaskListeningStatus, 3000);
+        }
+    }
 
-			if (chatListener != null)
-				chatListener.notifyChatHome(user,null);
-			if (typingNotifier != null)
-				typingNotifier.notifyListeningStatusRecieve(user);
-			timerListeningStatus.schedule(timerTaskListeningStatus, 3000);
-		}
-	}
-	ChatManagerListener chatManagerListener = new ChatManagerListener() {
+    public void startUserListeningStatusForGroup(final String group, final String user) {
+        if (timerListeningStatus == null) {
+            timerListeningStatus = new Timer();
+            timerTaskListeningStatus = new TimerTask() {
 
-		@Override
-		public void chatCreated(final Chat arg0, final boolean arg1) {
-			// TODO Auto-generated method stub
+                @Override
+                public void run() {
+                    SharedPrefManager.getInstance().saveUserListeningStatusForGroup(group, "");
+                    if (chatListener != null)
+                        chatListener.notifyChatHome(user, null);
+                    if (typingNotifier != null)
+                        typingNotifier.notifyListeningStatusRecieve(user);
+                    cancel();
+                    timerListeningStatus = null;
+                    timerTaskListeningStatus = null;
+                }
+            };
+            SharedPrefManager.getInstance().saveUserListeningStatusForGroup(group, user);
 
-			arg0.addMessageListener(new MessageListener() {
+            if (chatListener != null)
+                chatListener.notifyChatHome(user, null);
+            if (typingNotifier != null)
+                typingNotifier.notifyListeningStatusRecieve(user);
+            timerListeningStatus.schedule(timerTaskListeningStatus, 3000);
+        }
+    }
 
-				@Override
-				public void processMessage(Chat arg0, Message arg1) {
-					// TODO Auto-generated method stub
-					Log.d("Chat State", "typing called..");
-					if (ChatState.composing.equals(arg1)) {
-						Log.d("Chat State", arg0.getParticipant()
-								+ " is typing..");
-					} else if (ChatState.gone.equals(arg1)) {
-						Log.d("Chat State", arg0.getParticipant()
-								+ " has left the conversation.");
-					} else {
-						Log.d("Chat State",
-								arg0.getParticipant() + ": " + arg1.getFrom());
-					}
-				}
+    ChatManagerListener chatManagerListener = new ChatManagerListener() {
 
-			});
-		}
-	};
+        @Override
+        public void chatCreated(final Chat arg0, final boolean arg1) {
+            // TODO Auto-generated method stub
 
-	private void eventMakeremoveSGSubAdmin(boolean isSGSubAdmin){
-		SuperGroupSubAdminStatusChange obj = new SuperGroupSubAdminStatusChange();
-		obj.setSGSubAdmin(isSGSubAdmin);
+            arg0.addMessageListener(new MessageListener() {
 
-		EventBus.getDefault().post(obj);
-	}
+                @Override
+                public void processMessage(Chat arg0, Message arg1) {
+                    // TODO Auto-generated method stub
+                    Log.d("Chat State", "typing called..");
+                    if (ChatState.composing.equals(arg1)) {
+                        Log.d("Chat State", arg0.getParticipant()
+                                + " is typing..");
+                    } else if (ChatState.gone.equals(arg1)) {
+                        Log.d("Chat State", arg0.getParticipant()
+                                + " has left the conversation.");
+                    } else {
+                        Log.d("Chat State",
+                                arg0.getParticipant() + ": " + arg1.getFrom());
+                    }
+                }
 
-	PacketListener packetListener = new PacketListener() {
+            });
+        }
+    };
 
-		@Override
-		public void processPacket(Packet packet) {
+    private void eventsetGroupBroadcastMode() {
+        GroupChatBroadcastInfo obj = new GroupChatBroadcastInfo();
+        EventBus.getDefault().post(obj);
+    }
 
-			if (!packet.toXML().contains("<message"))
-				return;
-			try {
-				System.out.println("Got packet " + packet.toXML() + " -- "+ packet.getPacketID());
-				// Collection<PacketExtension> col = packet.getExtensions();
-				// PacketExtension extens = (PacketExtension)col.toArray()[0];
-				//
-				// Log.d(TAG, "PacketExtension size: " +col.size()
-				// +" , "+extens.getElementName()+" -- "+extens.toXML());
+    PacketListener packetListener = new PacketListener() {
 
-				final Message message = (Message) packet;
-				Log.d(TAG, "Message Subject: "+ message.getSubject());
-				Log.d(TAG, "Message Seen State processPacket: "+ message.getMessageSeenState());
+        @Override
+        public void processPacket(Packet packet) {
 
-				// Log.d(TAG, "message body " + message.getBody());
-				String fromName = null;
-				if (message != null) {
-					int xMPPMessageType = message.getXMPPMessageType().ordinal();
-					if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeActivateUser.ordinal()){
-						String captionTag  = message.getMediaTagMessage();
-						prefManager.saveUserExistence(captionTag, true);
-						DBWrapper.getInstance().updateSGActiveStatus(prefManager.getUserDomain(), true);
-						EventBus.getDefault().post("[Activated] : "+captionTag);
-						return;
-					}else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeMakeSGSubAdmin.ordinal()){
-						prefManager.setAsDomainSubAdmin(prefManager.getUserDomain(), true);
-						eventMakeremoveSGSubAdmin(true);
-						return;
-					}else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeRemoveSGSubAdmin.ordinal()){
-						prefManager.setAsDomainSubAdmin(prefManager.getUserDomain(), false);
-						eventMakeremoveSGSubAdmin(false);
-						return;
-					}else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSGUpdate.ordinal()){
-						String captionTag  = message.getMediaTagMessage();
-						System.out.println("atMeXmppMessageTypeSGUpdate received : "+captionTag);
-						if(captionTag.contains("&quot;"))
-							captionTag = captionTag.replace("&quot;", "\"");
-						try {
-							JSONObject jsonobj = new JSONObject(captionTag);
-							if(jsonobj.has("domainDisplayName") && jsonobj.getString("domainDisplayName").toString().trim().length() > 0) {
+            if (!packet.toXML().contains("<message"))
+                return;
+            try {
+                System.out.println("Got packet " + packet.toXML() + " -- " + packet.getPacketID());
+                // Collection<PacketExtension> col = packet.getExtensions();
+                // PacketExtension extens = (PacketExtension)col.toArray()[0];
+                //
+                // Log.d(TAG, "PacketExtension size: " +col.size()
+                // +" , "+extens.getElementName()+" -- "+extens.toXML());
+
+                final Message message = (Message) packet;
+
+                String body = message.getBody();
+                Log.d(TAG, "Message Subject: " + message.getSubject());
+                Log.d(TAG, "Message Seen State processPacket: " + message.getMessageSeenState());
+
+                // Log.d(TAG, "message body " + message.getBody());
+                String fromName = null;
+                if (message != null) {
+                    int xMPPMessageType = message.getXMPPMessageType().ordinal();
+                    if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeActivateUser.ordinal()) {
+                        String captionTag = message.getMediaTagMessage();
+                        prefManager.saveUserExistence(captionTag, true);
+                        DBWrapper.getInstance().updateSGActiveStatus(prefManager.getUserDomain(), true);
+                        EventBus.getDefault().post("[Activated] : " + captionTag);
+                        return;
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeMakeSGSubAdmin.ordinal()) {
+                        prefManager.setAsDomainSubAdmin(prefManager.getUserDomain(), true);
+                        return;
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeRemoveSGSubAdmin.ordinal()) {
+                        prefManager.setAsDomainSubAdmin(prefManager.getUserDomain(), false);
+                        return;
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSGUpdate.ordinal()) {
+                        String captionTag = message.getMediaTagMessage();
+                        System.out.println("atMeXmppMessageTypeSGUpdate received : " + captionTag);
+                        if (captionTag.contains("&quot;"))
+                            captionTag = captionTag.replace("&quot;", "\"");
+                        try {
+                            JSONObject jsonobj = new JSONObject(captionTag);
+                            if (jsonobj.has("domainDisplayName") && jsonobj.getString("domainDisplayName").toString().trim().length() > 0) {
 //								displayname = jsonobj.getString("domainDisplayName").toString();
-								prefManager.saveCurrentSGDisplayName(jsonobj.getString("domainDisplayName").toString());
-							}
-							if(jsonobj.has("domainPicID") && jsonobj.getString("domainPicID").toString().trim().length() > 0) {
+                                prefManager.saveCurrentSGDisplayName(jsonobj.getString("domainDisplayName").toString());
+                            }
+                            if (jsonobj.has("domainPicID") && jsonobj.getString("domainPicID").toString().trim().length() > 0) {
 //								fileId = jsonobj.getString("domainPicID").toString();
-								prefManager.saveSGFileId("SG_FILE_ID", jsonobj.getString("domainPicID").toString());
-							}
-							jsonobj = null;
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
-						return;
-					}else if(xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeDeactivateUser.ordinal()){
-						Log.d(TAG, "atMeXmppMessageTypeDeactivateUser: User deactivated.");
-						String captionTag  = message.getMediaTagMessage();
-						prefManager.saveUserExistence(captionTag, false);
-						if (captionTag.equals(userMe)) {
+                                prefManager.saveSGFileId("SG_FILE_ID", jsonobj.getString("domainPicID").toString());
+                            }
+                            jsonobj = null;
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        return;
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeDeactivateUser.ordinal()) {
+                        Log.d(TAG, "atMeXmppMessageTypeDeactivateUser: User deactivated.");
+                        String captionTag = message.getMediaTagMessage();
+                        prefManager.saveUserExistence(captionTag, false);
+                        if (captionTag.equals(userMe)) {
 
-							//Show tha deactivate screen & switch to home.
-							DBWrapper.getInstance().updateSGActiveStatus(prefManager.getUserDomain(), false);
-							EventBus.getDefault().post("[Deactivated] : "+captionTag);
+                            //Show tha deactivate screen & switch to home.
+                            DBWrapper.getInstance().updateSGActiveStatus(prefManager.getUserDomain(), false);
+                            EventBus.getDefault().post("[Deactivated] : " + captionTag);
 
 //							// Close the connection and logout as another user has logged in
 //							String mobileNumber = prefManager.getUserPhone();
@@ -1351,110 +1396,110 @@ public class ChatService extends Service implements interfaceInstances {
 //							}catch(Exception ex){
 //
 //							}
-						}
-						return;
-					}else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeUserProfileUpdate.ordinal()){
-						Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeUserProfileUpdate: "+ xMPPMessageType);
-						String captionTag  = message.getMediaTagMessage();
-						String displayname = null;
-						String userName = null;
-						String statusMessage = null;
-						String fileId = null;
-						String flatNumber = null;
-						String buildingNumber = null;
-						String address = null;
-						String residenceType = null;
+                        }
+                        return;
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeUserProfileUpdate.ordinal()) {
+                        Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeUserProfileUpdate: " + xMPPMessageType);
+                        String captionTag = message.getMediaTagMessage();
+                        String displayname = null;
+                        String userName = null;
+                        String statusMessage = null;
+                        String fileId = null;
+                        String flatNumber = null;
+                        String buildingNumber = null;
+                        String address = null;
+                        String residenceType = null;
 
-						int dnc = -1;
-						int dnm = -1;
-						if(captionTag != null){
-							if(captionTag.contains("&quot;"))
-								captionTag = captionTag.replace("&quot;", "\"");
-							try {
-								JSONObject jsonobj = new JSONObject(captionTag);
-								if(jsonobj.has("displayname") && jsonobj.getString("displayname").toString().trim().length() > 0) {
-									displayname = jsonobj.getString("displayname").toString();
-								}
-								if(jsonobj.has("userName") && jsonobj.getString("userName").toString().trim().length() > 0) {
-									userName = jsonobj.getString("userName").toString();
-								}
-								if(jsonobj.has("statusMessage") && jsonobj.getString("statusMessage").toString().trim().length() > 0) {
-									statusMessage = jsonobj.getString("statusMessage").toString();
-								}
-								if(jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
-									fileId = jsonobj.getString("fileId").toString();
-								}
-								if(jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
-									fileId = jsonobj.getString("fileId").toString();
-								}
-								if(jsonobj.has("flatNumber") && jsonobj.getString("flatNumber").toString().trim().length() > 0) {
-									flatNumber = jsonobj.getString("flatNumber").toString();
-								}
-								if(jsonobj.has("buildingNumber") && jsonobj.getString("buildingNumber").toString().trim().length() > 0) {
-									buildingNumber = jsonobj.getString("buildingNumber").toString();
-								}
-								if(jsonobj.has("residenceType") && jsonobj.getString("residenceType").toString().trim().length() > 0) {
-									residenceType = jsonobj.getString("residenceType").toString();
-								}
-								if(jsonobj.has("address") && jsonobj.getString("address").toString().trim().length() > 0) {
-									address = jsonobj.getString("address").toString();
-								}
-								if(jsonobj.has("privacyStatusMap") && jsonobj.getString("privacyStatusMap").toString().trim().length() > 0){
-									String privacyMap = jsonobj.getString("privacyStatusMap");
-									if(privacyMap!=null && !privacyMap.equals("")){
-										if(privacyMap.contains("&quot;"))
-											privacyMap = privacyMap.replace("&quot;", "\"");
-										JSONObject jsonobj1 = new JSONObject(privacyMap);
-										if(jsonobj1.has("DNC")) {
-											dnc = jsonobj1.getInt("DNC");
-										}
-										if(jsonobj1.has("DNM")) {
-											dnm = jsonobj1.getInt("DNM");
-										}
-									}
-								}
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-						}
-						//Save User DisplayName
-						if(userName!=null && !userName.equals("")){
-							if(dnc!=-1){
-								if(dnc==1)
-									prefManager.saveStatusDNC(userName, true);
-								else if(dnc==0)
-									prefManager.saveStatusDNC(userName, false);
-							}
-							if(dnm!=-1){
-								if(dnm==1)
-									prefManager.saveStatusDNM(userName, true);
-								else if(dnm==0)
-									prefManager.saveStatusDNM(userName, false);
-							}
-						}
-						if(displayname != null){
-							if(userName.equals(prefManager.getUserName()))
-								prefManager.saveDisplayName(displayname);
-							else{
-								prefManager.saveUserServerName(userName, displayname);
-								DBWrapper.getInstance().updateUserDisplayName(displayname, userName);
-							}
-						}
-						//Save User statusMessage
-						if(statusMessage != null)
-							prefManager.saveUserStatusMessage(userName, statusMessage);
-						//Save group picture
-						if(fileId != null)
-							prefManager.saveUserFileId(userName, fileId);
-						//Save flatNumber, buildingNumber, residenceType, address
-						if(flatNumber != null || buildingNumber != null || residenceType != null || address != null){
-							DBWrapper wrapper = DBWrapper.getInstance();
-							String number = wrapper.getContactNumber(userName);
-							UserResponseDetail userDetail = (new GsonBuilder().create()).fromJson(captionTag, UserResponseDetail.class);
-							if(number != null && !number.equals("")){
-								wrapper.updateUserDetails(number, userDetail);
-							}
-						}
+                        int dnc = -1;
+                        int dnm = -1;
+                        if (captionTag != null) {
+                            if (captionTag.contains("&quot;"))
+                                captionTag = captionTag.replace("&quot;", "\"");
+                            try {
+                                JSONObject jsonobj = new JSONObject(captionTag);
+                                if (jsonobj.has("displayname") && jsonobj.getString("displayname").toString().trim().length() > 0) {
+                                    displayname = jsonobj.getString("displayname").toString();
+                                }
+                                if (jsonobj.has("userName") && jsonobj.getString("userName").toString().trim().length() > 0) {
+                                    userName = jsonobj.getString("userName").toString();
+                                }
+                                if (jsonobj.has("statusMessage") && jsonobj.getString("statusMessage").toString().trim().length() > 0) {
+                                    statusMessage = jsonobj.getString("statusMessage").toString();
+                                }
+                                if (jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
+                                    fileId = jsonobj.getString("fileId").toString();
+                                }
+                                if (jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
+                                    fileId = jsonobj.getString("fileId").toString();
+                                }
+                                if (jsonobj.has("flatNumber") && jsonobj.getString("flatNumber").toString().trim().length() > 0) {
+                                    flatNumber = jsonobj.getString("flatNumber").toString();
+                                }
+                                if (jsonobj.has("buildingNumber") && jsonobj.getString("buildingNumber").toString().trim().length() > 0) {
+                                    buildingNumber = jsonobj.getString("buildingNumber").toString();
+                                }
+                                if (jsonobj.has("residenceType") && jsonobj.getString("residenceType").toString().trim().length() > 0) {
+                                    residenceType = jsonobj.getString("residenceType").toString();
+                                }
+                                if (jsonobj.has("address") && jsonobj.getString("address").toString().trim().length() > 0) {
+                                    address = jsonobj.getString("address").toString();
+                                }
+                                if (jsonobj.has("privacyStatusMap") && jsonobj.getString("privacyStatusMap").toString().trim().length() > 0) {
+                                    String privacyMap = jsonobj.getString("privacyStatusMap");
+                                    if (privacyMap != null && !privacyMap.equals("")) {
+                                        if (privacyMap.contains("&quot;"))
+                                            privacyMap = privacyMap.replace("&quot;", "\"");
+                                        JSONObject jsonobj1 = new JSONObject(privacyMap);
+                                        if (jsonobj1.has("DNC")) {
+                                            dnc = jsonobj1.getInt("DNC");
+                                        }
+                                        if (jsonobj1.has("DNM")) {
+                                            dnm = jsonobj1.getInt("DNM");
+                                        }
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        //Save User DisplayName
+                        if (userName != null && !userName.equals("")) {
+                            if (dnc != -1) {
+                                if (dnc == 1)
+                                    prefManager.saveStatusDNC(userName, true);
+                                else if (dnc == 0)
+                                    prefManager.saveStatusDNC(userName, false);
+                            }
+                            if (dnm != -1) {
+                                if (dnm == 1)
+                                    prefManager.saveStatusDNM(userName, true);
+                                else if (dnm == 0)
+                                    prefManager.saveStatusDNM(userName, false);
+                            }
+                        }
+                        if (displayname != null) {
+                            if (userName.equals(prefManager.getUserName()))
+                                prefManager.saveDisplayName(displayname);
+                            else {
+                                prefManager.saveUserServerName(userName, displayname);
+                                DBWrapper.getInstance().updateUserDisplayName(displayname, userName);
+                            }
+                        }
+                        //Save User statusMessage
+                        if (statusMessage != null)
+                            prefManager.saveUserStatusMessage(userName, statusMessage);
+                        //Save group picture
+                        if (fileId != null)
+                            prefManager.saveUserFileId(userName, fileId);
+                        //Save flatNumber, buildingNumber, residenceType, address
+                        if (flatNumber != null || buildingNumber != null || residenceType != null || address != null) {
+                            DBWrapper wrapper = DBWrapper.getInstance();
+                            String number = wrapper.getContactNumber(userName);
+                            UserResponseDetail userDetail = (new GsonBuilder().create()).fromJson(captionTag, UserResponseDetail.class);
+                            if (number != null && !number.equals("")) {
+                                wrapper.updateUserDetails(number, userDetail);
+                            }
+                        }
 //						if (profileUpdateNotifier != null){
 //							if(profileUpdateNotifier instanceof ContactsScreen || profileUpdateNotifier instanceof EsiaChatContactsScreen
 //									|| profileUpdateNotifier instanceof GroupProfileScreen)
@@ -1466,477 +1511,476 @@ public class ChatService extends Service implements interfaceInstances {
 //							new BitmapDownloader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,fileId, BitmapDownloader.THUMB_REQUEST);
 //						else
 //							new BitmapDownloader().execute(fileId, BitmapDownloader.THUMB_REQUEST);
-						if (chatCountListener != null)
-							chatCountListener.notifyChatRecieve(userName,null);
-						if (chatListener != null)
-							chatListener.notifyChatRecieve(userName,null);
-						if (profileUpdateNotifier != null)
-							profileUpdateNotifier.notifyProfileUpdate(userName, statusMessage, displayname);
-						return;
-					}else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeUserRegistered.ordinal()){
-						Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeUserRegistered: "+ xMPPMessageType);
-						String captionTag  = message.getMediaTagMessage();
-						String displayname = null;
-						String userName = null;
-						String statusMessage = null;
-						String fileId = null;
-						String country_code = null;
-						String mobile_number = null;
-						if(captionTag != null){
-							if(captionTag.contains("&quot;"))
-								captionTag = captionTag.replace("&quot;", "\"");
-							try {
-								JSONObject jsonobj = new JSONObject(captionTag);
-								if(jsonobj.has("displayname") && jsonobj.getString("displayname").toString().trim().length() > 0) {
-									displayname = jsonobj.getString("displayname").toString();
-								}
-								if(jsonobj.has("userName") && jsonobj.getString("userName").toString().trim().length() > 0) {
-									userName = jsonobj.getString("userName").toString();
-								}
-								if(jsonobj.has("statusMessage") && jsonobj.getString("statusMessage").toString().trim().length() > 0) {
-									statusMessage = jsonobj.getString("statusMessage").toString();
-								}
-								if(jsonobj.has("mobilenumber") && jsonobj.getString("mobilenumber").toString().trim().length() > 0) {
-									mobile_number = jsonobj.getString("mobilenumber").toString();
-								}
-								if(jsonobj.has("contryCode") && jsonobj.getString("contryCode").toString().trim().length() > 0) {
-									country_code = jsonobj.getString("contryCode").toString();
-								}
-								if(jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
-									fileId = jsonobj.getString("fileId").toString();
-								}
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-						}
-						//Save User DisplayName
-						if(displayname != null){
-							if(userName.equals(prefManager.getUserName()))
-								prefManager.saveDisplayName(displayname);
-							else{
-								prefManager.saveUserServerName(userName, displayname);
-								DBWrapper.getInstance().updateUserDisplayName(displayname, userName);
-							}
-						}
-						//Save User statusMessage
-						if(statusMessage != null)
-							prefManager.saveUserStatusMessage(userName, statusMessage);
-						//Save group picture
-						if(fileId != null)
-							prefManager.saveUserFileId(userName, fileId);
+                        if (chatCountListener != null)
+                            chatCountListener.notifyChatRecieve(userName, null);
+                        if (chatListener != null)
+                            chatListener.notifyChatRecieve(userName, null);
+                        if (profileUpdateNotifier != null)
+                            profileUpdateNotifier.notifyProfileUpdate(userName, statusMessage, displayname);
+                        return;
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeUserRegistered.ordinal()) {
+                        Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeUserRegistered: " + xMPPMessageType);
+                        String captionTag = message.getMediaTagMessage();
+                        String displayname = null;
+                        String userName = null;
+                        String statusMessage = null;
+                        String fileId = null;
+                        String country_code = null;
+                        String mobile_number = null;
+                        if (captionTag != null) {
+                            if (captionTag.contains("&quot;"))
+                                captionTag = captionTag.replace("&quot;", "\"");
+                            try {
+                                JSONObject jsonobj = new JSONObject(captionTag);
+                                if (jsonobj.has("displayname") && jsonobj.getString("displayname").toString().trim().length() > 0) {
+                                    displayname = jsonobj.getString("displayname").toString();
+                                }
+                                if (jsonobj.has("userName") && jsonobj.getString("userName").toString().trim().length() > 0) {
+                                    userName = jsonobj.getString("userName").toString();
+                                }
+                                if (jsonobj.has("statusMessage") && jsonobj.getString("statusMessage").toString().trim().length() > 0) {
+                                    statusMessage = jsonobj.getString("statusMessage").toString();
+                                }
+                                if (jsonobj.has("mobilenumber") && jsonobj.getString("mobilenumber").toString().trim().length() > 0) {
+                                    mobile_number = jsonobj.getString("mobilenumber").toString();
+                                }
+                                if (jsonobj.has("contryCode") && jsonobj.getString("contryCode").toString().trim().length() > 0) {
+                                    country_code = jsonobj.getString("contryCode").toString();
+                                }
+                                if (jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
+                                    fileId = jsonobj.getString("fileId").toString();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        //Save User DisplayName
+                        if (displayname != null) {
+                            if (userName.equals(prefManager.getUserName()))
+                                prefManager.saveDisplayName(displayname);
+                            else {
+                                prefManager.saveUserServerName(userName, displayname);
+                                DBWrapper.getInstance().updateUserDisplayName(displayname, userName);
+                            }
+                        }
+                        //Save User statusMessage
+                        if (statusMessage != null)
+                            prefManager.saveUserStatusMessage(userName, statusMessage);
+                        //Save group picture
+                        if (fileId != null)
+                            prefManager.saveUserFileId(userName, fileId);
 
-						//Save user joined - not invited now
-						prefManager.saveUserInvited(userName, false);
+                        //Save user joined - not invited now
+                        prefManager.saveUserInvited(userName, false);
 
-						//Need to add that contact in DB
-						if(message.getDisplayName() != null && userName != null && !userName.equals(prefManager.getUserName()))
-							updateContactcInDB(userName, message.getDisplayName(), mobile_number, 1);
+                        //Need to add that contact in DB
+                        if (message.getDisplayName() != null && userName != null && !userName.equals(prefManager.getUserName()))
+                            updateContactcInDB(userName, message.getDisplayName(), mobile_number, 1);
 //						if (chatCountListener != null)
 //							chatCountListener.notifyChatRecieve(userName,null);
 //						if (chatListener != null)
 //							chatListener.notifyChatRecieve(userName,null);
 //						if (profileUpdateNotifier != null)
 //							profileUpdateNotifier.notifyProfileUpdate(userName, statusMessage, displayname);
-						return;
-					}else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSharedIDCreated.ordinal() ||
-							xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSharedIDUpdated.ordinal()){
-						Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeUserRegistered: "+ xMPPMessageType);
-						String captionTag  = message.getMediaTagMessage();
-						String userName = null;
-						String displayname = null;
-						String fileId = null;
-						String removedAdmin;
-						String sharedID = null;
-						String sharedIDName = null;
-						String sharedIDDisplayName = null;
-						String sharedIDFileID = null;
-						if(captionTag != null){
-							if(captionTag.contains("&quot;"))
-								captionTag = captionTag.replace("&quot;", "\"");
-							try {
-								JSONObject jsonobj = new JSONObject(captionTag);
-								if(jsonobj.has("userName") && jsonobj.getString("userName").toString().trim().length() > 0) {
-									userName = jsonobj.getString("userName").toString();
-								}
-								if(jsonobj.has("adminuser") && jsonobj.getString("adminuser").toString().trim().length() > 0) {
-									removedAdmin = jsonobj.getString("adminuser").toString();
-								}
-								if(jsonobj.has("displayname") && jsonobj.getString("displayname").toString().trim().length() > 0) {
-									displayname = jsonobj.getString("displayname").toString();
-								}
-								if(jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
-									fileId = jsonobj.getString("fileId").toString();
-								}
-								if(jsonobj.has("sharedID") && jsonobj.getString("sharedID").toString().trim().length() > 0) {
-									sharedID = jsonobj.getString("sharedID").toString();
-								}
-								if(jsonobj.has("sharedIDName") && jsonobj.getString("sharedIDName").toString().trim().length() > 0) {
-									sharedIDName = jsonobj.getString("sharedIDName").toString();
-								}
-								if(jsonobj.has("sharedIDDisplayName") && jsonobj.getString("sharedIDDisplayName").toString().trim().length() > 0) {
-									sharedIDDisplayName = jsonobj.getString("sharedIDDisplayName").toString();
-								}
-								if(jsonobj.has("sharedIDFileID") && jsonobj.getString("sharedIDFileID").toString().trim().length() > 0) {
-									sharedIDFileID = jsonobj.getString("sharedIDFileID").toString();
-								}
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-						}
+                        return;
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSharedIDCreated.ordinal() ||
+                            xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSharedIDUpdated.ordinal()) {
+                        Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeUserRegistered: " + xMPPMessageType);
+                        String captionTag = message.getMediaTagMessage();
+                        String userName = null;
+                        String displayname = null;
+                        String fileId = null;
+                        String removedAdmin;
+                        String sharedID = null;
+                        String sharedIDName = null;
+                        String sharedIDDisplayName = null;
+                        String sharedIDFileID = null;
+                        if (captionTag != null) {
+                            if (captionTag.contains("&quot;"))
+                                captionTag = captionTag.replace("&quot;", "\"");
+                            try {
+                                JSONObject jsonobj = new JSONObject(captionTag);
+                                if (jsonobj.has("userName") && jsonobj.getString("userName").toString().trim().length() > 0) {
+                                    userName = jsonobj.getString("userName").toString();
+                                }
+                                if (jsonobj.has("adminuser") && jsonobj.getString("adminuser").toString().trim().length() > 0) {
+                                    removedAdmin = jsonobj.getString("adminuser").toString();
+                                }
+                                if (jsonobj.has("displayname") && jsonobj.getString("displayname").toString().trim().length() > 0) {
+                                    displayname = jsonobj.getString("displayname").toString();
+                                }
+                                if (jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
+                                    fileId = jsonobj.getString("fileId").toString();
+                                }
+                                if (jsonobj.has("sharedID") && jsonobj.getString("sharedID").toString().trim().length() > 0) {
+                                    sharedID = jsonobj.getString("sharedID").toString();
+                                }
+                                if (jsonobj.has("sharedIDName") && jsonobj.getString("sharedIDName").toString().trim().length() > 0) {
+                                    sharedIDName = jsonobj.getString("sharedIDName").toString();
+                                }
+                                if (jsonobj.has("sharedIDDisplayName") && jsonobj.getString("sharedIDDisplayName").toString().trim().length() > 0) {
+                                    sharedIDDisplayName = jsonobj.getString("sharedIDDisplayName").toString();
+                                }
+                                if (jsonobj.has("sharedIDFileID") && jsonobj.getString("sharedIDFileID").toString().trim().length() > 0) {
+                                    sharedIDFileID = jsonobj.getString("sharedIDFileID").toString();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
 
 //						prefManager.saveSharedIDDisplayName(sharedIDName, sharedIDDisplayName);
 //						prefManager.setSharedIDContact(sharedIDName, true);
 //						if(sharedIDFileID != null)
 //							prefManager.saveSharedIDFileId(sharedIDName, sharedIDFileID);
 
-						//Save Shared ID in Preferences
-						if(!prefManager.isDomainAdmin(prefManager.getUserDomain()) && xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSharedIDUpdated.ordinal()){
-							prefManager.saveSharedIDDisplayName(sharedIDName, sharedIDDisplayName);
-							prefManager.setSharedIDContact(sharedIDName, true);
-							if(sharedIDFileID != null) {
-								if(sharedIDFileID.startsWith("http://") && sharedIDFileID.lastIndexOf('/') != -1 && sharedIDFileID.lastIndexOf('.') != -1)
-									sharedIDFileID = sharedIDFileID.substring(sharedIDFileID.lastIndexOf('/') + 1, sharedIDFileID.lastIndexOf('.'));
-								prefManager.saveSharedIDFileId(sharedIDName, sharedIDFileID);
-							}
-							if(Build.VERSION.SDK_INT >= 11)
-								new GetSharedIDListFromServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-							else
-								new GetSharedIDListFromServer().execute();
-							HomeScreen.refreshContactList = true;
-						}else if(prefManager.getSharedIDDisplayName(sharedIDName) == null){
-							if(!prefManager.isDomainAdmin(prefManager.getUserDomain()))
-							{
-								prefManager.saveSharedIDDisplayName(sharedIDName, sharedIDDisplayName);
-								prefManager.setSharedIDContact(sharedIDName, true);
-								if(sharedIDFileID != null)
-									prefManager.saveSharedIDFileId(sharedIDName, sharedIDFileID);
-								//Update Shared Id'd to add on top of contact list
-								ContentValues contentvalues = new ContentValues();
-								//Shared ID name is saved in username field
-								contentvalues.put(DatabaseConstants.USER_NAME_FIELD, sharedIDName);
-								contentvalues.put(DatabaseConstants.VOPIUM_FIELD, Integer.valueOf(1));
-								if(sharedID != null)
-									contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, sharedID);
-								else
-									contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, (new Random()).nextInt());
-								int id = userName.hashCode();
-								if (id < -1)
-									id = -(id);
-								contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD, Integer.valueOf(id));
-								contentvalues.put(DatabaseConstants.RAW_CONTACT_ID, Integer.valueOf(id));
-								//Shared ID Display name is saved in Display name field
-								contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, Constants.SHARED_ID_START_STRING + sharedIDDisplayName);
-								contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD, Integer.valueOf(0));
-								contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
-								contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
-								contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
-								//Save USerID and SG in DB
-								contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
-								contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
-								contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, "9999999999");
-								DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
-								HomeScreen.refreshContactList = true;
-							}
-						}
-						if (profileUpdateNotifier != null)
-							profileUpdateNotifier.notifyProfileUpdate(sharedIDName, null, null);
-						return;
-					}else if(xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSharedIDDeleted.ordinal()){
+                        //Save Shared ID in Preferences
+                        if (!prefManager.isDomainAdmin(prefManager.getUserDomain()) && xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSharedIDUpdated.ordinal()) {
+                            prefManager.saveSharedIDDisplayName(sharedIDName, sharedIDDisplayName);
+                            prefManager.setSharedIDContact(sharedIDName, true);
+                            if (sharedIDFileID != null) {
+                                if (sharedIDFileID.startsWith("http://") && sharedIDFileID.lastIndexOf('/') != -1 && sharedIDFileID.lastIndexOf('.') != -1)
+                                    sharedIDFileID = sharedIDFileID.substring(sharedIDFileID.lastIndexOf('/') + 1, sharedIDFileID.lastIndexOf('.'));
+                                prefManager.saveSharedIDFileId(sharedIDName, sharedIDFileID);
+                            }
+                            if (Build.VERSION.SDK_INT >= 11)
+                                new GetSharedIDListFromServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                            else
+                                new GetSharedIDListFromServer().execute();
+                            HomeScreen.refreshContactList = true;
+                        } else if (prefManager.getSharedIDDisplayName(sharedIDName) == null) {
+                            if (!prefManager.isDomainAdmin(prefManager.getUserDomain())) {
+                                prefManager.saveSharedIDDisplayName(sharedIDName, sharedIDDisplayName);
+                                prefManager.setSharedIDContact(sharedIDName, true);
+                                if (sharedIDFileID != null)
+                                    prefManager.saveSharedIDFileId(sharedIDName, sharedIDFileID);
+                                //Update Shared Id'd to add on top of contact list
+                                ContentValues contentvalues = new ContentValues();
+                                //Shared ID name is saved in username field
+                                contentvalues.put(DatabaseConstants.USER_NAME_FIELD, sharedIDName);
+                                contentvalues.put(DatabaseConstants.VOPIUM_FIELD, Integer.valueOf(1));
+                                if (sharedID != null)
+                                    contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, sharedID);
+                                else
+                                    contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, (new Random()).nextInt());
+                                int id = userName.hashCode();
+                                if (id < -1)
+                                    id = -(id);
+                                contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD, Integer.valueOf(id));
+                                contentvalues.put(DatabaseConstants.RAW_CONTACT_ID, Integer.valueOf(id));
+                                //Shared ID Display name is saved in Display name field
+                                contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, Constants.SHARED_ID_START_STRING + sharedIDDisplayName);
+                                contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD, Integer.valueOf(0));
+                                contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
+                                contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
+                                contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
+                                //Save USerID and SG in DB
+                                contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
+                                contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
+                                contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, "9999999999");
+                                DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
+                                HomeScreen.refreshContactList = true;
+                            }
+                        }
+                        if (profileUpdateNotifier != null)
+                            profileUpdateNotifier.notifyProfileUpdate(sharedIDName, null, null);
+                        return;
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSharedIDDeleted.ordinal()) {
 
-						Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeSharedIDDeleted: "+ xMPPMessageType);
-						String captionTag  = message.getMediaTagMessage();
-						String userName = null;
-						String displayname = null;
-						String fileId = null;
-						boolean deactivated = false;;
-						String sharedID = null;
-						String sharedIDName = null;
-						String sharedIDDisplayName = null;
-						String sharedIDFileID = null;
-						if(captionTag != null){
-							if(captionTag.contains("&quot;"))
-								captionTag = captionTag.replace("&quot;", "\"");
-							try {
-								JSONObject jsonobj = new JSONObject(captionTag);
-								if(jsonobj.has("userName") && jsonobj.getString("userName").toString().trim().length() > 0) {
-									userName = jsonobj.getString("userName").toString();
-								}
-								if(jsonobj.has("displayname") && jsonobj.getString("displayname").toString().trim().length() > 0) {
-									displayname = jsonobj.getString("displayname").toString();
-								}
-								if(jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
-									fileId = jsonobj.getString("fileId").toString();
-								}
-								if(jsonobj.has("sharedID") && jsonobj.getString("sharedID").toString().trim().length() > 0) {
-									sharedID = jsonobj.getString("sharedID").toString();
-								}
-								if(jsonobj.has("sharedIDName") && jsonobj.getString("sharedIDName").toString().trim().length() > 0) {
-									sharedIDName = jsonobj.getString("sharedIDName").toString();
-								}
-								if(jsonobj.has("sharedIDDisplayName") && jsonobj.getString("sharedIDDisplayName").toString().trim().length() > 0) {
-									sharedIDDisplayName = jsonobj.getString("sharedIDDisplayName").toString();
-								}
-								if(jsonobj.has("deactivated") && jsonobj.getString("deactivated").toString().trim().length() > 0) {
-									deactivated = jsonobj.getBoolean("deactivated");
-								}
-								if(jsonobj.has("sharedIDFileID") && jsonobj.getString("sharedIDFileID").toString().trim().length() > 0) {
-									sharedIDFileID = jsonobj.getString("sharedIDFileID").toString();
-								}
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-						}
-						//Save Deactivated Status in Preferences Shared ID in Preferences
-						if(!prefManager.isDomainAdmin(prefManager.getUserDomain())){
-							prefManager.setSharedIDDeactivated(sharedIDName, true);
-							//Delete From Shared ID list
-							DBWrapper.getInstance().deleteContact(sharedIDName);
-							HomeScreen.removeSharedID(sharedIDName);
-						}
-						HomeScreen.refreshContactList = true;
-						if (profileUpdateNotifier != null)
-							profileUpdateNotifier.notifyProfileUpdate(sharedIDName, null, null);
-						return;
-					}else if(xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSharedIDAdminRemoved.ordinal()){
+                        Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeSharedIDDeleted: " + xMPPMessageType);
+                        String captionTag = message.getMediaTagMessage();
+                        String userName = null;
+                        String displayname = null;
+                        String fileId = null;
+                        boolean deactivated = false;
+                        ;
+                        String sharedID = null;
+                        String sharedIDName = null;
+                        String sharedIDDisplayName = null;
+                        String sharedIDFileID = null;
+                        if (captionTag != null) {
+                            if (captionTag.contains("&quot;"))
+                                captionTag = captionTag.replace("&quot;", "\"");
+                            try {
+                                JSONObject jsonobj = new JSONObject(captionTag);
+                                if (jsonobj.has("userName") && jsonobj.getString("userName").toString().trim().length() > 0) {
+                                    userName = jsonobj.getString("userName").toString();
+                                }
+                                if (jsonobj.has("displayname") && jsonobj.getString("displayname").toString().trim().length() > 0) {
+                                    displayname = jsonobj.getString("displayname").toString();
+                                }
+                                if (jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
+                                    fileId = jsonobj.getString("fileId").toString();
+                                }
+                                if (jsonobj.has("sharedID") && jsonobj.getString("sharedID").toString().trim().length() > 0) {
+                                    sharedID = jsonobj.getString("sharedID").toString();
+                                }
+                                if (jsonobj.has("sharedIDName") && jsonobj.getString("sharedIDName").toString().trim().length() > 0) {
+                                    sharedIDName = jsonobj.getString("sharedIDName").toString();
+                                }
+                                if (jsonobj.has("sharedIDDisplayName") && jsonobj.getString("sharedIDDisplayName").toString().trim().length() > 0) {
+                                    sharedIDDisplayName = jsonobj.getString("sharedIDDisplayName").toString();
+                                }
+                                if (jsonobj.has("deactivated") && jsonobj.getString("deactivated").toString().trim().length() > 0) {
+                                    deactivated = jsonobj.getBoolean("deactivated");
+                                }
+                                if (jsonobj.has("sharedIDFileID") && jsonobj.getString("sharedIDFileID").toString().trim().length() > 0) {
+                                    sharedIDFileID = jsonobj.getString("sharedIDFileID").toString();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        //Save Deactivated Status in Preferences Shared ID in Preferences
+                        if (!prefManager.isDomainAdmin(prefManager.getUserDomain())) {
+                            prefManager.setSharedIDDeactivated(sharedIDName, true);
+                            //Delete From Shared ID list
+                            DBWrapper.getInstance().deleteContact(sharedIDName);
+                            HomeScreen.removeSharedID(sharedIDName);
+                        }
+                        HomeScreen.refreshContactList = true;
+                        if (profileUpdateNotifier != null)
+                            profileUpdateNotifier.notifyProfileUpdate(sharedIDName, null, null);
+                        return;
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSharedIDAdminRemoved.ordinal()) {
 
-						Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeUserRegistered: "+ xMPPMessageType);
-						String captionTag  = message.getMediaTagMessage();
-						String userName = null;
-						String displayname = null;
-						String fileId = null;
-						String removed_user = null;
-						String sharedID = null;
-						String sharedIDName = null;
-						String sharedIDDisplayName = null;
-						String sharedIDFileID = null;
-						if(captionTag != null){
-							if(captionTag.contains("&quot;"))
-								captionTag = captionTag.replace("&quot;", "\"");
-							try {
-								JSONObject jsonobj = new JSONObject(captionTag);
-								if(jsonobj.has("userName") && jsonobj.getString("userName").toString().trim().length() > 0) {
-									userName = jsonobj.getString("userName").toString();
-								}
-								if(jsonobj.has("displayname") && jsonobj.getString("displayname").toString().trim().length() > 0) {
-									displayname = jsonobj.getString("displayname").toString();
-								}
-								if(jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
-									fileId = jsonobj.getString("fileId").toString();
-								}
-								if(jsonobj.has("sharedID") && jsonobj.getString("sharedID").toString().trim().length() > 0) {
-									sharedID = jsonobj.getString("sharedID").toString();
-								}
-								if(jsonobj.has("sharedIDName") && jsonobj.getString("sharedIDName").toString().trim().length() > 0) {
-									sharedIDName = jsonobj.getString("sharedIDName").toString();
-								}
-								if(jsonobj.has("sharedIDDisplayName") && jsonobj.getString("sharedIDDisplayName").toString().trim().length() > 0) {
-									sharedIDDisplayName = jsonobj.getString("sharedIDDisplayName").toString();
-								}
-								if(jsonobj.has("adminuser") && jsonobj.getString("adminuser").toString().trim().length() > 0) {
-									removed_user = jsonobj.getString("adminuser").toString();
-								}
-								if(jsonobj.has("sharedIDFileID") && jsonobj.getString("sharedIDFileID").toString().trim().length() > 0) {
-									sharedIDFileID = jsonobj.getString("sharedIDFileID").toString();
-								}
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-						}
-						if(prefManager.isDomainAdmin(prefManager.getUserDomain()))
-							HomeScreen.removeAdminFromSharedID(sharedIDName, removed_user);
-						else{
-							if(Build.VERSION.SDK_INT >= 11)
-								new GetSharedIDListFromServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-							else
-								new GetSharedIDListFromServer().execute();
-						}
-						return;
-					}
-					else if(xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeRemoveBroadCast.ordinal()){
-						String broadcastUUID = message.getGroupId();
-						if(broadcastUUID!=null && !broadcastUUID.equals("")){
-							chatDBWrapper.deleteRecentUserChatByUserName(broadcastUUID);
-							if (chatCountListener != null)
-								chatCountListener.notifyChatRecieve(broadcastUUID,null);
-							if (chatListener != null)
-								chatListener.notifyChatRecieve(broadcastUUID,null);
-						}
-					}else if(xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeNewCreateBroadCast.ordinal()){
-						String broadcastDisplayName = message.getGroupDisplayname();
-						String createrName = message.getDisplayName();
-						String broadcastUUID = message.getGroupId();
-						String broadcastDiscription = message.getBody();
-						String broadcastPicId = message.getGroupPICId();
-						String ownersPicId = message.getPicId();
-						if(broadcastUUID!=null && !broadcastUUID.equals("") && broadcastDisplayName != null){
-							prefManager.saveBroadCastName(broadcastUUID, broadcastDisplayName);
-							if(createrName!=null && !createrName.equals(""))
-								prefManager.saveGroupOwnerName(broadcastUUID, createrName);
-							if(broadcastDiscription!=null && !broadcastDiscription.equals(""))
-								prefManager.saveUserStatusMessage(broadcastUUID, broadcastDiscription);
-							if(broadcastDisplayName!=null && !broadcastDisplayName.equals(""))
-								prefManager.saveBroadCastDisplayName(broadcastUUID, broadcastDisplayName);
-							saveMessage(broadcastDisplayName, broadcastUUID,broadcastDisplayName+" broadcast created.");
-							prefManager.saveUseBroadCastInfo(broadcastUUID,userMe,SharedPrefManager.BROADCAST_ACTIVE_INFO,true);
-							if(broadcastPicId!=null && !broadcastPicId.equals("")){
-								if(Build.VERSION.SDK_INT >= 11)
-									new BitmapDownloader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,broadcastPicId,BitmapDownloader.THUMB_REQUEST);
-								else
-									new BitmapDownloader().execute(broadcastPicId,BitmapDownloader.THUMB_REQUEST);
-								prefManager.saveUserFileId(broadcastUUID, broadcastPicId);
-							}
-							if(ownersPicId!=null && !ownersPicId.equals("")){
-								if(Build.VERSION.SDK_INT >= 11)
-									new BitmapDownloader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,ownersPicId,BitmapDownloader.THUMB_REQUEST);
-								else
-									new BitmapDownloader().execute(ownersPicId,BitmapDownloader.THUMB_REQUEST);
+                        Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeUserRegistered: " + xMPPMessageType);
+                        String captionTag = message.getMediaTagMessage();
+                        String userName = null;
+                        String displayname = null;
+                        String fileId = null;
+                        String removed_user = null;
+                        String sharedID = null;
+                        String sharedIDName = null;
+                        String sharedIDDisplayName = null;
+                        String sharedIDFileID = null;
+                        if (captionTag != null) {
+                            if (captionTag.contains("&quot;"))
+                                captionTag = captionTag.replace("&quot;", "\"");
+                            try {
+                                JSONObject jsonobj = new JSONObject(captionTag);
+                                if (jsonobj.has("userName") && jsonobj.getString("userName").toString().trim().length() > 0) {
+                                    userName = jsonobj.getString("userName").toString();
+                                }
+                                if (jsonobj.has("displayname") && jsonobj.getString("displayname").toString().trim().length() > 0) {
+                                    displayname = jsonobj.getString("displayname").toString();
+                                }
+                                if (jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
+                                    fileId = jsonobj.getString("fileId").toString();
+                                }
+                                if (jsonobj.has("sharedID") && jsonobj.getString("sharedID").toString().trim().length() > 0) {
+                                    sharedID = jsonobj.getString("sharedID").toString();
+                                }
+                                if (jsonobj.has("sharedIDName") && jsonobj.getString("sharedIDName").toString().trim().length() > 0) {
+                                    sharedIDName = jsonobj.getString("sharedIDName").toString();
+                                }
+                                if (jsonobj.has("sharedIDDisplayName") && jsonobj.getString("sharedIDDisplayName").toString().trim().length() > 0) {
+                                    sharedIDDisplayName = jsonobj.getString("sharedIDDisplayName").toString();
+                                }
+                                if (jsonobj.has("adminuser") && jsonobj.getString("adminuser").toString().trim().length() > 0) {
+                                    removed_user = jsonobj.getString("adminuser").toString();
+                                }
+                                if (jsonobj.has("sharedIDFileID") && jsonobj.getString("sharedIDFileID").toString().trim().length() > 0) {
+                                    sharedIDFileID = jsonobj.getString("sharedIDFileID").toString();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        if (prefManager.isDomainAdmin(prefManager.getUserDomain()))
+                            HomeScreen.removeAdminFromSharedID(sharedIDName, removed_user);
+                        else {
+                            if (Build.VERSION.SDK_INT >= 11)
+                                new GetSharedIDListFromServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                            else
+                                new GetSharedIDListFromServer().execute();
+                        }
+                        return;
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeRemoveBroadCast.ordinal()) {
+                        String broadcastUUID = message.getGroupId();
+                        if (broadcastUUID != null && !broadcastUUID.equals("")) {
+                            chatDBWrapper.deleteRecentUserChatByUserName(broadcastUUID);
+                            if (chatCountListener != null)
+                                chatCountListener.notifyChatRecieve(broadcastUUID, null);
+                            if (chatListener != null)
+                                chatListener.notifyChatRecieve(broadcastUUID, null);
+                        }
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeNewCreateBroadCast.ordinal()) {
+                        String broadcastDisplayName = message.getGroupDisplayname();
+                        String createrName = message.getDisplayName();
+                        String broadcastUUID = message.getGroupId();
+                        String broadcastDiscription = message.getBody();
+                        String broadcastPicId = message.getGroupPICId();
+                        String ownersPicId = message.getPicId();
+                        if (broadcastUUID != null && !broadcastUUID.equals("") && broadcastDisplayName != null) {
+                            prefManager.saveBroadCastName(broadcastUUID, broadcastDisplayName);
+                            if (createrName != null && !createrName.equals(""))
+                                prefManager.saveGroupOwnerName(broadcastUUID, createrName);
+                            if (broadcastDiscription != null && !broadcastDiscription.equals(""))
+                                prefManager.saveUserStatusMessage(broadcastUUID, broadcastDiscription);
+                            if (broadcastDisplayName != null && !broadcastDisplayName.equals(""))
+                                prefManager.saveBroadCastDisplayName(broadcastUUID, broadcastDisplayName);
+                            saveMessage(broadcastDisplayName, broadcastUUID, broadcastDisplayName + " broadcast created.");
+                            prefManager.saveUseBroadCastInfo(broadcastUUID, userMe, SharedPrefManager.BROADCAST_ACTIVE_INFO, true);
+                            if (broadcastPicId != null && !broadcastPicId.equals("")) {
+                                if (Build.VERSION.SDK_INT >= 11)
+                                    new BitmapDownloader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, broadcastPicId, BitmapDownloader.THUMB_REQUEST);
+                                else
+                                    new BitmapDownloader().execute(broadcastPicId, BitmapDownloader.THUMB_REQUEST);
+                                prefManager.saveUserFileId(broadcastUUID, broadcastPicId);
+                            }
+                            if (ownersPicId != null && !ownersPicId.equals("")) {
+                                if (Build.VERSION.SDK_INT >= 11)
+                                    new BitmapDownloader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ownersPicId, BitmapDownloader.THUMB_REQUEST);
+                                else
+                                    new BitmapDownloader().execute(ownersPicId, BitmapDownloader.THUMB_REQUEST);
 //								prefManager.saveUserFileId(broadcastUUID, ownersPicId);
-							}
-							if (chatCountListener != null)
-								chatCountListener.notifyChatRecieve(broadcastUUID,null);
-							if (chatListener != null)
-								chatListener.notifyChatRecieve(broadcastUUID,null);
-						}else{
-							Log.d(TAG, "BroadcastUUID is null during new broadcast creation.");
-						}
-						return;
-					}else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeNewCreateGroup.ordinal()){
-						String groupDisplayName = message.getGroupDisplayname();
-						String createrDisplayName = message.getDisplayName();
-						String groupOwnerName = message.getGroupOwnerName();
-						String groupUUID = message.getGroupId();
-						String groupDiscription = message.getMediaTagMessage();
-						String groupPicId = message.getGroupPICId();
-						String createrFileID = message.getPicId();
-						String groupMemberCount = message.getGroupMemberCount();
-						if(groupUUID!=null && !groupUUID.equals("")){
-							prefManager.saveGroupName(groupUUID, groupDisplayName);
-							prefManager.saveGroupDisplayName(groupUUID, groupDisplayName);
-							//save owner display name
-							prefManager.saveUserServerName(groupOwnerName, createrDisplayName);
-							//save owner file id
-							prefManager.saveUserFileId(groupOwnerName, createrFileID);
-							if(groupOwnerName!=null && groupOwnerName.equals(userMe))
-								prefManager.saveUserGroupInfo(groupUUID,groupOwnerName,SharedPrefManager.GROUP_OWNER_INFO,true);
-							prefManager.saveGroupInfo(groupUUID,SharedPrefManager.GROUP_ACTIVE_INFO,true);
-							prefManager.saveUserGroupInfo(groupUUID,userMe,SharedPrefManager.GROUP_ACTIVE_INFO,true);
-							if(groupMemberCount != null)
-								prefManager.saveGroupMemberCount(groupUUID, String.valueOf(groupMemberCount));
-							String message_ID = message.getPacketID();
-							if(groupDiscription!=null && !groupDiscription.equals(""))
-								prefManager.saveUserStatusMessage(groupUUID, groupDiscription);
-							if(message_ID!=null)
-								saveInfoMessage(groupDisplayName, groupUUID,groupDisplayName+" group created.", message_ID);
-							else
-								saveInfoMessage(groupDisplayName, groupUUID,groupDisplayName+" group created.", UUID.randomUUID().toString());
-							sendGroupPresence(groupUUID,0);
-							if(groupPicId!=null && !groupPicId.equals("")){
-								if(Build.VERSION.SDK_INT >= 11)
-									new BitmapDownloader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,groupPicId, BitmapDownloader.THUMB_REQUEST);
-								else
-									new BitmapDownloader().execute(groupPicId,BitmapDownloader.THUMB_REQUEST);
-								prefManager.saveUserFileId(groupUUID, groupPicId);
-							}
-							if (chatCountListener != null)
-								chatCountListener.notifyChatRecieve(groupUUID, null);
-							if (chatListener != null)
-								chatListener.notifyChatRecieve(groupUUID, null);
+                            }
+                            if (chatCountListener != null)
+                                chatCountListener.notifyChatRecieve(broadcastUUID, null);
+                            if (chatListener != null)
+                                chatListener.notifyChatRecieve(broadcastUUID, null);
+                        } else {
+                            Log.d(TAG, "BroadcastUUID is null during new broadcast creation.");
+                        }
+                        return;
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeNewCreateGroup.ordinal()) {
+                        String groupDisplayName = message.getGroupDisplayname();
+                        String createrDisplayName = message.getDisplayName();
+                        String groupOwnerName = message.getGroupOwnerName();
+                        String groupUUID = message.getGroupId();
+                        String groupDiscription = message.getMediaTagMessage();
+                        String groupPicId = message.getGroupPICId();
+                        String createrFileID = message.getPicId();
+                        String groupMemberCount = message.getGroupMemberCount();
+                        if (groupUUID != null && !groupUUID.equals("")) {
+                            prefManager.saveGroupName(groupUUID, groupDisplayName);
+                            prefManager.saveGroupDisplayName(groupUUID, groupDisplayName);
+                            //save owner display name
+                            prefManager.saveUserServerName(groupOwnerName, createrDisplayName);
+                            //save owner file id
+                            prefManager.saveUserFileId(groupOwnerName, createrFileID);
+                            if (groupOwnerName != null && groupOwnerName.equals(userMe))
+                                prefManager.saveUserGroupInfo(groupUUID, groupOwnerName, SharedPrefManager.GROUP_OWNER_INFO, true);
+                            prefManager.saveGroupInfo(groupUUID, SharedPrefManager.GROUP_ACTIVE_INFO, true);
+                            prefManager.saveUserGroupInfo(groupUUID, userMe, SharedPrefManager.GROUP_ACTIVE_INFO, true);
+                            if (groupMemberCount != null)
+                                prefManager.saveGroupMemberCount(groupUUID, String.valueOf(groupMemberCount));
+                            String message_ID = message.getPacketID();
+                            if (groupDiscription != null && !groupDiscription.equals(""))
+                                prefManager.saveUserStatusMessage(groupUUID, groupDiscription);
+                            if (message_ID != null)
+                                saveInfoMessage(groupDisplayName, groupUUID, groupDisplayName + " group created.", message_ID);
+                            else
+                                saveInfoMessage(groupDisplayName, groupUUID, groupDisplayName + " group created.", UUID.randomUUID().toString());
+                            sendGroupPresence(groupUUID, 0);
+                            if (groupPicId != null && !groupPicId.equals("")) {
+                                if (Build.VERSION.SDK_INT >= 11)
+                                    new BitmapDownloader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, groupPicId, BitmapDownloader.THUMB_REQUEST);
+                                else
+                                    new BitmapDownloader().execute(groupPicId, BitmapDownloader.THUMB_REQUEST);
+                                prefManager.saveUserFileId(groupUUID, groupPicId);
+                            }
+                            if (chatCountListener != null)
+                                chatCountListener.notifyChatRecieve(groupUUID, null);
+                            if (chatListener != null)
+                                chatListener.notifyChatRecieve(groupUUID, null);
 //							if (profileUpdateNotifier != null)
 //								profileUpdateNotifier.notifyProfileUpdate(groupUUID, null, groupDisplayName);
-						}else{
-							Log.d(TAG, "GroupUUID is null during new group creation.");
-						}
-						return;
-					}
-					//Check here for
-					if(message.getStatusMessageType() == Message.StatusMessageType.stateAllSGCounters)//501
-					{
-						String all_counter  = message.getJsonBody();
-						if(all_counter != null && !all_counter.isEmpty()) {
-							JSONObject jsonobj = new JSONObject(all_counter.trim());
-							Iterator<?> keys = jsonobj.keys();
-							while( keys.hasNext() ) {
-								String key = (String)keys.next();
+                        } else {
+                            Log.d(TAG, "GroupUUID is null during new group creation.");
+                        }
+                        return;
+                    }
+                    //Check here for
+                    if (message.getStatusMessageType() == Message.StatusMessageType.stateAllSGCounters)//501
+                    {
+                        String all_counter = message.getJsonBody();
+                        if (all_counter != null && !all_counter.isEmpty()) {
+                            JSONObject jsonobj = new JSONObject(all_counter.trim());
+                            Iterator<?> keys = jsonobj.keys();
+                            while (keys.hasNext()) {
+                                String key = (String) keys.next();
 //								System.out.println("Key  - "+key);
-								try {
-									DBWrapper.getInstance().updateSGNewMessageCount(key, Integer.parseInt((String) jsonobj.get(key)));
+                                try {
+                                    DBWrapper.getInstance().updateSGNewMessageCount(key, Integer.parseInt((String) jsonobj.get(key)));
 //								if ( jsonobj.get(key) instanceof JSONObject ) {
 //
 //								}
-								}catch(NumberFormatException ex){
-									ex.printStackTrace();
-								}
-							};
-							if(HomeScreen.isforeGround){
-								HomeScreen.updateNavDrawer = true;
-							}
+                                } catch (NumberFormatException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+                            ;
+                            if (HomeScreen.isforeGround) {
+                                HomeScreen.updateNavDrawer = true;
+                            }
 
-						}
-						return;
-					}
-					fromName = StringUtils.parseBareAddress(message.getFrom());
-					// Log.d(TAG, "Got text [" + message.getBody()
-					// + "] from [" + fromName + "]");
-					String user = fromName;
-					if (fromName != null && fromName.contains("@")) {
-						user = fromName.substring(0, fromName.indexOf('@'));
-						fromName = DBWrapper.getInstance().getChatName(user);
-					}
-					if (user.equals(userMe)) {
-						Log.d(TAG, "Self messaging is not allowed.");
-						return;
-					}
-					if (message.getMessageSeenState() == Message.SeenState.recieved
-							|| message.getMessageSeenState() == Message.SeenState.seen) {
-						String whreStr = convertStringToWhereAs(message.getPacketID());
-						if(chatDBWrapper.isBroadCastMessage(whreStr)){
-							message.setStatusMessageType(Message.StatusMessageType.broadcast);
-						}
-						if(message.getStatusMessageType() == Message.StatusMessageType.group||message.getStatusMessageType() == Message.StatusMessageType.broadcast){
-							saveGroupOrBroadcastStatus(user, whreStr, message.getMessageSeenState());
-						}else{
-							chatDBWrapper.updateSeenStatus(user,whreStr,message.getMessageSeenState());
-							if(message.getMessageSeenState() == Message.SeenState.seen){
-								long currentTime = System.currentTimeMillis();
-								chatDBWrapper.updateP2PReadTime(whreStr,currentTime);
-							}
-						}
-						if (chatCountListener != null)
-							chatCountListener.notifyChatRecieve(user,null);
-						if (chatListener != null)
-							chatListener.notifyChatRecieve(user,null);
-						return;
-					}
-					if (message.getBody() != null && !message.getBody().equals("")) {
-						if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal()){
-							if(message.isConsoleMessage() == null) {
-								prefManager.saveBulletinChatCounter(prefManager.getUserDomain(), prefManager.getBulletinChatCounter(prefManager.getUserDomain()) + 1);
-								int messageCount = prefManager.getBulletinChatCounter(prefManager.getUserDomain());
-								ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
-							}
-						}else if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal()){
+                        }
+                        return;
+                    }
+                    fromName = StringUtils.parseBareAddress(message.getFrom());
+                    // Log.d(TAG, "Got text [" + message.getBody()
+                    // + "] from [" + fromName + "]");
+                    String user = fromName;
+                    if (fromName != null && fromName.contains("@")) {
+                        user = fromName.substring(0, fromName.indexOf('@'));
+                        fromName = DBWrapper.getInstance().getChatName(user);
+                    }
+                    if (user.equals(userMe)) {
+                        Log.d(TAG, "Self messaging is not allowed.");
+                        return;
+                    }
+                    if (message.getMessageSeenState() == Message.SeenState.recieved
+                            || message.getMessageSeenState() == Message.SeenState.seen) {
+                        String whreStr = convertStringToWhereAs(message.getPacketID());
+                        if (chatDBWrapper.isBroadCastMessage(whreStr)) {
+                            message.setStatusMessageType(Message.StatusMessageType.broadcast);
+                        }
+                        if (message.getStatusMessageType() == Message.StatusMessageType.group || message.getStatusMessageType() == Message.StatusMessageType.broadcast) {
+                            saveGroupOrBroadcastStatus(user, whreStr, message.getMessageSeenState());
+                        } else {
+                            chatDBWrapper.updateSeenStatus(user, whreStr, message.getMessageSeenState());
+                            if (message.getMessageSeenState() == Message.SeenState.seen) {
+                                long currentTime = System.currentTimeMillis();
+                                chatDBWrapper.updateP2PReadTime(whreStr, currentTime);
+                            }
+                        }
+                        if (chatCountListener != null)
+                            chatCountListener.notifyChatRecieve(user, null);
+                        if (chatListener != null)
+                            chatListener.notifyChatRecieve(user, null);
+                        return;
+                    }
+                    if (message.getBody() != null && !message.getBody().equals("")) {
+                        if (message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal()) {
+                            if (message.isConsoleMessage() == null) {
+                                prefManager.saveBulletinChatCounter(prefManager.getUserDomain(), prefManager.getBulletinChatCounter(prefManager.getUserDomain()) + 1);
+                                int messageCount = prefManager.getBulletinChatCounter(prefManager.getUserDomain());
+                                ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
+                            }
+                        } else if (message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal()) {
 //							prefManager.saveBulletinChatCounter(prefManager.getBulletinChatCounter() + 1);
 //							int messageCount = prefManager.getBulletinChatCounter();
 //							ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
-						}else{
-							if(message.isConsoleMessage() == null) {
-								prefManager.saveChatCounter(prefManager.getUserDomain(), prefManager.getChatCounter(prefManager.getUserDomain()) + 1);
-								int messageCount = prefManager.getChatCounter(prefManager.getUserDomain());
-								ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
-								prefManager.saveChatCountOfUser(user, prefManager.getChatCountOfUser(user) + 1);
-							}
-						}
-						message.setMessageSeenState(Message.SeenState.recieved);
+                        } else {
+                            if (message.isConsoleMessage() == null) {
+                                prefManager.saveChatCounter(prefManager.getUserDomain(), prefManager.getChatCounter(prefManager.getUserDomain()) + 1);
+                                int messageCount = prefManager.getChatCounter(prefManager.getUserDomain());
+                                ShortcutBadger.with(SuperChatApplication.context).count(messageCount);
+                                prefManager.saveChatCountOfUser(user, prefManager.getChatCountOfUser(user) + 1);
+                            }
+                        }
+                        message.setMessageSeenState(Message.SeenState.recieved);
 //						showNotificationForMessage(user, fromName, message.getBody(), message,(byte)0);
-						if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal()){
-							prefManager.saveUserServerName(user, message.getDisplayName());
-							showNotificationForMessage(user, message.getGroupId(), message.getDisplayName(), message.getBody(), message);
-						}
-						else
-							showNotificationForMessage(user, fromName, message.getBody(), message, (byte)message.getXMPPMessageType().ordinal());
-						if (chatCountListener != null){
-							chatCountListener.notifyChatRecieve(user,null);
-						}
+                        if (message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal()) {
+                            prefManager.saveUserServerName(user, message.getDisplayName());
+                            showNotificationForMessage(user, message.getGroupId(), message.getDisplayName(), message.getBody(), message);
+                        } else
+                            showNotificationForMessage(user, fromName, message.getBody(), message, (byte) message.getXMPPMessageType().ordinal());
+                        if (chatCountListener != null) {
+                            chatCountListener.notifyChatRecieve(user, null);
+                        }
 //						if(chatListener!= null){
 //							System.out.println("[Chat recieved] - "+chatListener.getClass().toString());
 //							chatListener.notifyChatHome(user, null);
@@ -1945,380 +1989,380 @@ public class ChatService extends Service implements interfaceInstances {
 //						if (message.getMessageSeenState() == Message.SeenState.recieved
 //								&& ((onForeground && currentUser
 //										.equals(user)) || !onForeground)) {
-						if (((ChatListScreen.onForeground && !ChatListScreen.currentUser.equals(user)) || !ChatListScreen.onForeground)) {
-							List<String> strList = new ArrayList<String>();
-							strList.add(message.getPacketID());
-							if(message.getStatusMessageType() == Message.StatusMessageType.broadcast)
-								sendGroupOrBroadcastAck(user, strList, Message.SeenState.recieved, null);
-							else
-								sendAck(user, strList, Message.SeenState.recieved);
-						}
-					}
+                        if (((ChatListScreen.onForeground && !ChatListScreen.currentUser.equals(user)) || !ChatListScreen.onForeground)) {
+                            List<String> strList = new ArrayList<String>();
+                            strList.add(message.getPacketID());
+                            if (message.getStatusMessageType() == Message.StatusMessageType.broadcast)
+                                sendGroupOrBroadcastAck(user, strList, Message.SeenState.recieved, null);
+                            else
+                                sendAck(user, strList, Message.SeenState.recieved);
+                        }
+                    }
 
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				Log.d(TAG,
-						"Exception occured during processPacket."
-								+ e.toString());
-			}
-			sendOffLineMessages1();
-			if(prefManager!=null) //new1
-				prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
-		}
-	};
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.d(TAG,
+                        "Exception occured during processPacket."
+                                + e.toString());
+            }
+            sendOffLineMessages1();
+            if (prefManager != null) //new1
+                prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis()); //new1
+        }
+    };
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		Log.d(TAG, "Creating onBind Service.");
-		return mBinder;
-	}
+    @Override
+    public IBinder onBind(Intent intent) {
+        Log.d(TAG, "Creating onBind Service.");
+        return mBinder;
+    }
 
-	public void showNotificationForMessage(String senderName, String from,
-										   String displayName, String msg, Message message) {
+    public void showNotificationForMessage(String senderName, String from,
+                                           String displayName, String msg, Message message) {
 
-		boolean console_msg = false;
-		if(message.isConsoleMessage() != null && message.isConsoleMessage().equalsIgnoreCase("true"))
-			console_msg = true;
-		if(senderName!=null && senderName.contains("#786#"))
-			senderName = senderName.substring(0, senderName.indexOf("#786#"));
-		CharSequence tickerText = msg;// buildTickerMessage(context,
-		// from, msg.getBody());
-		String user = from;
-		String PollMessageType = "1";
-		String PollID = null;
-		String grpDisplayName = SharedPrefManager.getInstance().getGroupDisplayName(user);
-		String captionTag  = message.getMediaTagMessage();
-		if(captionTag != null){
-			try {
-				JSONObject jsonobj = new JSONObject(captionTag);
-				if(jsonobj.has("PollMessageType") && jsonobj.getString("PollMessageType").toString().trim().length() > 0) {
-					PollMessageType = jsonobj.getString("PollMessageType").toString();
-				}
-				if(jsonobj.has("PollID") && jsonobj.getString("PollID").toString().trim().length() > 0) {
-					PollID = jsonobj.getString("PollID").toString();
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-		if(PollMessageType.equals("2")){
-			//Save that message in shared pref.
-			savePoll(from, PollID, captionTag);
-		}else
-			saveMessage(displayName, from, userMe, msg, message);
-		//Save that user in DB
-		String number = senderName;
-		if(number.indexOf('_') != -1)
-			number = senderName.substring(0, number.indexOf('_'));
-		if(message.getDisplayName() != null)
-			updateContactcInDB(senderName, message.getDisplayName(), number, 2);
-		if (messageNotification == null) {
-			messageNotification = new NotificationCompat.Builder(context);
+        boolean console_msg = false;
+        if (message.isConsoleMessage() != null && message.isConsoleMessage().equalsIgnoreCase("true"))
+            console_msg = true;
+        if (senderName != null && senderName.contains("#786#"))
+            senderName = senderName.substring(0, senderName.indexOf("#786#"));
+        CharSequence tickerText = msg;// buildTickerMessage(context,
+        // from, msg.getBody());
+        String user = from;
+        String PollMessageType = "1";
+        String PollID = null;
+        String grpDisplayName = SharedPrefManager.getInstance().getGroupDisplayName(user);
+        String captionTag = message.getMediaTagMessage();
+        if (captionTag != null) {
+            try {
+                JSONObject jsonobj = new JSONObject(captionTag);
+                if (jsonobj.has("PollMessageType") && jsonobj.getString("PollMessageType").toString().trim().length() > 0) {
+                    PollMessageType = jsonobj.getString("PollMessageType").toString();
+                }
+                if (jsonobj.has("PollID") && jsonobj.getString("PollID").toString().trim().length() > 0) {
+                    PollID = jsonobj.getString("PollID").toString();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if (PollMessageType.equals("2")) {
+            //Save that message in shared pref.
+            savePoll(from, PollID, captionTag);
+        } else
+            saveMessage(displayName, from, userMe, msg, message);
+        //Save that user in DB
+        String number = senderName;
+        if (number.indexOf('_') != -1)
+            number = senderName.substring(0, number.indexOf('_'));
+        if (message.getDisplayName() != null)
+            updateContactcInDB(senderName, message.getDisplayName(), number, 2);
+        if (messageNotification == null) {
+            messageNotification = new NotificationCompat.Builder(context);
 //			if(R.drawable.chatgreen == -1){
 //				if(bitmap==null)
 //					bitmap = Bitmap.createBitmap(createColors(), 0, STRIDE, WIDTH, HEIGHT,Bitmap.Config.RGB_565);
 //				messageNotification.setLargeIcon(bitmap);
 //			}
-			messageNotification.setSmallIcon(R.drawable.chatgreen);
-			messageNotification.setAutoCancel(true);
-			messageNotification.setLights(Color.RED, 3000, 3000);
+            messageNotification.setSmallIcon(R.drawable.chatgreen);
+            messageNotification.setAutoCancel(true);
+            messageNotification.setLights(Color.RED, 3000, 3000);
 
 
-		}
-		Notification note = messageNotification.build();
-		if(prefManager.isMute(from))
-			note.defaults = 0;
-		else
-			note.defaults |= Notification.DEFAULT_SOUND;
-		note.defaults |= Notification.DEFAULT_LIGHTS;
-		// messageNotification.setOnlyAlertOnce(true);
-		Uri alarmSound = RingtoneManager
-				.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-		if(prefManager.isMute(from))
-			messageNotification.setSound(null);
-		else
-			messageNotification.setSound(alarmSound);
+        }
+        Notification note = messageNotification.build();
+        if (prefManager.isMute(from))
+            note.defaults = 0;
+        else
+            note.defaults |= Notification.DEFAULT_SOUND;
+        note.defaults |= Notification.DEFAULT_LIGHTS;
+        // messageNotification.setOnlyAlertOnce(true);
+        Uri alarmSound = RingtoneManager
+                .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        if (prefManager.isMute(from))
+            messageNotification.setSound(null);
+        else
+            messageNotification.setSound(alarmSound);
 
-		String notificationSenderName = senderName;
-		notificationSenderName = DBWrapper.getInstance().getChatName(senderName);
-		if(notificationSenderName!=null && notificationSenderName.contains("#786#"))
-			notificationSenderName = notificationSenderName.substring(0, notificationSenderName.indexOf("#786#"));
-		if(notificationSenderName.equals(senderName)){
+        String notificationSenderName = senderName;
+        notificationSenderName = DBWrapper.getInstance().getChatName(senderName);
+        if (notificationSenderName != null && notificationSenderName.contains("#786#"))
+            notificationSenderName = notificationSenderName.substring(0, notificationSenderName.indexOf("#786#"));
+        if (notificationSenderName.equals(senderName)) {
 //				notificationSenderName = notificationSenderName.replaceFirst("m", "+");
-			if(notificationSenderName.contains("_"))
-				notificationSenderName = "+"+notificationSenderName.substring(0, notificationSenderName.indexOf("_"));
-		}
-		if(message.getDisplayName() != null)
-			notificationSenderName = message.getDisplayName();
-		else
-			notificationSenderName = "New user";
-		if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal())
-			tickerText = "Message from " + notificationSenderName + "@" + SharedPrefManager.getInstance().getSharedIDDisplayName(grpDisplayName);
-		else
-			tickerText = "Message from " + notificationSenderName + "@" + grpDisplayName;
-		messageNotification.setWhen(System.currentTimeMillis());
-		messageNotification.setTicker(tickerText);
-		Intent notificationIntent = new Intent();
-		Log.d(TAG, "notificationPackage: "+notificationPackage+" , "+notificationActivity);
-		notificationIntent.setClassName(notificationPackage, notificationPackage+notificationActivity);
+            if (notificationSenderName.contains("_"))
+                notificationSenderName = "+" + notificationSenderName.substring(0, notificationSenderName.indexOf("_"));
+        }
+        if (message.getDisplayName() != null)
+            notificationSenderName = message.getDisplayName();
+        else
+            notificationSenderName = "New user";
+        if (message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal())
+            tickerText = "Message from " + notificationSenderName + "@" + SharedPrefManager.getInstance().getSharedIDDisplayName(grpDisplayName);
+        else
+            tickerText = "Message from " + notificationSenderName + "@" + grpDisplayName;
+        messageNotification.setWhen(System.currentTimeMillis());
+        messageNotification.setTicker(tickerText);
+        Intent notificationIntent = new Intent();
+        Log.d(TAG, "notificationPackage: " + notificationPackage + " , " + notificationActivity);
+        notificationIntent.setClassName(notificationPackage, notificationPackage + notificationActivity);
 //		Intent notificationIntent = new Intent(context,
 //				ChatListScreen.class);
-		notificationIntent.putExtra(ChatDBConstants.CONTACT_NAMES_FIELD,
-				grpDisplayName);
-		notificationIntent.putExtra(ChatDBConstants.USER_NAME_FIELD, user);
-		notificationIntent.putExtra("FROM_NOTIFICATION", true);
-		if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal())
-			notificationIntent.putExtra("FROM_BULLETIN_NOTIFICATION", true);
-		// notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-		// Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-				| Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-		//| Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);// FLAG_ACTIVITY_SINGLE_TOP);
-		notificationIntent.setAction(Long.toString(System.currentTimeMillis()));
-		PendingIntent contentIntent = PendingIntent.getActivity(
-				context, 0, notificationIntent,
-				PendingIntent.FLAG_ONE_SHOT);
-		if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal())
-			messageNotification.setContentTitle(notificationSenderName + "@" + SharedPrefManager.getInstance().getSharedIDDisplayName(grpDisplayName));
-		else
-			messageNotification.setContentTitle(notificationSenderName + "@" + grpDisplayName);
-		messageNotification.setContentText(msg);
-		messageNotification.setContentIntent(contentIntent);
-		int count = prefManager.getChatCountOfUser(user);
-		Notification notification = messageNotification.build();
-		if(R.layout.message_notifier!=-1){
-			RemoteViews contentView = new RemoteViews(
-					context.getPackageName(),
-					R.layout.message_notifier);
-			if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal())
-				contentView.setTextViewText(R.id.chat_person_name, notificationSenderName+"@"+SharedPrefManager.getInstance().getSharedIDDisplayName(grpDisplayName));
-			else
-				contentView.setTextViewText(R.id.chat_person_name, notificationSenderName+"@"+grpDisplayName);
+        notificationIntent.putExtra(ChatDBConstants.CONTACT_NAMES_FIELD,
+                grpDisplayName);
+        notificationIntent.putExtra(ChatDBConstants.USER_NAME_FIELD, user);
+        notificationIntent.putExtra("FROM_NOTIFICATION", true);
+        if (message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal())
+            notificationIntent.putExtra("FROM_BULLETIN_NOTIFICATION", true);
+        // notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+        // Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+        //| Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);// FLAG_ACTIVITY_SINGLE_TOP);
+        notificationIntent.setAction(Long.toString(System.currentTimeMillis()));
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                context, 0, notificationIntent,
+                PendingIntent.FLAG_ONE_SHOT);
+        if (message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal())
+            messageNotification.setContentTitle(notificationSenderName + "@" + SharedPrefManager.getInstance().getSharedIDDisplayName(grpDisplayName));
+        else
+            messageNotification.setContentTitle(notificationSenderName + "@" + grpDisplayName);
+        messageNotification.setContentText(msg);
+        messageNotification.setContentIntent(contentIntent);
+        int count = prefManager.getChatCountOfUser(user);
+        Notification notification = messageNotification.build();
+        if (R.layout.message_notifier != -1) {
+            RemoteViews contentView = new RemoteViews(
+                    context.getPackageName(),
+                    R.layout.message_notifier);
+            if (message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal())
+                contentView.setTextViewText(R.id.chat_person_name, notificationSenderName + "@" + SharedPrefManager.getInstance().getSharedIDDisplayName(grpDisplayName));
+            else
+                contentView.setTextViewText(R.id.chat_person_name, notificationSenderName + "@" + grpDisplayName);
 
-			Uri uri = getPicUri(user);
-			if(uri!=null)
-				contentView.setImageViewUri(R.id.imagenotileft, uri);
-			else{
-				if(SharedPrefManager.getInstance().isSharedIDContact(user))
-					contentView.setImageViewResource(R.id.imagenotileft, R.drawable.small_helpdesk);
-				else
-					contentView.setImageViewResource(R.id.imagenotileft, R.drawable.chat_person);
-			}
-			if(message.getMediaBody()!=null){
-				int mediaType = 0;
-				try{
-					mediaType = Integer.parseInt(message.getMediaBody().getType());
-				}catch(NumberFormatException e){}
-				if(mediaType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Video message");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Picture message");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Voice message");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Doc file");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypePdf.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Pdf file");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "XLS file");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypePPT.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "PPT file");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeLocation.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Shared a location");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeContact.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Shared contact");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypePoll.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Poll");
-			}else
-				contentView.setTextViewText(R.id.chat_message, msg);
-			if (count > 0) {
-				contentView.setTextViewText(R.id.chat_notification_bubble_text,
-						String.valueOf(count));
-			}
-			notification.contentView = contentView;
-		}
-		Random random = new Random();
-		int id = (senderName + "@" + grpDisplayName).hashCode();
-		if (id < -1)
-			id = -(id);
-		Log.d(TAG, "showNotificationForMessage1: "+from+" , "+currentUser+" , "+onForeground);
-		if(!console_msg && prefManager.isSnoozeExpired(prefManager.getUserDomain()) && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
-				.equals(from) && !ChatListScreen.currentUser.endsWith("-all")) || !ChatListScreen.onForeground))
-			notificationManager.notify(id, notification);
+            Uri uri = getPicUri(user);
+            if (uri != null)
+                contentView.setImageViewUri(R.id.imagenotileft, uri);
+            else {
+                if (SharedPrefManager.getInstance().isSharedIDContact(user))
+                    contentView.setImageViewResource(R.id.imagenotileft, R.drawable.small_helpdesk);
+                else
+                    contentView.setImageViewResource(R.id.imagenotileft, R.drawable.chat_person);
+            }
+            if (message.getMediaBody() != null) {
+                int mediaType = 0;
+                try {
+                    mediaType = Integer.parseInt(message.getMediaBody().getType());
+                } catch (NumberFormatException e) {
+                }
+                if (mediaType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "Video message");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "Picture message");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "Voice message");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "Doc file");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypePdf.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "Pdf file");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "XLS file");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypePPT.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "PPT file");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypeLocation.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "Shared a location");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypeContact.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "Shared contact");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypePoll.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "Poll");
+            } else
+                contentView.setTextViewText(R.id.chat_message, msg);
+            if (count > 0) {
+                contentView.setTextViewText(R.id.chat_notification_bubble_text,
+                        String.valueOf(count));
+            }
+            notification.contentView = contentView;
+        }
+        Random random = new Random();
+        int id = (senderName + "@" + grpDisplayName).hashCode();
+        if (id < -1)
+            id = -(id);
+        Log.d(TAG, "showNotificationForMessage1: " + from + " , " + currentUser + " , " + onForeground);
+        if (!console_msg && prefManager.isSnoozeExpired(prefManager.getUserDomain()) && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
+                .equals(from) && !ChatListScreen.currentUser.endsWith("-all")) || !ChatListScreen.onForeground))
+            notificationManager.notify(id, notification);
 
-	}
+    }
 
-	private void updateContactcInDB(String username, String dislay_name, String mobile_number, int type){
-		try{
-			String number = DBWrapper.getInstance().getContactNumber(username);
-			if(number!=null && !number.equals(""))
-				return;
-			ContentValues contentvalues = new ContentValues();
-			contentvalues.put(DatabaseConstants.USER_NAME_FIELD,username);
-			contentvalues.put(DatabaseConstants.VOPIUM_FIELD, type);
-			contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,mobile_number);
-			int id = username.hashCode();
-			if (id < -1)
-				id = -(id);
-			contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD,Integer.valueOf(id));
-			contentvalues.put(DatabaseConstants.RAW_CONTACT_ID,Integer.valueOf(id));
-			contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, dislay_name);
-			contentvalues.put(DatabaseConstants.CONTACT_TYPE_FIELD, "");
-			contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD,Integer.valueOf(0));//Integer.valueOf(0)
-			contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-			contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, ""+type);
-			contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
-			contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, mobile_number);
-			//Save USerID and SG in DB
-			contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
-			contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
-			if(!username.equalsIgnoreCase(SharedPrefManager.getInstance().getUserName()))
-				DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
+    private void updateContactcInDB(String username, String dislay_name, String mobile_number, int type) {
+        try {
+            String number = DBWrapper.getInstance().getContactNumber(username);
+            if (number != null && !number.equals(""))
+                return;
+            ContentValues contentvalues = new ContentValues();
+            contentvalues.put(DatabaseConstants.USER_NAME_FIELD, username);
+            contentvalues.put(DatabaseConstants.VOPIUM_FIELD, type);
+            contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, mobile_number);
+            int id = username.hashCode();
+            if (id < -1)
+                id = -(id);
+            contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD, Integer.valueOf(id));
+            contentvalues.put(DatabaseConstants.RAW_CONTACT_ID, Integer.valueOf(id));
+            contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, dislay_name);
+            contentvalues.put(DatabaseConstants.CONTACT_TYPE_FIELD, "");
+            contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD, Integer.valueOf(0));//Integer.valueOf(0)
+            contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
+            contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "" + type);
+            contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
+            contentvalues.put(com.superchat.data.db.DatabaseConstants.CONTACT_COMPOSITE_FIELD, mobile_number);
+            //Save USerID and SG in DB
+            contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
+            contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
+            if (!username.equalsIgnoreCase(SharedPrefManager.getInstance().getUserName()))
+                DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
 
-		}catch(Exception ex){
-			ex.printStackTrace();
-		}
-	}
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
-	private void savePoll(String grp_name, String poll_id, String json_data)
-	{
-		//create test hashmap
-		Log.i(TAG, "savePoll for poll ID = "+poll_id+", Poll New Received JSON : "+json_data);
-		HashMap<String, String> pollHashMap = null;
-		pollHashMap = getPollForGroup(grp_name);
-		if(pollHashMap == null)
-			pollHashMap = new HashMap<String, String>();
+    private void savePoll(String grp_name, String poll_id, String json_data) {
+        //create test hashmap
+        Log.i(TAG, "savePoll for poll ID = " + poll_id + ", Poll New Received JSON : " + json_data);
+        HashMap<String, String> pollHashMap = null;
+        pollHashMap = getPollForGroup(grp_name);
+        if (pollHashMap == null)
+            pollHashMap = new HashMap<String, String>();
 
-		if(pollHashMap.containsKey(poll_id)){
-			//Update here JSON Values for selected options.
-			JSONObject jsonobj;
-			try {
-				jsonobj = new JSONObject(json_data);
-				JSONArray poll_options = null;
-				JSONArray poll_reply_options = null;
-				String replied_option_id = null;
-				String[] poll_ids = null;
-				String[] poll_value = null;
-				int[] poll_option_count = null;
-				if(jsonobj.has("PollReplyOption")){
-					poll_reply_options = jsonobj.getJSONArray("PollReplyOption");
-					for(int i = 0; i < poll_reply_options.length(); i++){
-						JSONObject obj = (JSONObject) poll_reply_options.get(i);
-						if(obj.has("OptionId")){
-							replied_option_id = obj.getString("OptionId");
-						}
-					}
-				}
+        if (pollHashMap.containsKey(poll_id)) {
+            //Update here JSON Values for selected options.
+            JSONObject jsonobj;
+            try {
+                jsonobj = new JSONObject(json_data);
+                JSONArray poll_options = null;
+                JSONArray poll_reply_options = null;
+                String replied_option_id = null;
+                String[] poll_ids = null;
+                String[] poll_value = null;
+                int[] poll_option_count = null;
+                if (jsonobj.has("PollReplyOption")) {
+                    poll_reply_options = jsonobj.getJSONArray("PollReplyOption");
+                    for (int i = 0; i < poll_reply_options.length(); i++) {
+                        JSONObject obj = (JSONObject) poll_reply_options.get(i);
+                        if (obj.has("OptionId")) {
+                            replied_option_id = obj.getString("OptionId");
+                        }
+                    }
+                }
 
-				//Work on stored JSON, get the updated % count
-				String stored_json = pollHashMap.get(poll_id);
-				Log.i(TAG, "savePoll for poll ID = "+poll_id+", Poll Stored JSON : "+json_data);
-				jsonobj = new JSONObject(stored_json);
-				if(jsonobj.has("PollOption"))
-					poll_options = jsonobj.getJSONArray("PollOption");
+                //Work on stored JSON, get the updated % count
+                String stored_json = pollHashMap.get(poll_id);
+                Log.i(TAG, "savePoll for poll ID = " + poll_id + ", Poll Stored JSON : " + json_data);
+                jsonobj = new JSONObject(stored_json);
+                if (jsonobj.has("PollOption"))
+                    poll_options = jsonobj.getJSONArray("PollOption");
 
-				if(poll_options.length() > 0){
-					poll_ids = new String[poll_options.length()];
-					poll_value = new String[poll_options.length()];
-					poll_option_count = new int[poll_options.length()];
-					for(int i = 0; i < poll_options.length(); i++){
-						JSONObject obj = (JSONObject) poll_options.get(i);
-						if(obj.has("OptionId")){
-							poll_ids[i] = obj.getString("OptionId");
-						}
-						if(obj.has("OptionText")){
-							poll_value[i] = obj.getString("OptionText");
-						}
-						if(obj.has("PollOptionCount")){
-							if(poll_ids[i].equalsIgnoreCase(replied_option_id))
-								poll_option_count[i] = Integer.parseInt(obj.getString("PollOptionCount")) + 1;
-							else
-								poll_option_count[i] = Integer.parseInt(obj.getString("PollOptionCount"));
-						}
-					}
-				}
-				//Make new JSON Array to store in DB
-				poll_options = new JSONArray();
-				for(int i = 0; i < poll_ids.length; i++)
-				{
-					JSONObject options_element = new JSONObject();
-					options_element.put("OptionId", poll_ids[i]);
-					options_element.put("OptionText", poll_value[i]);
-					options_element.put("PollOptionCount", poll_option_count[i]);
-					poll_options.put(options_element);
-				}
+                if (poll_options.length() > 0) {
+                    poll_ids = new String[poll_options.length()];
+                    poll_value = new String[poll_options.length()];
+                    poll_option_count = new int[poll_options.length()];
+                    for (int i = 0; i < poll_options.length(); i++) {
+                        JSONObject obj = (JSONObject) poll_options.get(i);
+                        if (obj.has("OptionId")) {
+                            poll_ids[i] = obj.getString("OptionId");
+                        }
+                        if (obj.has("OptionText")) {
+                            poll_value[i] = obj.getString("OptionText");
+                        }
+                        if (obj.has("PollOptionCount")) {
+                            if (poll_ids[i].equalsIgnoreCase(replied_option_id))
+                                poll_option_count[i] = Integer.parseInt(obj.getString("PollOptionCount")) + 1;
+                            else
+                                poll_option_count[i] = Integer.parseInt(obj.getString("PollOptionCount"));
+                        }
+                    }
+                }
+                //Make new JSON Array to store in DB
+                poll_options = new JSONArray();
+                for (int i = 0; i < poll_ids.length; i++) {
+                    JSONObject options_element = new JSONObject();
+                    options_element.put("OptionId", poll_ids[i]);
+                    options_element.put("OptionText", poll_value[i]);
+                    options_element.put("PollOptionCount", poll_option_count[i]);
+                    poll_options.put(options_element);
+                }
 
-				//Update new JSON Array
-				JSONObject finalJSONbject = new JSONObject(json_data);
-				finalJSONbject.remove("PollOption");
-				finalJSONbject.put("PollOption", poll_options);
+                //Update new JSON Array
+                JSONObject finalJSONbject = new JSONObject(json_data);
+                finalJSONbject.remove("PollOption");
+                finalJSONbject.put("PollOption", poll_options);
 
-				//Remove Older JSON and update newer one.
-				pollHashMap.remove(poll_id);
-				pollHashMap.put(poll_id, finalJSONbject.toString());
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+                //Remove Older JSON and update newer one.
+                pollHashMap.remove(poll_id);
+                pollHashMap.put(poll_id, finalJSONbject.toString());
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 
-		}
-		else
-			pollHashMap.put(poll_id, json_data);
+        } else
+            pollHashMap.put(poll_id, json_data);
 
-		//convert to string using gson
-		Gson gson = new Gson();
-		String hashMapString = gson.toJson(pollHashMap);
+        //convert to string using gson
+        Gson gson = new Gson();
+        String hashMapString = gson.toJson(pollHashMap);
 
-		//save in shared prefs
-		SharedPreferences prefs = getSharedPreferences("poll_data", MODE_PRIVATE);
-		prefs.edit().putString(grp_name, hashMapString).apply();
+        //save in shared prefs
+        SharedPreferences prefs = getSharedPreferences("poll_data", MODE_PRIVATE);
+        prefs.edit().putString(grp_name, hashMapString).apply();
 
-	}
+    }
 
-	private HashMap<String, String> getPollForGroup(String grp_name)
-	{
-		//save in shared prefs
-		SharedPreferences prefs = getSharedPreferences("poll_data", MODE_PRIVATE);
-		Gson gson = new Gson();
+    private HashMap<String, String> getPollForGroup(String grp_name) {
+        //save in shared prefs
+        SharedPreferences prefs = getSharedPreferences("poll_data", MODE_PRIVATE);
+        Gson gson = new Gson();
 
-		//get from shared prefs
-		String storedHashMapString = prefs.getString(grp_name, null);
-		java.lang.reflect.Type type = new TypeToken<HashMap<String, String>>(){}.getType();
-		if(storedHashMapString != null) {
-			HashMap<String, String> testHashMap2 = gson.fromJson(storedHashMapString, type);
-			return testHashMap2;
-		}
-		return null;
-	}
-	static Bitmap bitmap = null;
-	boolean isSameUser = false;
-	public void showNotificationForMessage(String from, String displayName,
-										   String msg, Message message,byte messageType) {
-		boolean console_msg = false;
-		if(message.isConsoleMessage() != null && message.isConsoleMessage().equalsIgnoreCase("true"))
-			console_msg = true;
-		if(displayName!=null && displayName.contains("#786#"))
-			displayName = displayName.substring(0, displayName.indexOf("#786#"));
-		CharSequence tickerText = msg;// buildTickerMessage(context,
-		// from, msg.getBody());
-		String user = from;
-		saveMessage(from, userMe, msg, message, messageType);
-		if(displayName.equals(from)){
-			displayName = SharedPrefManager.getInstance().getUserServerName(from);
-			if(displayName.equals(from)){
-				if(displayName.contains("_")){
+        //get from shared prefs
+        String storedHashMapString = prefs.getString(grp_name, null);
+        java.lang.reflect.Type type = new TypeToken<HashMap<String, String>>() {
+        }.getType();
+        if (storedHashMapString != null) {
+            HashMap<String, String> testHashMap2 = gson.fromJson(storedHashMapString, type);
+            return testHashMap2;
+        }
+        return null;
+    }
+
+    static Bitmap bitmap = null;
+    boolean isSameUser = false;
+
+    public void showNotificationForMessage(String from, String displayName,
+                                           String msg, Message message, byte messageType) {
+        boolean console_msg = false;
+        if (message.isConsoleMessage() != null && message.isConsoleMessage().equalsIgnoreCase("true"))
+            console_msg = true;
+        if (displayName != null && displayName.contains("#786#"))
+            displayName = displayName.substring(0, displayName.indexOf("#786#"));
+        CharSequence tickerText = msg;// buildTickerMessage(context,
+        // from, msg.getBody());
+        String user = from;
+        saveMessage(from, userMe, msg, message, messageType);
+        if (displayName.equals(from)) {
+            displayName = SharedPrefManager.getInstance().getUserServerName(from);
+            if (displayName.equals(from)) {
+                if (displayName.contains("_")) {
 //					displayName = "+"+displayName.substring(0, displayName.indexOf("_"));
-					displayName = message.getDisplayName();
-					if(displayName!=null){
-						SharedPrefManager.getInstance().saveUserServerName(from, displayName);
-						String picId = message.getPicId();
-						if(picId!=null && !picId.equals(""))
-							SharedPrefManager.getInstance().saveUserFileId(from, picId);
-					}
-				}
-			}
-		}
+                    displayName = message.getDisplayName();
+                    if (displayName != null) {
+                        SharedPrefManager.getInstance().saveUserServerName(from, displayName);
+                        String picId = message.getPicId();
+                        if (picId != null && !picId.equals(""))
+                            SharedPrefManager.getInstance().saveUserFileId(from, picId);
+                    }
+                }
+            }
+        }
 
 //		int messageCount = prefManager.getChatCounter();
 //		if(isFirstMessage){
@@ -2335,342 +2379,351 @@ public class ChatService extends Service implements interfaceInstances {
 //		}
 
 
-		if (messageNotification == null) {
-			messageNotification = new NotificationCompat.Builder(context);
-			if(R.drawable.chatgreen==-1){
-				if(bitmap==null)
-					bitmap = Bitmap.createBitmap(createColors(), 0, STRIDE, WIDTH, HEIGHT,Bitmap.Config.RGB_565);
-				messageNotification.setLargeIcon(bitmap);//R.drawable.chatgreen);
+        if (messageNotification == null) {
+            messageNotification = new NotificationCompat.Builder(context);
+            if (R.drawable.chatgreen == -1) {
+                if (bitmap == null)
+                    bitmap = Bitmap.createBitmap(createColors(), 0, STRIDE, WIDTH, HEIGHT, Bitmap.Config.RGB_565);
+                messageNotification.setLargeIcon(bitmap);//R.drawable.chatgreen);
 
-			}
-			messageNotification.setSmallIcon(R.drawable.chatgreen);//messageNotification.setDefaults(Notification.DEFAULT_ALL);
-			messageNotification.setAutoCancel(true);
-			messageNotification.setLights(Color.RED, 3000, 3000);
+            }
+            messageNotification.setSmallIcon(R.drawable.chatgreen);//messageNotification.setDefaults(Notification.DEFAULT_ALL);
+            messageNotification.setAutoCancel(true);
+            messageNotification.setLights(Color.RED, 3000, 3000);
 
-		}
-		Notification note = messageNotification.build();
-		if(prefManager.isMute(from))
-			note.defaults = 0;
-		else
-			note.defaults |= Notification.DEFAULT_SOUND;
-		note.defaults |= Notification.DEFAULT_LIGHTS;
-		// messageNotification.setOnlyAlertOnce(true);
-		Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-		if(prefManager.isMute(from))
-			messageNotification.setSound(null);
-		else
-			messageNotification.setSound(alarmSound);
+        }
+        Notification note = messageNotification.build();
+        if (prefManager.isMute(from))
+            note.defaults = 0;
+        else
+            note.defaults |= Notification.DEFAULT_SOUND;
+        note.defaults |= Notification.DEFAULT_LIGHTS;
+        // messageNotification.setOnlyAlertOnce(true);
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        if (prefManager.isMute(from))
+            messageNotification.setSound(null);
+        else
+            messageNotification.setSound(alarmSound);
 
 //		if(displayName!=null && displayName.equals(user)){
 //			if(displayName.startsWith("m"))
 //				displayName = displayName.replace("m", "+");
 //			}
-		tickerText = "Message from " + displayName;
-		messageNotification.setWhen(System.currentTimeMillis());
-		messageNotification.setTicker(tickerText);
-		Intent notificationIntent = new Intent();
-		Log.d(TAG, "notificationPackage: "+notificationPackage+" , "+notificationActivity);
-		notificationIntent.setClassName(notificationPackage, notificationPackage+notificationActivity);
+        tickerText = "Message from " + displayName;
+        messageNotification.setWhen(System.currentTimeMillis());
+        messageNotification.setTicker(tickerText);
+        Intent notificationIntent = new Intent();
+        Log.d(TAG, "notificationPackage: " + notificationPackage + " , " + notificationActivity);
+        notificationIntent.setClassName(notificationPackage, notificationPackage + notificationActivity);
 //		Intent notificationIntent = new Intent(context,
 //				ChatListScreen.class);
-		notificationIntent.putExtra(ChatDBConstants.CONTACT_NAMES_FIELD, displayName);
-		notificationIntent.putExtra(ChatDBConstants.USER_NAME_FIELD, user);
-		notificationIntent.putExtra("FROM_NOTIFICATION", true);
-		if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal())
-			notificationIntent.putExtra("FROM_BULLETIN_NOTIFICATION", true);
-		// notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-				| Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+        notificationIntent.putExtra(ChatDBConstants.CONTACT_NAMES_FIELD, displayName);
+        notificationIntent.putExtra(ChatDBConstants.USER_NAME_FIELD, user);
+        notificationIntent.putExtra("FROM_NOTIFICATION", true);
+        if (message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal())
+            notificationIntent.putExtra("FROM_BULLETIN_NOTIFICATION", true);
+        // notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
 //				| Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);// FLAG_ACTIVITY_SINGLE_TOP);
-		notificationIntent.setAction(Long.toString(System.currentTimeMillis()));
-		PendingIntent contentIntent = PendingIntent.getActivity(
-				context, 0, notificationIntent,
-				PendingIntent.FLAG_ONE_SHOT);
+        notificationIntent.setAction(Long.toString(System.currentTimeMillis()));
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                context, 0, notificationIntent,
+                PendingIntent.FLAG_ONE_SHOT);
 
-		messageNotification.setContentTitle(displayName);
+        messageNotification.setContentTitle(displayName);
 
-		messageNotification.setContentText(msg);
-		messageNotification.setContentIntent(contentIntent);
-		int count = prefManager.getChatCountOfUser(user);
-		Notification notification = messageNotification.build();
+        messageNotification.setContentText(msg);
+        messageNotification.setContentIntent(contentIntent);
+        int count = prefManager.getChatCountOfUser(user);
+        Notification notification = messageNotification.build();
 
-		if(R.layout.message_notifier!=-1){
-			RemoteViews contentView = new RemoteViews(
-					context.getPackageName(),
-					R.layout.message_notifier);
-			contentView.setTextViewText(R.id.chat_person_name, displayName);
-			Uri uri = getPicUri(user);
-			if(uri!=null)
-				contentView.setImageViewUri(R.id.imagenotileft, uri);
+        if (R.layout.message_notifier != -1) {
+            RemoteViews contentView = new RemoteViews(
+                    context.getPackageName(),
+                    R.layout.message_notifier);
+            contentView.setTextViewText(R.id.chat_person_name, displayName);
+            Uri uri = getPicUri(user);
+            if (uri != null)
+                contentView.setImageViewUri(R.id.imagenotileft, uri);
 //			setProfilePic()
-			if(message.getMediaBody()!=null){
-				int mediaType = 0;
-				try{
-					mediaType = Integer.parseInt(message.getMediaBody().getType());
-				}catch(NumberFormatException e){}
-				if(mediaType == XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Picture message");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Voice message");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Video message");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Doc message");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypePdf.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Pdf message");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "XLS message");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypePPT.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "PPT message");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeLocation.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Shared a location");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeContact.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Shared contact");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypePoll.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Poll");
+            if (message.getMediaBody() != null) {
+                int mediaType = 0;
+                try {
+                    mediaType = Integer.parseInt(message.getMediaBody().getType());
+                } catch (NumberFormatException e) {
+                }
+                if (mediaType == XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "Picture message");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "Voice message");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "Video message");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "Doc message");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypePdf.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "Pdf message");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "XLS message");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypePPT.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "PPT message");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypeLocation.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "Shared a location");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypeContact.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "Shared contact");
+                else if (mediaType == XMPPMessageType.atMeXmppMessageTypePoll.ordinal())
+                    contentView.setTextViewText(R.id.chat_message, "Poll");
 
-			}else{
+            } else {
 //				contentView.setTextViewText(R.id.chat_message, notificationAllMessage);
-				contentView.setTextViewText(R.id.chat_message, msg);
-			}
-			if (count > 0) {
-				contentView.setTextViewText(R.id.chat_notification_bubble_text,
-						String.valueOf(count));
-			}
-			notification.contentView = contentView;
-		}
-		Random random = new Random();
-		int id = user.hashCode();
-		if (id < -1)
-			id = -(id);
-		Log.d(TAG, "showNotificationForMessage: "+from+" , "+currentUser+" , "+onForeground);
+                contentView.setTextViewText(R.id.chat_message, msg);
+            }
+            if (count > 0) {
+                contentView.setTextViewText(R.id.chat_notification_bubble_text,
+                        String.valueOf(count));
+            }
+            notification.contentView = contentView;
+        }
+        Random random = new Random();
+        int id = user.hashCode();
+        if (id < -1)
+            id = -(id);
+        Log.d(TAG, "showNotificationForMessage: " + from + " , " + currentUser + " , " + onForeground);
 
-		if(!console_msg && prefManager.isSnoozeExpired(prefManager.getUserDomain()) && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
-				.equals(from) && !ChatListScreen.currentUser.endsWith("-all")) || !ChatListScreen.onForeground))
-			notificationManager.notify(id, notification);
-		previousUser = from;
-		isFirstMessage = false;
-	}
-	private Uri getPicUri(String userName){
-		SharedPrefManager pref = SharedPrefManager.getInstance();
-		String groupPicId = null;
-		if(pref.isSharedIDContact(userName))
-			groupPicId = pref.getSharedIDFileId(userName);
-		else
-			groupPicId = pref.getUserFileId(userName);
-		if(groupPicId!=null && !groupPicId.equals("")){
-			String profilePicUrl = groupPicId;//AppConstants.media_get_url+
-			if(!profilePicUrl.contains(".jpg"))
-				profilePicUrl = groupPicId+".jpg";//AppConstants.media_get_url+
+        if (!console_msg && prefManager.isSnoozeExpired(prefManager.getUserDomain()) && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
+                .equals(from) && !ChatListScreen.currentUser.endsWith("-all")) || !ChatListScreen.onForeground))
+            notificationManager.notify(id, notification);
+        previousUser = from;
+        isFirstMessage = false;
+    }
 
-			File file = Environment.getExternalStorageDirectory();
+    private Uri getPicUri(String userName) {
+        SharedPrefManager pref = SharedPrefManager.getInstance();
+        String groupPicId = null;
+        if (pref.isSharedIDContact(userName))
+            groupPicId = pref.getSharedIDFileId(userName);
+        else
+            groupPicId = pref.getUserFileId(userName);
+        if (groupPicId != null && !groupPicId.equals("")) {
+            String profilePicUrl = groupPicId;//AppConstants.media_get_url+
+            if (!profilePicUrl.contains(".jpg"))
+                profilePicUrl = groupPicId + ".jpg";//AppConstants.media_get_url+
+
+            File file = Environment.getExternalStorageDirectory();
 //			String filename = file.getPath()+ File.separator + "SuperChat/"+profilePicUrl;
-			String filename = file.getPath()+ File.separator + Constants.contentProfilePhoto+profilePicUrl;
+            String filename = file.getPath() + File.separator + Constants.contentProfilePhoto + profilePicUrl;
 //			view.setTag(filename);
-			File file1 = new File(filename);
-			if(file1!=null && file1.exists()){
-				return Uri.parse(filename);
-			}
+            File file1 = new File(filename);
+            if (file1 != null && file1.exists()) {
+                return Uri.parse(filename);
+            }
 //				view.setImageURI(Uri.parse(filename));
 //				view.setBackgroundDrawable(null);
 //			}
-		}
+        }
 //		else if(SharedPrefManager.getInstance().isGroupChat(userName))
 //			view.setImageResource(R.drawable.chat_person);
 //		else
 //			view.setImageResource(R.drawable.avatar); //
-		return null;
-	}
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		prefManager = SharedPrefManager.getInstance();
-		context = SuperChatApplication.context;
-		chatDBWrapper = ChatDBWrapper.getInstance(context);
-		calender = Calendar.getInstance(TimeZone.getDefault());
-		notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		userMe = prefManager.getUserName();
-		displayUserName = prefManager.getDisplayName();
-		bitmap = BitmapFactory.decodeResource(context.getResources(), android.R.drawable.ic_menu_view);//Bitmap.createBitmap(createColors(), 0, STRIDE, WIDTH, HEIGHT,Bitmap.Config.RGB_565);
-		notificationPackage = context.getPackageName();
-		Log.d(TAG, "Creating Chat Service."+context.getPackageName());
-	}
+        return null;
+    }
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		Log.d(TAG, "Destroying Chat Service.");
-	}
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        prefManager = SharedPrefManager.getInstance();
+        context = SuperChatApplication.context;
+        chatDBWrapper = ChatDBWrapper.getInstance(context);
+        calender = Calendar.getInstance(TimeZone.getDefault());
+        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        userMe = prefManager.getUserName();
+        displayUserName = prefManager.getDisplayName();
+        bitmap = BitmapFactory.decodeResource(context.getResources(), android.R.drawable.ic_menu_view);//Bitmap.createBitmap(createColors(), 0, STRIDE, WIDTH, HEIGHT,Bitmap.Config.RGB_565);
+        notificationPackage = context.getPackageName();
+        Log.d(TAG, "Creating Chat Service." + context.getPackageName());
+    }
 
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		super.onStartCommand(intent, START_STICKY, startId);
-		Log.d(TAG, "[XMPP Service started - onStartCommand]");
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "Destroying Chat Service.");
+    }
+
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, START_STICKY, startId);
+        Log.d(TAG, "[XMPP Service started - onStartCommand]");
 //		if(isServiceRunning("com.chat.sdk.ChatService")){
 //			System.out.println("[SERVICE ALREADY RUNNING, SO STOP]");
 //			stopService(new Intent(this, ChatService.class));
 //		}
-		new Connect().execute("");
-		return START_STICKY;
-	}
+        new Connect().execute("");
+        return START_STICKY;
+    }
 
-	private class Connect extends AsyncTask<String, Void, String> {
+    private class Connect extends AsyncTask<String, Void, String> {
 
-		@Override
-		protected String doInBackground(String... params) {
-			chatLogin();
-			return null;
-		}
-	}
-	boolean processing;
+        @Override
+        protected String doInBackground(String... params) {
+            chatLogin();
+            return null;
+        }
+    }
 
-	public void chatLogin() {
-		Log.i(TAG, "XMPP trying to login with ChatClient inside chatLogin method. ");
-		new Timer().schedule(new TimerTask() {
+    boolean processing;
 
-			@Override
-			public void run() {
-				ConnectivityManager cm = (ConnectivityManager) SuperChatApplication.context
-						.getSystemService(Context.CONNECTIVITY_SERVICE);
-				NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-				boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
-				if (isConnected && !xmppConectionStatus) {
+    public void chatLogin() {
+        Log.i(TAG, "XMPP trying to login with ChatClient inside chatLogin method. ");
+        new Timer().schedule(new TimerTask() {
 
-					String userName = "";
-					String password = "";
-					if (connection != null) {
-						connection.disconnect();
-						connection = null;
-					}
-					if (prefManager != null) {
-						userName = prefManager.getUserName();
-						password = prefManager.getUserPassword();
-					}
-					SmackAndroid.init(SuperChatApplication.context);
-					Log.e(TAG, "chatLogin: userName === "+userName);
-					userMe = userName;
-					ConnectionConfiguration connConfig = null;
-					try {
+            @Override
+            public void run() {
+                ConnectivityManager cm = (ConnectivityManager) SuperChatApplication.context
+                        .getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
+                if (isConnected && !xmppConectionStatus) {
+
+                    String userName = "";
+                    String password = "";
+                    if (connection != null) {
+                        connection.disconnect();
+                        connection = null;
+                    }
+                    if (prefManager != null) {
+                        userName = prefManager.getUserName();
+                        password = prefManager.getUserPassword();
+                    }
+                    SmackAndroid.init(SuperChatApplication.context);
+                    Log.e(TAG, "chatLogin: userName === " + userName);
+                    userMe = userName;
+                    ConnectionConfiguration connConfig = null;
+                    try {
 //						 connConfig = new AndroidConnectionConfiguration( Constants.CHAT_SERVER_URL);
-						Log.d(TAG, "XmppChatClient.getChatServer: "+Constants.CHAT_SERVER_URL);
-						// Create the configuration for this new connection_
-						connConfig = new ConnectionConfiguration(Constants.CHAT_SERVER_URL, 5222);
-						connConfig.setReconnectionAllowed(true);
-						connConfig.setRosterLoadedAtLogin(true);
-						connConfig.setSASLAuthenticationEnabled(false);
-						connConfig.setSecurityMode(SecurityMode.disabled);
+                        Log.d(TAG, "XmppChatClient.getChatServer: " + Constants.CHAT_SERVER_URL);
+                        // Create the configuration for this new connection_
+                        connConfig = new ConnectionConfiguration(Constants.CHAT_SERVER_URL, 5222);
+                        connConfig.setReconnectionAllowed(true);
+                        connConfig.setRosterLoadedAtLogin(true);
+                        connConfig.setSASLAuthenticationEnabled(false);
+                        connConfig.setSecurityMode(SecurityMode.disabled);
 //						xmppConectionStatus = true;
 
-					} catch (NumberFormatException e1) {
-						xmppConectionStatus = false;
-					}
-					catch (Exception e) {
-						xmppConectionStatus = false;
-					}
+                    } catch (NumberFormatException e1) {
+                        xmppConectionStatus = false;
+                    } catch (Exception e) {
+                        xmppConectionStatus = false;
+                    }
 
 //						if(connectionStatusListener!=null)
 //							connectionStatusListener.notifyConnectionChange();
-					if (connConfig == null)
-						return;
-					else {
-						if (processing) {
-							processing = false;
-							cancel();
-							System.out.println("successfulyy [[SECOND CALL]]");
-							return;
-						}
-						Log.i(TAG, "ConnConfig Successfully");
-					}
+                    if (connConfig == null)
+                        return;
+                    else {
+                        if (processing) {
+                            processing = false;
+                            cancel();
+                            System.out.println("successfulyy [[SECOND CALL]]");
+                            return;
+                        }
+                        Log.i(TAG, "ConnConfig Successfully");
+                    }
 //						connConfig.setSendPresence(false);
-					connection = new XMPPConnection(connConfig);
-					processing = true;
-					try {
-						if (connection != null && !connection.isConnected()) {
+                    connection = new XMPPConnection(connConfig);
+                    processing = true;
+                    try {
+                        if (connection != null && !connection.isConnected()) {
 
-							connection.connect();
-							Log.d(TAG, "[SettingsDialog] Connected to " + connection.getHost());
+                            connection.connect();
+                            Log.d(TAG, "[SettingsDialog] Connected to " + connection.getHost());
 
-							// ProviderManager.getInstance().addExtensionProvider("status","androidpn:iq:status",
-							// new MUCUserProvider());
+                            // ProviderManager.getInstance().addExtensionProvider("status","androidpn:iq:status",
+                            // new MUCUserProvider());
 
 //							int last_online_time = 0;
 //							if(prefManager.getLastOnline(prefManager.getUserDomain()) > 0)
 //							 	last_online_time = (int)((System.currentTimeMillis() - (prefManager.getLastOnline(prefManager.getUserDomain()) - (100 * 1000)))/1000);
 //							System.out.println("(last_online_time) - "+last_online_time);
 
-							if (!connection.isAuthenticated())
-								connection.login(userName, password);
-							setConnection(packetListener);
-							setConnectionStatusListener(connectionListener);
-							setGroupListener(groupPacketListener);
-							setTypingListener(typingListener);
-							setGroupTypingListener(typingGroupListener);
-							setRecordingStatusListener(recordStatusListener);
-							setListeningStatusListener(listeningStatusListener);
-							setInvitationListener(invitationListener);
-							// Set the status to available
-							Presence subscription = new Presence(Presence.Type.subscribe);
-							subscription.setTo(userName+"@"+Constants.CHAT_DOMAIN);
-							subscription.setPriority(24);
-							subscription.setMode(Presence.Mode.available);
-							connection.sendPacket(subscription);
+                            if (!connection.isAuthenticated())
+                                connection.login(userName, password);
+                            setConnection(packetListener);
+                            setConnectionStatusListener(connectionListener);
+                            setGroupListener(groupPacketListener);
+                            setTypingListener(typingListener);
+                            setGroupTypingListener(typingGroupListener);
+                            setRecordingStatusListener(recordStatusListener);
+                            setListeningStatusListener(listeningStatusListener);
+                            setInvitationListener(invitationListener);
+                            // Set the status to available
+                            Presence subscription = new Presence(Presence.Type.subscribe);
+                            subscription.setTo(userName + "@" + Constants.CHAT_DOMAIN);
+                            subscription.setPriority(24);
+                            subscription.setMode(Presence.Mode.available);
+                            connection.sendPacket(subscription);
 //							 SubscriptionMode subscriptionMode =  Roster.getDefaultSubscriptionMode();
-							Thread.sleep(2000);
+                            Thread.sleep(2000);
 //							System.out.println("chatLogin :: total groups to join :- "+SharedPrefManager.getInstance().getGroupNamesArray().length);
-							for (String group : prefManager.getGroupNamesArray()) {
-								if (group != null && !group.equals("")){
-									if(prefManager.isGroupMemberActive(group, prefManager.getUserName())) {
+                            for (String group : prefManager.getGroupNamesArray()) {
+                                if (group != null && !group.equals("")) {
+                                    if (prefManager.isGroupMemberActive(group, prefManager.getUserName())) {
 //										sendGroupPresence(group, (last_online_time > 0 ? last_online_time : -1));
-										sendGroupPresence(group, 0);
-									}
-								}
-							}
-							xmppConectionStatus = true;
-							if(connectionStatusListener != null)
-								connectionStatusListener.notifyConnectionChange();
+                                        sendGroupPresence(group, 0);
+                                    }
+                                }
+                            }
+                            xmppConectionStatus = true;
+                            if (connectionStatusListener != null)
+                                connectionStatusListener.notifyConnectionChange();
 //							System.out.println("Connected Successfully:: So cancelling Timer - cancel()");
-							if(prefManager!=null)
-								prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis());
-							sendOffLineMessages1();
-							updateBlockedUserList(prefManager.getUserName());
-							cancel();
-							processing = false;
-							// getOnlinesList();
+                            if (prefManager != null)
+                                prefManager.saveLastOnline(prefManager.getUserDomain(), System.currentTimeMillis());
+                            sendOffLineMessages1();
+                            updateBlockedUserList(prefManager.getUserName());
+                            cancel();
+                            processing = false;
+                            // getOnlinesList();
 //							xmppConectionStatus = true;
-						}else
-							xmppConectionStatus = false;
+                        } else
+                            xmppConectionStatus = false;
 
-					} catch (XMPPException ex) {
-						xmppConectionStatus = false;
-						Log.d(TAG, "[SettingsDialog] Failed to connect to " + connection);
-						Log.d(TAG, ex.toString());
-						// connection = null;
-						processing = false;
+                    } catch (XMPPException ex) {
+                        xmppConectionStatus = false;
+                        Log.d(TAG, "[SettingsDialog] Failed to connect to " + connection);
+                        Log.d(TAG, ex.toString());
+                        // connection = null;
+                        processing = false;
 
-					} catch (Exception e) {
-						xmppConectionStatus = false;
-						Log.d(TAG, "chatLogin connect excption: " + e.toString());
-						processing = false;
-					}
-				} else
-					cancel();
-				if(connectionStatusListener!=null)
-					connectionStatusListener.notifyConnectionChange();
-			}
+                    } catch (Exception e) {
+                        xmppConectionStatus = false;
+                        Log.d(TAG, "chatLogin connect excption: " + e.toString());
+                        processing = false;
+                    }
+                } else
+                    cancel();
+                if (connectionStatusListener != null)
+                    connectionStatusListener.notifyConnectionChange();
+            }
 
-		}, 500, 4000);
+        }, 500, 4000);
 
-		// if (connection == null)
-		// return false;
-		//
-		// return true;
-	}
-	public boolean updateGroupDisplayName(String groupName,String groupDisplayName, String caption){
-		return sendGroupInfoMessage(groupName, groupDisplayName, caption, Message.XMPPMessageType.atMeXmppMessageTypeGroupName);
-	}
-	public boolean removeGroupPerson(String room, String nickName) {
+        // if (connection == null)
+        // return false;
+        //
+        // return true;
+    }
+
+    public boolean updateGroupDisplayName(String groupName, String groupDisplayName, String caption) {
+        return sendGroupInfoMessage(groupName, groupDisplayName, caption, Message.XMPPMessageType.atMeXmppMessageTypeGroupName);
+    }
+
+    public boolean updateGroupType(String groupName, String groupDisplayName, GroupChatMetaInfo.GroupPermissions permissionMode) {
+        return sendGroupSpecialMessage(groupName, groupDisplayName, permissionMode, Message.XMPPMessageType.atMeXmppMessageTypeGroupName);
+    }
+
+    public boolean removeGroupPerson(String room, String nickName) {
 //		SharedPrefManager.getInstance().removeGroupName(room);
-		sendInfoMessage(room,nickName,Message.XMPPMessageType.atMeXmppMessageTypeLeftGroup);
-		prefManager.saveUserGroupInfo(room,nickName,SharedPrefManager.GROUP_ACTIVE_INFO,false);
+        sendInfoMessage(room, nickName, Message.XMPPMessageType.atMeXmppMessageTypeLeftGroup);
+        prefManager.saveUserGroupInfo(room, nickName, SharedPrefManager.GROUP_ACTIVE_INFO, false);
 //		 try{
 //		 if (connection == null || !connection.isConnected() || !connection.isAuthenticated())
 //			 return false;
@@ -2683,49 +2736,51 @@ public class ChatService extends Service implements interfaceInstances {
 //		 Log.d(TAG, "leave chat excption " + e.toString());
 //		 return false;
 //		 }
-		return true;
-	}
-	public boolean leave(String room, String nickName) {
-		SharedPrefManager.getInstance().removeGroupName(room);
-		prefManager.saveUserGroupInfo(room,nickName,SharedPrefManager.GROUP_ACTIVE_INFO,false);
+        return true;
+    }
+
+    public boolean leave(String room, String nickName) {
+        SharedPrefManager.getInstance().removeGroupName(room);
+        prefManager.saveUserGroupInfo(room, nickName, SharedPrefManager.GROUP_ACTIVE_INFO, false);
 //		sendInfoMessage(room,nickName,Message.XMPPMessageType.atMeXmppMessageTypeLeftGroup);
-		// try{
-		// if (connection == null || !connection.isConnected()
-		// || !connection.isAuthenticated())
-		// return false;
-		// String roomPath = room + "@" + AtmeChatClient.getChatServer();
-		// Presence leavePresence = new Presence(Presence.Type.unavailable);
-		// leavePresence.setTo(roomPath + "/" + nickName);
-		// connection.sendPacket(leavePresence);
-		// return true;
-		// }catch(Exception e){
-		// Log.d(TAG, "leave chat excption " + e.toString());
-		// return false;
-		// }
-		return true;
-	}
-	private void updateBlockedUserList(String userId) {
+        // try{
+        // if (connection == null || !connection.isConnected()
+        // || !connection.isAuthenticated())
+        // return false;
+        // String roomPath = room + "@" + AtmeChatClient.getChatServer();
+        // Presence leavePresence = new Presence(Presence.Type.unavailable);
+        // leavePresence.setTo(roomPath + "/" + nickName);
+        // connection.sendPacket(leavePresence);
+        // return true;
+        // }catch(Exception e){
+        // Log.d(TAG, "leave chat excption " + e.toString());
+        // return false;
+        // }
+        return true;
+    }
 
-		if (connection != null && connection.isConnected() && connection.isAuthenticated()){
-			try {
-				PrivacyListManager privacyManager = PrivacyListManager.getInstanceFor(connection);
-				if (privacyManager == null) {
-					return;
-				}
-				String ser = "@" + Constants.CHAT_SERVER_URL;
-				PrivacyList plist = null;
-				try {
-					plist = privacyManager.getPrivacyList("blockList");
-				} catch (Exception e) {
+    private void updateBlockedUserList(String userId) {
+
+        if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
+            try {
+                PrivacyListManager privacyManager = PrivacyListManager.getInstanceFor(connection);
+                if (privacyManager == null) {
+                    return;
+                }
+                String ser = "@" + Constants.CHAT_SERVER_URL;
+                PrivacyList plist = null;
+                try {
+                    plist = privacyManager.getPrivacyList("blockList");
+                } catch (Exception e) {
 //		            e.printStackTrace();
-				}
-				if (plist != null) {// No blacklisted or is not listed, direct getPrivacyList error
-					List<PrivacyItem> items = plist.getItems();
-					for (PrivacyItem item : items) {
+                }
+                if (plist != null) {// No blacklisted or is not listed, direct getPrivacyList error
+                    List<PrivacyItem> items = plist.getItems();
+                    for (PrivacyItem item : items) {
 
 
-						String from = item.getValue().substring(0,
-								item.getValue().indexOf(ser));
+                        String from = item.getValue().substring(0,
+                                item.getValue().indexOf(ser));
 
 //		                if (userId.equals(from)) {
 //
@@ -2734,58 +2789,59 @@ public class ChatService extends Service implements interfaceInstances {
 ////		                    privacyList.add(from);
 //
 //		                }
-						boolean isUnBlocked = item.isAllow();
-						item.setValue(from);
-						item.setFilterIQ(isUnBlocked);
-						item.setFilterMessage(isUnBlocked);
-						item.setFilterPresence_in(isUnBlocked);
-						item.setFilterPresence_out(isUnBlocked);
+                        boolean isUnBlocked = item.isAllow();
+                        item.setValue(from);
+                        item.setFilterIQ(isUnBlocked);
+                        item.setFilterMessage(isUnBlocked);
+                        item.setFilterPresence_in(isUnBlocked);
+                        item.setFilterPresence_out(isUnBlocked);
 //		                updateBlockUnblockUser(from,item,isUnBlocked);
-						prefManager.setBlockStatus(from, !isUnBlocked);
-						if(!SuperChatApplication.blockUserList.contains(from) && !isUnBlocked)
-							SuperChatApplication.blockUserList.add(from);
+                        prefManager.setBlockStatus(from, !isUnBlocked);
+                        if (!SuperChatApplication.blockUserList.contains(from) && !isUnBlocked)
+                            SuperChatApplication.blockUserList.add(from);
 
-					}
-					if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
-						try {
-							privacyManager.updatePrivacyList("blockList", items);
+                    }
+                    if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
+                        try {
+                            privacyManager.updatePrivacyList("blockList", items);
 //             	        privacyManager.createPrivacyList(listName, privacyItems);
-							privacyManager.setActiveListName("blockList");
+                            privacyManager.setActiveListName("blockList");
 
-						} catch (Exception e) {
-							Log.e("PRIVACY_ERROR: ", " " + e.toString());
-							e.printStackTrace();
-						}
-					}
-				} else {
-				}
-			} catch (Exception ex) {
-			}
-		}
-	}
-	public List<String> getBlockedUserList(String userId) {
+                        } catch (Exception e) {
+                            Log.e("PRIVACY_ERROR: ", " " + e.toString());
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                }
+            } catch (Exception ex) {
+            }
+        }
+    }
 
-		List<String> privacyList = new ArrayList<String>();
-		if (connection != null && connection.isConnected() && connection.isAuthenticated()){
-			try {
-				PrivacyListManager privacyManager = PrivacyListManager.getInstanceFor(connection);
-				if (privacyManager == null) {
-					return privacyList;
-				}
-				String ser = "@" + Constants.CHAT_SERVER_URL;
-				PrivacyList plist = null;
-				try {
-					plist = privacyManager.getPrivacyList("blockList");
-				} catch (Exception e) {
+    public List<String> getBlockedUserList(String userId) {
+
+        List<String> privacyList = new ArrayList<String>();
+        if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
+            try {
+                PrivacyListManager privacyManager = PrivacyListManager.getInstanceFor(connection);
+                if (privacyManager == null) {
+                    return privacyList;
+                }
+                String ser = "@" + Constants.CHAT_SERVER_URL;
+                PrivacyList plist = null;
+                try {
+                    plist = privacyManager.getPrivacyList("blockList");
+                } catch (Exception e) {
 //		            e.printStackTrace();
-				}
-				if (plist != null) {// No blacklisted or is not listed, direct getPrivacyList error
-					List<PrivacyItem> items = plist.getItems();
-					for (PrivacyItem item : items) {
+                }
+                if (plist != null) {// No blacklisted or is not listed, direct getPrivacyList error
+                    List<PrivacyItem> items = plist.getItems();
+                    for (PrivacyItem item : items) {
 
 
-						String from = item.getValue().substring(0,
-								item.getValue().indexOf(ser));
+                        String from = item.getValue().substring(0,
+                                item.getValue().indexOf(ser));
 
 //		                if (userId.equals(from)) {
 //
@@ -2794,11 +2850,11 @@ public class ChatService extends Service implements interfaceInstances {
 ////		                    privacyList.add(from);
 //
 //		                }
-						boolean isUnBlocked = item.isAllow();
-						if(!isUnBlocked)
-							privacyList.add(from);
+                        boolean isUnBlocked = item.isAllow();
+                        if (!isUnBlocked)
+                            privacyList.add(from);
 
-					}
+                    }
 //		            if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
 //                	    try {
 //                	        privacyManager.updatePrivacyList("blockList", items);
@@ -2810,788 +2866,792 @@ public class ChatService extends Service implements interfaceInstances {
 //                	        e.printStackTrace();
 //                	    }
 //                    }
-				} else {
-					return privacyList;
-				}
-			} catch (Exception ex) {
-			}
-		}
-		return privacyList;
-	}
-	// Here function for block user on xmpp
-	public boolean updateBlockUnblockUser(String userName,PrivacyItem item, boolean isUnblock) {
+                } else {
+                    return privacyList;
+                }
+            } catch (Exception ex) {
+            }
+        }
+        return privacyList;
+    }
 
-		String jid = userName + "@" + Constants.CHAT_SERVER_URL;
-		String listName = "blockList";
+    // Here function for block user on xmpp
+    public boolean updateBlockUnblockUser(String userName, PrivacyItem item, boolean isUnblock) {
 
-		// Create the list of PrivacyItem that will allow or
-		// deny some privacy aspect
+        String jid = userName + "@" + Constants.CHAT_SERVER_URL;
+        String listName = "blockList";
 
-		//ArrayList privacyItems = new ArrayList();
+        // Create the list of PrivacyItem that will allow or
+        // deny some privacy aspect
 
-		List<PrivacyItem> privacyItems = new Vector<PrivacyItem>();
+        //ArrayList privacyItems = new ArrayList();
+
+        List<PrivacyItem> privacyItems = new Vector<PrivacyItem>();
 
 //		    PrivacyItem item = new PrivacyItem(PrivacyItem.Type.jid.toString(), isUnblock, 1);
-		item.setValue(jid);
-		item.setFilterIQ(isUnblock);
-		item.setFilterMessage(isUnblock);
-		item.setFilterPresence_in(isUnblock);
-		item.setFilterPresence_out(isUnblock);
+        item.setValue(jid);
+        item.setFilterIQ(isUnblock);
+        item.setFilterMessage(isUnblock);
+        item.setFilterPresence_in(isUnblock);
+        item.setFilterPresence_out(isUnblock);
 
-		privacyItems.add(item);
-		// Get the privacy manager for the current connection.
-		// Create the new list.
-		if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
-			PrivacyListManager privacyManager = PrivacyListManager.getInstanceFor(connection);
-			try {
-				privacyManager.updatePrivacyList(listName, privacyItems);
+        privacyItems.add(item);
+        // Get the privacy manager for the current connection.
+        // Create the new list.
+        if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
+            PrivacyListManager privacyManager = PrivacyListManager.getInstanceFor(connection);
+            try {
+                privacyManager.updatePrivacyList(listName, privacyItems);
 //			        privacyManager.createPrivacyList(listName, privacyItems);
-				privacyManager.setActiveListName(listName);
+                privacyManager.setActiveListName(listName);
 
-				return true;
-			} catch (Exception e) {
-				Log.e("PRIVACY_ERROR: ", " " + e.toString());
-				e.printStackTrace();
-			}
-		}
-		return false;
-	}
-	public boolean blockUnblockUser(String userName, boolean isUnblock) {
+                return true;
+            } catch (Exception e) {
+                Log.e("PRIVACY_ERROR: ", " " + e.toString());
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
 
-		String jid = userName + "@" + Constants.CHAT_SERVER_URL;
-		String listName = "blockList";
+    public boolean blockUnblockUser(String userName, boolean isUnblock) {
 
-		// Create the list of PrivacyItem that will allow or
-		// deny some privacy aspect
+        String jid = userName + "@" + Constants.CHAT_SERVER_URL;
+        String listName = "blockList";
 
-		//ArrayList privacyItems = new ArrayList();
+        // Create the list of PrivacyItem that will allow or
+        // deny some privacy aspect
 
-		List<PrivacyItem> privacyItems = new Vector<PrivacyItem>();
+        //ArrayList privacyItems = new ArrayList();
 
-		PrivacyItem item = new PrivacyItem(PrivacyItem.Type.jid.toString(), isUnblock, prefManager.getBlockOrder());
-		item.setValue(jid);
-		item.setFilterIQ(isUnblock);
-		item.setFilterMessage(isUnblock);
-		item.setFilterPresence_in(isUnblock);
-		item.setFilterPresence_out(isUnblock);
+        List<PrivacyItem> privacyItems = new Vector<PrivacyItem>();
 
-		privacyItems.add(item);
-		// Get the privacy manager for the current connection.
-		// Create the new list.
-		if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
-			PrivacyListManager privacyManager = PrivacyListManager.getInstanceFor(connection);
-			try {
-				prefManager.saveBlockOrder(-1);
-				if(!SuperChatApplication.blockUserList.contains(userName) && !isUnblock){
-					SuperChatApplication.blockUserList.add(userName);
+        PrivacyItem item = new PrivacyItem(PrivacyItem.Type.jid.toString(), isUnblock, prefManager.getBlockOrder());
+        item.setValue(jid);
+        item.setFilterIQ(isUnblock);
+        item.setFilterMessage(isUnblock);
+        item.setFilterPresence_in(isUnblock);
+        item.setFilterPresence_out(isUnblock);
 
-				}
-				if(isUnblock && SuperChatApplication.blockUserList.contains(userName)){
-					SuperChatApplication.blockUserList.remove(userName);
+        privacyItems.add(item);
+        // Get the privacy manager for the current connection.
+        // Create the new list.
+        if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
+            PrivacyListManager privacyManager = PrivacyListManager.getInstanceFor(connection);
+            try {
+                prefManager.saveBlockOrder(-1);
+                if (!SuperChatApplication.blockUserList.contains(userName) && !isUnblock) {
+                    SuperChatApplication.blockUserList.add(userName);
 
-				}
-				if(!isUnblock)
-					prefManager.saveBlockedUser(userName);
-				else
-					prefManager.removeBlockedUser(userName);
+                }
+                if (isUnblock && SuperChatApplication.blockUserList.contains(userName)) {
+                    SuperChatApplication.blockUserList.remove(userName);
 
-				privacyManager.updatePrivacyList(listName, privacyItems);
+                }
+                if (!isUnblock)
+                    prefManager.saveBlockedUser(userName);
+                else
+                    prefManager.removeBlockedUser(userName);
+
+                privacyManager.updatePrivacyList(listName, privacyItems);
 //	        privacyManager.createPrivacyList(listName, privacyItems);
-				privacyManager.setActiveListName(listName);
+                privacyManager.setActiveListName(listName);
 
-				return true;
-			} catch (Exception e) {
-				Log.e("PRIVACY_ERROR: ", " " + e.toString());
-				e.printStackTrace();
-			}
-		}
-		return false;
-	}
-	// public void getOfflineMessages(final XMPPConnection connection){
-	// new Thread() {
-	// public void run() {
-	// synchronized (connection) {
-	//
-	//
-	// connection.sendPacket(new Presence(Presence.Type.unavailable));
-	// try {
-	// wait(1000);
-	// } catch (InterruptedException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// connection.sendPacket(new Presence(Presence.Type.available));
-	// }
-	// }}.start();
-	// }
+                return true;
+            } catch (Exception e) {
+                Log.e("PRIVACY_ERROR: ", " " + e.toString());
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+    // public void getOfflineMessages(final XMPPConnection connection){
+    // new Thread() {
+    // public void run() {
+    // synchronized (connection) {
+    //
+    //
+    // connection.sendPacket(new Presence(Presence.Type.unavailable));
+    // try {
+    // wait(1000);
+    // } catch (InterruptedException e) {
+    // // TODO Auto-generated catch block
+    // e.printStackTrace();
+    // }
+    // connection.sendPacket(new Presence(Presence.Type.available));
+    // }
+    // }}.start();
+    // }
 
-	public boolean sendOffLineMessages1() {
-		if (connection == null || !connection.isConnected()
-				|| !connection.isAuthenticated())
-			return false;
-		ConnectivityManager cm = (ConnectivityManager) context
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-		boolean isConnected = activeNetwork != null
-				&& activeNetwork.isConnected();
-		if (!isConnected)
-			return false;
-		synchronized (this) {
+    public boolean sendOffLineMessages1() {
+        if (connection == null || !connection.isConnected()
+                || !connection.isAuthenticated())
+            return false;
+        ConnectivityManager cm = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null
+                && activeNetwork.isConnected();
+        if (!isConnected)
+            return false;
+        synchronized (this) {
 
-			ArrayList<HashMap<String, String>> list = chatDBWrapper.getUndeliveredMessages(userMe);
-			if (list != null)
-				Log.d(TAG, "Total unsync items " + list.size());
-			if (list != null && !list.isEmpty()) {
-				Iterator<HashMap<String, String>> iterator = list.iterator();
-				if (iterator != null) {
-					while (iterator.hasNext()) {
-						activeNetwork = cm.getActiveNetworkInfo();
-						isConnected = activeNetwork != null
-								&& activeNetwork.isConnected();
-						if (!isConnected)
-							return false;
-						HashMap<String, String> items = iterator.next();
-						String userName = items
-								.get(ChatDBConstants.TO_USER_FIELD);
-						String message = items
-								.get(ChatDBConstants.MESSAGEINFO_FIELD);
-						String captionMsg = items.get(ChatDBConstants.MEDIA_CAPTION_TAG);
-						int msgType = XMPPMessageType.atMeXmppMessageTypeNormal.ordinal();
-						try{
-							msgType = Integer.parseInt(items.get(ChatDBConstants.MESSAGE_TYPE_FIELD));
-						}catch(NumberFormatException e){
+            ArrayList<HashMap<String, String>> list = chatDBWrapper.getUndeliveredMessages(userMe);
+            if (list != null)
+                Log.d(TAG, "Total unsync items " + list.size());
+            if (list != null && !list.isEmpty()) {
+                Iterator<HashMap<String, String>> iterator = list.iterator();
+                if (iterator != null) {
+                    while (iterator.hasNext()) {
+                        activeNetwork = cm.getActiveNetworkInfo();
+                        isConnected = activeNetwork != null
+                                && activeNetwork.isConnected();
+                        if (!isConnected)
+                            return false;
+                        HashMap<String, String> items = iterator.next();
+                        String userName = items
+                                .get(ChatDBConstants.TO_USER_FIELD);
+                        String message = items
+                                .get(ChatDBConstants.MESSAGEINFO_FIELD);
+                        String captionMsg = items.get(ChatDBConstants.MEDIA_CAPTION_TAG);
+                        int msgType = XMPPMessageType.atMeXmppMessageTypeNormal.ordinal();
+                        try {
+                            msgType = Integer.parseInt(items.get(ChatDBConstants.MESSAGE_TYPE_FIELD));
+                        } catch (NumberFormatException e) {
 
-						}
-						String msgId = items.get(ChatDBConstants.MESSAGE_ID);
-						Log.d(TAG, "Unsync item values: " + userName + " , "
-								+ message + " , " + msgId);
-						if (userName == null || userName.equals("")) {
-							Log.d(TAG, "userName is not correct: " + userName);
-							continue;
-						}
-						if (message == null || message.equals("")) {
-							Log.d(TAG, "Message should not be empty or null: "
-									+ message);
-							continue;
-						}
-						if (msgId == null || msgId.equals("")) {
-							Log.d(TAG,
-									"Message id should not be empty or null: "
-											+ msgId);
-							continue;
-						}
-						if (userName.equals(userMe)) {
-							continue;
-						}
-						boolean isGroupChat = false;
-						if (SharedPrefManager.getInstance().isGroupChat(
-								userName)
-								&& !message.equals("You are welcome in "
-								+ userName + " group.")) {
-							// sendGroupMessage(userName, message);
-							// return;
-							isGroupChat = true;
-						}
+                        }
+                        String msgId = items.get(ChatDBConstants.MESSAGE_ID);
+                        Log.d(TAG, "Unsync item values: " + userName + " , "
+                                + message + " , " + msgId);
+                        if (userName == null || userName.equals("")) {
+                            Log.d(TAG, "userName is not correct: " + userName);
+                            continue;
+                        }
+                        if (message == null || message.equals("")) {
+                            Log.d(TAG, "Message should not be empty or null: "
+                                    + message);
+                            continue;
+                        }
+                        if (msgId == null || msgId.equals("")) {
+                            Log.d(TAG,
+                                    "Message id should not be empty or null: "
+                                            + msgId);
+                            continue;
+                        }
+                        if (userName.equals(userMe)) {
+                            continue;
+                        }
+                        boolean isGroupChat = false;
+                        if (SharedPrefManager.getInstance().isGroupChat(
+                                userName)
+                                && !message.equals("You are welcome in "
+                                + userName + " group.")) {
+                            // sendGroupMessage(userName, message);
+                            // return;
+                            isGroupChat = true;
+                        }
 
-						String to = userName + "@"
-								+ Constants.CHAT_DOMAIN;
-						if (isGroupChat) {
-							to = userName + "@conference."
-									+ Constants.CHAT_DOMAIN;
-						}
-						Log.d(TAG, "Sending text [" + message + "] to [" + to
-								+ "]");
-						Message msg = new Message(to);// , Message.Type.chat);
-						if (isGroupChat)
-							msg.setType(Message.Type.groupchat);
-						else
-							msg.setType(Message.Type.chat);
-						msg.setMessageSeenState(Message.SeenState.sent);
-						msg.setDisplayName(prefManager.getDisplayName());
-						String picId = prefManager.getUserFileId(prefManager.getUserName());
-						if(picId != null)
-							msg.setPicId(picId);
+                        String to = userName + "@"
+                                + Constants.CHAT_DOMAIN;
+                        if (isGroupChat) {
+                            to = userName + "@conference."
+                                    + Constants.CHAT_DOMAIN;
+                        }
+                        Log.d(TAG, "Sending text [" + message + "] to [" + to
+                                + "]");
+                        Message msg = new Message(to);// , Message.Type.chat);
+                        if (isGroupChat)
+                            msg.setType(Message.Type.groupchat);
+                        else
+                            msg.setType(Message.Type.chat);
+                        msg.setMessageSeenState(Message.SeenState.sent);
+                        msg.setDisplayName(prefManager.getDisplayName());
+                        String picId = prefManager.getUserFileId(prefManager.getUserName());
+                        if (picId != null)
+                            msg.setPicId(picId);
 
-						msg.setBody(message);
-						msg.setPacketID(msgId);
-						String url = null;
-						String thumb = null;
-						String media_length = null;
-						if(msgType == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal()){
-							url = items.get(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD);
-						}else if(msgType == XMPPMessageType.atMeXmppMessageTypePdf.ordinal()){
-							url = items.get(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD);
-						}else if(msgType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal()){
-							url = items.get(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD);
-						}else if(msgType == XMPPMessageType.atMeXmppMessageTypePPT.ordinal()){
-							url = items.get(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD);
-						}else if(msgType == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()){
-							url = items.get(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD);
-							media_length = items.get(ChatDBConstants.MESSAGE_MEDIA_LENGTH);
-						}else if(msgType == XMPPMessageType.atMeXmppMessageTypeImage.ordinal()){
-							url = items.get(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD);
-							thumb = items.get(ChatDBConstants.MESSAGE_THUMB_FIELD);
+                        msg.setBody(message);
+                        msg.setPacketID(msgId);
+                        String url = null;
+                        String thumb = null;
+                        String media_length = null;
+                        if (msgType == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal()) {
+                            url = items.get(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD);
+                        } else if (msgType == XMPPMessageType.atMeXmppMessageTypePdf.ordinal()) {
+                            url = items.get(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD);
+                        } else if (msgType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal()) {
+                            url = items.get(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD);
+                        } else if (msgType == XMPPMessageType.atMeXmppMessageTypePPT.ordinal()) {
+                            url = items.get(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD);
+                        } else if (msgType == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()) {
+                            url = items.get(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD);
+                            media_length = items.get(ChatDBConstants.MESSAGE_MEDIA_LENGTH);
+                        } else if (msgType == XMPPMessageType.atMeXmppMessageTypeImage.ordinal()) {
+                            url = items.get(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD);
+                            thumb = items.get(ChatDBConstants.MESSAGE_THUMB_FIELD);
 
-						}else if(msgType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()){
-							url = items.get(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD);
-							thumb = items.get(ChatDBConstants.MESSAGE_THUMB_FIELD);
+                        } else if (msgType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()) {
+                            url = items.get(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD);
+                            thumb = items.get(ChatDBConstants.MESSAGE_THUMB_FIELD);
 
-						}
-						if(url!=null){
-							msg.setXMPPMessageType((XMPPMessageType.values()[msgType]));
-							MediaBody mediaBody = msg.new MediaBody();
-							mediaBody.setType(String.valueOf(msgType));
+                        }
+                        if (url != null) {
+                            msg.setXMPPMessageType((XMPPMessageType.values()[msgType]));
+                            MediaBody mediaBody = msg.new MediaBody();
+                            mediaBody.setType(String.valueOf(msgType));
 //							mediaBody.setUrl(url.substring(url.indexOf(Constants.PIC_SEP) + Constants.PIC_SEP.length()));
-							mediaBody.setUrl(url);
-							if(thumb!=null)
-								mediaBody.setThumb_data(thumb);
-							msg.setMediaBody(mediaBody);
-						}
+                            mediaBody.setUrl(url);
+                            if (thumb != null)
+                                mediaBody.setThumb_data(thumb);
+                            msg.setMediaBody(mediaBody);
+                        }
 //						}
-						if(captionMsg!=null && !captionMsg.equals("")){
-							msg.setMediaTagMessage(captionMsg);
-						}
-						Log.d(TAG, "sent packet: " + msg.toXML());
-						if (connection != null && connection.isConnected()
-								&& connection.isAuthenticated()) {
-							connection.sendPacket(msg);
-							chatDBWrapper.updateSeenStatus(userName,
-									"(\"" + msgId + "\")", SeenState.sent);
-						} else {
-							msg.setMessageSeenState(Message.SeenState.wait);
-							// chatLogin();
-						}
-					}
-				}
-			}
-		}
-		return true;
-	}
+                        if (captionMsg != null && !captionMsg.equals("")) {
+                            msg.setMediaTagMessage(captionMsg);
+                        }
+                        Log.d(TAG, "sent packet: " + msg.toXML());
+                        if (connection != null && connection.isConnected()
+                                && connection.isAuthenticated()) {
+                            connection.sendPacket(msg);
+                            chatDBWrapper.updateSeenStatus(userName,
+                                    "(\"" + msgId + "\")", SeenState.sent);
+                        } else {
+                            msg.setMessageSeenState(Message.SeenState.wait);
+                            // chatLogin();
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
 
-	public void updateMessageStatus(String from, String to, String msg,
-									String msgId) {
+    public void updateMessageStatus(String from, String to, String msg,
+                                    String msgId) {
 
-	}
+    }
 
-	public void chatLogout() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				if (connection != null && connection.isConnected()) {
-					try {
-						connection.removePacketListener(packetListener);
-						connection.disconnect();
-						xmppConectionStatus = false;
-						clearAllNotifications();
-					} catch (Exception e) {
-					}
-					connection = null;
-				}
-			}
-		}).start();
+    public void chatLogout() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (connection != null && connection.isConnected()) {
+                    try {
+                        connection.removePacketListener(packetListener);
+                        connection.disconnect();
+                        xmppConectionStatus = false;
+                        clearAllNotifications();
+                    } catch (Exception e) {
+                    }
+                    connection = null;
+                }
+            }
+        }).start();
 
-	}
-	public void saveGroupOrBroadcastStatus(String from, String packetId, Message.SeenState state) {
-		try{
-			String actual_domain = null;
-			ContentValues contentvalues = new ContentValues();
-			contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
-			if(packetId.contains("("))
-				packetId = packetId.replace("(", "");
-			if(packetId.contains(")"))
-				packetId = packetId.replace(")", "");
-			if(packetId.contains("\""))
-				packetId = packetId.replace("\"", "");
-			packetId = packetId.trim();
-			contentvalues.put(ChatDBConstants.MESSAGE_ID,packetId);
-			long currentTime = System.currentTimeMillis();
-			calender.setTimeInMillis(currentTime);
-			if(state == Message.SeenState.recieved)
-				contentvalues.put(ChatDBConstants.DELIVER_TIME_FIELD, currentTime);
-			if(state == Message.SeenState.seen)
-				contentvalues.put(ChatDBConstants.SEEN_TIME_FIELD, currentTime);
-			contentvalues.put(ChatDBConstants.SEEN_FIELD, state.ordinal());
+    }
+
+    public void saveGroupOrBroadcastStatus(String from, String packetId, Message.SeenState state) {
+        try {
+            String actual_domain = null;
+            ContentValues contentvalues = new ContentValues();
+            contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
+            if (packetId.contains("("))
+                packetId = packetId.replace("(", "");
+            if (packetId.contains(")"))
+                packetId = packetId.replace(")", "");
+            if (packetId.contains("\""))
+                packetId = packetId.replace("\"", "");
+            packetId = packetId.trim();
+            contentvalues.put(ChatDBConstants.MESSAGE_ID, packetId);
+            long currentTime = System.currentTimeMillis();
+            calender.setTimeInMillis(currentTime);
+            if (state == Message.SeenState.recieved)
+                contentvalues.put(ChatDBConstants.DELIVER_TIME_FIELD, currentTime);
+            if (state == Message.SeenState.seen)
+                contentvalues.put(ChatDBConstants.SEEN_TIME_FIELD, currentTime);
+            contentvalues.put(ChatDBConstants.SEEN_FIELD, state.ordinal());
 //		contentvalues.put(ChatDBConstants.GROUP_UUID_FIELD, groupUUID);
-			//Save USerID and SG in DB
-			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
+            //Save USerID and SG in DB
+            contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
 
-			//Add SG Name and user ID
-			if(!prefManager.isGroupChat(from)) {
-				if (from != null && from.contains("_"))
-					actual_domain = from.substring(from.indexOf('_') + 1);
+            //Add SG Name and user ID
+            if (!prefManager.isGroupChat(from)) {
+                if (from != null && from.contains("_"))
+                    actual_domain = from.substring(from.indexOf('_') + 1);
 
-				if (actual_domain.equals(prefManager.getUserDomain()))
-					contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
-				else
-					contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
-			}else
-				contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+                if (actual_domain.equals(prefManager.getUserDomain()))
+                    contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+                else
+                    contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+            } else
+                contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
 
-			long insertId = chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_STATUS_INFO, contentvalues);
-			if(insertId == -1){
-				chatDBWrapper.updateGroupOrBroadCastSeenStatus(from,"(\"" + packetId + "\")", state,currentTime);
-			}
-			if(state == Message.SeenState.seen)
-				chatDBWrapper.updateUserReadCount(packetId, chatDBWrapper.getTotalMessageReadCount(packetId) + 1);
-		}catch(Exception e){}
-	}
-	private void addNewContactEntry(String displayName, String tmpUserName,String tmpMobile){
-		try{
-			String number = DBWrapper.getInstance().getContactNumber(tmpUserName);
-			if(number!=null && !number.equals(""))
-				return;
-			ContentValues contentvalues = new ContentValues();
-			contentvalues.put(DatabaseConstants.USER_NAME_FIELD,tmpUserName);
-			contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(2));
-			contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
-			contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,tmpMobile);
-			contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
-			contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, displayName);
-			contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
-			int id = tmpUserName.hashCode();
-			if (id < -1)
-				id = -(id);
-			contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD,Integer.valueOf(id));
-			contentvalues.put(DatabaseConstants.RAW_CONTACT_ID,Integer.valueOf(id));
-			//Save USerID and SG in DB
-			contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
-			contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
-			DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
-		}catch(Exception e){
+            long insertId = chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_STATUS_INFO, contentvalues);
+            if (insertId == -1) {
+                chatDBWrapper.updateGroupOrBroadCastSeenStatus(from, "(\"" + packetId + "\")", state, currentTime);
+            }
+            if (state == Message.SeenState.seen)
+                chatDBWrapper.updateUserReadCount(packetId, chatDBWrapper.getTotalMessageReadCount(packetId) + 1);
+        } catch (Exception e) {
+        }
+    }
 
-		}
-	}
-	public void saveMessage(String displayName, String from, String to,
-							String msg, Message message) {
-		String groupSenderDisplayName = message.getDisplayName();
-		Message.MessageDelay delay  = message.getMessageDelay();
-		String actual_domain = null;
-		String sender_user_name = null;
+    private void addNewContactEntry(String displayName, String tmpUserName, String tmpMobile) {
+        try {
+            String number = DBWrapper.getInstance().getContactNumber(tmpUserName);
+            if (number != null && !number.equals(""))
+                return;
+            ContentValues contentvalues = new ContentValues();
+            contentvalues.put(DatabaseConstants.USER_NAME_FIELD, tmpUserName);
+            contentvalues.put(DatabaseConstants.VOPIUM_FIELD, Integer.valueOf(2));
+            contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
+            contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, tmpMobile);
+            contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
+            contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, displayName);
+            contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
+            int id = tmpUserName.hashCode();
+            if (id < -1)
+                id = -(id);
+            contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD, Integer.valueOf(id));
+            contentvalues.put(DatabaseConstants.RAW_CONTACT_ID, Integer.valueOf(id));
+            //Save USerID and SG in DB
+            contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
+            contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
+            DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void saveMessage(String displayName, String from, String to,
+                            String msg, Message message) {
+        String groupSenderDisplayName = message.getDisplayName();
+        Message.MessageDelay delay = message.getMessageDelay();
+        String actual_domain = null;
+        String sender_user_name = null;
 //		if(groupSenderDisplayName!=null && !groupSenderDisplayName.equals("")){
 //			displayName = groupSenderDisplayName;
 //		}
-		if(groupSenderDisplayName!=null && !groupSenderDisplayName.equals("") && !groupSenderDisplayName.equals("#786#")){
-			String tmpFrom = message.getFrom();
-			if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal()){
-				displayName = tmpFrom.substring(0, tmpFrom.indexOf('@'));
-			}else if(tmpFrom != null && tmpFrom.contains("/") && tmpFrom.length()>(tmpFrom.indexOf("/")+1))
-				displayName = groupSenderDisplayName+"#786#"+tmpFrom.substring(tmpFrom.indexOf("/")+1);
-			sender_user_name = tmpFrom.substring(tmpFrom.indexOf("/") + 1);
-		}
-		try {
-			String captionTag  = message.getMediaTagMessage();
-			String fileName  = message.getMediaFileName();
-			String locationMsg  = message.getLocationMessage();
-			ContentValues contentvalues = new ContentValues();
+        if (groupSenderDisplayName != null && !groupSenderDisplayName.equals("") && !groupSenderDisplayName.equals("#786#")) {
+            String tmpFrom = message.getFrom();
+            if (message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal()) {
+                displayName = tmpFrom.substring(0, tmpFrom.indexOf('@'));
+            } else if (tmpFrom != null && tmpFrom.contains("/") && tmpFrom.length() > (tmpFrom.indexOf("/") + 1))
+                displayName = groupSenderDisplayName + "#786#" + tmpFrom.substring(tmpFrom.indexOf("/") + 1);
+            sender_user_name = tmpFrom.substring(tmpFrom.indexOf("/") + 1);
+        }
+        try {
+            String captionTag = message.getMediaTagMessage();
+            String fileName = message.getMediaFileName();
+            String locationMsg = message.getLocationMessage();
+            ContentValues contentvalues = new ContentValues();
 
-			contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
-			contentvalues.put(ChatDBConstants.TO_USER_FIELD, to);
-			contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD, new Integer(1));
-			contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, displayName);
-			if((message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeImage || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeVideo || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeAudio)
-					&& msg != null && !from.equals(SharedPrefManager.getInstance().getUserName()) && captionTag != null)
-				contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, msg);
-			else if(captionTag!=null && !captionTag.equals(""))
-				contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, captionTag);
-			if(fileName != null && !fileName.equals("")){
-				contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, fileName);
-			}
-			if(locationMsg!=null && !locationMsg.equals(""))
-				contentvalues.put(ChatDBConstants.MESSAGE_TYPE_LOCATION, locationMsg);
-			contentvalues.put(ChatDBConstants.SEEN_FIELD, message.getMessageSeenState().ordinal());
+            contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
+            contentvalues.put(ChatDBConstants.TO_USER_FIELD, to);
+            contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD, new Integer(1));
+            contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, displayName);
+            if ((message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeImage || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeVideo || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeAudio)
+                    && msg != null && !from.equals(SharedPrefManager.getInstance().getUserName()) && captionTag != null)
+                contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, msg);
+            else if (captionTag != null && !captionTag.equals(""))
+                contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, captionTag);
+            if (fileName != null && !fileName.equals("")) {
+                contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, fileName);
+            }
+            if (locationMsg != null && !locationMsg.equals(""))
+                contentvalues.put(ChatDBConstants.MESSAGE_TYPE_LOCATION, locationMsg);
+            contentvalues.put(ChatDBConstants.SEEN_FIELD, message.getMessageSeenState().ordinal());
 
-			if(message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeImage
-					|| message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeVideo)//This check has been made to receive picture/audio/video message URL in Subject
-			{
-				MediaBody media = message.getMediaBody();
-				if(media!=null){
-					String type = media.getType();
-					if(type!=null)
-						contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getXMPPMessageType().ordinal());
+            if (message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeImage
+                    || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeVideo)//This check has been made to receive picture/audio/video message URL in Subject
+            {
+                MediaBody media = message.getMediaBody();
+                if (media != null) {
+                    String type = media.getType();
+                    if (type != null)
+                        contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getXMPPMessageType().ordinal());
 
-					String urlImage = media.getUrl();
-					if(urlImage!=null)
-						contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, urlImage);
+                    String urlImage = media.getUrl();
+                    if (urlImage != null)
+                        contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, urlImage);
 
 
-					String thumbImage = media.getThumb_data();
-					if(thumbImage!=null)
-						contentvalues.put(ChatDBConstants.MESSAGE_THUMB_FIELD, thumbImage);
-				}
-			}else if(message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeDoc
-					|| message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypePdf
-					|| message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeXLS
-					|| message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypePPT)//This check has been made to receive picture/audio/video message URL in Subject
-			{
-				MediaBody media = message.getMediaBody();
-				if(media!=null){
-					String type = media.getType();
-					if(type!=null)
-						contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getXMPPMessageType().ordinal());
+                    String thumbImage = media.getThumb_data();
+                    if (thumbImage != null)
+                        contentvalues.put(ChatDBConstants.MESSAGE_THUMB_FIELD, thumbImage);
+                }
+            } else if (message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeDoc
+                    || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypePdf
+                    || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeXLS
+                    || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypePPT)//This check has been made to receive picture/audio/video message URL in Subject
+            {
+                MediaBody media = message.getMediaBody();
+                if (media != null) {
+                    String type = media.getType();
+                    if (type != null)
+                        contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getXMPPMessageType().ordinal());
 
-					String fileUrl = media.getUrl();
-					if(fileUrl!=null){
-						contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, fileUrl);
-					}
-					String thumbImage = media.getThumb_data();
-					if(thumbImage!=null)
-						contentvalues.put(ChatDBConstants.MESSAGE_THUMB_FIELD, thumbImage);
-				}
-			}else if(message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeAudio)//This check has been made to receive picture/audio/video message URL in Subject
-			{
-				MediaBody media = message.getMediaBody();
-				if(media!=null){
-					String type = media.getType();
-					if(type!=null)
-						contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getXMPPMessageType().ordinal());
+                    String fileUrl = media.getUrl();
+                    if (fileUrl != null) {
+                        contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, fileUrl);
+                    }
+                    String thumbImage = media.getThumb_data();
+                    if (thumbImage != null)
+                        contentvalues.put(ChatDBConstants.MESSAGE_THUMB_FIELD, thumbImage);
+                }
+            } else if (message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeAudio)//This check has been made to receive picture/audio/video message URL in Subject
+            {
+                MediaBody media = message.getMediaBody();
+                if (media != null) {
+                    String type = media.getType();
+                    if (type != null)
+                        contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getXMPPMessageType().ordinal());
 
-					String urlVoice = media.getUrl();
-					if(urlVoice!=null){
-						if(urlVoice.contains(".caf")){
-							urlVoice = urlVoice.replace(".caf", MEDIA_TYPE);
-						}
-						contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, urlVoice);
-					}
-					//Save Here Audio Length
-					if(media.getAudioLength() != null)
-						contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_LENGTH, media.getAudioLength());
-					String thumbImage = media.getThumb_data();
-					if(thumbImage!=null)
-						contentvalues.put(ChatDBConstants.MESSAGE_THUMB_FIELD, thumbImage);
-				}
-			}else if(message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeContact
-					|| message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeLocation
-					|| message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypePoll){
-				contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getXMPPMessageType().ordinal());
-			}
+                    String urlVoice = media.getUrl();
+                    if (urlVoice != null) {
+                        if (urlVoice.contains(".caf")) {
+                            urlVoice = urlVoice.replace(".caf", MEDIA_TYPE);
+                        }
+                        contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, urlVoice);
+                    }
+                    //Save Here Audio Length
+                    if (media.getAudioLength() != null)
+                        contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_LENGTH, media.getAudioLength());
+                    String thumbImage = media.getThumb_data();
+                    if (thumbImage != null)
+                        contentvalues.put(ChatDBConstants.MESSAGE_THUMB_FIELD, thumbImage);
+                }
+            } else if (message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeContact
+                    || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeLocation
+                    || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypePoll) {
+                contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getXMPPMessageType().ordinal());
+            }
 
-			if(message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypePoll){
-				captionTag  = message.getMediaTagMessage();
-				String PollMessageType = null;
-				String PollID = null;
-				if(captionTag != null){
-					try {
-						JSONObject jsonobj = new JSONObject(captionTag);
-						if(jsonobj.has("PollMessageType") && jsonobj.getString("PollMessageType").toString().trim().length() > 0) {
-							PollMessageType = jsonobj.getString("PollMessageType").toString();
-						}
-						if(jsonobj.has("PollID") && jsonobj.getString("PollID").toString().trim().length() > 0) {
-							PollID = jsonobj.getString("PollID").toString();
-						}
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-				}
-				if(PollMessageType.equals("1"))
-					savePoll(from, PollID, captionTag);
-			}
+            if (message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypePoll) {
+                captionTag = message.getMediaTagMessage();
+                String PollMessageType = null;
+                String PollID = null;
+                if (captionTag != null) {
+                    try {
+                        JSONObject jsonobj = new JSONObject(captionTag);
+                        if (jsonobj.has("PollMessageType") && jsonobj.getString("PollMessageType").toString().trim().length() > 0) {
+                            PollMessageType = jsonobj.getString("PollMessageType").toString();
+                        }
+                        if (jsonobj.has("PollID") && jsonobj.getString("PollID").toString().trim().length() > 0) {
+                            PollID = jsonobj.getString("PollID").toString();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (PollMessageType.equals("1"))
+                    savePoll(from, PollID, captionTag);
+            }
 
-			contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, msg);
-			// String name =
-			// cursor.getString(cursor.getColumnIndex(ChatDBConstants.CONTACT_NAMES_FIELD));
-			String myName = prefManager.getUserName();
+            contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, msg);
+            // String name =
+            // cursor.getString(cursor.getColumnIndex(ChatDBConstants.CONTACT_NAMES_FIELD));
+            String myName = prefManager.getUserName();
 
-			String name = "";
-			String oppName = "";
-			if (myName.equals(from)) {
-				oppName = to;
-				name = DBWrapper.getInstance().getChatName(to);
-				contentvalues.put(ChatDBConstants.MESSAGE_ID,
-						message.getPacketID());
-				contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD,
-						UUID.randomUUID().toString());
-			} else {
-				oppName = from;
-				name = DBWrapper.getInstance().getChatName(from);
-				contentvalues.put(ChatDBConstants.MESSAGE_ID, UUID
-						.randomUUID().toString());
-				String foregin = message.getPacketID();
-				if (foregin != null && !foregin.equals(""))
-					contentvalues.put(
-							ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD,
-							message.getPacketID());
-				else
-					contentvalues.put(
-							ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID
-									.randomUUID().toString());
-			}
+            String name = "";
+            String oppName = "";
+            if (myName.equals(from)) {
+                oppName = to;
+                name = DBWrapper.getInstance().getChatName(to);
+                contentvalues.put(ChatDBConstants.MESSAGE_ID,
+                        message.getPacketID());
+                contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD,
+                        UUID.randomUUID().toString());
+            } else {
+                oppName = from;
+                name = DBWrapper.getInstance().getChatName(from);
+                contentvalues.put(ChatDBConstants.MESSAGE_ID, UUID
+                        .randomUUID().toString());
+                String foregin = message.getPacketID();
+                if (foregin != null && !foregin.equals(""))
+                    contentvalues.put(
+                            ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD,
+                            message.getPacketID());
+                else
+                    contentvalues.put(
+                            ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID
+                                    .randomUUID().toString());
+            }
 
-			long currentTime = System.currentTimeMillis();
-			calender.setTimeInMillis(currentTime);
-			int new_msg_date = calender.get(Calendar.DATE);
-			int old_msg_date = 0;
-			long millis = chatDBWrapper.lastMessageInDB(oppName);
+            long currentTime = System.currentTimeMillis();
+            calender.setTimeInMillis(currentTime);
+            int new_msg_date = calender.get(Calendar.DATE);
+            int old_msg_date = 0;
+            long millis = chatDBWrapper.lastMessageInDB(oppName);
 
-			if(millis != -1){
-				calender.setTimeInMillis(millis);
-				old_msg_date = calender.get(Calendar.DATE);
-			}
-			if (old_msg_date == 0 || new_msg_date > old_msg_date) {
-				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
-				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
-			} else {
-				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
-			}
-			if(delay != null && delay.getStamp() != null) {
-				try {
-					String del = delay.getStamp();
-					long delay_millis = 0;
-					if(del != null && del.length() > 0)
-						delay_millis = convertDelayToMillis(del);
+            if (millis != -1) {
+                calender.setTimeInMillis(millis);
+                old_msg_date = calender.get(Calendar.DATE);
+            }
+            if (old_msg_date == 0 || new_msg_date > old_msg_date) {
+                contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
+                contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
+            } else {
+                contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
+            }
+            if (delay != null && delay.getStamp() != null) {
+                try {
+                    String del = delay.getStamp();
+                    long delay_millis = 0;
+                    if (del != null && del.length() > 0)
+                        delay_millis = convertDelayToMillis(del);
 //					System.out.println("[Delay in Message currentTime - ] "+currentTime/1000);
 //					System.out.println("[Delay in Message delay_millis - ] "+delay_millis/1000);
 //					System.out.println("[Delay in Message convertCurrentTimeintoMillis GMT+530 - ] "+convertCurrentTimeintoMillis()/1000);
-					if(delay_millis > 0)
-						contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, (delay_millis + convertCurrentTimeintoMillis()));
-					else
-						contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
-				}catch (Exception ex){
-					contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
-					ex.printStackTrace();
-				}
-			}else {
+                    if (delay_millis > 0)
+                        contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, (delay_millis + convertCurrentTimeintoMillis()));
+                    else
+                        contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
+                } catch (Exception ex) {
+                    contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
+                    ex.printStackTrace();
+                }
+            } else {
 //				System.out.println("[Delay in Message currentTime - ] "+currentTime/1000);
 //				System.out.println("[Delay in Message convertCurrentTimeintoMillis GMT+530 - ] "+convertCurrentTimeintoMillis()/1000);
-				contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
-			}
+                contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
+            }
 
-			contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
-			//Save USerID and SG in DB
-			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
-			//Add SG Name and user ID
-			if(sender_user_name != null) {
-				if(prefManager.getUserServerName(sender_user_name).equals(sender_user_name) || prefManager.getUserServerName(sender_user_name) == null)
-					prefManager.saveUserServerName(sender_user_name, message.getDisplayName());
-				if (sender_user_name != null && sender_user_name.contains("_"))
-					actual_domain = sender_user_name.substring(sender_user_name.indexOf('_') + 1);
+            contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
+            //Save USerID and SG in DB
+            contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
+            //Add SG Name and user ID
+            if (sender_user_name != null) {
+                if (prefManager.getUserServerName(sender_user_name).equals(sender_user_name) || prefManager.getUserServerName(sender_user_name) == null)
+                    prefManager.saveUserServerName(sender_user_name, message.getDisplayName());
+                if (sender_user_name != null && sender_user_name.contains("_"))
+                    actual_domain = sender_user_name.substring(sender_user_name.indexOf('_') + 1);
 
-				if (actual_domain.equals(prefManager.getUserDomain()))
-					contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
-				else
-					contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
-			}else
-				contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
-			chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
-			if(message.getDisplayName() != null)
-				if (chatListener != null)
-					chatListener.notifyChatRecieve(from, msg);
-		} catch (Exception e) {
-			Log.d(TAG, "Exception during save message" + from + "-" + to + "-"+ msg);
-		}
-	}
+                if (actual_domain.equals(prefManager.getUserDomain()))
+                    contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+                else
+                    contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+            } else
+                contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+            chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
+            if (message.getDisplayName() != null)
+                if (chatListener != null)
+                    chatListener.notifyChatRecieve(from, msg);
+        } catch (Exception e) {
+            Log.d(TAG, "Exception during save message" + from + "-" + to + "-" + msg);
+        }
+    }
 
-	public String saveMessage(String from, String to, String msg, Message message, byte messageType) {
-		String name = "";
-		String captionTag  = message.getMediaTagMessage();
-		String jsonBody  = message.getJsonBody();
-		Message.MessageDelay delay  = message.getMessageDelay();
-		String fileName  = message.getMediaFileName();
-		String locationMsg  = message.getLocationMessage();
-		boolean is_sent_from_console = false;
-		String actual_domain = null;
-		if(message.isConsoleMessage() != null && message.isConsoleMessage().equalsIgnoreCase("true"))
-			is_sent_from_console = true;
-		if(jsonBody != null){
-			try {
-				JSONObject jsonobj = new JSONObject(jsonBody);
-				if(jsonobj.has("caption") && jsonobj.getString("caption").toString().trim().length() > 0) {
-					captionTag = jsonobj.getString("caption").toString();
-				}
-				if(jsonobj.has("location") && jsonobj.getString("location").toString().trim().length() > 0) {
-					locationMsg = jsonobj.getString("location").toString();
-				}
-				if(jsonobj.has("fileName") && jsonobj.getString("fileName").toString().trim().length() > 0) {
-					fileName = jsonobj.getString("fileName").toString();
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-		try {
+    public String saveMessage(String from, String to, String msg, Message message, byte messageType) {
+        String name = "";
+        String captionTag = message.getMediaTagMessage();
+        String jsonBody = message.getJsonBody();
+        Message.MessageDelay delay = message.getMessageDelay();
+        String fileName = message.getMediaFileName();
+        String locationMsg = message.getLocationMessage();
+        boolean is_sent_from_console = false;
+        String actual_domain = null;
+        if (message.isConsoleMessage() != null && message.isConsoleMessage().equalsIgnoreCase("true"))
+            is_sent_from_console = true;
+        if (jsonBody != null) {
+            try {
+                JSONObject jsonobj = new JSONObject(jsonBody);
+                if (jsonobj.has("caption") && jsonobj.getString("caption").toString().trim().length() > 0) {
+                    captionTag = jsonobj.getString("caption").toString();
+                }
+                if (jsonobj.has("location") && jsonobj.getString("location").toString().trim().length() > 0) {
+                    locationMsg = jsonobj.getString("location").toString();
+                }
+                if (jsonobj.has("fileName") && jsonobj.getString("fileName").toString().trim().length() > 0) {
+                    fileName = jsonobj.getString("fileName").toString();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
 
-			ContentValues contentvalues = new ContentValues();
+            ContentValues contentvalues = new ContentValues();
 
-			if(is_sent_from_console){
-				contentvalues.put(ChatDBConstants.FROM_USER_FIELD, to);
-				String dest = message.getCustDest();
-				if(dest != null && dest.lastIndexOf("@") != -1)
-					dest = dest.substring(0, dest.lastIndexOf("@"));
-				from = to;
-				to = dest;
-				contentvalues.put(ChatDBConstants.TO_USER_FIELD, dest);
-			}else {
-				contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
-				contentvalues.put(ChatDBConstants.TO_USER_FIELD, to);
-			}
-			if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal()){
-				String sharedid = message.getGroupId();
-				String sharedid_display_name = message.getGroupDisplayname();
-				contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, sharedid_display_name+"<"+sharedid+">");
-			}else if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal()){
-				contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, message.getDisplayName() + "#786#" + from);
-			}else
-				contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, "");
+            if (is_sent_from_console) {
+                contentvalues.put(ChatDBConstants.FROM_USER_FIELD, to);
+                String dest = message.getCustDest();
+                if (dest != null && dest.lastIndexOf("@") != -1)
+                    dest = dest.substring(0, dest.lastIndexOf("@"));
+                from = to;
+                to = dest;
+                contentvalues.put(ChatDBConstants.TO_USER_FIELD, dest);
+            } else {
+                contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
+                contentvalues.put(ChatDBConstants.TO_USER_FIELD, to);
+            }
+            if (message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal()) {
+                String sharedid = message.getGroupId();
+                String sharedid_display_name = message.getGroupDisplayname();
+                contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, sharedid_display_name + "<" + sharedid + ">");
+            } else if (message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal()) {
+                contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, message.getDisplayName() + "#786#" + from);
+            } else
+                contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, "");
 
-			if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal()){
-				//This is special bulletin message
-				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message.getStatusMessageType().ordinal());
-			}else if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal()){
-				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message.getStatusMessageType().ordinal());
-			}
-			if((message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeImage
-					|| message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeVideo
-					|| message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeAudio)
-					&& msg != null && !from.equals(SharedPrefManager.getInstance().getUserName()) && captionTag != null)
-				if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal())
-					contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, captionTag);
-				else
-					contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, msg);
-			else if(captionTag!=null && !captionTag.equals(""))
-				contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, captionTag);
-			if(fileName != null && !fileName.equals("")){
-				contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, fileName);
-			}
-			if(message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeLocation){
-				if(locationMsg!=null && !locationMsg.equals(""))
-					contentvalues.put(ChatDBConstants.MESSAGE_TYPE_LOCATION, locationMsg);
-			}
-			contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, messageType);
-			contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD, new Integer(1));
-			contentvalues.put(ChatDBConstants.SEEN_FIELD, message.getMessageSeenState().ordinal());
+            if (message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal()) {
+                //This is special bulletin message
+                contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message.getStatusMessageType().ordinal());
+            } else if (message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal()) {
+                contentvalues.put(ChatDBConstants.MESSAGE_TYPE, message.getStatusMessageType().ordinal());
+            }
+            if ((message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeImage
+                    || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeVideo
+                    || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeAudio)
+                    && msg != null && !from.equals(SharedPrefManager.getInstance().getUserName()) && captionTag != null)
+                if (message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal())
+                    contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, captionTag);
+                else
+                    contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, msg);
+            else if (captionTag != null && !captionTag.equals(""))
+                contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, captionTag);
+            if (fileName != null && !fileName.equals("")) {
+                contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, fileName);
+            }
+            if (message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeLocation) {
+                if (locationMsg != null && !locationMsg.equals(""))
+                    contentvalues.put(ChatDBConstants.MESSAGE_TYPE_LOCATION, locationMsg);
+            }
+            contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, messageType);
+            contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD, new Integer(1));
+            contentvalues.put(ChatDBConstants.SEEN_FIELD, message.getMessageSeenState().ordinal());
 
-			if(message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeImage ||
-					message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeVideo)//This check has been made to receive picture/audio/video message URL in Subject
-			{
-				MediaBody media = message.getMediaBody();
-				if(media!=null){
-					String type = media.getType();
-					if(type!=null)
-						contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getXMPPMessageType().ordinal());
+            if (message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeImage ||
+                    message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeVideo)//This check has been made to receive picture/audio/video message URL in Subject
+            {
+                MediaBody media = message.getMediaBody();
+                if (media != null) {
+                    String type = media.getType();
+                    if (type != null)
+                        contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getXMPPMessageType().ordinal());
 
-					String urlImage = media.getUrl();
-					if(message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeVideo) {
-						if (urlImage != null && !(urlImage.endsWith(".mp4") || urlImage.endsWith(".3gp")) || urlImage.endsWith(".3gpp"))
-							urlImage = urlImage.substring(0, urlImage.lastIndexOf('.')) + ".mp4";
-					}
-					if(urlImage!=null)
-						contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, urlImage);
+                    String urlImage = media.getUrl();
+                    if (message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeVideo) {
+                        if (urlImage != null && !(urlImage.endsWith(".mp4") || urlImage.endsWith(".3gp")) || urlImage.endsWith(".3gpp"))
+                            urlImage = urlImage.substring(0, urlImage.lastIndexOf('.')) + ".mp4";
+                    }
+                    if (urlImage != null)
+                        contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, urlImage);
 
-					String thumbImage = media.getThumb_data();
-					if(thumbImage!=null)
-						contentvalues.put(ChatDBConstants.MESSAGE_THUMB_FIELD, thumbImage);
-				}
-			}else if(message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeDoc
-					|| message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypePdf
-					|| message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeXLS
-					|| message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypePPT)//This check has been made to receive picture/audio/video message URL in Subject
-			{
-				if(captionTag == null && fileName == null && msg != null)
-					contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, msg);
-				MediaBody media = message.getMediaBody();
-				if(media!=null){
-					String type = media.getType();
-					if(type!=null)
-						contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getXMPPMessageType().ordinal());
-					String urlPdf = media.getUrl();
-					if(urlPdf!=null){
-						contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, urlPdf);
-					}
-				}
-			}else if(message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeAudio)//This check has been made to receive picture/audio/video message URL in Subject
-			{
-				MediaBody media = message.getMediaBody();
-				if(media!=null){
-					String type = media.getType();
-					if(type!=null)
-						contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getXMPPMessageType().ordinal());
+                    String thumbImage = media.getThumb_data();
+                    if (thumbImage != null)
+                        contentvalues.put(ChatDBConstants.MESSAGE_THUMB_FIELD, thumbImage);
+                }
+            } else if (message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeDoc
+                    || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypePdf
+                    || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeXLS
+                    || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypePPT)//This check has been made to receive picture/audio/video message URL in Subject
+            {
+                if (captionTag == null && fileName == null && msg != null)
+                    contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, msg);
+                MediaBody media = message.getMediaBody();
+                if (media != null) {
+                    String type = media.getType();
+                    if (type != null)
+                        contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getXMPPMessageType().ordinal());
+                    String urlPdf = media.getUrl();
+                    if (urlPdf != null) {
+                        contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, urlPdf);
+                    }
+                }
+            } else if (message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeAudio)//This check has been made to receive picture/audio/video message URL in Subject
+            {
+                MediaBody media = message.getMediaBody();
+                if (media != null) {
+                    String type = media.getType();
+                    if (type != null)
+                        contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, message.getXMPPMessageType().ordinal());
 
-					String urlVoice = media.getUrl();
-					if(urlVoice!=null){
-						if(urlVoice.contains(".caf")){
-							urlVoice = urlVoice.replace(".caf", MEDIA_TYPE);
-						}
-						contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, urlVoice);
-					}
-					//Save here Audio Length
-					if(media.getAudioLength() != null)
-						contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_LENGTH, media.getAudioLength());
+                    String urlVoice = media.getUrl();
+                    if (urlVoice != null) {
+                        if (urlVoice.contains(".caf")) {
+                            urlVoice = urlVoice.replace(".caf", MEDIA_TYPE);
+                        }
+                        contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_URL_FIELD, urlVoice);
+                    }
+                    //Save here Audio Length
+                    if (media.getAudioLength() != null)
+                        contentvalues.put(ChatDBConstants.MESSAGE_MEDIA_LENGTH, media.getAudioLength());
 //					String thumbImage = media.getThumb_data();
 //					if(thumbImage!=null)
 //						contentvalues.put(ChatDBConstants.MESSAGE_THUMB_FIELD, thumbImage);
-				}
-			}
-			contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, msg);
-			// String name =
-			// cursor.getString(cursor.getColumnIndex(ChatDBConstants.CONTACT_NAMES_FIELD));
-			String myName = prefManager.getUserName();
+                }
+            }
+            contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, msg);
+            // String name =
+            // cursor.getString(cursor.getColumnIndex(ChatDBConstants.CONTACT_NAMES_FIELD));
+            String myName = prefManager.getUserName();
 
 
-			String oppName = "";
-			boolean isBroadCast = prefManager.isBroadCast(from);
-			if (myName.equals(from) || isBroadCast) {
-				name = DBWrapper.getInstance(context).getChatName(to);
-				if(is_sent_from_console) {
-					oppName = from;
-					contentvalues.put(ChatDBConstants.MESSAGE_ID, message.getConsolePacketId());
-				}
-				else {
-					oppName = to;
-					contentvalues.put(ChatDBConstants.MESSAGE_ID, message.getPacketID());
-				}
-				contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID.randomUUID().toString());
-			} else {
-				if(is_sent_from_console) {
-					oppName = to;
-					name = DBWrapper.getInstance(context).getChatName(to);
-				}
-				else {
-					oppName = from;
-					name = DBWrapper.getInstance(context).getChatName(from);
-				}
-				if(!name.contains("#786#")){
-					String senderDisplayName = message.getDisplayName();
-					if(senderDisplayName!=null && !senderDisplayName.equals("") ){
-						name = senderDisplayName+"#786#"+from;
-						String tMobile = "";
-						if(from.contains("_"))
-							tMobile = "+"+from.substring(0, from.indexOf("_"));
-						addNewContactEntry(senderDisplayName,from,tMobile);
-						String tFileId = message.getPicId();
-						if(tFileId!=null && !tFileId.equals(""))
-							prefManager.saveUserFileId(from, tFileId);
-					}
-				}
-				if(is_sent_from_console)
-					contentvalues.put(ChatDBConstants.MESSAGE_ID, message.getConsolePacketId());
-				else
-					contentvalues.put(ChatDBConstants.MESSAGE_ID, UUID.randomUUID().toString());
-				String foregin = message.getPacketID();
-				if (foregin != null && !foregin.equals(""))
-					contentvalues.put(
-							ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD,
-							message.getPacketID());
-				else
-					contentvalues.put(
-							ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID
-									.randomUUID().toString());
-			}
-			long currentTime = System.currentTimeMillis();
-			calender.setTimeInMillis(currentTime);
-			if(to.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")){
-				int new_msg_date = calender.get(Calendar.DATE);
+            String oppName = "";
+            boolean isBroadCast = prefManager.isBroadCast(from);
+            if (myName.equals(from) || isBroadCast) {
+                name = DBWrapper.getInstance(context).getChatName(to);
+                if (is_sent_from_console) {
+                    oppName = from;
+                    contentvalues.put(ChatDBConstants.MESSAGE_ID, message.getConsolePacketId());
+                } else {
+                    oppName = to;
+                    contentvalues.put(ChatDBConstants.MESSAGE_ID, message.getPacketID());
+                }
+                contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID.randomUUID().toString());
+            } else {
+                if (is_sent_from_console) {
+                    oppName = to;
+                    name = DBWrapper.getInstance(context).getChatName(to);
+                } else {
+                    oppName = from;
+                    name = DBWrapper.getInstance(context).getChatName(from);
+                }
+                if (!name.contains("#786#")) {
+                    String senderDisplayName = message.getDisplayName();
+                    if (senderDisplayName != null && !senderDisplayName.equals("")) {
+                        name = senderDisplayName + "#786#" + from;
+                        String tMobile = "";
+                        if (from.contains("_"))
+                            tMobile = "+" + from.substring(0, from.indexOf("_"));
+                        addNewContactEntry(senderDisplayName, from, tMobile);
+                        String tFileId = message.getPicId();
+                        if (tFileId != null && !tFileId.equals(""))
+                            prefManager.saveUserFileId(from, tFileId);
+                    }
+                }
+                if (is_sent_from_console)
+                    contentvalues.put(ChatDBConstants.MESSAGE_ID, message.getConsolePacketId());
+                else
+                    contentvalues.put(ChatDBConstants.MESSAGE_ID, UUID.randomUUID().toString());
+                String foregin = message.getPacketID();
+                if (foregin != null && !foregin.equals(""))
+                    contentvalues.put(
+                            ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD,
+                            message.getPacketID());
+                else
+                    contentvalues.put(
+                            ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID
+                                    .randomUUID().toString());
+            }
+            long currentTime = System.currentTimeMillis();
+            calender.setTimeInMillis(currentTime);
+            if (to.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")) {
+                int new_msg_date = calender.get(Calendar.DATE);
 
-				int old_msg_date = 0;
-				long milis = chatDBWrapper.latestMessageInDBForBulletin();
-				if(milis != -1){
-					calender.setTimeInMillis(milis);
-					old_msg_date = calender.get(Calendar.DATE);
-				}
-				if (old_msg_date == 0 || new_msg_date > old_msg_date) {
-					contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
-				} else {
-					contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
-				}
-			}else {
+                int old_msg_date = 0;
+                long milis = chatDBWrapper.latestMessageInDBForBulletin();
+                if (milis != -1) {
+                    calender.setTimeInMillis(milis);
+                    old_msg_date = calender.get(Calendar.DATE);
+                }
+                if (old_msg_date == 0 || new_msg_date > old_msg_date) {
+                    contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
+                } else {
+                    contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
+                }
+            } else {
 //				int date = calender.get(Calendar.DATE);
 //				int oldDate = date;
 //				long milis = chatDBWrapper.lastMessageInDB(oppName);
@@ -3607,351 +3667,360 @@ public class ChatService extends Service implements interfaceInstances {
 //					contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
 //				}
 
-				int new_msg_date = calender.get(Calendar.DATE);
-				int old_msg_date = 0;
-				long millis = chatDBWrapper.lastMessageInDB(oppName);
+                int new_msg_date = calender.get(Calendar.DATE);
+                int old_msg_date = 0;
+                long millis = chatDBWrapper.lastMessageInDB(oppName);
 
-				if(millis != -1){
-					calender.setTimeInMillis(millis);
-					old_msg_date = calender.get(Calendar.DATE);
-				}
-				if ((old_msg_date == 0 || new_msg_date > old_msg_date)
-						&& message.getStatusMessageType().ordinal() != Message.StatusMessageType.broadcasttoall.ordinal()
-						&& !prefManager.isSharedIDContact(to)) {
-					contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
-				} else {
-					contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
-				}
-			}
-			if(delay != null && delay.getStamp() != null) {
-				try {
-					String del = delay.getStamp();
-					long delay_millis = 0;
-					if(del != null && del.length() > 0)
-						delay_millis = convertDelayToMillis(del);
+                if (millis != -1) {
+                    calender.setTimeInMillis(millis);
+                    old_msg_date = calender.get(Calendar.DATE);
+                }
+                if ((old_msg_date == 0 || new_msg_date > old_msg_date)
+                        && message.getStatusMessageType().ordinal() != Message.StatusMessageType.broadcasttoall.ordinal()
+                        && !prefManager.isSharedIDContact(to)) {
+                    contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
+                } else {
+                    contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
+                }
+            }
+            if (delay != null && delay.getStamp() != null) {
+                try {
+                    String del = delay.getStamp();
+                    long delay_millis = 0;
+                    if (del != null && del.length() > 0)
+                        delay_millis = convertDelayToMillis(del);
 //					System.out.println("[Delay in Message currentTime - ] "+currentTime);
 //					System.out.println("[Delay in Message delay_millis - ] "+delay_millis);
 //					System.out.println("[Delay in Message convertCurrentTimeintoMillis GMT+530 - ] "+convertCurrentTimeintoMillis());
-					if(delay_millis > 0)
-						contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, (delay_millis + convertCurrentTimeintoMillis()));
-					else
-						contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
-				}catch (Exception ex){
-					contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
-					ex.printStackTrace();
-				}
-			}else
-				contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
+                    if (delay_millis > 0)
+                        contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, (delay_millis + convertCurrentTimeintoMillis()));
+                    else
+                        contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
+                } catch (Exception ex) {
+                    contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
+                    ex.printStackTrace();
+                }
+            } else
+                contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
 
-			if(SharedPrefManager.getInstance().isBroadCast(to)) {
-				if(SharedPrefManager.getInstance().getBroadcastFirstTimeName(to) != null)
-					contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, SharedPrefManager.getInstance().getBroadcastFirstTimeName(to));
-				else {
-					SharedPrefManager.getInstance().saveBroadcastFirstTimeName(to, name);
-					contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
-				}
-			}else if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal())
-				contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, SharedPrefManager.getInstance().getUserDomain() + "-all");
-			else
-				contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
-			//Save USerID and SG in DB
-			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
-			//Add SG Name and user ID
-			if(from != null && from.contains("_"))
-				actual_domain = from.substring(from.indexOf('_') + 1);
+            if (SharedPrefManager.getInstance().isBroadCast(to)) {
+                if (SharedPrefManager.getInstance().getBroadcastFirstTimeName(to) != null)
+                    contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, SharedPrefManager.getInstance().getBroadcastFirstTimeName(to));
+                else {
+                    SharedPrefManager.getInstance().saveBroadcastFirstTimeName(to, name);
+                    contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
+                }
+            } else if (message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal())
+                contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, SharedPrefManager.getInstance().getUserDomain() + "-all");
+            else
+                contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
+            //Save USerID and SG in DB
+            contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
+            //Add SG Name and user ID
+            if (from != null && from.contains("_"))
+                actual_domain = from.substring(from.indexOf('_') + 1);
 
-			if(actual_domain.equals(prefManager.getUserDomain()))
-				contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
-			else
-				contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
-			if(prefManager.getUserServerName(from).equals(from) || prefManager.getUserServerName(from) == null)
-				prefManager.saveUserServerName(from, message.getDisplayName());
-			System.out.println("ChatService - 2::saveMessage: - "+contentvalues.toString());
-			long insertedInfo = chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
-			Log.e(TAG, "insertedInfo during message save: " + insertedInfo + " , " + contentvalues.valueSet().toArray());
-			if (chatListener != null)
-				chatListener.notifyChatRecieve(from, msg);
-		} catch (Exception e) {
-			Log.d(TAG, "Exception during save message" + from + "-" + to + "-" + msg);
-		}
-		return name;
-	}
+            if (actual_domain.equals(prefManager.getUserDomain()))
+                contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+            else
+                contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+            if (prefManager.getUserServerName(from).equals(from) || prefManager.getUserServerName(from) == null)
+                prefManager.saveUserServerName(from, message.getDisplayName());
+            System.out.println("ChatService - 2::saveMessage: - " + contentvalues.toString());
+            long insertedInfo = chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
+            Log.e(TAG, "insertedInfo during message save: " + insertedInfo + " , " + contentvalues.valueSet().toArray());
+            if (chatListener != null)
+                chatListener.notifyChatRecieve(from, msg);
+        } catch (Exception e) {
+            Log.d(TAG, "Exception during save message" + from + "-" + to + "-" + msg);
+        }
+        return name;
+    }
 
-	public String convertStringToWhereAs(String strs) {
-		if (strs != null && strs.contains("[") && strs.contains("]")) {
-			// Gson gson = new Gson();
-			// strs = gson.toJson(strs);
-			strs = strs.replace('[', '(');
-			strs = strs.replace(']', ')');
-		}
-		return strs;
-	}
+    public String convertStringToWhereAs(String strs) {
+        if (strs != null && strs.contains("[") && strs.contains("]")) {
+            // Gson gson = new Gson();
+            // strs = gson.toJson(strs);
+            strs = strs.replace('[', '(');
+            strs = strs.replace(']', ')');
+        }
+        return strs;
+    }
 
-	public void setConnection(PacketListener lstener) {
-		// this.connection = connection;
-		if (connection != null) {
-			// Add a packet listener to get messages sent to us
-			PacketFilter filter = new MessageTypeFilter(Message.Type.chat);
-			connection.addPacketListener(lstener, filter);
-			// connection.
-		}
-	}
-	public void setConnectionStatusListener(ConnectionListener connectionListener) {
-		// this.connection = connection;
-		if (connection != null) {
-			connection.addConnectionListener(connectionListener);
-		}
-	}
+    public void setConnection(PacketListener lstener) {
+        // this.connection = connection;
+        if (connection != null) {
+            // Add a packet listener to get messages sent to us
+            PacketFilter filter = new MessageTypeFilter(Message.Type.chat);
+            connection.addPacketListener(lstener, filter);
+            // connection.
+        }
+    }
 
-	public void setTypingListener(PacketListener lstener) {
-		// this.connection = connection;
-		if (connection != null) {
-			// Add a packet listener to get messages sent to us
-			PacketFilter filter = new MessageTypeFilter(Message.Type.chat);
-			PacketFilter packetFilter = new PacketExtensionFilter("composing",
-					"http://jabber.org/protocol/chatstates");
-			connection.addPacketListener(lstener, packetFilter);
-			// connection.
-		}
-	}
-	public void setGroupTypingListener(PacketListener lstener) {
-		// this.connection = connection;
-		if (connection != null) {
-			// Add a packet listener to get messages sent to us
-			PacketFilter filter = new MessageTypeFilter(Message.Type.groupchat);
-			PacketFilter packetFilter = new PacketExtensionFilter("composing",
-					"http://jabber.org/protocol/chatstates");
-			connection.addPacketListener(lstener, packetFilter);
-			// connection.
-		}
-	}
-	public void setRecordingStatusListener(PacketListener lstener) {
-		// this.connection = connection;
-		if (connection != null) {
-			// Add a packet listener to get messages sent to us
-			PacketFilter filter = new MessageTypeFilter(Message.Type.chat);
-			PacketFilter packetFilter = new PacketExtensionFilter("recording",
-					"http://jabber.org/protocol/chatstates");
-			connection.addPacketListener(lstener, packetFilter);
-			// connection.
-		}
-	}
-	public void setListeningStatusListener(PacketListener lstener) {
-		// this.connection = connection;
-		if (connection != null) {
-			// Add a packet listener to get messages sent to us
-			PacketFilter filter = new MessageTypeFilter(Message.Type.chat);
-			PacketFilter packetFilter = new PacketExtensionFilter("listening",
-					"http://jabber.org/protocol/chatstates");
-			connection.addPacketListener(lstener, packetFilter);
-			// connection.
-		}
-	}
+    public void setConnectionStatusListener(ConnectionListener connectionListener) {
+        // this.connection = connection;
+        if (connection != null) {
+            connection.addConnectionListener(connectionListener);
+        }
+    }
 
-	public void setInvitationListener(PacketListener lstener) {
-		if (connection != null) {
-			connection.addPacketListener(lstener, invitationFilter);
-		}
-	}
+    public void setTypingListener(PacketListener lstener) {
+        // this.connection = connection;
+        if (connection != null) {
+            // Add a packet listener to get messages sent to us
+            PacketFilter filter = new MessageTypeFilter(Message.Type.chat);
+            PacketFilter packetFilter = new PacketExtensionFilter("composing",
+                    "http://jabber.org/protocol/chatstates");
+            connection.addPacketListener(lstener, packetFilter);
+            // connection.
+        }
+    }
 
-	public void setGroupListener(PacketListener lstener) {
-		// this.connection = connection;
-		if (connection != null) {
-			// Add a packet listener to get messages sent to us
-			PacketFilter filter = new MessageTypeFilter(Message.Type.groupchat);
-			connection.addPacketListener(lstener, filter);
-			// connection.
-		}
-	}
+    public void setGroupTypingListener(PacketListener lstener) {
+        // this.connection = connection;
+        if (connection != null) {
+            // Add a packet listener to get messages sent to us
+            PacketFilter filter = new MessageTypeFilter(Message.Type.groupchat);
+            PacketFilter packetFilter = new PacketExtensionFilter("composing",
+                    "http://jabber.org/protocol/chatstates");
+            connection.addPacketListener(lstener, packetFilter);
+            // connection.
+        }
+    }
 
-	public void sendAck(String userName, List<String> strList,
-						Message.SeenState state) {
-		try {
-			if (userName == null || userName.equals("")) {
-				Toast.makeText(context,
-						"userName is not correct: " + userName, 1000).show();
-				return;
-			}
-			if (strList == null || strList.equals("")) {
-				Toast.makeText(context,
-						"Message id should not be empty or null: " + strList,
-						1000).show();
-				return;
-			}
+    public void setRecordingStatusListener(PacketListener lstener) {
+        // this.connection = connection;
+        if (connection != null) {
+            // Add a packet listener to get messages sent to us
+            PacketFilter filter = new MessageTypeFilter(Message.Type.chat);
+            PacketFilter packetFilter = new PacketExtensionFilter("recording",
+                    "http://jabber.org/protocol/chatstates");
+            connection.addPacketListener(lstener, packetFilter);
+            // connection.
+        }
+    }
 
-			if (connection == null || !connection.isConnected()) {
-				Toast.makeText(
-						context,
-						"You have not logged in on chat server. Please try after some time",
-						1000).show();
-				// chatLogin(chatCountListener);
-				return;
-			}
-			if (userName.equals(userMe)) {
-				Toast.makeText(context,
-						"Self messaging are not allowed.", 1000).show();
-				return;
-			}
-			String to = userName + "@" + Constants.CHAT_DOMAIN;
-			Message msg = new Message(to, Message.Type.chat);
-			msg.setBody("");
+    public void setListeningStatusListener(PacketListener lstener) {
+        // this.connection = connection;
+        if (connection != null) {
+            // Add a packet listener to get messages sent to us
+            PacketFilter filter = new MessageTypeFilter(Message.Type.chat);
+            PacketFilter packetFilter = new PacketExtensionFilter("listening",
+                    "http://jabber.org/protocol/chatstates");
+            connection.addPacketListener(lstener, packetFilter);
+            // connection.
+        }
+    }
 
-			String[] strs = strList.toArray(new String[strList.size()]);
-			Log.d(TAG, "sent packet ids string : " + strs.toString());
-			Gson gson = new Gson();
-			msg.setPacketID(StringUtils.escapeForXML(gson.toJson(strs)));
-			Log.d(TAG, "sent packet packet id  : " + msg.getPacketID());
-			msg.setDisplayName(prefManager.getDisplayName());
-			String picId = prefManager.getUserFileId(prefManager.getUserName());
-			if(picId != null)
-				msg.setPicId(picId);
-			msg.setMessageSeenState(state);
-			if (connection != null && connection.isConnected()) {
-				connection.sendPacket(msg);
-				Log.d(TAG, "sent packet ack : " + msg.toXML() + "---" + gson.toJson(strs));
-				chatDBWrapper.updateFrndsSeenStatus(userName,
-						convertStringToWhereAs(gson.toJson(strs)),
-						msg.getMessageSeenState());
-			} else {
-				Toast.makeText( context, "You are not connected with server. Please try after some time", 1000).show();
-				// connection = null;
-				return;
-			}
-		} catch (Exception e) {
-			Log.d(TAG, "Exception occured during sendAck." + e.toString());
-		}
-	}
-	public void sendGroupOrBroadcastAck(String userName, List<String> strList,
-										Message.SeenState state,String broadCastOrGroupId23) {
-		try {
-			if (userName == null || userName.equals("")) {
-				Toast.makeText(context,
-						"userName is not correct: " + userName, 1000).show();
-				return;
-			}
-			if (strList == null || strList.equals("")) {
-				Toast.makeText(context,
-						"Message id should not be empty or null: " + strList,
-						1000).show();
-				return;
-			}
+    public void setInvitationListener(PacketListener lstener) {
+        if (connection != null) {
+            connection.addPacketListener(lstener, invitationFilter);
+        }
+    }
 
-			if (connection == null || !connection.isConnected()) {
-				Toast.makeText(
-						context,
-						"You have not logged in on chat server. Please try after some time",
-						1000).show();
-				// chatLogin(chatCountListener);
-				return;
-			}
-			if (userName.equals(userMe)) {
-				Toast.makeText(context,
-						"Self messaging are not allowed.", 1000).show();
-				return;
-			}
-			String to = userName + "@" + Constants.CHAT_DOMAIN;
-			Message msg = new Message(to, Message.Type.chat);
-			msg.setBody("");
+    public void setGroupListener(PacketListener lstener) {
+        // this.connection = connection;
+        if (connection != null) {
+            // Add a packet listener to get messages sent to us
+            PacketFilter filter = new MessageTypeFilter(Message.Type.groupchat);
+            connection.addPacketListener(lstener, filter);
+            // connection.
+        }
+    }
 
-			String[] strs = strList.toArray(new String[strList.size()]);
-			Log.d(TAG, "sent packet ids string : " + strs.toString());
-			Gson gson = new Gson();
-			msg.setPacketID(StringUtils.escapeForXML(gson.toJson(strs)));
-			Log.d(TAG, "sent packet packet id  : " + msg.getPacketID());
-			msg.setDisplayName(prefManager.getDisplayName());
-			String picId = prefManager.getUserFileId(prefManager.getUserName());
-			if(picId != null)
-				msg.setPicId(picId);
-			msg.setMessageSeenState(state);
-			msg.setStatusMessageType(Message.StatusMessageType.group);
-			if (connection != null && connection.isConnected()) {
-				connection.sendPacket(msg);
-				Log.d(TAG,
-						"sent packet ack : " + msg.toXML() + "---"
-								+ gson.toJson(strs));
-				chatDBWrapper.updateFrndsSeenStatus(userName,
-						convertStringToWhereAs(gson.toJson(strs)),
-						msg.getMessageSeenState());
-			} else {
-				Toast.makeText(
-						context,
-						"You are not connected with server. Please try after some time",
-						1000).show();
-				// connection = null;
-				return;
-			}
-		} catch (Exception e) {
-			Log.d(TAG, "Exception occured during sendAck." + e.toString());
-		}
-	}
-	public void setTypingListener(TypingListener typingNotifier) {
-		this.typingNotifier = typingNotifier;
-	}
+    public void sendAck(String userName, List<String> strList,
+                        Message.SeenState state) {
+        try {
+            if (userName == null || userName.equals("")) {
+                Toast.makeText(context,
+                        "userName is not correct: " + userName, 1000).show();
+                return;
+            }
+            if (strList == null || strList.equals("")) {
+                Toast.makeText(context,
+                        "Message id should not be empty or null: " + strList,
+                        1000).show();
+                return;
+            }
 
-	public void setChatListener(ChatCountListener chatListener) {
-		this.chatListener = chatListener;
-	}
-	public void setProfileUpdateListener(ProfileUpdateListener profileUpdateNotifier) {
-		this.profileUpdateNotifier = profileUpdateNotifier;
-	}
+            if (connection == null || !connection.isConnected()) {
+                Toast.makeText(
+                        context,
+                        "You have not logged in on chat server. Please try after some time",
+                        1000).show();
+                // chatLogin(chatCountListener);
+                return;
+            }
+            if (userName.equals(userMe)) {
+                Toast.makeText(context,
+                        "Self messaging are not allowed.", 1000).show();
+                return;
+            }
+            String to = userName + "@" + Constants.CHAT_DOMAIN;
+            Message msg = new Message(to, Message.Type.chat);
+            msg.setBody("");
 
-	public void setChatCountListener(ChatCountListener chatCountListener) {
-		this.chatCountListener = chatCountListener;
-	}
+            String[] strs = strList.toArray(new String[strList.size()]);
+            Log.d(TAG, "sent packet ids string : " + strs.toString());
+            Gson gson = new Gson();
+            msg.setPacketID(StringUtils.escapeForXML(gson.toJson(strs)));
+            Log.d(TAG, "sent packet packet id  : " + msg.getPacketID());
+            msg.setDisplayName(prefManager.getDisplayName());
+            String picId = prefManager.getUserFileId(prefManager.getUserName());
+            if (picId != null)
+                msg.setPicId(picId);
+            msg.setMessageSeenState(state);
+            if (connection != null && connection.isConnected()) {
+                connection.sendPacket(msg);
+                Log.d(TAG, "sent packet ack : " + msg.toXML() + "---" + gson.toJson(strs));
+                chatDBWrapper.updateFrndsSeenStatus(userName,
+                        convertStringToWhereAs(gson.toJson(strs)),
+                        msg.getMessageSeenState());
+            } else {
+                Toast.makeText(context, "You are not connected with server. Please try after some time", 1000).show();
+                // connection = null;
+                return;
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Exception occured during sendAck." + e.toString());
+        }
+    }
 
-	public void clearAllNotifications() {
-		if (notificationManager != null){
-			notificationManager.cancelAll();
-			isFirstMessage = true;
-			previousUser = "";
-		}
-	}
-	public boolean sendGroupOwnerTaskMessage(String groupCreaterName, String groupCreaterFileID, String userName, String groupUUID,String groupDisplayName,
-											 String description, String groupPicId, String memberCount, Message.XMPPMessageType xMPPMessageType) {
-		String to = userName + "@" + Constants.CHAT_DOMAIN;
-		Log.d(TAG, "Sending text [" + description + "] to [" + to + "]");
-		Message msg = new Message(to);// , Message.Type.chat);
-		int type = xMPPMessageType.ordinal();
+    public void sendGroupOrBroadcastAck(String userName, List<String> strList,
+                                        Message.SeenState state, String broadCastOrGroupId23) {
+        try {
+            if (userName == null || userName.equals("")) {
+                Toast.makeText(context,
+                        "userName is not correct: " + userName, 1000).show();
+                return;
+            }
+            if (strList == null || strList.equals("")) {
+                Toast.makeText(context,
+                        "Message id should not be empty or null: " + strList,
+                        1000).show();
+                return;
+            }
 
-		if (type == XMPPMessageType.atMeXmppMessageTypeNewCreateGroup.ordinal()) {
-			Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeNewCreateGroup: " + xMPPMessageType);
-		} else if (type == XMPPMessageType.atMeXmppMessageTypeNewCreateBroadCast.ordinal()) {
-			Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeNewCreateBroadCast: " + xMPPMessageType);
-		}
+            if (connection == null || !connection.isConnected()) {
+                Toast.makeText(
+                        context,
+                        "You have not logged in on chat server. Please try after some time",
+                        1000).show();
+                // chatLogin(chatCountListener);
+                return;
+            }
+            if (userName.equals(userMe)) {
+                Toast.makeText(context,
+                        "Self messaging are not allowed.", 1000).show();
+                return;
+            }
+            String to = userName + "@" + Constants.CHAT_DOMAIN;
+            Message msg = new Message(to, Message.Type.chat);
+            msg.setBody("");
+
+            String[] strs = strList.toArray(new String[strList.size()]);
+            Log.d(TAG, "sent packet ids string : " + strs.toString());
+            Gson gson = new Gson();
+            msg.setPacketID(StringUtils.escapeForXML(gson.toJson(strs)));
+            Log.d(TAG, "sent packet packet id  : " + msg.getPacketID());
+            msg.setDisplayName(prefManager.getDisplayName());
+            String picId = prefManager.getUserFileId(prefManager.getUserName());
+            if (picId != null)
+                msg.setPicId(picId);
+            msg.setMessageSeenState(state);
+            msg.setStatusMessageType(Message.StatusMessageType.group);
+            if (connection != null && connection.isConnected()) {
+                connection.sendPacket(msg);
+                Log.d(TAG,
+                        "sent packet ack : " + msg.toXML() + "---"
+                                + gson.toJson(strs));
+                chatDBWrapper.updateFrndsSeenStatus(userName,
+                        convertStringToWhereAs(gson.toJson(strs)),
+                        msg.getMessageSeenState());
+            } else {
+                Toast.makeText(
+                        context,
+                        "You are not connected with server. Please try after some time",
+                        1000).show();
+                // connection = null;
+                return;
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Exception occured during sendAck." + e.toString());
+        }
+    }
+
+    public void setTypingListener(TypingListener typingNotifier) {
+        this.typingNotifier = typingNotifier;
+    }
+
+    public void setChatListener(ChatCountListener chatListener) {
+        this.chatListener = chatListener;
+    }
+
+    public void setProfileUpdateListener(ProfileUpdateListener profileUpdateNotifier) {
+        this.profileUpdateNotifier = profileUpdateNotifier;
+    }
+
+    public void setChatCountListener(ChatCountListener chatCountListener) {
+        this.chatCountListener = chatCountListener;
+    }
+
+    public void clearAllNotifications() {
+        if (notificationManager != null) {
+            notificationManager.cancelAll();
+            isFirstMessage = true;
+            previousUser = "";
+        }
+    }
+
+    public boolean sendGroupOwnerTaskMessage(String groupCreaterName, String groupCreaterFileID, String userName, String groupUUID, String groupDisplayName,
+                                             String description, String groupPicId, String memberCount, Message.XMPPMessageType xMPPMessageType) {
+        String to = userName + "@" + Constants.CHAT_DOMAIN;
+        Log.d(TAG, "Sending text [" + description + "] to [" + to + "]");
+        Message msg = new Message(to);// , Message.Type.chat);
+        int type = xMPPMessageType.ordinal();
+
+        if (type == XMPPMessageType.atMeXmppMessageTypeNewCreateGroup.ordinal()) {
+            Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeNewCreateGroup: " + xMPPMessageType);
+        } else if (type == XMPPMessageType.atMeXmppMessageTypeNewCreateBroadCast.ordinal()) {
+            Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeNewCreateBroadCast: " + xMPPMessageType);
+        }
 
 //		if(isGroupChat)
 //			msg.setType(Message.Type.groupchat);
 //		else
-		msg.setType(Message.Type.chat);
-		msg.setXMPPMessageType(xMPPMessageType);
-		if(description!=null && !description.equals(""))
-			msg.setBody(description);
-		if(groupCreaterName!=null && !groupCreaterName.equals(""))
-			msg.setDisplayName(groupCreaterName);
-		msg.setGroupOwnerName(userName);
-		if(groupCreaterFileID!=null && !groupCreaterFileID.equals(""))
-			msg.setPicId(groupCreaterFileID);
-		msg.setGroupDisplayName(groupDisplayName);
-		if(memberCount!=null && !memberCount.equals(""))
-			msg.setGroupmemberCount(memberCount);
-		if(groupPicId!=null && !groupPicId.equals(""))
-			msg.setGroupPicId(groupPicId);
-		if(groupUUID!=null && !groupUUID.equals(""))
-			msg.setGroupId(groupUUID);
-		msg.setPacketID(UUID.randomUUID().toString());
-		Log.d(TAG, "sent packet: " + msg.toXML());
-		if (connection != null && connection.isConnected()
-				&& connection.isAuthenticated()) {
-			connection.sendPacket(msg);
-		} else {
-			return false;
-		}
+        msg.setType(Message.Type.chat);
+        msg.setXMPPMessageType(xMPPMessageType);
+        if (description != null && !description.equals(""))
+            msg.setBody(description);
+        if (groupCreaterName != null && !groupCreaterName.equals(""))
+            msg.setDisplayName(groupCreaterName);
+        msg.setGroupOwnerName(userName);
+        if (groupCreaterFileID != null && !groupCreaterFileID.equals(""))
+            msg.setPicId(groupCreaterFileID);
+        msg.setGroupDisplayName(groupDisplayName);
+        if (memberCount != null && !memberCount.equals(""))
+            msg.setGroupmemberCount(memberCount);
+        if (groupPicId != null && !groupPicId.equals(""))
+            msg.setGroupPicId(groupPicId);
+        if (groupUUID != null && !groupUUID.equals(""))
+            msg.setGroupId(groupUUID);
+        msg.setPacketID(UUID.randomUUID().toString());
+        Log.d(TAG, "sent packet: " + msg.toXML());
+        if (connection != null && connection.isConnected()
+                && connection.isAuthenticated()) {
+            connection.sendPacket(msg);
+        } else {
+            return false;
+        }
 //		saveMessage(userMe, userName, message, msg);
 //		sendOffLineMessages1();
-		return true;
-	}
-	public boolean sendGroupTaskMessage(String createrName, String createrFileID, String groupOwner, String userName, String groupUUID,String groupDisplayName, String description, String picId,
-										String memberCount, Message.XMPPMessageType xMPPMessageType) {
+        return true;
+    }
+
+    public boolean sendGroupTaskMessage(String createrName, String createrFileID, String groupOwner, String userName, String groupUUID, String groupDisplayName, String description, String picId,
+                                        String memberCount, Message.XMPPMessageType xMPPMessageType) {
 //		boolean isGroupChat = false;
 //		if (SharedPrefManager.getInstance().isGroupChat(userName)
 //				&& !description.equals("You are welcome in " + userName + " group.")) {
@@ -3966,487 +4035,564 @@ public class ChatService extends Service implements interfaceInstances {
 //					"Self messaging are not allowed.", 1000).show();
 //			return false;
 //		}
-		String to = userName + "@" + Constants.CHAT_DOMAIN;
+        String to = userName + "@" + Constants.CHAT_DOMAIN;
 //		if (isGroupChat) {
 //			to = userName + "@conference." + Constants.CHAT_DOMAIN;
 //		}
-		Log.d(TAG, "Sending text [" + description + "] to [" + to + "]");
-		Message msg = new Message(to);// , Message.Type.chat);
-		int type = xMPPMessageType.ordinal();
+        Log.d(TAG, "Sending text [" + description + "] to [" + to + "]");
+        Message msg = new Message(to);// , Message.Type.chat);
+        int type = xMPPMessageType.ordinal();
 
-		if (type == XMPPMessageType.atMeXmppMessageTypeNewCreateGroup.ordinal()) {
-			Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeNewCreateGroup: " + xMPPMessageType);
-		} else if (type == XMPPMessageType.atMeXmppMessageTypeNewCreateBroadCast.ordinal()) {
-			Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeNewCreateBroadCast: " + xMPPMessageType);
-		}
+        if (type == XMPPMessageType.atMeXmppMessageTypeNewCreateGroup.ordinal()) {
+            Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeNewCreateGroup: " + xMPPMessageType);
+        } else if (type == XMPPMessageType.atMeXmppMessageTypeNewCreateBroadCast.ordinal()) {
+            Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeNewCreateBroadCast: " + xMPPMessageType);
+        }
 
 //		if(isGroupChat)
 //			msg.setType(Message.Type.groupchat);
 //		else
-		msg.setType(Message.Type.chat);
-		msg.setXMPPMessageType(xMPPMessageType);
-		if(description!=null && !description.equals(""))
-			msg.setMediaTagMessage(description);
-		if(createrName!=null && !createrName.equals(""))
-			msg.setDisplayName(createrName);
-		if(groupOwner!=null && !groupOwner.equals(""))
-			msg.setDisplayName(createrName);
-		if(groupDisplayName!=null && !groupDisplayName.equals(""))
-			msg.setGroupDisplayName(groupDisplayName);
-		if(createrFileID!=null && !createrFileID.equals(""))
-			msg.setPicId(createrFileID);
-		if(picId!=null && !picId.equals(""))
-			msg.setGroupPicId(picId);
-		if(memberCount!=null && !memberCount.equals(""))
-			msg.setGroupmemberCount(memberCount);
-		if(groupUUID!=null && !groupUUID.equals(""))
-			msg.setGroupId(groupUUID);
-		msg.setPacketID(UUID.randomUUID().toString());
-		Log.d(TAG, "sent packet: " + msg.toXML());
-		if (connection != null && connection.isConnected()
-				&& connection.isAuthenticated()) {
-			connection.sendPacket(msg);
-		} else {
-			return false;
-		}
+        msg.setType(Message.Type.chat);
+        msg.setXMPPMessageType(xMPPMessageType);
+        if (description != null && !description.equals(""))
+            msg.setMediaTagMessage(description);
+        if (createrName != null && !createrName.equals(""))
+            msg.setDisplayName(createrName);
+        if (groupOwner != null && !groupOwner.equals(""))
+            msg.setDisplayName(createrName);
+        if (groupDisplayName != null && !groupDisplayName.equals(""))
+            msg.setGroupDisplayName(groupDisplayName);
+        if (createrFileID != null && !createrFileID.equals(""))
+            msg.setPicId(createrFileID);
+        if (picId != null && !picId.equals(""))
+            msg.setGroupPicId(picId);
+        if (memberCount != null && !memberCount.equals(""))
+            msg.setGroupmemberCount(memberCount);
+        if (groupUUID != null && !groupUUID.equals(""))
+            msg.setGroupId(groupUUID);
+        msg.setPacketID(UUID.randomUUID().toString());
+        Log.d(TAG, "sent packet: " + msg.toXML());
+        if (connection != null && connection.isConnected()
+                && connection.isAuthenticated()) {
+            connection.sendPacket(msg);
+        } else {
+            return false;
+        }
 //		saveMessage(userMe, userName, message, msg);
 //		sendOffLineMessages1();
-		return true;
-	}
-	public boolean sendSGSubAdminAddRemove(String userName, Message.XMPPMessageType xMPPMessageType) {
-		String to = userName + "@" + Constants.CHAT_DOMAIN;
-		Message msg = new Message(to);
-		msg.setType(Message.Type.chat);
-		msg.setXMPPMessageType(xMPPMessageType);
-		msg.setPacketID(UUID.randomUUID().toString());
-		Log.d(TAG, "sent packet: " + msg.toXML());
-		if (connection != null && connection.isConnected()
-				&& connection.isAuthenticated()) {
-			connection.sendPacket(msg);
-		} else {
-			return false;
-		}
-		return true;
-	}
+        return true;
+    }
 
-	public boolean sendInfoMessage(String groupName, String message,
-								   Message.XMPPMessageType xMPPMessageType) {
-		boolean isGroupChat = false;
-		if (SharedPrefManager.getInstance().isGroupChat(groupName)
-				&& !message
-				.equals("You are welcome in " + groupName + " group.")) {
-			// sendGroupMessage(userName, message);
-			// return;
-			isGroupChat = true;
-		}
+    public boolean sendSGSubAdminAddRemove(String userName, Message.XMPPMessageType xMPPMessageType) {
+        String to = userName + "@" + Constants.CHAT_DOMAIN;
+        Message msg = new Message(to);
+        msg.setType(Message.Type.chat);
+        msg.setXMPPMessageType(xMPPMessageType);
+        msg.setPacketID(UUID.randomUUID().toString());
+        Log.d(TAG, "sent packet: " + msg.toXML());
+        if (connection != null && connection.isConnected()
+                && connection.isAuthenticated()) {
+            connection.sendPacket(msg);
+        } else {
+            return false;
+        }
+        return true;
+    }
 
-		if (groupName == null || groupName.equals("")) {
-			Toast.makeText(context,
-					"userName is not correct: " + groupName, 1000).show();
-			return false;
-		}
-		if (message == null || message.equals("")) {
-			Toast.makeText(context,
-					"Message should not be empty or null: " + message, 1000)
-					.show();
-			return false;
-		}
+    public boolean sendInfoMessage(String groupName, String message,
+                                   Message.XMPPMessageType xMPPMessageType) {
+        boolean isGroupChat = false;
+        if (SharedPrefManager.getInstance().isGroupChat(groupName)
+                && !message
+                .equals("You are welcome in " + groupName + " group.")) {
+            // sendGroupMessage(userName, message);
+            // return;
+            isGroupChat = true;
+        }
 
-		if (groupName.equals(userMe)) {
-			Toast.makeText(context,
-					"Self messaging are not allowed.", 1000).show();
-			return false;
-		}
-		String to = groupName + "@" + Constants.CHAT_DOMAIN;
-		if (isGroupChat) {
-			to = groupName + "@conference." + Constants.CHAT_DOMAIN;
-		}
-		Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
-		Message msg = new Message(to);// , Message.Type.chat);
-		int type = xMPPMessageType.ordinal();
+        if (groupName == null || groupName.equals("")) {
+            Toast.makeText(context,
+                    "userName is not correct: " + groupName, 1000).show();
+            return false;
+        }
+        if (message == null || message.equals("")) {
+            Toast.makeText(context,
+                    "Message should not be empty or null: " + message, 1000)
+                    .show();
+            return false;
+        }
 
-		if (type == XMPPMessageType.atMeXmppMessageTypeGroupName.ordinal()) {
-			Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeGroupName: "
-					+ xMPPMessageType);
-		} else if (type == XMPPMessageType.atMeXmppMessageTypeMemberList
-				.ordinal()) {
-			Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeMemberList: "
-					+ xMPPMessageType);
-		} else if (type == XMPPMessageType.atMeXmppMessageTypeJoinGroup
-				.ordinal()) {
-			Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeJoinGroup: "
-					+ xMPPMessageType);
-		} else if (type == XMPPMessageType.atMeXmppMessageTypeLeftGroup
-				.ordinal()) {
-			Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeLeftGroup: "
-					+ xMPPMessageType);
-		} else if (type == XMPPMessageType.atMeXmppMessageTypeGroupAdminUpdate
-				.ordinal()) {
-			Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeGroupAdminUpdate: "
-					+ xMPPMessageType);
-		} else if (type == XMPPMessageType.atMeXmppMessageTypeNewCreateGroup
-				.ordinal()) {
-			Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeNewCreateGroup: "
-					+ xMPPMessageType);
-		}
+        if (groupName.equals(userMe)) {
+            Toast.makeText(context,
+                    "Self messaging are not allowed.", 1000).show();
+            return false;
+        }
+        String to = groupName + "@" + Constants.CHAT_DOMAIN;
+        if (isGroupChat) {
+            to = groupName + "@conference." + Constants.CHAT_DOMAIN;
+        }
+        Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
+        Message msg = new Message(to);// , Message.Type.chat);
+        int type = xMPPMessageType.ordinal();
 
-		if (isGroupChat)
-			msg.setType(Message.Type.groupchat);
-		else
-			msg.setType(Message.Type.chat);
-		msg.setXMPPMessageType(xMPPMessageType);
-		if (type == XMPPMessageType.atMeXmppMessageTypeLeftGroup.ordinal()){
-			JSONObject finalJSONbject = null;
-			SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
-			try {
-				finalJSONbject = new JSONObject();
+        if (type == XMPPMessageType.atMeXmppMessageTypeGroupName.ordinal()) {
+            Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeGroupName: "
+                    + xMPPMessageType);
+        } else if (type == XMPPMessageType.atMeXmppMessageTypeMemberList
+                .ordinal()) {
+            Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeMemberList: "
+                    + xMPPMessageType);
+        } else if (type == XMPPMessageType.atMeXmppMessageTypeJoinGroup
+                .ordinal()) {
+            Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeJoinGroup: "
+                    + xMPPMessageType);
+        } else if (type == XMPPMessageType.atMeXmppMessageTypeLeftGroup
+                .ordinal()) {
+            Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeLeftGroup: "
+                    + xMPPMessageType);
+        } else if (type == XMPPMessageType.atMeXmppMessageTypeGroupAdminUpdate
+                .ordinal()) {
+            Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeGroupAdminUpdate: "
+                    + xMPPMessageType);
+        } else if (type == XMPPMessageType.atMeXmppMessageTypeNewCreateGroup
+                .ordinal()) {
+            Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeNewCreateGroup: "
+                    + xMPPMessageType);
+        }
 
-				try {
-					//For User Info
-					finalJSONbject.put("userName", message);
-					finalJSONbject.put("displayName", iPrefManager.getUserServerName(message));
-					if(iPrefManager.getUserFileId(message) != null)
-						finalJSONbject.put("fileId", iPrefManager.getUserFileId(message));
+        if (isGroupChat)
+            msg.setType(Message.Type.groupchat);
+        else
+            msg.setType(Message.Type.chat);
+        msg.setXMPPMessageType(xMPPMessageType);
+        if (type == XMPPMessageType.atMeXmppMessageTypeLeftGroup.ordinal()) {
+            JSONObject finalJSONbject = null;
+            SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
+            try {
+                finalJSONbject = new JSONObject();
 
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			if(finalJSONbject != null){
+                try {
+                    //For User Info
+                    finalJSONbject.put("userName", message);
+                    finalJSONbject.put("displayName", iPrefManager.getUserServerName(message));
+                    if (iPrefManager.getUserFileId(message) != null)
+                        finalJSONbject.put("fileId", iPrefManager.getUserFileId(message));
+
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            if (finalJSONbject != null) {
 //				msg.setMediaTagMessage(finalJSONbject.toString().replace("\"", "&quot;"));
-				msg.setMediaTagMessage(finalJSONbject.toString());
-			}
-		}
-		msg.setBody(message);
-		msg.setPacketID(UUID.randomUUID().toString());
-		Log.d(TAG, "sent packet: " + msg.toXML());
-		if (connection != null && connection.isConnected()
-				&& connection.isAuthenticated()) {
-			connection.sendPacket(msg);
-		} else {
-			return false;
-			// Toast.makeText(
-			// context,
-			// "You are not connected with server. Please try after some time",
-			// 1000).show();
-			// // connection = null;
-			// return;
+                msg.setMediaTagMessage(finalJSONbject.toString());
+            }
+        }
+        msg.setBody(message);
+        msg.setPacketID(UUID.randomUUID().toString());
+        Log.d(TAG, "sent packet: " + msg.toXML());
+        if (connection != null && connection.isConnected()
+                && connection.isAuthenticated()) {
+            connection.sendPacket(msg);
+        } else {
+            return false;
+            // Toast.makeText(
+            // context,
+            // "You are not connected with server. Please try after some time",
+            // 1000).show();
+            // // connection = null;
+            // return;
 //			msg.setMessageSeenState(Message.SeenState.wait);
-		}
+        }
 //		saveMessage(userMe, userName, message, msg);
-		/*
+        /*
 		 * Toast.makeText(context, message + ": " + message,
 		 * 2000) .show();
 		 */
 //		sendOffLineMessages1();
-		return true;
-	}
-	public boolean sendGroupInfoMessage(String groupName, String display_name, String caption,
-										Message.XMPPMessageType xMPPMessageType) {
-		boolean isGroupChat = false;
-		if (SharedPrefManager.getInstance().isGroupChat(groupName)
-				&& !display_name
-				.equals("You are welcome in " + groupName + " group.")) {
-			// sendGroupMessage(userName, message);
-			// return;
-			isGroupChat = true;
-		}
+        return true;
+    }
 
-		if (groupName == null || groupName.equals("")) {
-			Toast.makeText(context,
-					"userName is not correct: " + groupName, 1000).show();
-			return false;
-		}
-		if (display_name == null || display_name.equals("")) {
-			Toast.makeText(context,
-					"Message should not be empty or null: " + display_name, 1000)
-					.show();
-			return false;
-		}
+    public boolean sendGroupInfoMessage(String groupName, String display_name, String caption,
+                                        Message.XMPPMessageType xMPPMessageType) {
+        boolean isGroupChat = false;
+        if (SharedPrefManager.getInstance().isGroupChat(groupName)
+                && !display_name
+                .equals("You are welcome in " + groupName + " group.")) {
+            // sendGroupMessage(userName, message);
+            // return;
+            isGroupChat = true;
+        }
 
-		if (groupName.equals(userMe)) {
-			Toast.makeText(context,
-					"Self messaging are not allowed.", 1000).show();
-			return false;
-		}
-		String to = groupName + "@" + Constants.CHAT_DOMAIN;
-		if (isGroupChat) {
-			to = groupName + "@conference." + Constants.CHAT_DOMAIN;
-		}
-		Log.d(TAG, "Sending text [" + display_name + "] to [" + to + "]");
-		Message msg = new Message(to);// , Message.Type.chat);
-		int type = xMPPMessageType.ordinal();
+        if (groupName == null || groupName.equals("")) {
+            Toast.makeText(context,
+                    "userName is not correct: " + groupName, 1000).show();
+            return false;
+        }
+        if (display_name == null || display_name.equals("")) {
+            Toast.makeText(context,
+                    "Message should not be empty or null: " + display_name, 1000)
+                    .show();
+            return false;
+        }
 
-		if (type == XMPPMessageType.atMeXmppMessageTypeGroupName.ordinal()) {
-			Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeGroupName: "
-					+ xMPPMessageType);
-		} else if (type == XMPPMessageType.atMeXmppMessageTypeMemberList
-				.ordinal()) {
-			Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeMemberList: "
-					+ xMPPMessageType);
-		} else if (type == XMPPMessageType.atMeXmppMessageTypeJoinGroup
-				.ordinal()) {
-			Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeJoinGroup: "
-					+ xMPPMessageType);
-		} else if (type == XMPPMessageType.atMeXmppMessageTypeLeftGroup
-				.ordinal()) {
-			Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeLeftGroup: "
-					+ xMPPMessageType);
-		} else if (type == XMPPMessageType.atMeXmppMessageTypeGroupAdminUpdate
-				.ordinal()) {
-			Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeGroupAdminUpdate: "
-					+ xMPPMessageType);
-		}
+        if (groupName.equals(userMe)) {
+            Toast.makeText(context,
+                    "Self messaging are not allowed.", 1000).show();
+            return false;
+        }
+        String to = groupName + "@" + Constants.CHAT_DOMAIN;
+        if (isGroupChat) {
+            to = groupName + "@conference." + Constants.CHAT_DOMAIN;
+        }
+        Log.d(TAG, "Sending text [" + display_name + "] to [" + to + "]");
+        Message msg = new Message(to);// , Message.Type.chat);
+        int type = xMPPMessageType.ordinal();
 
-		if (isGroupChat)
-			msg.setType(Message.Type.groupchat);
-		else
-			msg.setType(Message.Type.chat);
-		msg.setXMPPMessageType(xMPPMessageType);
-		if(type == XMPPMessageType.atMeXmppMessageTypeGroupName.ordinal() || type == XMPPMessageType.atMeXmppMessageTypeMemberList.ordinal()){
-			if(caption!=null && !caption.equals(""))
-				msg.setMediaTagMessage(caption);
-		}
-		if(type == XMPPMessageType.atMeXmppMessageTypeMemberList.ordinal()) {// specific for ios
-			String displayName = "";
-			if(caption != null){
-				if(caption.contains("&quot;"))
-					caption = caption.replace("&quot;", "\"");
-				try {
-					JSONObject jsonobj = new JSONObject(caption);
-					if(jsonobj.has("displayName") && jsonobj.getString("displayName").toString().trim().length() > 0) {
-						displayName = jsonobj.getString("displayName").toString();
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
-			msg.setBody("Added you to group '"+displayName+"'.");
-		}else
-			msg.setBody(display_name);
-		msg.setPacketID(UUID.randomUUID().toString());
-		Log.d(TAG, "sent packet: " + msg.toXML());
-		if (connection != null && connection.isConnected()
-				&& connection.isAuthenticated()) {
-			connection.sendPacket(msg);
-		} else {
-			return false;
-		}
-		return true;
-	}
-	public boolean sendSpecialMessageToAllDomainMembers(String broadcast_name,
-														String caption, Message.XMPPMessageType xMPPMessageType){
+        if (type == XMPPMessageType.atMeXmppMessageTypeGroupName.ordinal()) {
+            Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeGroupName: "
+                    + xMPPMessageType);
+        } else if (type == XMPPMessageType.atMeXmppMessageTypeMemberList
+                .ordinal()) {
+            Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeMemberList: "
+                    + xMPPMessageType);
+        } else if (type == XMPPMessageType.atMeXmppMessageTypeJoinGroup
+                .ordinal()) {
+            Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeJoinGroup: "
+                    + xMPPMessageType);
+        } else if (type == XMPPMessageType.atMeXmppMessageTypeLeftGroup
+                .ordinal()) {
+            Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeLeftGroup: "
+                    + xMPPMessageType);
+        } else if (type == XMPPMessageType.atMeXmppMessageTypeGroupAdminUpdate
+                .ordinal()) {
+            Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeGroupAdminUpdate: "
+                    + xMPPMessageType);
+        }
+
+        if (isGroupChat)
+            msg.setType(Message.Type.groupchat);
+        else
+            msg.setType(Message.Type.chat);
+        msg.setXMPPMessageType(xMPPMessageType);
+        if (type == XMPPMessageType.atMeXmppMessageTypeGroupName.ordinal() || type == XMPPMessageType.atMeXmppMessageTypeMemberList.ordinal()) {
+            if (caption != null && !caption.equals(""))
+                msg.setMediaTagMessage(caption);
+        }
+        if (type == XMPPMessageType.atMeXmppMessageTypeMemberList.ordinal()) {// specific for ios
+            String displayName = "";
+            if (caption != null) {
+                if (caption.contains("&quot;"))
+                    caption = caption.replace("&quot;", "\"");
+                try {
+                    JSONObject jsonobj = new JSONObject(caption);
+                    if (jsonobj.has("displayName") && jsonobj.getString("displayName").toString().trim().length() > 0) {
+                        displayName = jsonobj.getString("displayName").toString();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            msg.setBody("Added you to group '" + displayName + "'.");
+        } else
+            msg.setBody(display_name);
+        msg.setPacketID(UUID.randomUUID().toString());
+        Log.d(TAG, "sent packet: " + msg.toXML());
+        if (connection != null && connection.isConnected()
+                && connection.isAuthenticated()) {
+            connection.sendPacket(msg);
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+
+    public boolean sendGroupSpecialMessage(String groupName, String display_name, GroupChatMetaInfo.GroupPermissions permissionMode,
+                                           Message.XMPPMessageType xMPPMessageType) {
+        boolean isGroupChat = false;
+        if (SharedPrefManager.getInstance().isGroupChat(groupName)
+                && !display_name
+                .equals("You are welcome in " + groupName + " group.")) {
+            // sendGroupMessage(userName, message);
+            // return;
+            isGroupChat = true;
+        }
+
+        if (groupName == null || groupName.equals("")) {
+            Toast.makeText(context,
+                    "userName is not correct: " + groupName, 1000).show();
+            return false;
+        }
+        if (display_name == null || display_name.equals("")) {
+            Toast.makeText(context,
+                    "Message should not be empty or null: " + display_name, 1000)
+                    .show();
+            return false;
+        }
+
+        if (groupName.equals(userMe)) {
+            Toast.makeText(context,
+                    "Self messaging are not allowed.", 1000).show();
+            return false;
+        }
+        String to = groupName + "@" + Constants.CHAT_DOMAIN;
+        if (isGroupChat) {
+            to = groupName + "@conference." + Constants.CHAT_DOMAIN;
+        }
+        Log.d(TAG, "Sending text [" + display_name + "] to [" + to + "]");
+        Message msg = new Message(to);// , Message.Type.chat);
+
+        try {
+            GroupChatXmppCaption caption = new GroupChatXmppCaption();
+
+            GroupChatXmppCaptionData data = new GroupChatXmppCaptionData();
+            data.setGroupPermissionType(""+permissionMode.ordinal());
+            data.setDisplayName(groupName);
+            data.setDescription("");
+
+            caption.setCaption(data);
+
+            String body = new Gson().toJson(caption).toString();
+
+            if (isGroupChat)
+                msg.setType(Message.Type.groupchat);
+            else
+                msg.setType(Message.Type.chat);
+
+            msg.setMediaTagMessage(body);
+            msg.setBody("Set Broadcast '" + display_name + "'.");
+            msg.setXMPPMessageType(xMPPMessageType);
+            msg.setPacketID(UUID.randomUUID().toString());
+
+            Log.d(TAG, "sent packet: " + msg.toXML());
+            if (connection != null && connection.isConnected()
+                    && connection.isAuthenticated()) {
+                connection.sendPacket(msg);
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+
+        }
+        return true;
+    }
+
+    public boolean sendSpecialMessageToAllDomainMembers(String broadcast_name,
+                                                        String caption, Message.XMPPMessageType xMPPMessageType) {
 //		String to = broadcast_name + "@" + Constants.CHAT_DOMAIN;
-		String to = broadcast_name + "@broadcast." + Constants.CHAT_DOMAIN;
-		Message msg = new Message(to);
-		msg.setType(Message.Type.chat);
-		msg.setDisplayName(prefManager.getDisplayName());
-		msg.setXMPPMessageType(xMPPMessageType);
-		if(caption != null && !caption.equals(""))
-			msg.setMediaTagMessage(caption);
-		msg.setStatusMessageType(Message.StatusMessageType.broadcast);
-		msg.setPacketID(UUID.randomUUID().toString());
-		msg.setBody("");
-		System.out.println("sendSpecialMessageToAllDomainMembers : Sent XML Packet: " + msg.toXML());
-		if (connection != null && connection.isConnected()
-				&& connection.isAuthenticated()) {
-			connection.sendPacket(msg);
-		} else {
-			return false;
-		}
-		return true;
-	}
+        String to = broadcast_name + "@broadcast." + Constants.CHAT_DOMAIN;
+        Message msg = new Message(to);
+        msg.setType(Message.Type.chat);
+        msg.setDisplayName(prefManager.getDisplayName());
+        msg.setXMPPMessageType(xMPPMessageType);
+        if (caption != null && !caption.equals(""))
+            msg.setMediaTagMessage(caption);
+        msg.setStatusMessageType(Message.StatusMessageType.broadcast);
+        msg.setPacketID(UUID.randomUUID().toString());
+        msg.setBody("");
+        System.out.println("sendSpecialMessageToAllDomainMembers : Sent XML Packet: " + msg.toXML());
+        if (connection != null && connection.isConnected()
+                && connection.isAuthenticated()) {
+            connection.sendPacket(msg);
+        } else {
+            return false;
+        }
+        return true;
+    }
 
-	public void sendBroadCastMessageToAll(String userName, String message) {
-		if (SharedPrefManager.getInstance().isBroadCast(userName)
-				&& !message.equals("You are welcome in " + userName + " group.")) {
-		}
-		if (userName == null || userName.equals("")) {
-			Toast.makeText(context, "userName is not correct: " + userName, 1000).show();
-			return;
-		}
-		if (message == null || message.equals("")) {
-			Toast.makeText(context, "Message should not be empty or null: " + message, 1000).show();
-			return;
-		}
-		if (userName.equals(userMe)) {
-			Toast.makeText(context, "Self messaging is not allowed.", 1000).show();
-			return;
-		}
-		String to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
-		Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
-		Message msg = new Message(to);
-		msg.setType(Message.Type.chat);
-		msg.setMessageSeenState(Message.SeenState.sent);
-		msg.setDisplayName(prefManager.getDisplayName());
-		String picId = prefManager.getUserFileId(prefManager.getUserName());
-		if(picId != null)
-			msg.setPicId(picId);
-		msg.setStatusMessageType(Message.StatusMessageType.broadcasttoall);
-		msg.setBody(message);
-		msg.setPacketID(UUID.randomUUID().toString());
-		Log.d(TAG, "sent packet: " + msg.toXML());
-		if(userName.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")){
-			saveMessage(userMe, userName, message, msg,(byte)0);
-			sendBulletinMessage(message, null, null, null, null,0, msg.getPacketID());
-			return;
-		}
-		if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
-			connection.sendPacket(msg);
-			xmppConectionStatus = true;
-		} else {
-			msg.setMessageSeenState(Message.SeenState.wait);
-		}
-		saveMessage(userMe, userName, message, msg,(byte)0);
-		sendOffLineMessages1();
-		if(connectionStatusListener!=null)
-			connectionStatusListener.notifyConnectionChange();
-	}
-	public void sendSharedIDMessageToAllAdmins(String shared_id, String message) {
-		String groupDisplayName = prefManager.getSharedIDDisplayName(shared_id);
-		String groupFileID = prefManager.getSharedIDFileId(shared_id);
-		if (SharedPrefManager.getInstance().isBroadCast(shared_id)
-				&& !message.equals("You are welcome in " + shared_id + " group.")) {
-		}
-		if (shared_id == null || shared_id.equals("")) {
-			Toast.makeText(context, "userName is not correct: " + shared_id, 1000).show();
-			return;
-		}
-		if (message == null || message.equals("")) {
-			Toast.makeText(context, "Message should not be empty or null: " + message, 1000).show();
-			return;
-		}
-		if (shared_id.equals(userMe)) {
-			Toast.makeText(context, "Self messaging is not allowed.", 1000).show();
-			return;
-		}
-		String to = shared_id + "@broadcast." + Constants.CHAT_DOMAIN;
-		Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
-		Message msg = new Message(to);
-		msg.setType(Message.Type.chat);
-		msg.setMessageSeenState(Message.SeenState.sent);
-		msg.setDisplayName(prefManager.getDisplayName());
-		String picId = prefManager.getUserFileId(prefManager.getUserName());
-		if(picId != null)
-			msg.setPicId(picId);
-		//Set sharedID group name, shared ID Display name, Shared ID file id
-		if(shared_id!=null && !shared_id.equals(""))
-			msg.setGroupId(shared_id);
-		if(groupDisplayName!=null && !groupDisplayName.equals(""))
-			msg.setGroupDisplayName(groupDisplayName);
-		if(groupFileID!=null && !groupFileID.equals(""))
-			msg.setGroupPicId(groupFileID);
+    public void sendBroadCastMessageToAll(String userName, String message) {
+        if (SharedPrefManager.getInstance().isBroadCast(userName)
+                && !message.equals("You are welcome in " + userName + " group.")) {
+        }
+        if (userName == null || userName.equals("")) {
+            Toast.makeText(context, "userName is not correct: " + userName, 1000).show();
+            return;
+        }
+        if (message == null || message.equals("")) {
+            Toast.makeText(context, "Message should not be empty or null: " + message, 1000).show();
+            return;
+        }
+        if (userName.equals(userMe)) {
+            Toast.makeText(context, "Self messaging is not allowed.", 1000).show();
+            return;
+        }
+        String to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
+        Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
+        Message msg = new Message(to);
+        msg.setType(Message.Type.chat);
+        msg.setMessageSeenState(Message.SeenState.sent);
+        msg.setDisplayName(prefManager.getDisplayName());
+        String picId = prefManager.getUserFileId(prefManager.getUserName());
+        if (picId != null)
+            msg.setPicId(picId);
+        msg.setStatusMessageType(Message.StatusMessageType.broadcasttoall);
+        msg.setBody(message);
+        msg.setPacketID(UUID.randomUUID().toString());
+        Log.d(TAG, "sent packet: " + msg.toXML());
+        if (userName.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")) {
+            saveMessage(userMe, userName, message, msg, (byte) 0);
+            sendBulletinMessage(message, null, null, null, null, 0, msg.getPacketID());
+            return;
+        }
+        if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
+            connection.sendPacket(msg);
+            xmppConectionStatus = true;
+        } else {
+            msg.setMessageSeenState(Message.SeenState.wait);
+        }
+        saveMessage(userMe, userName, message, msg, (byte) 0);
+        sendOffLineMessages1();
+        if (connectionStatusListener != null)
+            connectionStatusListener.notifyConnectionChange();
+    }
 
-		msg.setStatusMessageType(Message.StatusMessageType.sharedID);
-		msg.setBody(message);
-		msg.setPacketID(UUID.randomUUID().toString());
-		Log.d(TAG, "sent packet: " + msg.toXML());
-		if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
-			connection.sendPacket(msg);
-			xmppConectionStatus = true;
-		} else {
-			msg.setMessageSeenState(Message.SeenState.wait);
-		}
-		saveMessage(userMe, shared_id, message, msg,(byte)0);
-		sendOffLineMessages1();
-		if(connectionStatusListener!=null)
-			connectionStatusListener.notifyConnectionChange();
-	}
-	public void sendBroadCastMessage(String userName, String message) {
-		if (SharedPrefManager.getInstance().isBroadCast(userName)
-				&& !message.equals("You are welcome in " + userName + " group.")) {
-		}
-		if (userName == null || userName.equals("")) {
-			Toast.makeText(context, "userName is not correct: " + userName, 1000).show();
-			return;
-		}
-		if (message == null || message.equals("")) {
-			Toast.makeText(context, "Message should not be empty or null: " + message, 1000).show();
-			return;
-		}
-		if (userName.equals(userMe)) {
-			Toast.makeText(context, "Self messaging are not allowed.", 1000).show();
-			return;
-		}
-		String to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
-		Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
-		Message msg = new Message(to);
-		msg.setType(Message.Type.chat);
-		msg.setMessageSeenState(Message.SeenState.sent);
-		msg.setDisplayName(prefManager.getDisplayName());
-		String picId = prefManager.getUserFileId(prefManager.getUserName());
-		if(picId != null)
-			msg.setPicId(picId);
-		msg.setStatusMessageType(Message.StatusMessageType.broadcast);
-		msg.setBody(message);
-		msg.setPacketID(UUID.randomUUID().toString());
-		Log.d(TAG, "sent packet: " + msg.toXML());
-		if (connection != null && connection.isConnected()
-				&& connection.isAuthenticated()) {
-			connection.sendPacket(msg);
-			xmppConectionStatus = true;
-		} else {
-			msg.setMessageSeenState(Message.SeenState.wait);
-		}
-		saveMessage(userMe, userName, message, msg,(byte)0);
-		sendOffLineMessages1();
-		if(connectionStatusListener!=null)
-			connectionStatusListener.notifyConnectionChange();
-	}
-	public void sendBroadCastMessageOld(String userName, String message) {
-		boolean isGroupChat = false;
-		if (SharedPrefManager.getInstance().isGroupChat(userName)
-				&& !message
-				.equals("You are welcome in " + userName + " group.")) {
-			// sendGroupMessage(userName, message);
-			// return;
-			isGroupChat = true;
-			if(!prefManager.isGroupMemberActive(userName, userMe)){
-				return;
-			}
-		}
+    public void sendSharedIDMessageToAllAdmins(String shared_id, String message) {
+        String groupDisplayName = prefManager.getSharedIDDisplayName(shared_id);
+        String groupFileID = prefManager.getSharedIDFileId(shared_id);
+        if (SharedPrefManager.getInstance().isBroadCast(shared_id)
+                && !message.equals("You are welcome in " + shared_id + " group.")) {
+        }
+        if (shared_id == null || shared_id.equals("")) {
+            Toast.makeText(context, "userName is not correct: " + shared_id, 1000).show();
+            return;
+        }
+        if (message == null || message.equals("")) {
+            Toast.makeText(context, "Message should not be empty or null: " + message, 1000).show();
+            return;
+        }
+        if (shared_id.equals(userMe)) {
+            Toast.makeText(context, "Self messaging is not allowed.", 1000).show();
+            return;
+        }
+        String to = shared_id + "@broadcast." + Constants.CHAT_DOMAIN;
+        Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
+        Message msg = new Message(to);
+        msg.setType(Message.Type.chat);
+        msg.setMessageSeenState(Message.SeenState.sent);
+        msg.setDisplayName(prefManager.getDisplayName());
+        String picId = prefManager.getUserFileId(prefManager.getUserName());
+        if (picId != null)
+            msg.setPicId(picId);
+        //Set sharedID group name, shared ID Display name, Shared ID file id
+        if (shared_id != null && !shared_id.equals(""))
+            msg.setGroupId(shared_id);
+        if (groupDisplayName != null && !groupDisplayName.equals(""))
+            msg.setGroupDisplayName(groupDisplayName);
+        if (groupFileID != null && !groupFileID.equals(""))
+            msg.setGroupPicId(groupFileID);
 
-		if (userName == null || userName.equals("")) {
-			Toast.makeText(context,
-					"userName is not correct: " + userName, 1000).show();
-			return;
-		}
-		if (message == null || message.equals("")) {
-			Toast.makeText(context,
-					"Message should not be empty or null: " + message, 1000)
-					.show();
-			return;
-		}
+        msg.setStatusMessageType(Message.StatusMessageType.sharedID);
+        msg.setBody(message);
+        msg.setPacketID(UUID.randomUUID().toString());
+        Log.d(TAG, "sent packet: " + msg.toXML());
+        if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
+            connection.sendPacket(msg);
+            xmppConectionStatus = true;
+        } else {
+            msg.setMessageSeenState(Message.SeenState.wait);
+        }
+        saveMessage(userMe, shared_id, message, msg, (byte) 0);
+        sendOffLineMessages1();
+        if (connectionStatusListener != null)
+            connectionStatusListener.notifyConnectionChange();
+    }
 
-		// if (connection == null || !connection.isConnected()) {
-		// // Toast.makeText(
-		// // context,
-		// //
-		// "You have not logged in on chat server. Please try after some time",
-		// // 1000).show();
-		// chatLogin();
-		// //return;
-		// }
-		if (userName.equals(userMe)) {
-			Toast.makeText(context,
-					"Self messaging are not allowed.", 1000).show();
-			return;
-		}
-		String to = userName + "@" + Constants.CHAT_DOMAIN;
-		if (isGroupChat) {
-			to = userName + "@conference." + Constants.CHAT_DOMAIN;
-		}
-		Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
-		Message msg = new Message(to);// , Message.Type.chat);
-		if (isGroupChat)
-			msg.setType(Message.Type.groupchat);
-		else
-			msg.setType(Message.Type.chat);
-		msg.setMessageSeenState(Message.SeenState.sent);
+    public void sendBroadCastMessage(String userName, String message) {
+        if (SharedPrefManager.getInstance().isBroadCast(userName)
+                && !message.equals("You are welcome in " + userName + " group.")) {
+        }
+        if (userName == null || userName.equals("")) {
+            Toast.makeText(context, "userName is not correct: " + userName, 1000).show();
+            return;
+        }
+        if (message == null || message.equals("")) {
+            Toast.makeText(context, "Message should not be empty or null: " + message, 1000).show();
+            return;
+        }
+        if (userName.equals(userMe)) {
+            Toast.makeText(context, "Self messaging are not allowed.", 1000).show();
+            return;
+        }
+        String to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
+        Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
+        Message msg = new Message(to);
+        msg.setType(Message.Type.chat);
+        msg.setMessageSeenState(Message.SeenState.sent);
+        msg.setDisplayName(prefManager.getDisplayName());
+        String picId = prefManager.getUserFileId(prefManager.getUserName());
+        if (picId != null)
+            msg.setPicId(picId);
+        msg.setStatusMessageType(Message.StatusMessageType.broadcast);
+        msg.setBody(message);
+        msg.setPacketID(UUID.randomUUID().toString());
+        Log.d(TAG, "sent packet: " + msg.toXML());
+        if (connection != null && connection.isConnected()
+                && connection.isAuthenticated()) {
+            connection.sendPacket(msg);
+            xmppConectionStatus = true;
+        } else {
+            msg.setMessageSeenState(Message.SeenState.wait);
+        }
+        saveMessage(userMe, userName, message, msg, (byte) 0);
+        sendOffLineMessages1();
+        if (connectionStatusListener != null)
+            connectionStatusListener.notifyConnectionChange();
+    }
+
+    public void sendBroadCastMessageOld(String userName, String message) {
+        boolean isGroupChat = false;
+        if (SharedPrefManager.getInstance().isGroupChat(userName)
+                && !message
+                .equals("You are welcome in " + userName + " group.")) {
+            // sendGroupMessage(userName, message);
+            // return;
+            isGroupChat = true;
+            if (!prefManager.isGroupMemberActive(userName, userMe)) {
+                return;
+            }
+        }
+
+        if (userName == null || userName.equals("")) {
+            Toast.makeText(context,
+                    "userName is not correct: " + userName, 1000).show();
+            return;
+        }
+        if (message == null || message.equals("")) {
+            Toast.makeText(context,
+                    "Message should not be empty or null: " + message, 1000)
+                    .show();
+            return;
+        }
+
+        // if (connection == null || !connection.isConnected()) {
+        // // Toast.makeText(
+        // // context,
+        // //
+        // "You have not logged in on chat server. Please try after some time",
+        // // 1000).show();
+        // chatLogin();
+        // //return;
+        // }
+        if (userName.equals(userMe)) {
+            Toast.makeText(context,
+                    "Self messaging are not allowed.", 1000).show();
+            return;
+        }
+        String to = userName + "@" + Constants.CHAT_DOMAIN;
+        if (isGroupChat) {
+            to = userName + "@conference." + Constants.CHAT_DOMAIN;
+        }
+        Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
+        Message msg = new Message(to);// , Message.Type.chat);
+        if (isGroupChat)
+            msg.setType(Message.Type.groupchat);
+        else
+            msg.setType(Message.Type.chat);
+        msg.setMessageSeenState(Message.SeenState.sent);
 //		if(message.startsWith(AppConstants.PIC_SEP))//This is to send picture/audio/video URL in Subject as decided b/w ios and android
 //		{
 //			msg.setSubject(message.substring(message.indexOf(AppConstants.PIC_SEP) + AppConstants.PIC_SEP.length()));
@@ -4454,802 +4600,797 @@ public class ChatService extends Service implements interfaceInstances {
 //			msg.setBody("sent you an image");
 //		}
 //		else
-		msg.setBody(message);
-		msg.setPacketID(UUID.randomUUID().toString());
-		Log.d(TAG, "sent packet: " + msg.toXML());
-		if (connection != null && connection.isConnected()
-				&& connection.isAuthenticated()) {
-			connection.sendPacket(msg);
-			xmppConectionStatus = true;
-		} else {
+        msg.setBody(message);
+        msg.setPacketID(UUID.randomUUID().toString());
+        Log.d(TAG, "sent packet: " + msg.toXML());
+        if (connection != null && connection.isConnected()
+                && connection.isAuthenticated()) {
+            connection.sendPacket(msg);
+            xmppConectionStatus = true;
+        } else {
 //			xmppConectionStatus = false;
-			// Toast.makeText(
-			// context,
-			// "You are not connected with server. Please try after some time",
-			// 1000).show();
-			// // connection = null;
-			// return;
-			msg.setMessageSeenState(Message.SeenState.wait);
-		}
+            // Toast.makeText(
+            // context,
+            // "You are not connected with server. Please try after some time",
+            // 1000).show();
+            // // connection = null;
+            // return;
+            msg.setMessageSeenState(Message.SeenState.wait);
+        }
 //			saveMessage(userMe, userName, message, msg,(byte)0);
 		/*
 		 * Toast.makeText(context, message + ": " + message,
 		 * 2000) .show();
 		 */
-		sendOffLineMessages1();
-		if(connectionStatusListener!=null)
-			connectionStatusListener.notifyConnectionChange();
-	}
+        sendOffLineMessages1();
+        if (connectionStatusListener != null)
+            connectionStatusListener.notifyConnectionChange();
+    }
 
-	private void sendBulletinMessage(String message_txt, String file_id, String file_name, String caption, String location, int message_type, String packet_id) {
-		try {
-			BulletinMessageDataModel.MessageData bulletin_message =  new BulletinMessageDataModel.MessageData();
-			int audio_length = 0;
-			String extension = null;
-			bulletin_message.setType(""+message_type);
-			bulletin_message.setPacketId(packet_id);
-			if(file_id != null) {
-				if(file_id.startsWith("http://")) {
-					file_id = file_id.substring(file_id.lastIndexOf('/') + 1);
-					extension = file_id.substring(file_id.lastIndexOf('.') + 1);
-					file_id = file_id.substring(0, file_id.lastIndexOf('.'));
-				}
-				bulletin_message.setFileId(file_id);
-			}
-			if(file_name != null && message_type != XMPPMessageType.atMeXmppMessageTypeAudio.ordinal())
-				bulletin_message.setFilename(file_name);
-			Map<String,String> json_data = new HashMap<String,String>();
+    private void sendBulletinMessage(String message_txt, String file_id, String file_name, String caption, String location, int message_type, String packet_id) {
+        try {
+            BulletinMessageDataModel.MessageData bulletin_message = new BulletinMessageDataModel.MessageData();
+            int audio_length = 0;
+            String extension = null;
+            bulletin_message.setType("" + message_type);
+            bulletin_message.setPacketId(packet_id);
+            if (file_id != null) {
+                if (file_id.startsWith("http://")) {
+                    file_id = file_id.substring(file_id.lastIndexOf('/') + 1);
+                    extension = file_id.substring(file_id.lastIndexOf('.') + 1);
+                    file_id = file_id.substring(0, file_id.lastIndexOf('.'));
+                }
+                bulletin_message.setFileId(file_id);
+            }
+            if (file_name != null && message_type != XMPPMessageType.atMeXmppMessageTypeAudio.ordinal())
+                bulletin_message.setFilename(file_name);
+            Map<String, String> json_data = new HashMap<String, String>();
 
-			if(message_type == XMPPMessageType.atMeXmppMessageTypeImage.ordinal()){
-				message_txt = "Sent an image";
-			}else if(message_type == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()){
-				message_txt = "Sent a video";
-			}else if(message_type == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal()){
-				message_txt = "Sent a doc file";
-			}else if(message_type == XMPPMessageType.atMeXmppMessageTypePdf.ordinal()){
-				message_txt = "Sent a pdf file";
-			}else if(message_type == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal()){
-				message_txt = "Sent a xls file";
-			}else if(message_type == XMPPMessageType.atMeXmppMessageTypePPT.ordinal()){
-				message_txt = "Sent a ppt";
-			}else if(message_type == XMPPMessageType.atMeXmppMessageTypeLocation.ordinal()){
-				message_txt = "Shared location";
-			}else if(message_type == XMPPMessageType.atMeXmppMessageTypeContact.ordinal()){
-				message_txt = "Shared contact";
-			}else if(message_type == XMPPMessageType.atMeXmppMessageTypePoll.ordinal()){
-				message_txt = "Poll";
-			}else if(message_type == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()){
-				audio_length = MediaPlayer.create(context, Uri.fromFile(new File(file_name))).getDuration()/1000;
-				byte minutes = 0;
-				byte seconds = 0;
+            if (message_type == XMPPMessageType.atMeXmppMessageTypeImage.ordinal()) {
+                message_txt = "Sent an image";
+            } else if (message_type == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()) {
+                message_txt = "Sent a video";
+            } else if (message_type == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal()) {
+                message_txt = "Sent a doc file";
+            } else if (message_type == XMPPMessageType.atMeXmppMessageTypePdf.ordinal()) {
+                message_txt = "Sent a pdf file";
+            } else if (message_type == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal()) {
+                message_txt = "Sent a xls file";
+            } else if (message_type == XMPPMessageType.atMeXmppMessageTypePPT.ordinal()) {
+                message_txt = "Sent a ppt";
+            } else if (message_type == XMPPMessageType.atMeXmppMessageTypeLocation.ordinal()) {
+                message_txt = "Shared location";
+            } else if (message_type == XMPPMessageType.atMeXmppMessageTypeContact.ordinal()) {
+                message_txt = "Shared contact";
+            } else if (message_type == XMPPMessageType.atMeXmppMessageTypePoll.ordinal()) {
+                message_txt = "Poll";
+            } else if (message_type == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()) {
+                audio_length = MediaPlayer.create(context, Uri.fromFile(new File(file_name))).getDuration() / 1000;
+                byte minutes = 0;
+                byte seconds = 0;
 //				String len_msg = minutes + ":" + ((seconds < 10) ? ("0"+seconds) : seconds);
 //				if(audio_length > 0)
 //					message_txt = "Sent a voice note : "+ len_msg;
 //				else
-				message_txt = "Sent a voice note";
-			}
+                message_txt = "Sent a voice note";
+            }
 
-			if(message_txt != null && message_txt.trim().length() > 0)
-				bulletin_message.setText(message_txt);
+            if (message_txt != null && message_txt.trim().length() > 0)
+                bulletin_message.setText(message_txt);
 
 
-			if (message_type == XMPPMessageType.atMeXmppMessageTypePdf.ordinal()
-					|| message_type == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal()
-					|| message_type == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal()
-					|| message_type == XMPPMessageType.atMeXmppMessageTypePPT.ordinal()){
-				json_data.put("ext", extension);
-				json_data.put("fileName", file_name);
-			}
+            if (message_type == XMPPMessageType.atMeXmppMessageTypePdf.ordinal()
+                    || message_type == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal()
+                    || message_type == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal()
+                    || message_type == XMPPMessageType.atMeXmppMessageTypePPT.ordinal()) {
+                json_data.put("ext", extension);
+                json_data.put("fileName", file_name);
+            }
 
-			if (message_type == XMPPMessageType.atMeXmppMessageTypeImage.ordinal()
-					|| message_type == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()
-					|| message_type == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()){
-				if(caption != null)
-					json_data.put("caption", caption);
-				if(extension != null)
-					json_data.put("ext", extension);
-				if(message_type == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()){
-					if(audio_length > 0)
-						json_data.put("audioLength", ""+audio_length);
-				}
-			}else if(message_type == XMPPMessageType.atMeXmppMessageTypeLocation.ordinal() ){
-				json_data.put("caption", caption);
-				json_data.put("location", location);
-			}else if(message_type == XMPPMessageType.atMeXmppMessageTypeContact.ordinal()){
-				json_data.put("caption", caption);
-			}else if(message_type == XMPPMessageType.atMeXmppMessageTypePoll.ordinal()) {
-				json_data.put("caption", caption);
-			}
-			if(message_type != XMPPMessageType.atMeXmppMessageTypeNormal.ordinal())
-				bulletin_message.setJsonBody(json_data);
+            if (message_type == XMPPMessageType.atMeXmppMessageTypeImage.ordinal()
+                    || message_type == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()
+                    || message_type == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()) {
+                if (caption != null)
+                    json_data.put("caption", caption);
+                if (extension != null)
+                    json_data.put("ext", extension);
+                if (message_type == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()) {
+                    if (audio_length > 0)
+                        json_data.put("audioLength", "" + audio_length);
+                }
+            } else if (message_type == XMPPMessageType.atMeXmppMessageTypeLocation.ordinal()) {
+                json_data.put("caption", caption);
+                json_data.put("location", location);
+            } else if (message_type == XMPPMessageType.atMeXmppMessageTypeContact.ordinal()) {
+                json_data.put("caption", caption);
+            } else if (message_type == XMPPMessageType.atMeXmppMessageTypePoll.ordinal()) {
+                json_data.put("caption", caption);
+            }
+            if (message_type != XMPPMessageType.atMeXmppMessageTypeNormal.ordinal())
+                bulletin_message.setJsonBody(json_data);
 
-			Call call = null;
-			call = objApi.getApi(context).postBulletinMessage(bulletin_message);
-			call.enqueue(new RetrofitRetrofitCallback<BulletinMessageDataModel>(context) {
-				@Override
-				protected void onResponseVoidzResponse(Call call, Response response) {
-				}
+            Call call = null;
+            call = objApi.getApi(context).postBulletinMessage(bulletin_message);
+            call.enqueue(new RetrofitRetrofitCallback<BulletinMessageDataModel>(context) {
+                @Override
+                protected void onResponseVoidzResponse(Call call, Response response) {
+                }
 
-				@Override
-				protected void onResponseVoidzObject(Call call, BulletinMessageDataModel response) {
-					if (response != null && response.getStatus() != null && response.getStatus().equalsIgnoreCase("success")) {
+                @Override
+                protected void onResponseVoidzObject(Call call, BulletinMessageDataModel response) {
+                    if (response != null && response.getStatus() != null && response.getStatus().equalsIgnoreCase("success")) {
 
-						System.out.println("onResponseVoidzObject = "+response.getMessage());
+                        System.out.println("onResponseVoidzObject = " + response.getMessage());
 
-					} else {
-						String errorMessage = response.getMessage() != null ? response.getMessage() : "Please try later";
-					}
-				}
+                    } else {
+                        String errorMessage = response.getMessage() != null ? response.getMessage() : "Please try later";
+                    }
+                }
 
-				@Override
-				protected void common() {
-				}
-			});
+                @Override
+                protected void common() {
+                }
+            });
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	public void sendMessage(String userName, String message) {
-		boolean isGroupChat = false;
-		System.out.println("sendMessage :: userName = "+userName);
-		if (SharedPrefManager.getInstance().isGroupChat(userName)
-				&& !message.equals("You are welcome in " + userName + " group.")) {
-			isGroupChat = true;
-			if(!prefManager.isGroupMemberActive(userName, userMe)){
-				return;
-			}
-		}
-		if (userName == null || userName.equals("")) {
-			Toast.makeText(context, "userName is not correct: " + userName, 1000).show();
-			return;
-		}
-		if (message == null || message.equals("")) {
-			Toast.makeText(context, "Message should not be empty or null: " + message, 1000).show();
-			return;
-		}
-		if (userName.equals(userMe)) {
-			Toast.makeText(context, "Self messaging are not allowed.", 1000).show();
-			return;
-		}
-		String to = userName + "@" + Constants.CHAT_DOMAIN;
-		if (isGroupChat) {
-			to = userName + "@conference." + Constants.CHAT_DOMAIN;
-		}
-		Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
-		Message msg = new Message(to);// , Message.Type.chat);
-		if (isGroupChat)
-			msg.setType(Message.Type.groupchat);
-		else
-			msg.setType(Message.Type.chat);
-		msg.setDisplayName(prefManager.getDisplayName());
-		String picId = prefManager.getUserFileId(prefManager.getUserName());
-		if(picId != null)
-			msg.setPicId(picId);
-		msg.setMessageSeenState(Message.SeenState.sent);
-		msg.setBody(message);
-		msg.setPacketID(UUID.randomUUID().toString());
-		Log.d(TAG, "sent packet: " + msg.toXML());
-		if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
-			connection.sendPacket(msg);
-			xmppConectionStatus = true;
-		} else {
+    public void sendMessage(String userName, String message) {
+        boolean isGroupChat = false;
+        System.out.println("sendMessage :: userName = " + userName);
+        if (SharedPrefManager.getInstance().isGroupChat(userName)
+                && !message.equals("You are welcome in " + userName + " group.")) {
+            isGroupChat = true;
+            if (!prefManager.isGroupMemberActive(userName, userMe)) {
+                return;
+            }
+        }
+        if (userName == null || userName.equals("")) {
+            Toast.makeText(context, "userName is not correct: " + userName, 1000).show();
+            return;
+        }
+        if (message == null || message.equals("")) {
+            Toast.makeText(context, "Message should not be empty or null: " + message, 1000).show();
+            return;
+        }
+        if (userName.equals(userMe)) {
+            Toast.makeText(context, "Self messaging are not allowed.", 1000).show();
+            return;
+        }
+        String to = userName + "@" + Constants.CHAT_DOMAIN;
+        if (isGroupChat) {
+            to = userName + "@conference." + Constants.CHAT_DOMAIN;
+        }
+        Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
+        Message msg = new Message(to);// , Message.Type.chat);
+        if (isGroupChat)
+            msg.setType(Message.Type.groupchat);
+        else
+            msg.setType(Message.Type.chat);
+        msg.setDisplayName(prefManager.getDisplayName());
+        String picId = prefManager.getUserFileId(prefManager.getUserName());
+        if (picId != null)
+            msg.setPicId(picId);
+        msg.setMessageSeenState(Message.SeenState.sent);
+        msg.setBody(message);
+        msg.setPacketID(UUID.randomUUID().toString());
+        Log.d(TAG, "sent packet: " + msg.toXML());
+        if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
+            connection.sendPacket(msg);
+            xmppConectionStatus = true;
+        } else {
 //			xmppConectionStatus = false;
-			msg.setMessageSeenState(Message.SeenState.wait);
-			if(SuperChatApplication.isNetworkConnected()){
-				//try reconnecting here
+            msg.setMessageSeenState(Message.SeenState.wait);
+            if (SuperChatApplication.isNetworkConnected()) {
+                //try reconnecting here
 //				stopService(new Intent(this, ChatService.class));
 //				startService(new Intent(this, ChatService.class));
-				xmppConectionStatus = false;
-				chatLogin();
-			}
-		}
-		saveMessage(userMe, userName, message, msg,(byte)0);
-		sendOffLineMessages1();
-		if(connectionStatusListener!=null)
-			connectionStatusListener.notifyConnectionChange();
-	}
-	public String sendMediaMessage(String userName, String message , String captionMsg, String url, String thumb, XMPPMessageType mediaType)
-	{
-		boolean isGroupChat = false;
-		String packetID = null;
-		int audio_length = 0;
-		boolean bulletin_broadcast = false;
-		boolean shared_id_message = false;
-		String groupDisplayName = null;
-		String groupFileID = null;
-		String file_name = null;
-		if(prefManager.isSharedIDContact(userName)){
-			shared_id_message = true;
-			groupDisplayName = prefManager.getSharedIDDisplayName(userName);
-			groupFileID = prefManager.getSharedIDFileId(userName);
-		}
-		if (prefManager.isGroupChat(userName) && !message.equals("You are welcome in " + userName + " group.")) {
-			isGroupChat = true;
-			if(!prefManager.isGroupMemberActive(userName, userMe)){
-				return packetID;
-			}
-		}
-		if (userName == null || userName.equals("")) {
-			Toast.makeText(context, "userName is not correct: " + userName, 1000).show();
-			return packetID;
-		}
-		if (url == null || url.equals("")) {
-			Toast.makeText(context, "Message should not be empty or null: " + url, 1000).show();
-			return packetID;
-		}
-		if (userName.equals(userMe)) {
-			Toast.makeText(context, "Self messaging are not allowed.", 1000).show();
-			return packetID;
-		}
-		String to = userName + "@" + Constants.CHAT_DOMAIN;
-		if (isGroupChat) {
-			to = userName + "@conference." + Constants.CHAT_DOMAIN;
-		}else if(userName.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")){
-			to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
-			bulletin_broadcast = true;
-		}else if(shared_id_message){
-			to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
-		}
-		Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
-		Message msg = new Message(to);// , Message.Type.chat);
+                xmppConectionStatus = false;
+                chatLogin();
+            }
+        }
+        saveMessage(userMe, userName, message, msg, (byte) 0);
+        sendOffLineMessages1();
+        if (connectionStatusListener != null)
+            connectionStatusListener.notifyConnectionChange();
+    }
 
-		if(mediaType == XMPPMessageType.atMeXmppMessageTypeImage){
-			message = "Sent an image";
-			msg.setBody("Sent you an image");
-		}else if(mediaType == XMPPMessageType.atMeXmppMessageTypeVideo){
-			message = "Sent a video";
-			msg.setBody("Sent you a video");
-		}else if(mediaType == XMPPMessageType.atMeXmppMessageTypeDoc){
-			message = "Sent a doc file";
-			msg.setBody("Sent you a doc file");
-		}else if(mediaType == XMPPMessageType.atMeXmppMessageTypePdf){
-			message = "Sent a pdf file";
-			msg.setBody("Sent you a pdf file");
-		}else if(mediaType == XMPPMessageType.atMeXmppMessageTypeXLS){
-			message = "Sent a xls file";
-			msg.setBody("Sent you a xls file");
-		}else if(mediaType == XMPPMessageType.atMeXmppMessageTypePPT){
-			message = "Sent a ppt";
-			msg.setBody("Sent you a ppt");
-		}else if(mediaType == XMPPMessageType.atMeXmppMessageTypeLocation){
-			message = "Shared location";
-			msg.setBody("Shared location");
-		}else if(mediaType == XMPPMessageType.atMeXmppMessageTypeContact){
-			message = "Shared contact";
-			msg.setBody("Shared contact");
-		}else if(mediaType == XMPPMessageType.atMeXmppMessageTypePoll){
-			message = "Poll";
-			msg.setBody("Poll");
-		}else if(mediaType == XMPPMessageType.atMeXmppMessageTypeAudio){
-			audio_length = MediaPlayer.create(context, Uri.fromFile(new File(url))).getDuration()/1000;
-			byte minutes = 0;
-			byte seconds = 0;
-			String len_msg = minutes + ":" + ((seconds < 10) ? ("0"+seconds) : seconds);
-			if(audio_length > 0)
-				message = "Sent a voice note : "+ len_msg;
-			else
-				message = "Sent a voice note";
-			if(audio_length > 0)
-				msg.setBody("Sent you a voice note : "+len_msg);
-			else
-				msg.setBody("Sent you a voice note");
-		}
-		if (mediaType == XMPPMessageType.atMeXmppMessageTypePdf
-				|| mediaType == XMPPMessageType.atMeXmppMessageTypeDoc
-				|| mediaType == XMPPMessageType.atMeXmppMessageTypeXLS
-				|| mediaType == XMPPMessageType.atMeXmppMessageTypePPT) {
-			if(url != null && url.lastIndexOf('/') != -1 && url.lastIndexOf('.') != -1)
-				msg.setMediaFileName(url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.')));
-			else if(url != null && url.lastIndexOf('/') != -1)
-				msg.setMediaFileName(url.substring(url.lastIndexOf('/') + 1));
-		}
-		if (isGroupChat)
-			msg.setType(Message.Type.groupchat);
-		else
-			msg.setType(Message.Type.chat);
-		msg.setMessageSeenState(Message.SeenState.sent);
-		msg.setDisplayName(prefManager.getDisplayName());
-		String picId = prefManager.getUserFileId(prefManager.getUserName());
-		if(picId != null)
-			msg.setPicId(picId);
+    public String sendMediaMessage(String userName, String message, String captionMsg, String url, String thumb, XMPPMessageType mediaType) {
+        boolean isGroupChat = false;
+        String packetID = null;
+        int audio_length = 0;
+        boolean bulletin_broadcast = false;
+        boolean shared_id_message = false;
+        String groupDisplayName = null;
+        String groupFileID = null;
+        String file_name = null;
+        if (prefManager.isSharedIDContact(userName)) {
+            shared_id_message = true;
+            groupDisplayName = prefManager.getSharedIDDisplayName(userName);
+            groupFileID = prefManager.getSharedIDFileId(userName);
+        }
+        if (prefManager.isGroupChat(userName) && !message.equals("You are welcome in " + userName + " group.")) {
+            isGroupChat = true;
+            if (!prefManager.isGroupMemberActive(userName, userMe)) {
+                return packetID;
+            }
+        }
+        if (userName == null || userName.equals("")) {
+            Toast.makeText(context, "userName is not correct: " + userName, 1000).show();
+            return packetID;
+        }
+        if (url == null || url.equals("")) {
+            Toast.makeText(context, "Message should not be empty or null: " + url, 1000).show();
+            return packetID;
+        }
+        if (userName.equals(userMe)) {
+            Toast.makeText(context, "Self messaging are not allowed.", 1000).show();
+            return packetID;
+        }
+        String to = userName + "@" + Constants.CHAT_DOMAIN;
+        if (isGroupChat) {
+            to = userName + "@conference." + Constants.CHAT_DOMAIN;
+        } else if (userName.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")) {
+            to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
+            bulletin_broadcast = true;
+        } else if (shared_id_message) {
+            to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
+        }
+        Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
+        Message msg = new Message(to);// , Message.Type.chat);
 
-		if(bulletin_broadcast)
-			msg.setStatusMessageType(Message.StatusMessageType.broadcasttoall);
-		else if(shared_id_message){
-			//Set sharedID group name, shared ID Display name, Shared ID file id
-			if(userName!=null && !userName.equals(""))
-				msg.setGroupId(userName);
-			if(groupDisplayName!=null && !groupDisplayName.equals(""))
-				msg.setGroupDisplayName(groupDisplayName);
-			if(groupFileID!=null && !groupFileID.equals(""))
-				msg.setGroupPicId(groupFileID);
-			msg.setStatusMessageType(Message.StatusMessageType.sharedID);
-		}
+        if (mediaType == XMPPMessageType.atMeXmppMessageTypeImage) {
+            message = "Sent an image";
+            msg.setBody("Sent you an image");
+        } else if (mediaType == XMPPMessageType.atMeXmppMessageTypeVideo) {
+            message = "Sent a video";
+            msg.setBody("Sent you a video");
+        } else if (mediaType == XMPPMessageType.atMeXmppMessageTypeDoc) {
+            message = "Sent a doc file";
+            msg.setBody("Sent you a doc file");
+        } else if (mediaType == XMPPMessageType.atMeXmppMessageTypePdf) {
+            message = "Sent a pdf file";
+            msg.setBody("Sent you a pdf file");
+        } else if (mediaType == XMPPMessageType.atMeXmppMessageTypeXLS) {
+            message = "Sent a xls file";
+            msg.setBody("Sent you a xls file");
+        } else if (mediaType == XMPPMessageType.atMeXmppMessageTypePPT) {
+            message = "Sent a ppt";
+            msg.setBody("Sent you a ppt");
+        } else if (mediaType == XMPPMessageType.atMeXmppMessageTypeLocation) {
+            message = "Shared location";
+            msg.setBody("Shared location");
+        } else if (mediaType == XMPPMessageType.atMeXmppMessageTypeContact) {
+            message = "Shared contact";
+            msg.setBody("Shared contact");
+        } else if (mediaType == XMPPMessageType.atMeXmppMessageTypePoll) {
+            message = "Poll";
+            msg.setBody("Poll");
+        } else if (mediaType == XMPPMessageType.atMeXmppMessageTypeAudio) {
+            audio_length = MediaPlayer.create(context, Uri.fromFile(new File(url))).getDuration() / 1000;
+            byte minutes = 0;
+            byte seconds = 0;
+            String len_msg = minutes + ":" + ((seconds < 10) ? ("0" + seconds) : seconds);
+            if (audio_length > 0)
+                message = "Sent a voice note : " + len_msg;
+            else
+                message = "Sent a voice note";
+            if (audio_length > 0)
+                msg.setBody("Sent you a voice note : " + len_msg);
+            else
+                msg.setBody("Sent you a voice note");
+        }
+        if (mediaType == XMPPMessageType.atMeXmppMessageTypePdf
+                || mediaType == XMPPMessageType.atMeXmppMessageTypeDoc
+                || mediaType == XMPPMessageType.atMeXmppMessageTypeXLS
+                || mediaType == XMPPMessageType.atMeXmppMessageTypePPT) {
+            if (url != null && url.lastIndexOf('/') != -1 && url.lastIndexOf('.') != -1)
+                msg.setMediaFileName(url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.')));
+            else if (url != null && url.lastIndexOf('/') != -1)
+                msg.setMediaFileName(url.substring(url.lastIndexOf('/') + 1));
+        }
+        if (isGroupChat)
+            msg.setType(Message.Type.groupchat);
+        else
+            msg.setType(Message.Type.chat);
+        msg.setMessageSeenState(Message.SeenState.sent);
+        msg.setDisplayName(prefManager.getDisplayName());
+        String picId = prefManager.getUserFileId(prefManager.getUserName());
+        if (picId != null)
+            msg.setPicId(picId);
 
-		msg.setXMPPMessageType(mediaType);
-		msg.setBody(message);
-		msg.setPacketID(UUID.randomUUID().toString());
-		if(captionMsg!=null && !captionMsg.equals("")){
-			msg.setMediaTagMessage(captionMsg);
-		}
-		if(url!=null){
-			MediaBody mediaBody = msg.new MediaBody();
-			mediaBody.setType(String.valueOf(mediaType.ordinal()));
-			mediaBody.setUrl(url);
-			if(thumb!=null)
-				mediaBody.setThumb_data(thumb);
-			//Set Audio Length
-			if(mediaType == XMPPMessageType.atMeXmppMessageTypeAudio){
-				if(audio_length > 0)
-					mediaBody.setAudioLength(""+audio_length);
-			}
-			msg.setMediaBody(mediaBody);
-		}
-		System.out.println("[[sent packet: " + msg.toXML());
+        if (bulletin_broadcast)
+            msg.setStatusMessageType(Message.StatusMessageType.broadcasttoall);
+        else if (shared_id_message) {
+            //Set sharedID group name, shared ID Display name, Shared ID file id
+            if (userName != null && !userName.equals(""))
+                msg.setGroupId(userName);
+            if (groupDisplayName != null && !groupDisplayName.equals(""))
+                msg.setGroupDisplayName(groupDisplayName);
+            if (groupFileID != null && !groupFileID.equals(""))
+                msg.setGroupPicId(groupFileID);
+            msg.setStatusMessageType(Message.StatusMessageType.sharedID);
+        }
+
+        msg.setXMPPMessageType(mediaType);
+        msg.setBody(message);
+        msg.setPacketID(UUID.randomUUID().toString());
+        if (captionMsg != null && !captionMsg.equals("")) {
+            msg.setMediaTagMessage(captionMsg);
+        }
+        if (url != null) {
+            MediaBody mediaBody = msg.new MediaBody();
+            mediaBody.setType(String.valueOf(mediaType.ordinal()));
+            mediaBody.setUrl(url);
+            if (thumb != null)
+                mediaBody.setThumb_data(thumb);
+            //Set Audio Length
+            if (mediaType == XMPPMessageType.atMeXmppMessageTypeAudio) {
+                if (audio_length > 0)
+                    mediaBody.setAudioLength("" + audio_length);
+            }
+            msg.setMediaBody(mediaBody);
+        }
+        System.out.println("[[sent packet: " + msg.toXML());
 //		if (connection != null && connection.isConnected()
 //				&& connection.isAuthenticated()) {
 //			connection.sendPacket(msg);
 //		} else
-		{
-			// Toast.makeText(
-			// context,
-			// "You are not connected with server. Please try after some time",
-			// 1000).show();
-			// // connection = null;
-			// return;
-			msg.setMessageSeenState(Message.SeenState.pic_wait);
-		}
-		saveMessage(userMe, userName, message, msg, (byte) mediaType.ordinal());
-		return msg.getPacketID();
-	}
-	public void sendContactAndLocation(String userName, String message, String captionOrLocationMsg,
-									   String thumbURL, XMPPMessageType messageType, boolean is_broadcast)
-	{
-		System.out.println("sendContactAndLocation :: userName = "+userName);
-		boolean isGroupChat = false;
-		boolean bulletin_broadcast = false;
-		boolean shared_id_message = false;
-		String groupDisplayName = null;
-		String groupFileID = null;
-		if(prefManager.isSharedIDContact(userName)){
-			shared_id_message = true;
-			groupDisplayName = prefManager.getSharedIDDisplayName(userName);
-			groupFileID = prefManager.getSharedIDFileId(userName);
-		}
-		if (SharedPrefManager.getInstance().isGroupChat(userName)
-				&& !message.equals("You are welcome in " + userName + " group.")) {
-			isGroupChat = true;
-			if(!prefManager.isGroupMemberActive(userName, userMe)){
-				return;
-			}
-		}
-		if (userName == null || userName.equals("")) {
-			Toast.makeText(context,
-					"userName is not correct: " + userName, 1000).show();
-			return;
-		}
-		if (userName.equals(userMe)) {
+        {
+            // Toast.makeText(
+            // context,
+            // "You are not connected with server. Please try after some time",
+            // 1000).show();
+            // // connection = null;
+            // return;
+            msg.setMessageSeenState(Message.SeenState.pic_wait);
+        }
+        saveMessage(userMe, userName, message, msg, (byte) mediaType.ordinal());
+        return msg.getPacketID();
+    }
+
+    public void sendContactAndLocation(String userName, String message, String captionOrLocationMsg,
+                                       String thumbURL, XMPPMessageType messageType, boolean is_broadcast) {
+        System.out.println("sendContactAndLocation :: userName = " + userName);
+        boolean isGroupChat = false;
+        boolean bulletin_broadcast = false;
+        boolean shared_id_message = false;
+        String groupDisplayName = null;
+        String groupFileID = null;
+        if (prefManager.isSharedIDContact(userName)) {
+            shared_id_message = true;
+            groupDisplayName = prefManager.getSharedIDDisplayName(userName);
+            groupFileID = prefManager.getSharedIDFileId(userName);
+        }
+        if (SharedPrefManager.getInstance().isGroupChat(userName)
+                && !message.equals("You are welcome in " + userName + " group.")) {
+            isGroupChat = true;
+            if (!prefManager.isGroupMemberActive(userName, userMe)) {
+                return;
+            }
+        }
+        if (userName == null || userName.equals("")) {
+            Toast.makeText(context,
+                    "userName is not correct: " + userName, 1000).show();
+            return;
+        }
+        if (userName.equals(userMe)) {
 //			Toast.makeText(context, "Self messaging are not allowed.", 1000).show();
-			return;
-		}
-		String to = userName + "@" + Constants.CHAT_DOMAIN;
-		if (isGroupChat) {
-			to = userName + "@conference." + Constants.CHAT_DOMAIN;
-		}else if (SharedPrefManager.getInstance().isBroadCast(userName)){
-			to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
-		}else if(userName.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")){
-			to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
-			bulletin_broadcast = true;
-		}else if(shared_id_message){
-			to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
-		}
-		Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
-		Message msg = new Message(to);
-		if (isGroupChat)
-			msg.setType(Message.Type.groupchat);
-		else
-			msg.setType(Message.Type.chat);
-		msg.setMessageSeenState(Message.SeenState.sent);
-		msg.setDisplayName(prefManager.getDisplayName());
-		String picId = prefManager.getUserFileId(prefManager.getUserName());
-		if(picId != null)
-			msg.setPicId(picId);
-		if(bulletin_broadcast)
-			msg.setStatusMessageType(Message.StatusMessageType.broadcasttoall);
-		if(shared_id_message){
-			//Set sharedID group name, shared ID Display name, Shared ID file id
-			if(userName!=null && !userName.equals(""))
-				msg.setGroupId(userName);
-			if(groupDisplayName!=null && !groupDisplayName.equals(""))
-				msg.setGroupDisplayName(groupDisplayName);
-			if(groupFileID!=null && !groupFileID.equals(""))
-				msg.setGroupPicId(groupFileID);
-			msg.setStatusMessageType(Message.StatusMessageType.sharedID);
-		}
+            return;
+        }
+        String to = userName + "@" + Constants.CHAT_DOMAIN;
+        if (isGroupChat) {
+            to = userName + "@conference." + Constants.CHAT_DOMAIN;
+        } else if (SharedPrefManager.getInstance().isBroadCast(userName)) {
+            to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
+        } else if (userName.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")) {
+            to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
+            bulletin_broadcast = true;
+        } else if (shared_id_message) {
+            to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
+        }
+        Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
+        Message msg = new Message(to);
+        if (isGroupChat)
+            msg.setType(Message.Type.groupchat);
+        else
+            msg.setType(Message.Type.chat);
+        msg.setMessageSeenState(Message.SeenState.sent);
+        msg.setDisplayName(prefManager.getDisplayName());
+        String picId = prefManager.getUserFileId(prefManager.getUserName());
+        if (picId != null)
+            msg.setPicId(picId);
+        if (bulletin_broadcast)
+            msg.setStatusMessageType(Message.StatusMessageType.broadcasttoall);
+        if (shared_id_message) {
+            //Set sharedID group name, shared ID Display name, Shared ID file id
+            if (userName != null && !userName.equals(""))
+                msg.setGroupId(userName);
+            if (groupDisplayName != null && !groupDisplayName.equals(""))
+                msg.setGroupDisplayName(groupDisplayName);
+            if (groupFileID != null && !groupFileID.equals(""))
+                msg.setGroupPicId(groupFileID);
+            msg.setStatusMessageType(Message.StatusMessageType.sharedID);
+        }
 
-		msg.setXMPPMessageType(messageType);
-		if(messageType == XMPPMessageType.atMeXmppMessageTypeContact){
-			if(captionOrLocationMsg!=null && !captionOrLocationMsg.equals("")){
-				msg.setMediaTagMessage(captionOrLocationMsg);
-			}
-			message = "Shared contact";
-			msg.setBody("Shared contact");
-		}
-		else if(messageType == XMPPMessageType.atMeXmppMessageTypeLocation){
-			if(message!=null && !message.equals("")){
-				msg.setMediaTagMessage(message);
-			}
-			if(captionOrLocationMsg!=null && !captionOrLocationMsg.equals("")){
-				msg.setLocationMessage(captionOrLocationMsg);
-			}
-			msg.setBody("Shared location");
-		}
+        msg.setXMPPMessageType(messageType);
+        if (messageType == XMPPMessageType.atMeXmppMessageTypeContact) {
+            if (captionOrLocationMsg != null && !captionOrLocationMsg.equals("")) {
+                msg.setMediaTagMessage(captionOrLocationMsg);
+            }
+            message = "Shared contact";
+            msg.setBody("Shared contact");
+        } else if (messageType == XMPPMessageType.atMeXmppMessageTypeLocation) {
+            if (message != null && !message.equals("")) {
+                msg.setMediaTagMessage(message);
+            }
+            if (captionOrLocationMsg != null && !captionOrLocationMsg.equals("")) {
+                msg.setLocationMessage(captionOrLocationMsg);
+            }
+            msg.setBody("Shared location");
+        }
 
-		if(thumbURL!=null){
-			MediaBody mediaBody = msg.new MediaBody();
-			mediaBody.setType(String.valueOf(messageType.ordinal()));
-			mediaBody.setUrl(thumbURL);
-			if(thumbURL!=null)
-				mediaBody.setThumb_data(thumbURL);
-			msg.setMediaBody(mediaBody);
-		}
-		msg.setPacketID(UUID.randomUUID().toString());
-		Log.d(TAG, "sent packet: " + msg.toXML());
-		if(userName.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")){
-			if(!is_broadcast)
-				saveMessage(userMe, userName, message, msg, (byte)messageType.ordinal());
-			if(messageType == XMPPMessageType.atMeXmppMessageTypeLocation)
-				sendBulletinMessage("Shared location", null, null, message, captionOrLocationMsg, messageType.ordinal(), msg.getPacketID());
-			else
-				sendBulletinMessage("Shared contact", null, null, captionOrLocationMsg, null, messageType.ordinal(), msg.getPacketID());
-			return;
-		}
-		if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
-			connection.sendPacket(msg);
-			xmppConectionStatus = true;
-		} else {
+        if (thumbURL != null) {
+            MediaBody mediaBody = msg.new MediaBody();
+            mediaBody.setType(String.valueOf(messageType.ordinal()));
+            mediaBody.setUrl(thumbURL);
+            if (thumbURL != null)
+                mediaBody.setThumb_data(thumbURL);
+            msg.setMediaBody(mediaBody);
+        }
+        msg.setPacketID(UUID.randomUUID().toString());
+        Log.d(TAG, "sent packet: " + msg.toXML());
+        if (userName.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")) {
+            if (!is_broadcast)
+                saveMessage(userMe, userName, message, msg, (byte) messageType.ordinal());
+            if (messageType == XMPPMessageType.atMeXmppMessageTypeLocation)
+                sendBulletinMessage("Shared location", null, null, message, captionOrLocationMsg, messageType.ordinal(), msg.getPacketID());
+            else
+                sendBulletinMessage("Shared contact", null, null, captionOrLocationMsg, null, messageType.ordinal(), msg.getPacketID());
+            return;
+        }
+        if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
+            connection.sendPacket(msg);
+            xmppConectionStatus = true;
+        } else {
 //			xmppConectionStatus = false;
-			msg.setMessageSeenState(Message.SeenState.wait);
-		}
-		if(!is_broadcast)
-			saveMessage(userMe, userName, message, msg, (byte)messageType.ordinal());
-		sendOffLineMessages1();
-		if(connectionStatusListener!=null)
-			connectionStatusListener.notifyConnectionChange();
-	}
+            msg.setMessageSeenState(Message.SeenState.wait);
+        }
+        if (!is_broadcast)
+            saveMessage(userMe, userName, message, msg, (byte) messageType.ordinal());
+        sendOffLineMessages1();
+        if (connectionStatusListener != null)
+            connectionStatusListener.notifyConnectionChange();
+    }
 
-	public void sendPoll(String userName, String message, String captionOrLocationMsg,
-						 XMPPMessageType messageType, int poll_type)
-	{
-		System.out.println("sendPoll :: userName = "+userName);
-		if (userName == null || userName.equals("")) {
-			Toast.makeText(context, "userName is not correct: " + userName, Toast.LENGTH_SHORT).show();
-			return;
-		}
-		if (userName.equals(userMe)) {
+    public void sendPoll(String userName, String message, String captionOrLocationMsg,
+                         XMPPMessageType messageType, int poll_type) {
+        System.out.println("sendPoll :: userName = " + userName);
+        if (userName == null || userName.equals("")) {
+            Toast.makeText(context, "userName is not correct: " + userName, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (userName.equals(userMe)) {
 //			Toast.makeText(context, "Self messaging are not allowed.", 1000).show();
-			return;
-		}
-		String to = userName + "@" + Constants.CHAT_DOMAIN;
-		to = userName + "@conference." + Constants.CHAT_DOMAIN;
-		Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
-		Message msg = new Message(to);
-		msg.setType(Message.Type.groupchat);
-		msg.setMessageSeenState(Message.SeenState.sent);
-		msg.setDisplayName(prefManager.getDisplayName());
-		String picId = prefManager.getUserFileId(prefManager.getUserName());
-		if(picId != null)
-			msg.setPicId(picId);
+            return;
+        }
+        String to = userName + "@" + Constants.CHAT_DOMAIN;
+        to = userName + "@conference." + Constants.CHAT_DOMAIN;
+        Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
+        Message msg = new Message(to);
+        msg.setType(Message.Type.groupchat);
+        msg.setMessageSeenState(Message.SeenState.sent);
+        msg.setDisplayName(prefManager.getDisplayName());
+        String picId = prefManager.getUserFileId(prefManager.getUserName());
+        if (picId != null)
+            msg.setPicId(picId);
 
-		msg.setXMPPMessageType(messageType);
-		if(captionOrLocationMsg!=null && !captionOrLocationMsg.equals("")){
-			msg.setMediaTagMessage(captionOrLocationMsg);
-		}
-		if(poll_type == 2){
-			message = "Replied Poll";
-			msg.setBody("Replied Poll");
-		}else{
-			message = "Created Poll";
-			msg.setBody("Created Poll");
-		}
+        msg.setXMPPMessageType(messageType);
+        if (captionOrLocationMsg != null && !captionOrLocationMsg.equals("")) {
+            msg.setMediaTagMessage(captionOrLocationMsg);
+        }
+        if (poll_type == 2) {
+            message = "Replied Poll";
+            msg.setBody("Replied Poll");
+        } else {
+            message = "Created Poll";
+            msg.setBody("Created Poll");
+        }
 
-		msg.setPacketID(UUID.randomUUID().toString());
-		Log.d(TAG, "sent packet: " + msg.toXML());
-		if(userName.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")){
-			if(poll_type != 2) {
-				saveMessage(userMe, userName, message, msg, (byte) messageType.ordinal());
-			}
-			sendBulletinMessage(null, null, null, captionOrLocationMsg, null, messageType.ordinal(), msg.getPacketID());
-			return;
-		}
-		if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
-			connection.sendPacket(msg);
-			xmppConectionStatus = true;
-		} else {
+        msg.setPacketID(UUID.randomUUID().toString());
+        Log.d(TAG, "sent packet: " + msg.toXML());
+        if (userName.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")) {
+            if (poll_type != 2) {
+                saveMessage(userMe, userName, message, msg, (byte) messageType.ordinal());
+            }
+            sendBulletinMessage(null, null, null, captionOrLocationMsg, null, messageType.ordinal(), msg.getPacketID());
+            return;
+        }
+        if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
+            connection.sendPacket(msg);
+            xmppConectionStatus = true;
+        } else {
 //			xmppConectionStatus = false;
-			msg.setMessageSeenState(Message.SeenState.wait);
-		}
+            msg.setMessageSeenState(Message.SeenState.wait);
+        }
 
-		if(poll_type != 2) {
-			saveMessage(userMe, userName, message, msg, (byte) messageType.ordinal());
-			sendOffLineMessages1();
-		}
-		if(connectionStatusListener!=null)
-			connectionStatusListener.notifyConnectionChange();
-	}
+        if (poll_type != 2) {
+            saveMessage(userMe, userName, message, msg, (byte) messageType.ordinal());
+            sendOffLineMessages1();
+        }
+        if (connectionStatusListener != null)
+            connectionStatusListener.notifyConnectionChange();
+    }
 
-	public void sendMediaURL(String userName, String message,  String packetID , String captionMsg, String fileName, String url, String thumb, XMPPMessageType mediaType)
-	{
-		System.out.println("sendMediaURL :: userName = "+userName);
-		boolean isGroupChat = false;
-		boolean bulletin_broadcast = false;
-		int audio_length = 0;
-		boolean shared_id_message = false;
-		String groupDisplayName = null;
-		String groupFileID = null;
-		if(prefManager.isSharedIDContact(userName)){
-			shared_id_message = true;
-			groupDisplayName = prefManager.getSharedIDDisplayName(userName);
-			groupFileID = prefManager.getSharedIDFileId(userName);
-		}
-		if (SharedPrefManager.getInstance().isGroupChat(userName)
-				&& !message.equals("You are welcome in " + userName + " group.")) {
-			isGroupChat = true;
-			if(!prefManager.isGroupMemberActive(userName, userMe)){
-				return;
-			}
-		}
+    public void sendMediaURL(String userName, String message, String packetID, String captionMsg, String fileName, String url, String thumb, XMPPMessageType mediaType) {
+        System.out.println("sendMediaURL :: userName = " + userName);
+        boolean isGroupChat = false;
+        boolean bulletin_broadcast = false;
+        int audio_length = 0;
+        boolean shared_id_message = false;
+        String groupDisplayName = null;
+        String groupFileID = null;
+        if (prefManager.isSharedIDContact(userName)) {
+            shared_id_message = true;
+            groupDisplayName = prefManager.getSharedIDDisplayName(userName);
+            groupFileID = prefManager.getSharedIDFileId(userName);
+        }
+        if (SharedPrefManager.getInstance().isGroupChat(userName)
+                && !message.equals("You are welcome in " + userName + " group.")) {
+            isGroupChat = true;
+            if (!prefManager.isGroupMemberActive(userName, userMe)) {
+                return;
+            }
+        }
 
-		if (userName == null || userName.equals("")) {
-			Toast.makeText(context,
-					"userName is not correct: " + userName, 1000).show();
-			return;
-		}
-		if (url == null || url.equals("")) {
-			Toast.makeText(context,
-					"Message should not be empty or null: " + url, 1000)
-					.show();
-			return;
-		}
-		if (userName.equals(userMe)) {
-			return;
-		}
-		String to = userName + "@" + Constants.CHAT_DOMAIN;
-		if (isGroupChat) {
-			to = userName + "@conference." + Constants.CHAT_DOMAIN;
-		}else if (SharedPrefManager.getInstance().isBroadCast(userName)){
-			to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
-		}else if(userName.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")){
-			to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
-			bulletin_broadcast = true;
-		}else if(shared_id_message){
-			to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
-		}
+        if (userName == null || userName.equals("")) {
+            Toast.makeText(context,
+                    "userName is not correct: " + userName, 1000).show();
+            return;
+        }
+        if (url == null || url.equals("")) {
+            Toast.makeText(context,
+                    "Message should not be empty or null: " + url, 1000)
+                    .show();
+            return;
+        }
+        if (userName.equals(userMe)) {
+            return;
+        }
+        String to = userName + "@" + Constants.CHAT_DOMAIN;
+        if (isGroupChat) {
+            to = userName + "@conference." + Constants.CHAT_DOMAIN;
+        } else if (SharedPrefManager.getInstance().isBroadCast(userName)) {
+            to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
+        } else if (userName.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")) {
+            to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
+            bulletin_broadcast = true;
+        } else if (shared_id_message) {
+            to = userName + "@broadcast." + Constants.CHAT_DOMAIN;
+        }
 
-		Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
-		Message msg = new Message(to);// , Message.Type.chat);
-		if (isGroupChat)
-			msg.setType(Message.Type.groupchat);
-		else
-			msg.setType(Message.Type.chat);
-		msg.setMessageSeenState(Message.SeenState.sent);
-		msg.setDisplayName(prefManager.getDisplayName());
-		String picId = prefManager.getUserFileId(prefManager.getUserName());
-		if(picId != null)
-			msg.setPicId(picId);
-		if(bulletin_broadcast)
-			msg.setStatusMessageType(Message.StatusMessageType.broadcasttoall);
-		if(shared_id_message){
-			//Set sharedID group name, shared ID Display name, Shared ID file id
-			if(userName!=null && !userName.equals(""))
-				msg.setGroupId(userName);
-			if(groupDisplayName!=null && !groupDisplayName.equals(""))
-				msg.setGroupDisplayName(groupDisplayName);
-			if(groupFileID!=null && !groupFileID.equals(""))
-				msg.setGroupPicId(groupFileID);
-			msg.setStatusMessageType(Message.StatusMessageType.sharedID);
-		}
+        Log.d(TAG, "Sending text [" + message + "] to [" + to + "]");
+        Message msg = new Message(to);// , Message.Type.chat);
+        if (isGroupChat)
+            msg.setType(Message.Type.groupchat);
+        else
+            msg.setType(Message.Type.chat);
+        msg.setMessageSeenState(Message.SeenState.sent);
+        msg.setDisplayName(prefManager.getDisplayName());
+        String picId = prefManager.getUserFileId(prefManager.getUserName());
+        if (picId != null)
+            msg.setPicId(picId);
+        if (bulletin_broadcast)
+            msg.setStatusMessageType(Message.StatusMessageType.broadcasttoall);
+        if (shared_id_message) {
+            //Set sharedID group name, shared ID Display name, Shared ID file id
+            if (userName != null && !userName.equals(""))
+                msg.setGroupId(userName);
+            if (groupDisplayName != null && !groupDisplayName.equals(""))
+                msg.setGroupDisplayName(groupDisplayName);
+            if (groupFileID != null && !groupFileID.equals(""))
+                msg.setGroupPicId(groupFileID);
+            msg.setStatusMessageType(Message.StatusMessageType.sharedID);
+        }
 
-		if(captionMsg!=null && !captionMsg.equals("")){
-			msg.setMediaTagMessage(captionMsg);
-		}
-		if(mediaType != XMPPMessageType.atMeXmppMessageTypeAudio && fileName!=null && !fileName.equals("")){
-			msg.setMediaFileName(fileName);
-		}
+        if (captionMsg != null && !captionMsg.equals("")) {
+            msg.setMediaTagMessage(captionMsg);
+        }
+        if (mediaType != XMPPMessageType.atMeXmppMessageTypeAudio && fileName != null && !fileName.equals("")) {
+            msg.setMediaFileName(fileName);
+        }
 //		if(message.startsWith(AppConstants.PIC_SEP))//This is to send picture/audio/video URL in Subject as decided b/w ios and android
-		{
+        {
 //			msg.setSubject(message.substring(message.indexOf(AppConstants.PIC_SEP) + AppConstants.PIC_SEP.length()));
-			msg.setXMPPMessageType(mediaType);
-			if(mediaType == XMPPMessageType.atMeXmppMessageTypeImage){
-				if(captionMsg!=null && !captionMsg.equals(""))
-					msg.setBody(captionMsg);
-				else
-					msg.setBody("Sent you an image");
-			}else if(mediaType == XMPPMessageType.atMeXmppMessageTypeAudio){
-				if(captionMsg!=null && !captionMsg.equals(""))
-					msg.setBody(captionMsg);
-				else
-					msg.setBody("Sent you a voice note");
-			}else if(mediaType == XMPPMessageType.atMeXmppMessageTypeVideo){
-				if(captionMsg!=null && !captionMsg.equals(""))
-					msg.setBody(captionMsg);
-				else
-					msg.setBody("Sent you a video");
-			}else if(mediaType == XMPPMessageType.atMeXmppMessageTypeDoc)
-				msg.setBody("Sent you a doc");
-			else if(mediaType == XMPPMessageType.atMeXmppMessageTypePdf)
-				msg.setBody("Sent you a pdf");
-			else if(mediaType == XMPPMessageType.atMeXmppMessageTypeXLS)
-				msg.setBody("Sent you a xls");
-			else if(mediaType == XMPPMessageType.atMeXmppMessageTypePPT)
-				msg.setBody("Sent you a ppt");
-			if(mediaType == XMPPMessageType.atMeXmppMessageTypeAudio){
-				try{
-					if(fileName != null)//Here caption is used for actual local audio file path to get duration
-						audio_length = MediaPlayer.create(context, Uri.fromFile(new File(fileName))).getDuration()/1000;
-				}catch(Exception ex){
-					ex.printStackTrace();
-				}
-				byte minutes = (byte) (audio_length / 60);
-				byte seconds = (byte) (audio_length % 60);
-				String len_msg = minutes + ":" + ((seconds < 10) ? ("0"+seconds) : seconds);
-				if(audio_length > 0)
-					msg.setBody("Sent you a voice note : "+len_msg);
-				else
-					msg.setBody("Sent you a voice note");
+            msg.setXMPPMessageType(mediaType);
+            if (mediaType == XMPPMessageType.atMeXmppMessageTypeImage) {
+                if (captionMsg != null && !captionMsg.equals(""))
+                    msg.setBody(captionMsg);
+                else
+                    msg.setBody("Sent you an image");
+            } else if (mediaType == XMPPMessageType.atMeXmppMessageTypeAudio) {
+                if (captionMsg != null && !captionMsg.equals(""))
+                    msg.setBody(captionMsg);
+                else
+                    msg.setBody("Sent you a voice note");
+            } else if (mediaType == XMPPMessageType.atMeXmppMessageTypeVideo) {
+                if (captionMsg != null && !captionMsg.equals(""))
+                    msg.setBody(captionMsg);
+                else
+                    msg.setBody("Sent you a video");
+            } else if (mediaType == XMPPMessageType.atMeXmppMessageTypeDoc)
+                msg.setBody("Sent you a doc");
+            else if (mediaType == XMPPMessageType.atMeXmppMessageTypePdf)
+                msg.setBody("Sent you a pdf");
+            else if (mediaType == XMPPMessageType.atMeXmppMessageTypeXLS)
+                msg.setBody("Sent you a xls");
+            else if (mediaType == XMPPMessageType.atMeXmppMessageTypePPT)
+                msg.setBody("Sent you a ppt");
+            if (mediaType == XMPPMessageType.atMeXmppMessageTypeAudio) {
+                try {
+                    if (fileName != null)//Here caption is used for actual local audio file path to get duration
+                        audio_length = MediaPlayer.create(context, Uri.fromFile(new File(fileName))).getDuration() / 1000;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                byte minutes = (byte) (audio_length / 60);
+                byte seconds = (byte) (audio_length % 60);
+                String len_msg = minutes + ":" + ((seconds < 10) ? ("0" + seconds) : seconds);
+                if (audio_length > 0)
+                    msg.setBody("Sent you a voice note : " + len_msg);
+                else
+                    msg.setBody("Sent you a voice note");
 
-			}
-			if(url!=null){
-				MediaBody mediaBody = msg.new MediaBody();
-				mediaBody.setType(String.valueOf(mediaType.ordinal()));
+            }
+            if (url != null) {
+                MediaBody mediaBody = msg.new MediaBody();
+                mediaBody.setType(String.valueOf(mediaType.ordinal()));
 //				mediaBody.setUrl(url.substring(url.indexOf(Constants.PIC_SEP) + Constants.PIC_SEP.length()));
-				mediaBody.setUrl(url);
-				if(thumb!=null)
-					mediaBody.setThumb_data(thumb);
-				//Set Audio Length
-				if(mediaType == XMPPMessageType.atMeXmppMessageTypeAudio){
-					if(audio_length > 0)
-						mediaBody.setAudioLength(""+audio_length);
-				}
-				msg.setMediaBody(mediaBody);
-			}
-		}
+                mediaBody.setUrl(url);
+                if (thumb != null)
+                    mediaBody.setThumb_data(thumb);
+                //Set Audio Length
+                if (mediaType == XMPPMessageType.atMeXmppMessageTypeAudio) {
+                    if (audio_length > 0)
+                        mediaBody.setAudioLength("" + audio_length);
+                }
+                msg.setMediaBody(mediaBody);
+            }
+        }
 
-		msg.setPacketID(packetID);
-		Log.d(TAG, "sent packet: " + msg.toXML());
-		if(userName.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")){
-			chatDBWrapper.updateSeenStatus(userName, "(\"" + packetID + "\")", SeenState.sent);
-			sendBulletinMessage(message, url, fileName, captionMsg, null, mediaType.ordinal(), msg.getPacketID());
-			return;
-		}
-		if (connection != null && connection.isConnected()
-				&& connection.isAuthenticated()) {
-			connection.sendPacket(msg);
-			chatDBWrapper.updateSeenStatus(userName, "(\"" + packetID + "\")", SeenState.sent);
-			xmppConectionStatus = true;
-		} else
-		{
-			msg.setMessageSeenState(Message.SeenState.wait);
-			chatDBWrapper.updateSeenStatus(userName,
-					"(\"" + packetID + "\")", SeenState.wait);
-		}
-		if(connectionStatusListener!=null)
-			connectionStatusListener.notifyConnectionChange();
-	}
+        msg.setPacketID(packetID);
+        Log.d(TAG, "sent packet: " + msg.toXML());
+        if (userName.equals(SharedPrefManager.getInstance().getUserDomain() + "-all")) {
+            chatDBWrapper.updateSeenStatus(userName, "(\"" + packetID + "\")", SeenState.sent);
+            sendBulletinMessage(message, url, fileName, captionMsg, null, mediaType.ordinal(), msg.getPacketID());
+            return;
+        }
+        if (connection != null && connection.isConnected()
+                && connection.isAuthenticated()) {
+            connection.sendPacket(msg);
+            chatDBWrapper.updateSeenStatus(userName, "(\"" + packetID + "\")", SeenState.sent);
+            xmppConectionStatus = true;
+        } else {
+            msg.setMessageSeenState(Message.SeenState.wait);
+            chatDBWrapper.updateSeenStatus(userName,
+                    "(\"" + packetID + "\")", SeenState.wait);
+        }
+        if (connectionStatusListener != null)
+            connectionStatusListener.notifyConnectionChange();
+    }
 
-	public void clearNotifications(int id) {
-		try {
-			if (notificationManager != null)
-				notificationManager.cancel(id);
-		} catch (Exception e) {
-		}
-	}
+    public void clearNotifications(int id) {
+        try {
+            if (notificationManager != null)
+                notificationManager.cancel(id);
+        } catch (Exception e) {
+        }
+    }
 
-	public XMPPConnection getconnection() {
-		if (connection != null) {
-			Log.d(TAG, "connection send");
-			return connection;
-		} else {
-			Log.d(TAG, "connection null");
-			return null;
-		}
-	}
+    public XMPPConnection getconnection() {
+        if (connection != null) {
+            Log.d(TAG, "connection send");
+            return connection;
+        } else {
+            Log.d(TAG, "connection null");
+            return null;
+        }
+    }
 
-	public class MyBinder extends Binder {
-		public ChatService getService() {
-			return ChatService.this;
-		}
-	}
+    public class MyBinder extends Binder {
+        public ChatService getService() {
+            return ChatService.this;
+        }
+    }
 
-	public void inviteUserInRoom(String roomName, String displayName, String groupDiscription, String userName, String caption) {
-		if (connection != null && connection.isConnected()
-				&& connection.isAuthenticated()) {
-			try {
-				String room = roomName + "@conference."
-						+ Constants.CHAT_DOMAIN;
+    public void inviteUserInRoom(String roomName, String displayName, String groupDiscription, String userName, String caption) {
+        if (connection != null && connection.isConnected()
+                && connection.isAuthenticated()) {
+            try {
+                String room = roomName + "@conference."
+                        + Constants.CHAT_DOMAIN;
 
-				// MultiUserChat muc = new MultiUserChat(connection,room);
-				// muc.invite(userName+"@"+AtmeChatClient.getChatServer(),
-				// "Invitation Message");
-				//
-				// Message message = new Message(userName+"@"+
-				// AtmeChatClient.getChatServer());
-				// message.setBody("Join me for a group chat!");
-				// message.addExtension(new GroupChatInvitation(roomName + "@" +
-				// AtmeChatClient.getChatServer()));
-				// connection.sendPacket(message);
+                // MultiUserChat muc = new MultiUserChat(connection,room);
+                // muc.invite(userName+"@"+AtmeChatClient.getChatServer(),
+                // "Invitation Message");
+                //
+                // Message message = new Message(userName+"@"+
+                // AtmeChatClient.getChatServer());
+                // message.setBody("Join me for a group chat!");
+                // message.addExtension(new GroupChatInvitation(roomName + "@" +
+                // AtmeChatClient.getChatServer()));
+                // connection.sendPacket(message);
 
-				Message message = new Message(room);// , Message.Type.chat);
-				MUCUser mucUser = new MUCUser();
-				MUCUser.Invite invite = new MUCUser.Invite();
-				invite.setTo(userName + "@" + Constants.CHAT_DOMAIN);
-				// atMEMulti
-				if(displayName!=null && displayName.equals("Multi Chat Room"))
-					invite.setReason("atMEMulti>>> "+groupDiscription);
-				else
-					invite.setReason(displayName + ">>> "+groupDiscription);
-				mucUser.setInvite(invite);
-				// Add the MUCUser packet that includes the invitation to the
-				// message
-				message.addExtension(mucUser);
-				Log.i(TAG, "inviteUserInRoom request " + message.toXML());
-				connection.sendPacket(message);
+                Message message = new Message(room);// , Message.Type.chat);
+                MUCUser mucUser = new MUCUser();
+                MUCUser.Invite invite = new MUCUser.Invite();
+                invite.setTo(userName + "@" + Constants.CHAT_DOMAIN);
+                // atMEMulti
+                if (displayName != null && displayName.equals("Multi Chat Room"))
+                    invite.setReason("atMEMulti>>> " + groupDiscription);
+                else
+                    invite.setReason(displayName + ">>> " + groupDiscription);
+                mucUser.setInvite(invite);
+                // Add the MUCUser packet that includes the invitation to the
+                // message
+                message.addExtension(mucUser);
+                Log.i(TAG, "inviteUserInRoom request " + message.toXML());
+                connection.sendPacket(message);
 //				roster.createEntry(userName, prefManager.getUserServerName(userName), new String[]{roomName});
-				prefManager.saveUsersOfGroup(roomName, userName);
-				String userDisplayName = DBWrapper.getInstance().getChatName(userName);
-				if(userDisplayName!=null && userDisplayName.contains("#786#"))
-					userDisplayName = userDisplayName.substring(0, userDisplayName.indexOf("#786#"));
-				if(userName!=null && !userName.equals("") && !userName.equals(userMe)){
-					Log.d(TAG,"You group persons added "+ SharedPrefManager.getInstance().getGroupDisplayName(roomName));
-					if(userName.equalsIgnoreCase(userDisplayName))
-						userDisplayName = SharedPrefManager.getInstance().getUserServerName(userName);
-					saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(roomName), roomName, "You added \""+userDisplayName+"\".");
-				}
+                prefManager.saveUsersOfGroup(roomName, userName);
+                String userDisplayName = DBWrapper.getInstance().getChatName(userName);
+                if (userDisplayName != null && userDisplayName.contains("#786#"))
+                    userDisplayName = userDisplayName.substring(0, userDisplayName.indexOf("#786#"));
+                if (userName != null && !userName.equals("") && !userName.equals(userMe)) {
+                    Log.d(TAG, "You group persons added " + SharedPrefManager.getInstance().getGroupDisplayName(roomName));
+                    if (userName.equalsIgnoreCase(userDisplayName))
+                        userDisplayName = SharedPrefManager.getInstance().getUserServerName(userName);
+                    saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(roomName), roomName, "You added \"" + userDisplayName + "\".");
+                }
 //				sendInfoMessage(roomName,userName,Message.XMPPMessageType.atMeXmppMessageTypeMemberList);//
-				sendGroupInfoMessage(roomName, userName, caption, Message.XMPPMessageType.atMeXmppMessageTypeMemberList);//
+                sendGroupInfoMessage(roomName, userName, caption, Message.XMPPMessageType.atMeXmppMessageTypeMemberList);//
 //				sendMessage(roomName, userDisplayName + " has invited.");
-			} catch (Exception e) {
-				Log.d(TAG, " Exception in inviting userName " + userName);
-			}
-			xmppConectionStatus = true;
-		} else {
+            } catch (Exception e) {
+                Log.d(TAG, " Exception in inviting userName " + userName);
+            }
+            xmppConectionStatus = true;
+        } else {
 //			xmppConectionStatus = false;
-			Log.d(TAG, userMe + " are not inviting userName " + userName
-					+ " due to connection not available.");
-		}
-		if(connectionStatusListener!=null)
-			connectionStatusListener.notifyConnectionChange();
-	}
+            Log.d(TAG, userMe + " are not inviting userName " + userName
+                    + " due to connection not available.");
+        }
+        if (connectionStatusListener != null)
+            connectionStatusListener.notifyConnectionChange();
+    }
 
-	public void sendGroupPresence(String roomName, int historySeconds) {
-		try {
-			//For testing, to join directly.
+    public void sendGroupPresence(String roomName, int historySeconds) {
+        try {
+            //For testing, to join directly.
 //			joinMultiUserChat2(roomName);
-			int currentTime = 0;
-			long last_online_time = prefManager.getLastOnline(prefManager.getUserDomain());
-			long curr_time = System.currentTimeMillis() - last_online_time;
+            int currentTime = 0;
+            long last_online_time = prefManager.getLastOnline(prefManager.getUserDomain());
+            long curr_time = System.currentTimeMillis() - last_online_time;
 
-			long last_msg_time_diff_from_curr = 0;
-			long last_msg_time = chatDBWrapper.lastMessageInDB(roomName);
-			if(chatDBWrapper != null)
-				last_msg_time_diff_from_curr = System.currentTimeMillis() - last_msg_time;
+            long last_msg_time_diff_from_curr = 0;
+            long last_msg_time = chatDBWrapper.lastMessageInDB(roomName);
+            if (chatDBWrapper != null)
+                last_msg_time_diff_from_curr = System.currentTimeMillis() - last_msg_time;
 
-			if(last_msg_time_diff_from_curr > curr_time)
-				currentTime = (int)(last_msg_time_diff_from_curr / 1000);
-			else
-				currentTime = (int)(curr_time / 1000);
+            if (last_msg_time_diff_from_curr > curr_time)
+                currentTime = (int) (last_msg_time_diff_from_curr / 1000);
+            else
+                currentTime = (int) (curr_time / 1000);
 
-			if(last_online_time == 0 || last_msg_time == 0)
-				currentTime = 0;
+            if (last_online_time == 0 || last_msg_time == 0)
+                currentTime = 0;
 
-			System.out.println("sendGroupPresence : time : "+roomName+" - "+currentTime);
+            System.out.println("sendGroupPresence : time : " + roomName + " - " + currentTime);
 
-			if((currentTime < 0 && currentTime > -100) || currentTime < 100) {
-				currentTime = 240;
-			}
-
+            if ((currentTime < 0 && currentTime > -100) || currentTime < 100) {
+                currentTime = 240;
+            }
 
 
 //			if(prefManager.getLastOnline(prefManager.getUserDomain()) <= 0)
@@ -5257,231 +5398,231 @@ public class ChatService extends Service implements interfaceInstances {
 //			if(historySeconds > 0)
 //				currentTime = historySeconds;
 
-			if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
-				Presence joinPresence = new Presence(Presence.Type.available);
-				String room = roomName;
-				if (!room.contains("@conference."))
-					room = roomName + "@conference." + Constants.CHAT_DOMAIN;
-				joinPresence.setTo(room + "/" + userMe);
-				// Indicate the the client supports MUC
-				MUCInitialPresence initialPresence = new MUCInitialPresence();
-				MUCInitialPresence.History history = new History();
-				history.setSeconds(currentTime); //new1
-				initialPresence.setHistory(history);
-				joinPresence.addExtension(initialPresence);
-				connection.sendPacket(joinPresence);
+            if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
+                Presence joinPresence = new Presence(Presence.Type.available);
+                String room = roomName;
+                if (!room.contains("@conference."))
+                    room = roomName + "@conference." + Constants.CHAT_DOMAIN;
+                joinPresence.setTo(room + "/" + userMe);
+                // Indicate the the client supports MUC
+                MUCInitialPresence initialPresence = new MUCInitialPresence();
+                MUCInitialPresence.History history = new History();
+                history.setSeconds(currentTime); //new1
+                initialPresence.setHistory(history);
+                joinPresence.addExtension(initialPresence);
+                connection.sendPacket(joinPresence);
 //				xmppConectionStatus = true;
-			}else
-				Log.i(TAG, "sendGroupPresence :: [NOT CONNECTED YET]");
+            } else
+                Log.i(TAG, "sendGroupPresence :: [NOT CONNECTED YET]");
 //			else
 //				xmppConectionStatus = false;
-		} catch (Exception e) {
-			Log.d(TAG, roomName + " presence availibility not sent.");
-		}
-		if(connectionStatusListener!=null)
-			connectionStatusListener.notifyConnectionChange();
-	}
+        } catch (Exception e) {
+            Log.d(TAG, roomName + " presence availibility not sent.");
+        }
+        if (connectionStatusListener != null)
+            connectionStatusListener.notifyConnectionChange();
+    }
 
-	public void joinMultiUserChat(String roomName) {
-		Log.d(TAG, userMe + " createMultiUserChat method calling.");
-		if (connection != null && connection.isConnected()
-				&& connection.isAuthenticated()) {
-			Presence joinPresence = new Presence(Presence.Type.available);
-			String room = roomName;
-			if (!room.contains("@conference."))
-				room = roomName + "@conference." + Constants.CHAT_DOMAIN;
-			joinPresence.setTo(room + "/" + userMe);
-			// Indicate the the client supports MUC
-			joinPresence.addExtension(new MUCInitialPresence());
-			Log.d(TAG, " joinPresence: " + joinPresence.toXML());
-			connection.sendPacket(joinPresence);
+    public void joinMultiUserChat(String roomName) {
+        Log.d(TAG, userMe + " createMultiUserChat method calling.");
+        if (connection != null && connection.isConnected()
+                && connection.isAuthenticated()) {
+            Presence joinPresence = new Presence(Presence.Type.available);
+            String room = roomName;
+            if (!room.contains("@conference."))
+                room = roomName + "@conference." + Constants.CHAT_DOMAIN;
+            joinPresence.setTo(room + "/" + userMe);
+            // Indicate the the client supports MUC
+            joinPresence.addExtension(new MUCInitialPresence());
+            Log.d(TAG, " joinPresence: " + joinPresence.toXML());
+            connection.sendPacket(joinPresence);
 //			sendInfoMessage(roomName, userMe + " has joined this group.", XMPPMessageType.atMeXmppMessageTypeJoinGroup );
-			xmppConectionStatus = true;
-		} else {
+            xmppConectionStatus = true;
+        } else {
 //			xmppConectionStatus = false;
-			Log.d(TAG,
-					userMe
-							+ " joinMultiUserChat method created MultiUserChat instance is null.");
-		}
+            Log.d(TAG,
+                    userMe
+                            + " joinMultiUserChat method created MultiUserChat instance is null.");
+        }
 
-		Log.d(TAG, userMe + " createMultiUserChat metho calling end.");
-		if(connectionStatusListener!=null)
-			connectionStatusListener.notifyConnectionChange();
-	}
+        Log.d(TAG, userMe + " createMultiUserChat metho calling end.");
+        if (connectionStatusListener != null)
+            connectionStatusListener.notifyConnectionChange();
+    }
 
-	public void joinMultiUserChat2(String roomName) {
-		MultiUserChat mMultiUserChat = new MultiUserChat(connection, roomName + "@conference." + Constants.CHAT_SERVER_URL);
-		if (mMultiUserChat != null) {
-			try {
-				mMultiUserChat.join(userMe, prefManager.getUserPassword());
-				Log.i(TAG, userMe+ " joinMultiUserChat method created MultiUserChat has joined group.");
-			} catch (XMPPException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    public void joinMultiUserChat2(String roomName) {
+        MultiUserChat mMultiUserChat = new MultiUserChat(connection, roomName + "@conference." + Constants.CHAT_SERVER_URL);
+        if (mMultiUserChat != null) {
+            try {
+                mMultiUserChat.join(userMe, prefManager.getUserPassword());
+                Log.i(TAG, userMe + " joinMultiUserChat method created MultiUserChat has joined group.");
+            } catch (XMPPException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-	// muc#roomconfig_roomname
-	// muc#roomconfig_roomdesc
-	// muc#roomconfig_changesubject
-	// muc#roomconfig_maxusers
-	// muc#roomconfig_presencebroadcast
-	// muc#roomconfig_publicroom
-	// muc#roomconfig_persistentroom
-	// muc#roomconfig_moderatedroom
-	// muc#roomconfig_membersonly
-	// muc#roomconfig_allowinvites
-	// muc#roomconfig_passwordprotectedroom
-	// muc#roomconfig_roomsecret
-	// muc#roomconfig_whois
-	// muc#roomconfig_enablelogging
-	// x-muc#roomconfig_reservednick
-	// x-muc#roomconfig_canchangenick
-	// x-muc#roomconfig_registration
-	// muc#roomconfig_roomadmins
-	// muc#roomconfig_roomowners
+    // muc#roomconfig_roomname
+    // muc#roomconfig_roomdesc
+    // muc#roomconfig_changesubject
+    // muc#roomconfig_maxusers
+    // muc#roomconfig_presencebroadcast
+    // muc#roomconfig_publicroom
+    // muc#roomconfig_persistentroom
+    // muc#roomconfig_moderatedroom
+    // muc#roomconfig_membersonly
+    // muc#roomconfig_allowinvites
+    // muc#roomconfig_passwordprotectedroom
+    // muc#roomconfig_roomsecret
+    // muc#roomconfig_whois
+    // muc#roomconfig_enablelogging
+    // x-muc#roomconfig_reservednick
+    // x-muc#roomconfig_canchangenick
+    // x-muc#roomconfig_registration
+    // muc#roomconfig_roomadmins
+    // muc#roomconfig_roomowners
 
-	// public void createMultiUserChat1(String roomName){
-	// try{
-	// MultiUserChat muc = new MultiUserChat(connection, roomName +
-	// "@conference." + AtmeChatClient.getChatServer());
-	// muc.create(userMe);
-	//
-	// Form form = muc.getConfigurationForm();
-	// Form submitForm = form.createAnswerForm();
-	// for (Iterator fields = form.getFields();fields.hasNext();){
-	// FormField field = (FormField) fields.next();
-	// if(!FormField.TYPE_HIDDEN.equals(field.getType()) &&
-	// field.getVariable()!= null){
-	// Log.d(TAG, userMe + " field.getVariable() "+field.getVariable());
-	// submitForm.setDefaultAnswer(field.getVariable());
-	// }
-	// }
-	// submitForm.setAnswer("muc#roomconfig_publicroom", true);
-	// muc.sendConfigurationForm(submitForm);
-	// muc.join("userMe");
-	// }catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
-	public String createMultiUserChat(String groupDisplayName,
-									  ArrayList<String> inviters,String groupDiscription) {
-		Log.d(TAG, userMe + " createMultiUserChat method calling.");
-		String groupName = UUID.randomUUID().toString();
-		if (connection != null && connection.isConnected()
-				&& connection.isAuthenticated()) {
-			Log.d(TAG, userMe
-					+ " createMultiUserChat method connection available.");
-			MultiUserChat mMultiUserChat = new MultiUserChat(connection,
-					groupName + "@conference." + Constants.CHAT_DOMAIN);
-			Log.d(TAG, userMe
-					+ " createMultiUserChat method are creating MultiUserChat instance: "
-					+ mMultiUserChat);
-			if (mMultiUserChat != null) {
+    // public void createMultiUserChat1(String roomName){
+    // try{
+    // MultiUserChat muc = new MultiUserChat(connection, roomName +
+    // "@conference." + AtmeChatClient.getChatServer());
+    // muc.create(userMe);
+    //
+    // Form form = muc.getConfigurationForm();
+    // Form submitForm = form.createAnswerForm();
+    // for (Iterator fields = form.getFields();fields.hasNext();){
+    // FormField field = (FormField) fields.next();
+    // if(!FormField.TYPE_HIDDEN.equals(field.getType()) &&
+    // field.getVariable()!= null){
+    // Log.d(TAG, userMe + " field.getVariable() "+field.getVariable());
+    // submitForm.setDefaultAnswer(field.getVariable());
+    // }
+    // }
+    // submitForm.setAnswer("muc#roomconfig_publicroom", true);
+    // muc.sendConfigurationForm(submitForm);
+    // muc.join("userMe");
+    // }catch (Exception e) {
+    // e.printStackTrace();
+    // }
+    // }
+    public String createMultiUserChat(String groupDisplayName,
+                                      ArrayList<String> inviters, String groupDiscription) {
+        Log.d(TAG, userMe + " createMultiUserChat method calling.");
+        String groupName = UUID.randomUUID().toString();
+        if (connection != null && connection.isConnected()
+                && connection.isAuthenticated()) {
+            Log.d(TAG, userMe
+                    + " createMultiUserChat method connection available.");
+            MultiUserChat mMultiUserChat = new MultiUserChat(connection,
+                    groupName + "@conference." + Constants.CHAT_DOMAIN);
+            Log.d(TAG, userMe
+                    + " createMultiUserChat method are creating MultiUserChat instance: "
+                    + mMultiUserChat);
+            if (mMultiUserChat != null) {
 //				if(roster!=null){
 //					roster.createGroup(groupName);
 //
 //				}
-				try {
-					mMultiUserChat.create(userMe);
-					Log.d(TAG,
-							userMe
-									+ " createMultiUserChat method created MultiUserChat group with nick name.");
-					Form form = mMultiUserChat.getConfigurationForm();
-					Form submitForm = form.createAnswerForm();
-					for (Iterator fields = form.getFields(); fields.hasNext();) {
-						FormField field = (FormField) fields.next();
-						if (!FormField.TYPE_HIDDEN.equals(field.getType())
-								&& field.getVariable() != null) {
-							submitForm.setDefaultAnswer(field.getVariable());
-							Log.d(TAG,
-									"default fields "
-											+ field.getVariable()
-											+ "::"
-											+ submitForm.getField(
-											field.getVariable())
-											.toXML());
-						}
-					}
-					submitForm.setAnswer("muc#roomconfig_roomname", groupName);
-					List<String> owners = new ArrayList<String>();
-					owners.add(userMe + "@" + Constants.CHAT_DOMAIN);
-					submitForm.setAnswer("muc#roomconfig_roomowners", owners);
-					submitForm.setAnswer("muc#roomconfig_persistentroom", true);
+                try {
+                    mMultiUserChat.create(userMe);
+                    Log.d(TAG,
+                            userMe
+                                    + " createMultiUserChat method created MultiUserChat group with nick name.");
+                    Form form = mMultiUserChat.getConfigurationForm();
+                    Form submitForm = form.createAnswerForm();
+                    for (Iterator fields = form.getFields(); fields.hasNext(); ) {
+                        FormField field = (FormField) fields.next();
+                        if (!FormField.TYPE_HIDDEN.equals(field.getType())
+                                && field.getVariable() != null) {
+                            submitForm.setDefaultAnswer(field.getVariable());
+                            Log.d(TAG,
+                                    "default fields "
+                                            + field.getVariable()
+                                            + "::"
+                                            + submitForm.getField(
+                                            field.getVariable())
+                                            .toXML());
+                        }
+                    }
+                    submitForm.setAnswer("muc#roomconfig_roomname", groupName);
+                    List<String> owners = new ArrayList<String>();
+                    owners.add(userMe + "@" + Constants.CHAT_DOMAIN);
+                    submitForm.setAnswer("muc#roomconfig_roomowners", owners);
+                    submitForm.setAnswer("muc#roomconfig_persistentroom", true);
 
-					mMultiUserChat.sendConfigurationForm(submitForm);
-					Log.d(TAG,
-							userMe
-									+ " createMultiUserChat method sendConfigurationForm called.");
-					mMultiUserChat.join(userMe);
-					Log.d(TAG,
-							userMe
-									+ " createMultiUserChat method created MultiUserChat has joined group.");
-					prefManager.saveGroupName(groupName,
-							groupDisplayName);
-					// prefManager.saveUsersOfGroup(groupName,userDisplayName);
+                    mMultiUserChat.sendConfigurationForm(submitForm);
+                    Log.d(TAG,
+                            userMe
+                                    + " createMultiUserChat method sendConfigurationForm called.");
+                    mMultiUserChat.join(userMe);
+                    Log.d(TAG,
+                            userMe
+                                    + " createMultiUserChat method created MultiUserChat has joined group.");
+                    prefManager.saveGroupName(groupName,
+                            groupDisplayName);
+                    // prefManager.saveUsersOfGroup(groupName,userDisplayName);
 //					inviters.add(userMe);
-					try {
-						String infoList = "";
-						for (String inviter : inviters) {
-							if (inviter != null && !inviter.equals("") && !inviter.equals(userMe))
-								inviteUserInRoom(groupName, groupDisplayName, groupDiscription, inviter, null);
-							infoList +=  inviter+",";
+                    try {
+                        String infoList = "";
+                        for (String inviter : inviters) {
+                            if (inviter != null && !inviter.equals("") && !inviter.equals(userMe))
+                                inviteUserInRoom(groupName, groupDisplayName, groupDiscription, inviter, null);
+                            infoList += inviter + ",";
 //							roster.createEntry(inviter, prefManager.getUserServerName(inviter), new String[]{groupName});
 //							roster.getEntry(inviter).setName(prefManager.getUserServerName(inviter));
-						}
+                        }
 //						if(infoList.endsWith(","))
 //							infoList+=userMe;
 //						else
 //							infoList = userMe;
-						prefManager.saveUserGroupInfo(groupName,userMe,SharedPrefManager.GROUP_ACTIVE_INFO,true);
-						prefManager.saveGroupInfo(groupName,SharedPrefManager.GROUP_ACTIVE_INFO,true);
-						if(!infoList.equals("")){
-							if(infoList.endsWith(","))
-								infoList = infoList.substring(0, infoList.length()-1);
-							sendInfoMessage(groupName,infoList,Message.XMPPMessageType.atMeXmppMessageTypeMemberList);
-						}
-					} catch (Exception e) {
-						Log.d(TAG, "users are not able to joined.");
-					}
+                        prefManager.saveUserGroupInfo(groupName, userMe, SharedPrefManager.GROUP_ACTIVE_INFO, true);
+                        prefManager.saveGroupInfo(groupName, SharedPrefManager.GROUP_ACTIVE_INFO, true);
+                        if (!infoList.equals("")) {
+                            if (infoList.endsWith(","))
+                                infoList = infoList.substring(0, infoList.length() - 1);
+                            sendInfoMessage(groupName, infoList, Message.XMPPMessageType.atMeXmppMessageTypeMemberList);
+                        }
+                    } catch (Exception e) {
+                        Log.d(TAG, "users are not able to joined.");
+                    }
 
 //					sendMessage(groupName, "You are welcome in " + groupDisplayName
 //							+ " group.");
 
-				} catch (XMPPException e) {
-					e.printStackTrace();
-					Log.d(TAG, userMe + " are not creating roomname "
-							+ groupDisplayName + " " + e.toString());
-					return "";
-				} catch (Exception e) {
-					e.printStackTrace();
-					Log.d(TAG, userMe + " are not creating roomname "
-							+ groupDisplayName + " " + e.toString());
-					return "";
-				}
+                } catch (XMPPException e) {
+                    e.printStackTrace();
+                    Log.d(TAG, userMe + " are not creating roomname "
+                            + groupDisplayName + " " + e.toString());
+                    return "";
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d(TAG, userMe + " are not creating roomname "
+                            + groupDisplayName + " " + e.toString());
+                    return "";
+                }
 
-			} else {
-				Log.d(TAG,
-						userMe
-								+ " createMultiUserChat method created MultiUserChat instance is null.");
-				return "";
-			}
-			xmppConectionStatus = true;
-		} else {
+            } else {
+                Log.d(TAG,
+                        userMe
+                                + " createMultiUserChat method created MultiUserChat instance is null.");
+                return "";
+            }
+            xmppConectionStatus = true;
+        } else {
 //			xmppConectionStatus = false;
-			Log.d(TAG, userMe + " are not creating roomname " + groupDisplayName
-					+ " due to connection not available.");
-			return "";
-		}
-		Log.d(TAG, userMe + " createMultiUserChat metho calling end.");
-		if(connectionStatusListener!=null)
-			connectionStatusListener.notifyConnectionChange();
-		return groupName;
-	}
+            Log.d(TAG, userMe + " are not creating roomname " + groupDisplayName
+                    + " due to connection not available.");
+            return "";
+        }
+        Log.d(TAG, userMe + " createMultiUserChat metho calling end.");
+        if (connectionStatusListener != null)
+            connectionStatusListener.notifyConnectionChange();
+        return groupName;
+    }
 
-	//	public void sendGroupMessage(String room, String message) {
+    //	public void sendGroupMessage(String room, String message) {
 //		if (connection != null && connection.isConnected()
 //				&& connection.isAuthenticated()) {
 //			String to = room;
@@ -5502,267 +5643,272 @@ public class ChatService extends Service implements interfaceInstances {
 //					+ room);
 //		}
 //	}
-	public void sendListeningStatus(String userName) {
-		if (connection != null && connection.isConnected()
-				&& connection.isAuthenticated()) {
-			if(!xmppConectionStatus)
-				return;
-			boolean isGroupChat = false;
-			if (SharedPrefManager.getInstance().isGroupChat(userName)) {
-				isGroupChat = true;
-			}
-			// MessageEventManager event=new MessageEventManager(connection);
-			String to = userName + "@" + Constants.CHAT_DOMAIN;
-			if (isGroupChat) {
-				to = userName + "@conference." + Constants.CHAT_DOMAIN;
-			}
-			// //
-			// event.addMessageEventNotificationListener(messageEventNotificationListener);
-			// event.sendComposingNotification(to, "message_id is");
-			Message msg = new Message(to);
-			// Create a MessageEvent Package and add it to the message
-			MessageEvent messageEvent = new MessageEvent();
-			messageEvent.setListening(true);
-			messageEvent.setPacketID(null);
-			if (isGroupChat)
-				msg.setType(Message.Type.groupchat);
-			else
-				msg.setType(Message.Type.chat);
-			msg.addExtension(messageEvent);
-			// Send the packet
-			connection.sendPacket(msg);
-			xmppConectionStatus = true;
-		}else
+    public void sendListeningStatus(String userName) {
+        if (connection != null && connection.isConnected()
+                && connection.isAuthenticated()) {
+            if (!xmppConectionStatus)
+                return;
+            boolean isGroupChat = false;
+            if (SharedPrefManager.getInstance().isGroupChat(userName)) {
+                isGroupChat = true;
+            }
+            // MessageEventManager event=new MessageEventManager(connection);
+            String to = userName + "@" + Constants.CHAT_DOMAIN;
+            if (isGroupChat) {
+                to = userName + "@conference." + Constants.CHAT_DOMAIN;
+            }
+            // //
+            // event.addMessageEventNotificationListener(messageEventNotificationListener);
+            // event.sendComposingNotification(to, "message_id is");
+            Message msg = new Message(to);
+            // Create a MessageEvent Package and add it to the message
+            MessageEvent messageEvent = new MessageEvent();
+            messageEvent.setListening(true);
+            messageEvent.setPacketID(null);
+            if (isGroupChat)
+                msg.setType(Message.Type.groupchat);
+            else
+                msg.setType(Message.Type.chat);
+            msg.addExtension(messageEvent);
+            // Send the packet
+            connection.sendPacket(msg);
+            xmppConectionStatus = true;
+        } else
 //			xmppConectionStatus = false;
-			if(connectionStatusListener!=null)
-				connectionStatusListener.notifyConnectionChange();
-	}
-	public void sendRecordingStatus(String userName) {
-		if (connection != null && connection.isConnected()
-				&& connection.isAuthenticated()) {
-			if(!xmppConectionStatus)
-				return;
-			boolean isGroupChat = false;
-			if (SharedPrefManager.getInstance().isGroupChat(userName)) {
-				isGroupChat = true;
-			}
-			// MessageEventManager event=new MessageEventManager(connection);
-			String to = userName + "@" + Constants.CHAT_DOMAIN;
-			if (isGroupChat) {
-				to = userName + "@conference." + Constants.CHAT_DOMAIN;
-			}
-			// //
-			// event.addMessageEventNotificationListener(messageEventNotificationListener);
-			// event.sendComposingNotification(to, "message_id is");
-			Message msg = new Message(to);
-			// Create a MessageEvent Package and add it to the message
-			MessageEvent messageEvent = new MessageEvent();
-			messageEvent.setRecording(true);
-			messageEvent.setPacketID(null);
-			if (isGroupChat)
-				msg.setType(Message.Type.groupchat);
-			else
-				msg.setType(Message.Type.chat);
-			msg.addExtension(messageEvent);
-			// Send the packet
-			connection.sendPacket(msg);
-			xmppConectionStatus = true;
-		}
-//		else
-//			xmppConectionStatus = false;
-		if(connectionStatusListener!=null)
-			connectionStatusListener.notifyConnectionChange();
-	}
-	public void sendTypingStatus(String userName) {
-		if (connection != null && connection.isConnected()
-				&& connection.isAuthenticated()) {
-			if(!xmppConectionStatus)
-				return;
-			boolean isGroupChat = false;
-			if (SharedPrefManager.getInstance().isGroupChat(userName)) {
-				isGroupChat = true;
-			}
-			// MessageEventManager event=new MessageEventManager(connection);
-			String to = userName + "@" + Constants.CHAT_DOMAIN;
-			if (isGroupChat) {
-				to = userName + "@conference." + Constants.CHAT_DOMAIN;
-			}
-			// //
-			// event.addMessageEventNotificationListener(messageEventNotificationListener);
-			// event.sendComposingNotification(to, "message_id is");
-			Message msg = new Message(to);
-			// Create a MessageEvent Package and add it to the message
-			MessageEvent messageEvent = new MessageEvent();
-			messageEvent.setComposing(true);
-			messageEvent.setPacketID(null);
-			if (isGroupChat)
-				msg.setType(Message.Type.groupchat);
-			else
-				msg.setType(Message.Type.chat);
-			msg.addExtension(messageEvent);
-			// Send the packet
-			connection.sendPacket(msg);
-			Log.i("ChatService", "sendTypingStatus : "+msg.toXML());
-			xmppConectionStatus = true;
-		}
-//		else
-//			xmppConectionStatus = false;
-		if(connectionStatusListener!=null)
-			connectionStatusListener.notifyConnectionChange();
-	}
-	public void saveInfoMessage(String displayName, String from, String msg, String msgId) {
-		if(prefManager.isGroupChat(from) && !prefManager.isGroupMemberActive(from, userMe)){
-			return;
-		}
-		try {
-//			ChatDBWrapper chatDBWrapper = chatDBWrapper;
-			String actual_domain = null;
-			ContentValues contentvalues = new ContentValues();
-			String myName = SharedPrefManager.getInstance().getUserName();
-			if(SharedPrefManager.getInstance().isBroadCast(from)) {
-				contentvalues.put(ChatDBConstants.FROM_USER_FIELD, myName);
-				contentvalues.put(ChatDBConstants.TO_USER_FIELD, from);
-			}else{
-				contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
-				contentvalues.put(ChatDBConstants.TO_USER_FIELD, myName);
-			}
+            if (connectionStatusListener != null)
+                connectionStatusListener.notifyConnectionChange();
+    }
 
-			contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD,
-					new Integer(1));
-			contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, "");
-			contentvalues.put(ChatDBConstants.SEEN_FIELD,
-					SeenState.sent.ordinal());
+    public void sendRecordingStatus(String userName) {
+        if (connection != null && connection.isConnected()
+                && connection.isAuthenticated()) {
+            if (!xmppConectionStatus)
+                return;
+            boolean isGroupChat = false;
+            if (SharedPrefManager.getInstance().isGroupChat(userName)) {
+                isGroupChat = true;
+            }
+            // MessageEventManager event=new MessageEventManager(connection);
+            String to = userName + "@" + Constants.CHAT_DOMAIN;
+            if (isGroupChat) {
+                to = userName + "@conference." + Constants.CHAT_DOMAIN;
+            }
+            // //
+            // event.addMessageEventNotificationListener(messageEventNotificationListener);
+            // event.sendComposingNotification(to, "message_id is");
+            Message msg = new Message(to);
+            // Create a MessageEvent Package and add it to the message
+            MessageEvent messageEvent = new MessageEvent();
+            messageEvent.setRecording(true);
+            messageEvent.setPacketID(null);
+            if (isGroupChat)
+                msg.setType(Message.Type.groupchat);
+            else
+                msg.setType(Message.Type.chat);
+            msg.addExtension(messageEvent);
+            // Send the packet
+            connection.sendPacket(msg);
+            xmppConectionStatus = true;
+        }
+//		else
+//			xmppConectionStatus = false;
+        if (connectionStatusListener != null)
+            connectionStatusListener.notifyConnectionChange();
+    }
+
+    public void sendTypingStatus(String userName) {
+        if (connection != null && connection.isConnected()
+                && connection.isAuthenticated()) {
+            if (!xmppConectionStatus)
+                return;
+            boolean isGroupChat = false;
+            if (SharedPrefManager.getInstance().isGroupChat(userName)) {
+                isGroupChat = true;
+            }
+            // MessageEventManager event=new MessageEventManager(connection);
+            String to = userName + "@" + Constants.CHAT_DOMAIN;
+            if (isGroupChat) {
+                to = userName + "@conference." + Constants.CHAT_DOMAIN;
+            }
+            // //
+            // event.addMessageEventNotificationListener(messageEventNotificationListener);
+            // event.sendComposingNotification(to, "message_id is");
+            Message msg = new Message(to);
+            // Create a MessageEvent Package and add it to the message
+            MessageEvent messageEvent = new MessageEvent();
+            messageEvent.setComposing(true);
+            messageEvent.setPacketID(null);
+            if (isGroupChat)
+                msg.setType(Message.Type.groupchat);
+            else
+                msg.setType(Message.Type.chat);
+            msg.addExtension(messageEvent);
+            // Send the packet
+            connection.sendPacket(msg);
+            Log.i("ChatService", "sendTypingStatus : " + msg.toXML());
+            xmppConectionStatus = true;
+        }
+//		else
+//			xmppConectionStatus = false;
+        if (connectionStatusListener != null)
+            connectionStatusListener.notifyConnectionChange();
+    }
+
+    public void saveInfoMessage(String displayName, String from, String msg, String msgId) {
+        if (prefManager.isGroupChat(from) && !prefManager.isGroupMemberActive(from, userMe)) {
+            return;
+        }
+        try {
+//			ChatDBWrapper chatDBWrapper = chatDBWrapper;
+            String actual_domain = null;
+            ContentValues contentvalues = new ContentValues();
+            String myName = SharedPrefManager.getInstance().getUserName();
+            if (SharedPrefManager.getInstance().isBroadCast(from)) {
+                contentvalues.put(ChatDBConstants.FROM_USER_FIELD, myName);
+                contentvalues.put(ChatDBConstants.TO_USER_FIELD, from);
+            } else {
+                contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
+                contentvalues.put(ChatDBConstants.TO_USER_FIELD, myName);
+            }
+
+            contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD,
+                    new Integer(1));
+            contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, "");
+            contentvalues.put(ChatDBConstants.SEEN_FIELD,
+                    SeenState.sent.ordinal());
 //			 if(msg!=null && msg.contains("#786#")){
 //				 msg = msg.replace("#786#"+from,"");
 //				 msg = msg.replace("#786#"+myName,"");
 //				}
-			contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, msg);
-			// String name =
-			// cursor.getString(cursor.getColumnIndex(ChatDBConstants.CONTACT_NAMES_FIELD));
+            contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, msg);
+            // String name =
+            // cursor.getString(cursor.getColumnIndex(ChatDBConstants.CONTACT_NAMES_FIELD));
 
-			String name = "";
-			String oppName = "";
-			{
-				oppName = from;
-				name = DBWrapper.getInstance().getChatName(from);
-				if(name!=null && name.equals(from))
-					name = displayName+"#786#"+from;
-				contentvalues.put(ChatDBConstants.MESSAGE_ID, UUID
-						.randomUUID().toString());
-				if(msgId == null)
-					msgId = UUID.randomUUID().toString();
-				contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD,msgId);
+            String name = "";
+            String oppName = "";
+            {
+                oppName = from;
+                name = DBWrapper.getInstance().getChatName(from);
+                if (name != null && name.equals(from))
+                    name = displayName + "#786#" + from;
+                contentvalues.put(ChatDBConstants.MESSAGE_ID, UUID
+                        .randomUUID().toString());
+                if (msgId == null)
+                    msgId = UUID.randomUUID().toString();
+                contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, msgId);
 //						UUID.randomUUID().toString());
-			}
+            }
 
-			long currentTime = System.currentTimeMillis();
-			Calendar calender = Calendar.getInstance();
-			calender.setTimeInMillis(currentTime);
-			int date = calender.get(Calendar.DATE);
-			int oldDate = date;
-			long milis = chatDBWrapper.lastMessageInDB(oppName);
-			if(milis!=-1){
-				calender.setTimeInMillis(milis);
-				oldDate = calender.get(Calendar.DATE);
-			}
-			if ((oldDate != date) || chatDBWrapper.isFirstChat(oppName)) {
-				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
-			} else {
-				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
-				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, 0);
-			}
-			contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
+            long currentTime = System.currentTimeMillis();
+            Calendar calender = Calendar.getInstance();
+            calender.setTimeInMillis(currentTime);
+            int date = calender.get(Calendar.DATE);
+            int oldDate = date;
+            long milis = chatDBWrapper.lastMessageInDB(oppName);
+            if (milis != -1) {
+                calender.setTimeInMillis(milis);
+                oldDate = calender.get(Calendar.DATE);
+            }
+            if ((oldDate != date) || chatDBWrapper.isFirstChat(oppName)) {
+                contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
+            } else {
+                contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
+                contentvalues.put(ChatDBConstants.MESSAGE_TYPE, 0);
+            }
+            contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 //			AtMeApplication.dayValue = date;
-			contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
+            contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
 
-			if(SharedPrefManager.getInstance().isBroadCast(from) && SharedPrefManager.getInstance().getBroadcastFirstTimeName(from) != null)
-				contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, SharedPrefManager.getInstance().getBroadcastFirstTimeName(from));
-			else
-				contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
-			//Save USerID and SG in DB
-			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
-			//Add SG Name and user ID
-			if(!prefManager.isGroupChat(from)) {
-				if (from != null && from.contains("_"))
-					actual_domain = from.substring(from.indexOf('_') + 1);
+            if (SharedPrefManager.getInstance().isBroadCast(from) && SharedPrefManager.getInstance().getBroadcastFirstTimeName(from) != null)
+                contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, SharedPrefManager.getInstance().getBroadcastFirstTimeName(from));
+            else
+                contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
+            //Save USerID and SG in DB
+            contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
+            //Add SG Name and user ID
+            if (!prefManager.isGroupChat(from)) {
+                if (from != null && from.contains("_"))
+                    actual_domain = from.substring(from.indexOf('_') + 1);
 
-				if (actual_domain.equals(prefManager.getUserDomain()))
-					contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
-				else
-					contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
-			}else
-				contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
-			chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
+                if (actual_domain.equals(prefManager.getUserDomain()))
+                    contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+                else
+                    contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+            } else
+                contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+            chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
 //			if (chatListener != null)
 //				chatListener.notifyChatRecieve(from,msg);
-		} catch (Exception e) {
+        } catch (Exception e) {
 
-		}
-	}
-	public void saveInfoMessage(String displayName, String from, String msg) {
-		if(prefManager.isGroupChat(from) && !prefManager.isGroupMemberActive(from, userMe)){
-			return;
-		}
-		try {
-			String actual_domain = null;
-			ContentValues contentvalues = new ContentValues();
-			String myName = SharedPrefManager.getInstance().getUserName();
-			contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
-			contentvalues.put(ChatDBConstants.TO_USER_FIELD, myName);
-			contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD, new Integer(1));
-			contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, "");
-			contentvalues.put(ChatDBConstants.SEEN_FIELD, SeenState.sent.ordinal());
-			contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, msg);
-			String name = "";
-			String oppName = "";
-			oppName = from;
-			name = DBWrapper.getInstance().getChatName(from);
-			contentvalues.put(ChatDBConstants.MESSAGE_ID, UUID.randomUUID().toString());
-			contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD,UUID.randomUUID().toString());
+        }
+    }
 
-			long currentTime = System.currentTimeMillis();
-			Calendar calender = Calendar.getInstance();
-			calender.setTimeInMillis(currentTime);
-			int date = calender.get(Calendar.DATE);
-			int oldDate = date;
-			long milis = chatDBWrapper.lastMessageInDB(oppName);
-			if(milis!=-1){
-				calender.setTimeInMillis(milis);
-				oldDate = calender.get(Calendar.DATE);
-			}
-			if ((oldDate != date)
-					|| chatDBWrapper.isFirstChat(oppName)) {
-				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
+    public void saveInfoMessage(String displayName, String from, String msg) {
+        if (prefManager.isGroupChat(from) && !prefManager.isGroupMemberActive(from, userMe)) {
+            return;
+        }
+        try {
+            String actual_domain = null;
+            ContentValues contentvalues = new ContentValues();
+            String myName = SharedPrefManager.getInstance().getUserName();
+            contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
+            contentvalues.put(ChatDBConstants.TO_USER_FIELD, myName);
+            contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD, new Integer(1));
+            contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, "");
+            contentvalues.put(ChatDBConstants.SEEN_FIELD, SeenState.sent.ordinal());
+            contentvalues.put(ChatDBConstants.MESSAGEINFO_FIELD, msg);
+            String name = "";
+            String oppName = "";
+            oppName = from;
+            name = DBWrapper.getInstance().getChatName(from);
+            contentvalues.put(ChatDBConstants.MESSAGE_ID, UUID.randomUUID().toString());
+            contentvalues.put(ChatDBConstants.FOREIGN_MESSAGE_ID_FIELD, UUID.randomUUID().toString());
+
+            long currentTime = System.currentTimeMillis();
+            Calendar calender = Calendar.getInstance();
+            calender.setTimeInMillis(currentTime);
+            int date = calender.get(Calendar.DATE);
+            int oldDate = date;
+            long milis = chatDBWrapper.lastMessageInDB(oppName);
+            if (milis != -1) {
+                calender.setTimeInMillis(milis);
+                oldDate = calender.get(Calendar.DATE);
+            }
+            if ((oldDate != date)
+                    || chatDBWrapper.isFirstChat(oppName)) {
+                contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "1");
 //				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
-			} else {
-				contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
-			}
-			contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
+            } else {
+                contentvalues.put(ChatDBConstants.IS_DATE_CHANGED_FIELD, "0");
+            }
+            contentvalues.put(ChatDBConstants.MESSAGE_TYPE_FIELD, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
 //			AtMeApplication.dayValue = date;
-			contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
-			contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
-			//Save USerID and SG in DB
-			contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
-			//Add SG Name and user ID
-			if(!prefManager.isGroupChat(from)) {
-				if (from != null && from.contains("_"))
-					actual_domain = from.substring(from.indexOf('_') + 1);
+            contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
+            contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
+            //Save USerID and SG in DB
+            contentvalues.put(ChatDBConstants.USER_ID, prefManager.getUserId());
+            //Add SG Name and user ID
+            if (!prefManager.isGroupChat(from)) {
+                if (from != null && from.contains("_"))
+                    actual_domain = from.substring(from.indexOf('_') + 1);
 
-				if (actual_domain.equals(prefManager.getUserDomain()))
-					contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
-				else
-					contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
-			}else
-				contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+                if (actual_domain.equals(prefManager.getUserDomain()))
+                    contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
+                else
+                    contentvalues.put(ChatDBConstants.USER_SG, actual_domain);
+            } else
+                contentvalues.put(ChatDBConstants.USER_SG, prefManager.getUserDomain());
 
-			chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
-			if (chatListener != null)
-				chatListener.notifyChatRecieve(from,msg);
-		} catch (Exception e) {
+            chatDBWrapper.insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
+            if (chatListener != null)
+                chatListener.notifyChatRecieve(from, msg);
+        } catch (Exception e) {
 
-		}
-	}
-	//	public void sendXMPPFile(String filenameWithPath)
+        }
+    }
+
+    //	public void sendXMPPFile(String filenameWithPath)
 //	{
 //		FileTransferManager manager = new FileTransferManager(connection);
 //		OutgoingFileTransfer transfer = manager.createOutgoingFileTransfer("mahesh@78.129.179.96/Smack");
@@ -5827,230 +5973,234 @@ public class ChatService extends Service implements interfaceInstances {
 //		    }
 //		 });
 //	}
-	public void saveMessage(String displayName, String from, String msg) {
-		try {
-			ChatDBWrapper chatDBWrapper = ChatDBWrapper.getInstance();
-			ContentValues contentvalues = new ContentValues();
-			String myName = SharedPrefManager.getInstance().getUserName();
-			contentvalues.put(DatabaseConstants.FROM_USER_FIELD, from);
-			contentvalues.put(DatabaseConstants.TO_USER_FIELD, myName);
-			contentvalues.put(DatabaseConstants.UNREAD_COUNT_FIELD, new Integer(1));
-			contentvalues.put(DatabaseConstants.FROM_GROUP_USER_FIELD, "");
-			contentvalues.put(DatabaseConstants.SEEN_FIELD, com.chatsdk.org.jivesoftware.smack.packet.Message.SeenState.sent.ordinal());
+    public void saveMessage(String displayName, String from, String msg) {
+        try {
+            ChatDBWrapper chatDBWrapper = ChatDBWrapper.getInstance();
+            ContentValues contentvalues = new ContentValues();
+            String myName = SharedPrefManager.getInstance().getUserName();
+            contentvalues.put(DatabaseConstants.FROM_USER_FIELD, from);
+            contentvalues.put(DatabaseConstants.TO_USER_FIELD, myName);
+            contentvalues.put(DatabaseConstants.UNREAD_COUNT_FIELD, new Integer(1));
+            contentvalues.put(DatabaseConstants.FROM_GROUP_USER_FIELD, "");
+            contentvalues.put(DatabaseConstants.SEEN_FIELD, com.chatsdk.org.jivesoftware.smack.packet.Message.SeenState.sent.ordinal());
 
-			contentvalues.put(DatabaseConstants.MESSAGEINFO_FIELD, msg);
-			// String name =
-			// cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD));
+            contentvalues.put(DatabaseConstants.MESSAGEINFO_FIELD, msg);
+            // String name =
+            // cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD));
 
-			String name = "";
-			String oppName = "";
-			{
-				oppName = from;
-				name = chatDBWrapper.getChatName(from);
-				if(name!=null && name.equals(from))
-					name = displayName+"#786#"+from;
-				contentvalues.put(DatabaseConstants.MESSAGE_ID, UUID
-						.randomUUID().toString());
-				contentvalues.put(DatabaseConstants.FOREIGN_MESSAGE_ID_FIELD,
-						UUID.randomUUID().toString());
-			}
+            String name = "";
+            String oppName = "";
+            {
+                oppName = from;
+                name = chatDBWrapper.getChatName(from);
+                if (name != null && name.equals(from))
+                    name = displayName + "#786#" + from;
+                contentvalues.put(DatabaseConstants.MESSAGE_ID, UUID
+                        .randomUUID().toString());
+                contentvalues.put(DatabaseConstants.FOREIGN_MESSAGE_ID_FIELD,
+                        UUID.randomUUID().toString());
+            }
 
-			long currentTime = System.currentTimeMillis();
-			Calendar calender = Calendar.getInstance();
-			calender.setTimeInMillis(currentTime);
-			int date = calender.get(Calendar.DATE);
-			int oldDate = date;
-			long milis = ChatDBWrapper.getInstance().lastMessageInDB(oppName);
-			if(milis!=-1){
-				calender.setTimeInMillis(milis);
-				oldDate = calender.get(Calendar.DATE);
-			}
-			if ((oldDate != date)
-					|| ChatDBWrapper.getInstance().isFirstChat(oppName)) {
-				contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "1");
-				contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
-			} else {
-				contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "0");
-			}
+            long currentTime = System.currentTimeMillis();
+            Calendar calender = Calendar.getInstance();
+            calender.setTimeInMillis(currentTime);
+            int date = calender.get(Calendar.DATE);
+            int oldDate = date;
+            long milis = ChatDBWrapper.getInstance().lastMessageInDB(oppName);
+            if (milis != -1) {
+                calender.setTimeInMillis(milis);
+                oldDate = calender.get(Calendar.DATE);
+            }
+            if ((oldDate != date)
+                    || ChatDBWrapper.getInstance().isFirstChat(oppName)) {
+                contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "1");
+                contentvalues.put(ChatDBConstants.MESSAGE_TYPE, XMPPMessageType.atMeXmppMessageTypeSpecialMessage.ordinal());
+            } else {
+                contentvalues.put(DatabaseConstants.IS_DATE_CHANGED_FIELD, "0");
+            }
 //			AtMeApplication.dayValue = date;
-			contentvalues.put(DatabaseConstants.LAST_UPDATE_FIELD, currentTime);
+            contentvalues.put(DatabaseConstants.LAST_UPDATE_FIELD, currentTime);
 
-			contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
-			//Save USerID and SG in DB
-			contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
-			contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
+            contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, name);
+            //Save USerID and SG in DB
+            contentvalues.put(DatabaseConstants.USER_ID, prefManager.getUserId());
+            contentvalues.put(DatabaseConstants.USER_SG, prefManager.getUserDomain());
 //			System.out.println("ChatService - 1::saveMessage: - "+contentvalues.toString());
-			chatDBWrapper.insertInDB(DatabaseConstants.TABLE_NAME_MESSAGE_INFO,contentvalues);
-		} catch (Exception e) {
+            chatDBWrapper.insertInDB(DatabaseConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
+        } catch (Exception e) {
 
-		}
-	}
-	//=====================================================
+        }
+    }
+    //=====================================================
 
-	public boolean isServiceRunning(String serviceClassName){
-		final ActivityManager activityManager = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
-		final List<RunningServiceInfo> services = activityManager.getRunningServices(Integer.MAX_VALUE);
+    public boolean isServiceRunning(String serviceClassName) {
+        final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        final List<RunningServiceInfo> services = activityManager.getRunningServices(Integer.MAX_VALUE);
 
-		for (RunningServiceInfo runningServiceInfo : services) {
+        for (RunningServiceInfo runningServiceInfo : services) {
 //        	System.out.println("ClassName : "+runningServiceInfo.service.getClassName());
-			if (runningServiceInfo.service.getClassName().equals(serviceClassName)){
-				return true;
-			}
-		}
-		return false;
-	}
-	//----------------------------------------------------------------------------------------------------------
-	private void getUserProfileAsynch(final String userName) {
-		AsyncHttpClient client = new AsyncHttpClient();
-		client = SuperChatApplication.addHeaderInfo(client, true);
-		client.get(Constants.SERVER_URL + "/tiger/rest/user/profile/get?userName=" + userName, null,
-				new AsyncHttpResponseHandler() {
-					@Override
-					public void onStart() {
-						System.out.println("Asynch : Start");
-					}
-					@Override
-					public void onSuccess(int arg0, String arg1) {
-						System.out.println("Asynch : Start - "+arg1);
-						Gson gson = new GsonBuilder().create();
-						UserProfileModel objUserModel = gson.fromJson(arg1, UserProfileModel.class);
-						if (arg1 == null || arg1.contains("error") || objUserModel == null) {
-							return;
-						}
-						if(objUserModel.iName != null)
-							prefManager.saveUserServerName(userName, objUserModel.iName);
-					}
-					@Override
-					public void onFailure(Throwable arg0, String arg1) {
-						Log.d(TAG, "AsyncHttpClient onFailure: " + arg1);
-						super.onFailure(arg0, arg1);
-					}
-				});
-	}
-	public long convertDelayToMillis(String date){
-		long timeInMilliseconds = 0;
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd'T'HH:mm:ss", Locale.US);
-		try{
-			Date mDate = sdf.parse(date);
-			timeInMilliseconds = mDate.getTime();
-		}
-		catch (Exception e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return timeInMilliseconds;
-	}
-	public long convertCurrentTimeintoMillis(){
-		//+05:30
-		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
-		String   timeZone = new SimpleDateFormat("Z").format(calendar.getTime());
-		String time = timeZone.substring(0, 3) + ":"+ timeZone.substring(3, 5);
-		if(time == null)
-			return 0;
-		long millis = 0;
-		String hr = null;
-		String min = null;
-		String[] values = null;
+            if (runningServiceInfo.service.getClassName().equals(serviceClassName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-		if(time.startsWith("-")){
-			time = time.substring(1);
-			values = time.split(":");
-			millis = -1 * ((Integer.parseInt(values[0]) * 60 * 60 * 1000) + (Integer.parseInt(values[1]) * 60 * 1000));
+    //----------------------------------------------------------------------------------------------------------
+    private void getUserProfileAsynch(final String userName) {
+        AsyncHttpClient client = new AsyncHttpClient();
+        client = SuperChatApplication.addHeaderInfo(client, true);
+        client.get(Constants.SERVER_URL + "/tiger/rest/user/profile/get?userName=" + userName, null,
+                new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onStart() {
+                        System.out.println("Asynch : Start");
+                    }
 
-		}else{
-			time = time.substring(1);
-			values = time.split(":");
-			millis = (Integer.parseInt(values[0]) * 60 * 60 * 1000) + (Integer.parseInt(values[1]) * 60 * 1000);
-		}
+                    @Override
+                    public void onSuccess(int arg0, String arg1) {
+                        System.out.println("Asynch : Start - " + arg1);
+                        Gson gson = new GsonBuilder().create();
+                        UserProfileModel objUserModel = gson.fromJson(arg1, UserProfileModel.class);
+                        if (arg1 == null || arg1.contains("error") || objUserModel == null) {
+                            return;
+                        }
+                        if (objUserModel.iName != null)
+                            prefManager.saveUserServerName(userName, objUserModel.iName);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable arg0, String arg1) {
+                        Log.d(TAG, "AsyncHttpClient onFailure: " + arg1);
+                        super.onFailure(arg0, arg1);
+                    }
+                });
+    }
+
+    public long convertDelayToMillis(String date) {
+        long timeInMilliseconds = 0;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd'T'HH:mm:ss", Locale.US);
+        try {
+            Date mDate = sdf.parse(date);
+            timeInMilliseconds = mDate.getTime();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return timeInMilliseconds;
+    }
+
+    public long convertCurrentTimeintoMillis() {
+        //+05:30
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
+        String timeZone = new SimpleDateFormat("Z").format(calendar.getTime());
+        String time = timeZone.substring(0, 3) + ":" + timeZone.substring(3, 5);
+        if (time == null)
+            return 0;
+        long millis = 0;
+        String hr = null;
+        String min = null;
+        String[] values = null;
+
+        if (time.startsWith("-")) {
+            time = time.substring(1);
+            values = time.split(":");
+            millis = -1 * ((Integer.parseInt(values[0]) * 60 * 60 * 1000) + (Integer.parseInt(values[1]) * 60 * 1000));
+
+        } else {
+            time = time.substring(1);
+            values = time.split(":");
+            millis = (Integer.parseInt(values[0]) * 60 * 60 * 1000) + (Integer.parseInt(values[1]) * 60 * 1000);
+        }
 //		System.out.println("+05:30 Millis = "+millis);
-		return millis;
-	}
+        return millis;
+    }
 //-----------------------------------------------------------------------------------------
 
-	/**
-	 * This call will validate for the conflict, whether its genuine or fake.
-	 * Validity will be decided from the login - fail or success
-	 * Genuine - will logout, because same user may have logged in from some where else
-	 * Fake - Due to some reason system logged you out.
-	 */
-	private void validateConflictLogout(){
-		try{
-			LoginModel loginForm = new LoginModel();
-			loginForm.setUserName(prefManager.getUserName());
-			loginForm.setPassword(prefManager.getUserPassword());
-			if(prefManager.getDeviceToken() != null)
-				loginForm.setToken(prefManager.getDeviceToken());
-			String version = "";
-			try {
-				version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-				if(version!=null && version.contains("."))
-					version = version.replace(".", "_");
-				if(version==null)
-					version = "";
-			} catch (PackageManager.NameNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			String clientVersion = "Android_"+version;
-			loginForm.setClientVersion(clientVersion);
+    /**
+     * This call will validate for the conflict, whether its genuine or fake.
+     * Validity will be decided from the login - fail or success
+     * Genuine - will logout, because same user may have logged in from some where else
+     * Fake - Due to some reason system logged you out.
+     */
+    private void validateConflictLogout() {
+        try {
+            LoginModel loginForm = new LoginModel();
+            loginForm.setUserName(prefManager.getUserName());
+            loginForm.setPassword(prefManager.getUserPassword());
+            if (prefManager.getDeviceToken() != null)
+                loginForm.setToken(prefManager.getDeviceToken());
+            String version = "";
+            try {
+                version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+                if (version != null && version.contains("."))
+                    version = version.replace(".", "_");
+                if (version == null)
+                    version = "";
+            } catch (PackageManager.NameNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            String clientVersion = "Android_" + version;
+            loginForm.setClientVersion(clientVersion);
 
 
-			Call call = objApi.getApi(this).validateAutoConflict(loginForm);
-			call.enqueue(new RetrofitRetrofitCallback<LoginResponseModel>(this) {
-				@Override
-				protected void onResponseVoidzResponse(Call call, Response response) {
+            Call call = objApi.getApi(this).validateAutoConflict(loginForm);
+            call.enqueue(new RetrofitRetrofitCallback<LoginResponseModel>(this) {
+                @Override
+                protected void onResponseVoidzResponse(Call call, Response response) {
 
-				}
+                }
 
-				@Override
-				protected void onResponseVoidzObject(Call call, LoginResponseModel loginObj) {
-					if (loginObj != null && loginObj.status!=null && loginObj.status.equals("success")) {
-						Log.e(TAG, "Received conflict somehow and trying to connect again");
-						chatLogin();
-					}else{
-						Log.e(TAG, "Received conflict and validated true - Some one else have logged in.");
-						logoutForConflict();
-					}
+                @Override
+                protected void onResponseVoidzObject(Call call, LoginResponseModel loginObj) {
+                    if (loginObj != null && loginObj.status != null && loginObj.status.equals("success")) {
+                        Log.e(TAG, "Received conflict somehow and trying to connect again");
+                        chatLogin();
+                    } else {
+                        Log.e(TAG, "Received conflict and validated true - Some one else have logged in.");
+                        logoutForConflict();
+                    }
 
-				}
+                }
 
-				@Override
-				protected void common() {
+                @Override
+                protected void common() {
 
-				}
-			});
-		} catch(Exception e){
-			objExceptione.printStackTrace(e);
+                }
+            });
+        } catch (Exception e) {
+            objExceptione.printStackTrace(e);
 
-		}
-	}
+        }
+    }
 
-	//]]]]]]]]]]]]
-	private void getUserProfile(final String userName){
-		try{
-			Call call = objApi.getApi(context).getUserProfile(userName);
-			System.out.println("Retrofit : Start ");
-			call.enqueue(new RetrofitRetrofitCallback<UserProfileModel>(context) {
-				@Override
-				protected void onResponseVoidzResponse(Call call, Response response) {
-					System.out.println("Retrofit : onResponseVoidzResponse 1 - "+response.toString());
+    //]]]]]]]]]]]]
+    private void getUserProfile(final String userName) {
+        try {
+            Call call = objApi.getApi(context).getUserProfile(userName);
+            System.out.println("Retrofit : Start ");
+            call.enqueue(new RetrofitRetrofitCallback<UserProfileModel>(context) {
+                @Override
+                protected void onResponseVoidzResponse(Call call, Response response) {
+                    System.out.println("Retrofit : onResponseVoidzResponse 1 - " + response.toString());
 
-				}
+                }
 
-				@Override
-				protected void onResponseVoidzObject(Call call, UserProfileModel response) {
-					System.out.println("Retrofit : onResponseVoidzObject 2 - "+response.toString());
+                @Override
+                protected void onResponseVoidzObject(Call call, UserProfileModel response) {
+                    System.out.println("Retrofit : onResponseVoidzObject 2 - " + response.toString());
 
-				}
+                }
 
-				@Override
-				protected void common() {
+                @Override
+                protected void common() {
 
-				}
-			});
-		} catch(Exception e){
-			objExceptione.printStackTrace(e);
+                }
+            });
+        } catch (Exception e) {
+            objExceptione.printStackTrace(e);
 
-		}
-	}
+        }
+    }
 }
