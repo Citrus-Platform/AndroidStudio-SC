@@ -5312,12 +5312,12 @@ public class ChatService extends Service implements interfaceInstances {
         }
     }
 
-    public void inviteUserInRoom(String roomName, String displayName, String groupDiscription, String userName, String caption) {
-        if (connection != null && connection.isConnected()
-                && connection.isAuthenticated()) {
-            try {
-                String room = roomName + "@conference."
-                        + Constants.CHAT_DOMAIN;
+	public void inviteUserInRoom(String roomName, String displayName, String groupDiscription, String userName, String caption, boolean self_created) {
+		if (connection != null && connection.isConnected()
+				&& connection.isAuthenticated()) {
+			try {
+				String room = roomName + "@conference."
+						+ Constants.CHAT_DOMAIN;
 
                 // MultiUserChat muc = new MultiUserChat(connection,room);
                 // muc.invite(userName+"@"+AtmeChatClient.getChatServer(),
@@ -5354,7 +5354,8 @@ public class ChatService extends Service implements interfaceInstances {
                     Log.d(TAG, "You group persons added " + SharedPrefManager.getInstance().getGroupDisplayName(roomName));
                     if (userName.equalsIgnoreCase(userDisplayName))
                         userDisplayName = SharedPrefManager.getInstance().getUserServerName(userName);
-                    saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(roomName), roomName, "You added \"" + userDisplayName + "\".");
+					if(!self_created)
+                       saveInfoMessage(SharedPrefManager.getInstance().getGroupDisplayName(roomName), roomName, "You added \"" + userDisplayName + "\".");
                 }
 //				sendInfoMessage(roomName,userName,Message.XMPPMessageType.atMeXmppMessageTypeMemberList);//
                 sendGroupInfoMessage(roomName, userName, caption, Message.XMPPMessageType.atMeXmppMessageTypeMemberList);//
