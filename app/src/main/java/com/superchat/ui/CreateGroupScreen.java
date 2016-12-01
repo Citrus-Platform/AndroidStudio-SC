@@ -28,6 +28,7 @@ import com.superchat.SuperChatApplication;
 import com.superchat.model.ErrorModel;
 import com.superchat.model.GroupChatMetaInfo;
 import com.superchat.model.GroupChatServerModel;
+import com.superchat.model.GroupChatXmppCaptionData;
 import com.superchat.pref.SharedPreseferencesUtil;
 import com.superchat.utils.AppUtil;
 import com.superchat.utils.CompressImage;
@@ -65,6 +66,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -85,7 +87,7 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
     Dialog picChooserDialog;
     ProfilePicUploader picUploader;
     ImageView groupIconView;
-    ToggleButton toggleBroadcast;
+    Switch switchBroadcast;
     boolean isForGroupUpdate;
     boolean isForBroadCastUpdate;
     String groupFileId;
@@ -110,7 +112,7 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
         }
     };
     private boolean onForeground;
-    String mode = "";
+    String mode = Constants.KEY_GROUP_NORMAL;;
 
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -123,8 +125,8 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
         nextButton = (TextView) findViewById(R.id.id_next);
         title = (MyriadSemiboldTextView) findViewById(R.id.id_group_info_title);
         cancelButton = (TextView) findViewById(R.id.id_cancel);
-        toggleBroadcast = (ToggleButton) findViewById(R.id.toggleBroadcast);
-        toggleBroadcast.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        switchBroadcast = (Switch) findViewById(R.id.switchBroadcast);
+        switchBroadcast.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     mode = Constants.KEY_GROUP_BROADCAST;
@@ -251,7 +253,7 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
         bindService(new Intent(this, ChatService.class), mMessageConnection, Context.BIND_AUTO_CREATE);
 
         boolean isBroadCastMode = SharedPrefManager.getInstance().isGroupInBroadcastMode(groupUUID);
-        toggleBroadcast.setChecked(isBroadCastMode);
+        switchBroadcast.setChecked(isBroadCastMode);
     }
 
     protected void onPause() {
@@ -659,22 +661,42 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
                 } else
                     showDialog("Please try again later.");
             } else {
-                //Create Json here for group update info.
-                JSONObject finalJSONbject = new JSONObject();
-                try {
-                    finalJSONbject.put("displayName", displayName);
-                    if (groupDiscription != null)
-                        finalJSONbject.put("description", groupDiscription);
-                    if (urlss != null && urlss[0] != null && !urlss[0].equals(""))
-                        finalJSONbject.put("fileId", urlss[0]);
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                GroupChatXmppCaptionData data = new GroupChatXmppCaptionData();
+
+                data.setDisplayName(groupUUID);
+
+                if (groupDiscription != null)
+                    data.setDescription(groupDiscription);
+                if (urlss != null && urlss[0] != null && !urlss[0].equals(""))
+                    data.setFileId(urlss[0]);
+
+
+                // Save Meta info of group
+                {
+                    if (mode != null) {
+                        GroupChatMetaInfo groupChatMetaInfo = new GroupChatMetaInfo();
+                        groupChatMetaInfo.setBroadCastActive(mode);
+                        SharedPrefManager.getInstance().setSubGroupMetaData(groupUUID, groupChatMetaInfo);
+
+                        GroupChatMetaInfo.GroupPermissions permissionMode;
+                        if (groupChatMetaInfo.isBroadCastActive()) {
+                            permissionMode = GroupChatMetaInfo.GroupPermissions.SCGroupPermissionAllowedAdmins;
+                        } else {
+                            permissionMode = GroupChatMetaInfo.GroupPermissions.SCGroupPermissionAllowedAll;
+                        }
+
+                        data.setGroupPermissionType("" + permissionMode.ordinal());
+/*
+
+                            if(permissionMode != null) {
+                                messageService.updateGroupType(groupUUID, displayName, permissionMode);
+                            }
+*/
+                    }
                 }
 
                 if (messageService != null) {
-                    String json = finalJSONbject.toString();
-//					 json = json.replace("\"", "&quot;");
+                    String json = new Gson().toJson(data).toString();
                     messageService.updateGroupDisplayName(groupUUID, displayName, json);
                     json = null;
                 }
@@ -693,27 +715,6 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
 
                 setResult(RESULT_OK, new Intent(CreateGroupScreen.this, GroupProfileScreen.class));
                 finish();
-            }
-
-
-            // Save Meta info of group
-            {
-                if (mode != null) {
-                    GroupChatMetaInfo groupChatMetaInfo = new GroupChatMetaInfo();
-                    groupChatMetaInfo.setBroadCastActive(mode);
-                    SharedPrefManager.getInstance().setSubGroupMetaData(groupUUID, groupChatMetaInfo);
-
-                    GroupChatMetaInfo.GroupPermissions permissionMode;
-                    if(groupChatMetaInfo.isBroadCastActive()){
-                        permissionMode = GroupChatMetaInfo.GroupPermissions.SCGroupPermissionAllowedAdmins;
-                    } else {
-                        permissionMode = GroupChatMetaInfo.GroupPermissions.SCGroupPermissionAllowedAll;
-                    }
-
-                    if(permissionMode != null) {
-                        messageService.updateGroupType(groupUUID, displayName, permissionMode);
-                    }
-                }
             }
 
             super.onPostExecute(response);

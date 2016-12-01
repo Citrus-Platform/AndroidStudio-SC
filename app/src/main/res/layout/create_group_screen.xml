@@ -56,8 +56,8 @@
                 android:id="@+id/llBack"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
                 android:gravity="center"
+                android:orientation="horizontal"
                 android:padding="10dp">
 
                 <ImageView
@@ -75,9 +75,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
+                android:layout_toRightOf="@id/id_back_arrow"
                 android:gravity="center"
                 android:padding="10dp"
-                android:layout_toRightOf="@id/id_back_arrow"
                 android:text="@string/next_txt"
                 android:textColor="@color/white"
                 android:textSize="15sp" />
@@ -319,13 +319,44 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:background="@color/md_grey_200"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:weightSum="2">
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Broadcast"
+                        android:layout_centerVertical="true"
+                        android:textSize="15dp"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <Switch
+                        android:id="@+id/switchBroadcast"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:layout_alignParentRight="true"/><!--
                 <ToggleButton
                     android:id="@+id/toggleBroadcast"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textOff="B OFF"
-                    android:textOn="B ON"/>
+                    android:textOn="B ON"/>-->
+                </RelativeLayout>
 
             </LinearLayout>
         </LinearLayout>

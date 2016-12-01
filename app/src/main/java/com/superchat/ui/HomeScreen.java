@@ -569,29 +569,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         viewPagerTab.setViewPager(mViewPager);
 
         setTabsCustom();
-
-        if (iPrefManager.isFirstTime()
-                && iPrefManager.getAppMode() != null && iPrefManager.getAppMode().equals("VirginMode")) {
-//			if(firstTimeAdmin){
-//				mViewPager.setCurrentItem(2);
-//				chatMenuLayout.setSelected(false);
-//				publicGroupTab.setSelected(false);
-//				contactMenuLayout.setSelected(true);
-//				bulletinMenuLayout.setSelected(false);
-//			}else
-            {
-                mViewPager.setCurrentItem(1);
-
-            }
-        } else {
-            mViewPager.setCurrentItem(0);
-
-        }
-        startService(new Intent(SuperChatApplication.context, ChatService.class));
-
-//		syncView.setVisibility(View.GONE);
-//		TabPageIndicator titleIndicator = (TabPageIndicator)findViewById(R.id.titles);
-//		 titleIndicator.setViewPager(mViewPager);
         OnPageChangeListener mPageChangeListener = new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position,
@@ -651,12 +628,39 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 setTabsCustom();
             }
 
-			@Override
-			public void onPageScrollStateChanged(int state) {
-				// actions
-			}
-		};
-		mViewPager.addOnPageChangeListener(mPageChangeListener);
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                // actions
+            }
+        };
+        mViewPager.addOnPageChangeListener(mPageChangeListener);
+
+        if (iPrefManager.isFirstTime()
+                && iPrefManager.getAppMode() != null && iPrefManager.getAppMode().equals("VirginMode")) {
+//			if(firstTimeAdmin){
+//				mViewPager.setCurrentItem(2);
+//				chatMenuLayout.setSelected(false);
+//				publicGroupTab.setSelected(false);
+//				contactMenuLayout.setSelected(true);
+//				bulletinMenuLayout.setSelected(false);
+//			}else
+            {
+                mViewPager.setCurrentItem(1);
+
+            }
+        } else {
+            mViewPager.setCurrentItem(0);
+
+        }
+
+        setTabsCustom();
+
+        startService(new Intent(SuperChatApplication.context, ChatService.class));
+
+//		syncView.setVisibility(View.GONE);
+//		TabPageIndicator titleIndicator = (TabPageIndicator)findViewById(R.id.titles);
+//		 titleIndicator.setViewPager(mViewPager);
+
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			frompush = extras.getBoolean("FROM_NOTIFICATION");

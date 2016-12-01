@@ -4,6 +4,7 @@ public class GroupChatXmppCaptionData {
     private String groupPermissionType;
     private String displayName;
     private String description;
+    private String fileId;
 
     public String getGroupPermissionType() {
         return groupPermissionType;
@@ -27,5 +28,13 @@ public class GroupChatXmppCaptionData {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
     }
 }
