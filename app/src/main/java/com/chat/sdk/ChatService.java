@@ -1354,22 +1354,25 @@ public class ChatService extends Service implements interfaceInstances {
                             JSONObject jsonobj = new JSONObject(captionTag);
                             if (jsonobj.has("domainDisplayName") && jsonobj.getString("domainDisplayName").toString().trim().length() > 0) {
 //								displayname = jsonobj.getString("domainDisplayName").toString();
-                                prefManager.saveCurrentSGDisplayName(jsonobj.getString("domainDisplayName").toString());
-                            }
-                            if (jsonobj.has("domainPicID") && jsonobj.getString("domainPicID").toString().trim().length() > 0) {
+								prefManager.saveCurrentSGDisplayName(jsonobj.getString("domainDisplayName").toString());
+								DBWrapper.getInstance().updateSGDisplayName(prefManager.getUserDomain() , jsonobj.getString("domainDisplayName").toString());
+							}
+							if(jsonobj.has("domainPicID") && jsonobj.getString("domainPicID").toString().trim().length() > 0) {
 //								fileId = jsonobj.getString("domainPicID").toString();
-                                prefManager.saveSGFileId("SG_FILE_ID", jsonobj.getString("domainPicID").toString());
-                            }
-                            jsonobj = null;
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        return;
-                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeDeactivateUser.ordinal()) {
-                        Log.d(TAG, "atMeXmppMessageTypeDeactivateUser: User deactivated.");
-                        String captionTag = message.getMediaTagMessage();
-                        prefManager.saveUserExistence(captionTag, false);
-                        if (captionTag.equals(userMe)) {
+								prefManager.saveSGFileId(prefManager.getUserDomain(), jsonobj.getString("domainPicID").toString());
+								DBWrapper.getInstance().updateSGLogoFileID(prefManager.getUserDomain() , jsonobj.getString("domainPicID").toString());
+							}
+							EventBus.getDefault().post("[SGNAMECHANGE] : "+captionTag);
+							jsonobj = null;
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						return;
+					}else if(xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeDeactivateUser.ordinal()){
+						Log.d(TAG, "atMeXmppMessageTypeDeactivateUser: User deactivated.");
+						String captionTag  = message.getMediaTagMessage();
+						prefManager.saveUserExistence(captionTag, false);
+						if (captionTag.equals(userMe)) {
 
                             //Show tha deactivate screen & switch to home.
                             DBWrapper.getInstance().updateSGActiveStatus(prefManager.getUserDomain(), false);
@@ -5572,7 +5575,7 @@ public class ChatService extends Service implements interfaceInstances {
                         String infoList = "";
                         for (String inviter : inviters) {
                             if (inviter != null && !inviter.equals("") && !inviter.equals(userMe))
-                                inviteUserInRoom(groupName, groupDisplayName, groupDiscription, inviter, null);
+                                inviteUserInRoom(groupName, groupDisplayName, groupDiscription, inviter, null, false);
                             infoList += inviter + ",";
 //							roster.createEntry(inviter, prefManager.getUserServerName(inviter), new String[]{groupName});
 //							roster.getEntry(inviter).setName(prefManager.getUserServerName(inviter));

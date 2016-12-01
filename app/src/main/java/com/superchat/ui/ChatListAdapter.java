@@ -4552,8 +4552,20 @@ public class ChatListAdapter extends SimpleCursorAdapter {
             return null;
         Bitmap bmp = null;
         byte[] data = Base64.decode(baseData, Base64.DEFAULT);
-        if (data != null)
-            bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+        try {
+            if (data != null)
+                bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+            return bmp;
+        }catch (OutOfMemoryError e) {
+            e.printStackTrace();
+            System.gc();
+            try {
+                bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+            } catch (OutOfMemoryError e2) {
+                e2.printStackTrace();
+                // handle gracefully.
+            }
+        }
         return bmp;
     }
 

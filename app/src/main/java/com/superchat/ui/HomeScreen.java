@@ -507,7 +507,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         if (getIntent().getExtras() != null) {
             sgCreationAfterLogin = getIntent().getExtras().getBoolean(Constants.SG_CREATE_AFTER_LOGIN);
             if (sgCreationAfterLogin)
-                updateSlidingDrawer(iPrefManager.getCurrentSGDisplayName(), iPrefManager.getSGFileId("SG_FILE_ID"));
+                updateSlidingDrawer(iPrefManager.getCurrentSGDisplayName(), iPrefManager.getSGFileId(iPrefManager.getUserDomain()));
         }
         if (SharedPrefManager.getInstance().getBackupSchedule() == -1)
             SharedPrefManager.getInstance().setBackupSchedule(2);
@@ -912,7 +912,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             updateCounterValuesAtBottomTabs();
             String file_id = DBWrapper.getInstance().getSGLogoFileID(sg_name);
             if (file_id != null)
-                prefManager.saveSGFileId("SG_FILE_ID", file_id);
+                prefManager.saveSGFileId(sg_name, file_id);
             cleanDataAndSwitchSG(sg_name);
             //Set contact and group synch's
             prefManager.setContactSynched(sg_name, false);
@@ -1846,7 +1846,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                             String json = finalJSONbject.toString();
 //							 json = json.replace("\"", "&quot;");
                             for (String addedUser : EsiaChatContactsScreen.inviteUsersList)
-                                EsiaChatContactsScreen.inviteService.inviteUserInRoom(EsiaChatContactsScreen.inviteRoomName, EsiaChatContactsScreen.inviteDisplayName, "", addedUser, json);
+                                EsiaChatContactsScreen.inviteService.inviteUserInRoom(EsiaChatContactsScreen.inviteRoomName, EsiaChatContactsScreen.inviteDisplayName, "", addedUser, json, false);
                             json = null;
                         }
                         EsiaChatContactsScreen.invitationPending = false;
@@ -2140,6 +2140,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 showBackUpRestoreScreen(backupData);
             }
             // checkForBackUpAndUploadBackup();
+            if(id_sg_name_label != null) {
+                id_sg_name_label.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
+            }
         } catch(Exception e){
 
         }
@@ -2964,7 +2967,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                         }
                         sharedIDData.add(shared_id_detail);
                     }
-                }
+                }else
+                    sharedIDData.clear();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -4372,6 +4376,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             switchSG(iPrefManager.getUserDomain(), false, null, false);
         }else if(message != null && message.startsWith("[Activated] : ")){
             userDeactivated = false;
+        }else if(message != null && message.startsWith("[SGNAMECHANGE] : ")){
+            if(id_sg_name_label != null) {
+                id_sg_name_label.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
+            }
         }else {
             showDialogWithPositive(message);
         }
