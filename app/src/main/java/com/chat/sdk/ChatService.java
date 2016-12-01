@@ -80,6 +80,7 @@ import com.superchat.model.BulletinMessageDataModel;
 import com.superchat.model.GroupChatMetaInfo;
 import com.superchat.model.GroupChatXmppCaption;
 import com.superchat.model.GroupChatXmppCaptionData;
+import com.superchat.model.GroupChatXmppUserPermissionCaptionData;
 import com.superchat.model.LoginModel;
 import com.superchat.model.LoginResponseModel;
 import com.superchat.model.LoginResponseModel.UserResponseDetail;
@@ -480,7 +481,35 @@ public class ChatService extends Service implements interfaceInstances {
                                 senderName);
                     }
 
-                    if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeGroupName.ordinal()) {
+
+                    if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeAdminPermission.ordinal()) {
+                        Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeAdminPermission: " + xMPPMessageType);
+                        String inviter = senderName;
+
+                        String captionTag = message.getMediaTagMessage();
+                        if (captionTag != null) {
+                            if (captionTag.contains("&quot;"))
+                                captionTag = captionTag.replace("&quot;", "\"");
+
+                            try {
+                                GroupChatXmppUserPermissionCaptionData caption = new Gson().fromJson(captionTag, GroupChatXmppUserPermissionCaptionData.class);
+                                if (caption != null) {
+                                    if(caption.getAdmin().equalsIgnoreCase("1")) {
+                                        SharedPrefManager.getInstance().setUserGroupAdmin(user, caption.getUsername(), true);
+                                    } else {
+                                        SharedPrefManager.getInstance().setUserGroupAdmin(user, caption.getUsername(), false);
+                                    }
+                                }
+
+                                eventSetGroupBroadcastMode();
+                            } catch (Exception e) {
+
+                            }
+                        }
+
+                        return;
+                    }
+                    else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeGroupName.ordinal()) {
                         Log.d(TAG, "XMPPMessageType atMeXmppMessageTypeGroupName: " + xMPPMessageType);
                         String inviter = senderName;
 
@@ -493,10 +522,10 @@ public class ChatService extends Service implements interfaceInstances {
 
 
                             try {
-                                GroupChatXmppCaption caption = new Gson().fromJson(captionTag, GroupChatXmppCaption.class);
+                                GroupChatXmppCaptionData caption = new Gson().fromJson(captionTag, GroupChatXmppCaptionData.class);
                                 if (caption != null) {
-                                    int permissionType = Integer.parseInt(caption.getCaption().getGroupPermissionType());
-                                    String groupName = caption.getCaption().getDisplayName();
+                                    int permissionType = Integer.parseInt(caption.getGroupPermissionType());
+                                    String groupName = caption.getDisplayName();
                                     String groupMode = "";
                                     if (permissionType == GroupChatMetaInfo.GroupPermissions.SCGroupPermissionAllowedAdmins.ordinal()){
                                         groupMode = KEY_GROUP_BROADCAST;
@@ -511,10 +540,10 @@ public class ChatService extends Service implements interfaceInstances {
                                     {
                                         GroupChatMetaInfo groupChatMetaInfo = new GroupChatMetaInfo();
                                         groupChatMetaInfo.setBroadCastActive(groupMode);
-                                        SharedPrefManager.getInstance().setSubGroupMetaData(groupName, groupChatMetaInfo);
+                                        SharedPrefManager.getInstance().setSubGroupMetaData(user, groupChatMetaInfo);
                                     }
 
-                                    eventsetGroupBroadcastMode();
+                                    eventSetGroupBroadcastMode();
                                 }
                                 return;
                             } catch(Exception e){
@@ -1303,7 +1332,7 @@ public class ChatService extends Service implements interfaceInstances {
         }
     };
 
-    private void eventsetGroupBroadcastMode() {
+    private void eventSetGroupBroadcastMode() {
         GroupChatBroadcastInfo obj = new GroupChatBroadcastInfo();
         EventBus.getDefault().post(obj);
     }
@@ -1341,9 +1370,11 @@ public class ChatService extends Service implements interfaceInstances {
                         return;
                     } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeMakeSGSubAdmin.ordinal()) {
                         prefManager.setAsDomainSubAdmin(prefManager.getUserDomain(), true);
+                        eventSetGroupBroadcastMode();
                         return;
                     } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeRemoveSGSubAdmin.ordinal()) {
                         prefManager.setAsDomainSubAdmin(prefManager.getUserDomain(), false);
+                        eventSetGroupBroadcastMode();
                         return;
                     } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeSGUpdate.ordinal()) {
                         String captionTag = message.getMediaTagMessage();
@@ -2718,6 +2749,10 @@ public class ChatService extends Service implements interfaceInstances {
 
     public boolean updateGroupDisplayName(String groupName, String groupDisplayName, String caption) {
         return sendGroupInfoMessage(groupName, groupDisplayName, caption, Message.XMPPMessageType.atMeXmppMessageTypeGroupName);
+    }
+
+    public boolean updateGroupPermissions(String groupName, String groupDisplayName, String caption) {
+        return sendGroupInfoMessage(groupName, groupDisplayName, caption, Message.XMPPMessageType.atMeXmppMessageTypeAdminPermission);
     }
 
     public boolean updateGroupType(String groupName, String groupDisplayName, GroupChatMetaInfo.GroupPermissions permissionMode) {
@@ -4285,7 +4320,7 @@ public class ChatService extends Service implements interfaceInstances {
         else
             msg.setType(Message.Type.chat);
         msg.setXMPPMessageType(xMPPMessageType);
-        if (type == XMPPMessageType.atMeXmppMessageTypeGroupName.ordinal() || type == XMPPMessageType.atMeXmppMessageTypeMemberList.ordinal()) {
+        if (type == XMPPMessageType.atMeXmppMessageTypeGroupName.ordinal() || type == XMPPMessageType.atMeXmppMessageTypeMemberList.ordinal() || type == XMPPMessageType.atMeXmppMessageTypeAdminPermission.ordinal()) {
             if (caption != null && !caption.equals(""))
                 msg.setMediaTagMessage(caption);
         }
@@ -4306,6 +4341,10 @@ public class ChatService extends Service implements interfaceInstances {
             msg.setBody("Added you to group '" + displayName + "'.");
         } else
             msg.setBody(display_name);
+
+        // Set Blank body so Push will not be generated
+        msg.setBody("");
+
         msg.setPacketID(UUID.randomUUID().toString());
         Log.d(TAG, "sent packet: " + msg.toXML());
         if (connection != null && connection.isConnected()
@@ -4363,7 +4402,7 @@ public class ChatService extends Service implements interfaceInstances {
 
             caption.setCaption(data);
 
-            String body = new Gson().toJson(caption).toString();
+            String body = new Gson().toJson(data).toString();
 
             if (isGroupChat)
                 msg.setType(Message.Type.groupchat);
@@ -4371,7 +4410,7 @@ public class ChatService extends Service implements interfaceInstances {
                 msg.setType(Message.Type.chat);
 
             msg.setMediaTagMessage(body);
-            msg.setBody("Set Broadcast '" + display_name + "'.");
+            msg.setBody("");
             msg.setXMPPMessageType(xMPPMessageType);
             msg.setPacketID(UUID.randomUUID().toString());
 

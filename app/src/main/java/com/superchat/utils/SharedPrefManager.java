@@ -51,6 +51,8 @@ public class SharedPrefManager {
     private final String FIRST_TIME_APP = "mode"; // For Frash User
     private final String USER_ID = "user_id";
     private final String USER_DOMAIN = "user_domain";
+    private final String USER_Current_STATUS = "user_current_status";
+    private final String CURRENT_MEMBER_TYPE = "current_member_type";
     private final String OWNED_DOMAIN = "owned_domain";
     private final String USER_DOMAIN_DISPLAY_NAME = "use_domain_display_name";
     private final String USER_GENDER = "user_gender";
@@ -69,6 +71,7 @@ public class SharedPrefManager {
     private final String USER_STATUS_MESSAGE = "user_status_message";
     private final String USER_DESIGNATION = "user_designation";
     private final String USER_DEPARTMENT = "user_department";
+    private final String BULLETIN_FILE_ID = "bulletin_file_id";
     private final String AUTH_STATUS = "status";
     private final String USER_PHONE = "mobile_number";
     private final String DOMAIN_TYPE = "domain_type";
@@ -146,6 +149,9 @@ public class SharedPrefManager {
 
 
     private final String GROUPS_FOR_SG = "groups_for_sg";
+
+    private final String DATA_USAGE_MOBILE = "data_usage_mobile";
+    private final String DATA_USAGE_WIFI = "data_usage_wifi";
 
 
     private static SharedPrefManager sharedPrefManager;
@@ -282,6 +288,22 @@ public class SharedPrefManager {
         editor.commit();
     }
 
+
+    public boolean isUserGroupAdmin(String groupName) {
+        String user = getUserName();
+        String sg = getUserDomain();
+        String key = sg + groupName + user;
+        return pref.getBoolean(key, false);
+    }
+
+    public void setUserGroupAdmin(String groupName, String user, boolean flag) {
+        String sg = getUserDomain();
+        String key = sg + groupName + user;
+
+        editor.putBoolean(key, flag);
+        editor.commit();
+    }
+
     public void setSubGroupMetaData(String groupName, GroupChatMetaInfo groupChatMetaInfo) {
         if (groupChatMetaInfo != null) {
             String sg = getUserDomain();
@@ -339,6 +361,23 @@ public class SharedPrefManager {
         editor.commit();
     }
 
+    public String isDataUsageMobile() {
+        return pref.getString(DATA_USAGE_MOBILE, null);
+    }
+
+    public void setDataUsageMobile(String param) {
+        editor.putString(DATA_USAGE_MOBILE, param);
+        editor.commit();
+    }
+
+    public String isDataUsageWifi() {
+        return pref.getString(DATA_USAGE_WIFI, null);
+    }
+
+    public void setDataUsageWifi(String param) {
+        editor.putString(DATA_USAGE_WIFI, param);
+        editor.commit();
+    }
 
     public boolean isUpdateCheckNeeded() {
         return pref.getBoolean(APP_UPDATE, true);
@@ -537,6 +576,17 @@ public class SharedPrefManager {
 
     public void setLastBackUpTime(long time) {
         editor.putLong(LAST_BACKUP_TIME, time);
+        editor.commit();
+    }
+
+
+    public String getBulletin_File_Id(String sg) {
+        String value = pref.getString(BULLETIN_FILE_ID + sg, null);
+        return value;
+    }
+
+    public void saveBulletin_File_Id(String sg, String fileId) {
+        editor.putString(BULLETIN_FILE_ID + sg, fileId);
         editor.commit();
     }
 
@@ -1301,6 +1351,17 @@ public class SharedPrefManager {
         editor.commit();
     }
 
+
+    public void saveOwnerArray(String value) {
+        editor.putString(USER_Current_STATUS, value);
+        editor.commit();
+    }
+
+    public String getOwnerArray() {
+        String value = pref.getString(USER_Current_STATUS , null);
+        return value;
+    }
+
     public void saveUserDomain(String domain) {
 //		System.out.println("<< Domain >> : "+domain);
         editor.putString(USER_DOMAIN, domain);
@@ -1361,6 +1422,17 @@ public class SharedPrefManager {
         long value = pref.getLong(USER_ID, 0);
         return value;
     }
+
+    public void saveCurrentDomainType(String type) {
+        editor.putString(CURRENT_MEMBER_TYPE, type);
+        editor.commit();
+    }
+
+    public String getCurrentDomainType() {
+        String value = pref.getString(CURRENT_MEMBER_TYPE, null);
+        return value;
+    }
+
 
     public String getGroupDisplayName(String room) {
         String value = room;

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffe7e8e9"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/header_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/heder_height"
+        android:background="@color/header_footer_color">
+
+        <RelativeLayout
+            android:id="@+id/back_button_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@+id/header_txt">
+
+            <TextView
+                android:id="@+id/back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dip"
+                android:capitalize="characters"
+                android:gravity="left"
+                android:padding="15dip"
+                android:text="Cancel"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/header_txt"
+            style="@style/style_screen_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="Bulletin Icon" />
+
+        <RelativeLayout
+            android:id="@+id/edit_button_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@+id/header_txt">
+
+            <TextView
+                android:id="@+id/edit_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dip"
+                android:capitalize="characters"
+                android:gravity="right"
+                android:visibility="visible"
+                android:padding="15dip"
+                android:text="Edit"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/id_done_btn_bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dip"
+                android:capitalize="characters"
+                android:gravity="right"
+                android:padding="15dip"
+                android:text="Done"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center">
+
+        <com.superchat.widgets.RoundedImageView
+            android:id="@+id/bulletin_image"
+            android:layout_width="120dip"
+            android:layout_height="120dip"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/logo_small"/>
+
+        <com.superchat.widgets.RoundedImageView
+            android:id="@+id/bulletin_default_image"
+            android:layout_width="120dip"
+            android:layout_height="120dip"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:scaleType="centerCrop" />
+
+        <LinearLayout
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/bulletin_image"
+            android:layout_alignEnd="@+id/bulletin_image"
+            android:gravity="right"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/id_edit_pic"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/camera_group" />
+        </LinearLayout>
+    </RelativeLayout>
+
+
+    <!--<Button
+        android:id="@+id/id_done_btn_bottom"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="25dip"
+        android:layout_marginTop="10dip"
+        android:background="@drawable/round_rect_blue"
+        android:onClick="onNextButtonClickedForAdmin"
+        android:text="@string/done"
+        android:textColor="@color/white"
+        android:textColorHighlight="@color/header_color"
+        android:textSize="15sp"
+        android:visibility="visible" />-->
+
+
+</LinearLayout>

@@ -233,6 +233,8 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
     private ImageView micView;
     private RelativeLayout recordPanel;
     private RelativeLayout slideText;
+    private RelativeLayout bottom_write_bar1;
+    private RelativeLayout bottomBroadcastBar;
     private TextView fileConfirmMessageView;
     private TextView closeView;
     private ImageView attachEmoView;
@@ -1073,6 +1075,8 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         initAttachFileConfirmDialog();
         calander = Calendar.getInstance();
         mainHeaderLayout = (LinearLayout) findViewById(R.id.id_header_view);
+        bottom_write_bar1 = (RelativeLayout) findViewById(R.id.bottom_write_bar1);
+        bottomBroadcastBar = (RelativeLayout) findViewById(R.id.bottomBroadcastBar);
         editHeaderLayout = (RelativeLayout) findViewById(R.id.edit_chat_header);
         okEditTextView = (TextView) findViewById(R.id.id_ok_title);
         loadPrevious = (Button) findViewById(R.id.load_older_messages);
@@ -1515,12 +1519,13 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 //       		bottomPanel.setVisibility(View.GONE);
 //            xmppStatusView.setImageResource(R.drawable.red_dot);
         }
+
         if (isBulletinBroadcast) {
             if (isBulletinBroadcastForAdmin()) {
-                ((RelativeLayout) findViewById(R.id.bottom_write_bar1)).setVisibility(View.VISIBLE);
+                bottom_write_bar1.setVisibility(View.VISIBLE);
                 attachMediaView.setVisibility(View.VISIBLE);
             } else {
-                ((RelativeLayout) findViewById(R.id.bottom_write_bar1)).setVisibility(View.GONE);
+                bottom_write_bar1.setVisibility(View.GONE);
                 attachMediaView.setVisibility(View.GONE);
             }
         }
@@ -5700,7 +5705,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             return;
         }
         if (iChatPref.isGroupChat(userName) && !iChatPref.isGroupMemberActive(userName, iChatPref.getUserName())) {
-            ((RelativeLayout) findViewById(R.id.bottom_write_bar1)).setVisibility(View.GONE);
+            bottom_write_bar1.setVisibility(View.GONE);
             attachMediaView.setVisibility(View.GONE);
             chatList.setFastScrollEnabled(true);
             chatAdapter.setEditableChat(false);
@@ -5712,7 +5717,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             return;
         }
         if (!iChatPref.isUserExistence(userName)) {
-            ((RelativeLayout) findViewById(R.id.bottom_write_bar1)).setVisibility(View.GONE);
+            bottom_write_bar1.setVisibility(View.GONE);
             attachMediaView.setVisibility(View.GONE);
             callOption.setBackgroundResource(R.drawable.call_icon);
             callOption.setVisibility(View.GONE);
@@ -7442,16 +7447,18 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
     private void setUIChat(boolean isBroadcastScreenMode) {
         try {
             if(isBroadcastScreenMode){
-                ((RelativeLayout) findViewById(R.id.bottom_write_bar1)).setVisibility(View.GONE);
+                bottom_write_bar1.setVisibility(View.GONE);
                 attachMediaView.setVisibility(View.GONE);
+                bottomBroadcastBar.setVisibility(View.VISIBLE);
                 return;
             } else {
-                ((RelativeLayout) findViewById(R.id.bottom_write_bar1)).setVisibility(View.VISIBLE);
+                bottom_write_bar1.setVisibility(View.VISIBLE);
                 attachMediaView.setVisibility(View.VISIBLE);
+                bottomBroadcastBar.setVisibility(View.GONE);
             }
 
             if ((iChatPref.isGroupChat(userName) && !iChatPref.isGroupMemberActive(userName, iChatPref.getUserName()))) {
-                ((RelativeLayout) findViewById(R.id.bottom_write_bar1)).setVisibility(View.GONE);
+                bottom_write_bar1.setVisibility(View.GONE);
                 attachMediaView.setVisibility(View.GONE);
             }
         } catch (Exception e) {
@@ -7463,9 +7470,9 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
     private void setUIBroascastMode(boolean isBroadcastScreenMode) {
         try {
             if (isBroadcastScreenMode) {
-                chatOptions.setVisibility(View.GONE);
+                //chatOptions.setVisibility(View.GONE);
             } else {
-                chatOptions.setVisibility(View.VISIBLE);
+                //chatOptions.setVisibility(View.VISIBLE);
             }
 
             setUIChat(isBroadcastScreenMode);
@@ -7482,15 +7489,16 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         GroupChatMetaInfo groupChatMetaInfo = iChatPref.getSubGroupMetaData(groupName);
         if(groupChatMetaInfo != null && groupChatMetaInfo.isBroadCastActive()) {
             if (iChatPref.isGroupChat(userName) && !isBulletinBroadcast) {
-                if (iChatPref.isDomainAdminORSubAdmin() || isSharedIDAdmin) {
-                    Toast.makeText(this, "You are NOW admin or Subadmin", Toast.LENGTH_SHORT).show();
+                boolean isUserGroupAdmin = iChatPref.isUserGroupAdmin(groupName);
+                if (iChatPref.isDomainAdminORSubAdmin() || isSharedIDAdmin || isUserGroupAdmin) {
+                    //Toast.makeText(this, "You are NOW admin or Subadmin", Toast.LENGTH_SHORT).show();
                     setUIBroascastMode(false);
                 } else {
-                    Toast.makeText(this, "You are NOT authorized to edit", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "You are NOT authorized to edit", Toast.LENGTH_SHORT).show();
                     setUIBroascastMode(true);
                 }
             } else {
-                Toast.makeText(this, "This is not group :-P", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "This is not group :-P", Toast.LENGTH_SHORT).show();
             }
         } else {
             setUIBroascastMode(false);

@@ -66,7 +66,10 @@ import com.superchat.data.db.DBWrapper;
 import com.superchat.data.db.DatabaseConstants;
 import com.superchat.model.BroadCastDetailsModel;
 import com.superchat.model.ErrorModel;
+import com.superchat.model.GroupChatMetaInfo;
 import com.superchat.model.GroupChatServerModel;
+import com.superchat.model.GroupChatXmppCaptionData;
+import com.superchat.model.GroupChatXmppUserPermissionCaptionData;
 import com.superchat.model.GroupDetailsModel;
 import com.superchat.model.LoginModel;
 import com.superchat.utils.BitmapDownloader;
@@ -114,63 +117,65 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
-public class GroupProfileScreen extends Activity implements OnClickListener, ProfileUpdateListener,VoiceMediaHandler,OnMenuItemClickListener{
-	public final static String TAG = "GroupProfileScreen"; 
-	private RelativeLayout adminLayout;
-	private RelativeLayout ownerLayout;
-	private LinearLayout addGroupParticipantLayout;
-	private boolean isGroupAdmin;
-	private boolean isGroupOwner;
-	private String groupUUID;
-	private String selectedMessageId;
-	private String displayName = "";
-	private String statusMessage = "";
-	private String selectedMemberUserName;
-	private String selectedUserdisplayName;
-	private List<String> usersList;
-	private List<String> addMemberFilterList;
-	private TextView displayNameView;
-	private TextView ownerName;
-	private String ownerDislayName;
-	private TextView title;
-	private TextView backTitle;
-	private TextView deleteGroupView;
-	boolean isDeleteItem;
-	private Calendar calander;
-	Calendar currentCalender;
-	private MyriadSemiboldTextView deleteBroadcastList;
-	private TextView statusView;
-	private TextView addMemberView;
-	private TextView ownerView;
-	private TextView adminView; 
-	private TextView clearGroupChatView;
-	private TextView activePollView;
-	private TextView emailChatView;
-	private TextView allMediaView;
-	private TextView groupNotificationView;
-	private TextView leaveGroupChatView;
-	private ImageView editGroupView;
-	private TextView muteGroupView;
-	private ImageView groupIconView;
-	private SharedPrefManager iChatPref;
-	private Dialog memberOptionDialog; 
-	private HashMap<String, String> hashMap;
-//	private HashMap<String, MessageInfo> infoList;
-	boolean isProfileModified;
-	private ChatService service;
-	private XMPPConnection connection;
-	private ChatService messageService;
-	boolean invitationEnable;
-	ArrayList<String> inviters = null;
-	LinearLayout mainLayout;
-	private boolean isBroadCast;
-	private boolean isOpenChannel;
-	private boolean isMemberAddAllowed;
-	ProgressBar progressBarView;
-	public String groupOwnerName;
-	public String fileId;
-	public List<String> adminUserSet;
-	private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
+import static android.R.attr.data;
+
+public class GroupProfileScreen extends Activity implements OnClickListener, ProfileUpdateListener, VoiceMediaHandler, OnMenuItemClickListener {
+    public final static String TAG = "GroupProfileScreen";
+    private RelativeLayout adminLayout;
+    private RelativeLayout ownerLayout;
+    private LinearLayout addGroupParticipantLayout;
+    private boolean isGroupAdmin;
+    private boolean isGroupOwner;
+    private String groupUUID;
+    private String selectedMessageId;
+    private String displayName = "";
+    private String statusMessage = "";
+    private String selectedMemberUserName;
+    private String selectedUserdisplayName;
+    private List<String> usersList;
+    private List<String> addMemberFilterList;
+    private TextView displayNameView;
+    private TextView ownerName;
+    private String ownerDislayName;
+    private TextView title;
+    private TextView backTitle;
+    private TextView deleteGroupView;
+    boolean isDeleteItem;
+    private Calendar calander;
+    Calendar currentCalender;
+    private MyriadSemiboldTextView deleteBroadcastList;
+    private TextView statusView;
+    private TextView addMemberView;
+    private TextView ownerView;
+    private TextView adminView;
+    private TextView clearGroupChatView;
+    private TextView activePollView;
+    private TextView emailChatView;
+    private TextView allMediaView;
+    private TextView groupNotificationView;
+    private TextView leaveGroupChatView;
+    private ImageView editGroupView;
+    private TextView muteGroupView;
+    private ImageView groupIconView;
+    private SharedPrefManager iChatPref;
+    private Dialog memberOptionDialog;
+    private HashMap<String, String> hashMap;
+    //	private HashMap<String, MessageInfo> infoList;
+    boolean isProfileModified;
+    private ChatService service;
+    private XMPPConnection connection;
+    private ChatService messageService;
+    boolean invitationEnable;
+    ArrayList<String> inviters = null;
+    LinearLayout mainLayout;
+    private boolean isBroadCast;
+    private boolean isOpenChannel;
+    private boolean isMemberAddAllowed;
+    ProgressBar progressBarView;
+    public String groupOwnerName;
+    public String fileId;
+    public List<String> adminUserSet;
+    private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     private TextDrawable.IBuilder mDrawableBuilder;
     private TextView mediaCountView;
 	private TextView docsCountView;
@@ -252,7 +257,8 @@ public class GroupProfileScreen extends Activity implements OnClickListener, Pro
 			}
 			break;
 		}
-	}};
+        }
+    };
 	protected void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -2177,56 +2183,66 @@ private void getServerGroupProfile(String groupName){
 					}
 					//else
 //						showDialog("Network error in add participant.","Ok");
-				} catch (ClientProtocolException e) {
-					Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
-				} catch (IOException e) {
-					Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
-				}
-				
-			} catch (UnsupportedEncodingException e1) {
-				Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution UnsupportedEncodingException:"+e1.toString());
-			}catch(Exception e){
-				Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution Exception:"+e.toString());
-			}
-			
-			
-			
-			
-			return responseMsg;
-		}
-		
-		@Override
-		protected void onPostExecute(String response) {
-			
-			if (progressDialog != null) {
-				progressDialog.dismiss();
-				progressDialog = null;
-			}
-			if (response!=null && response.contains("error")){
-				Gson gson = new GsonBuilder().create();
-				ErrorModel errorModel = null;
-				try{
-					errorModel = gson.fromJson(response,ErrorModel.class);
-				}catch(Exception e){}
-				if (errorModel != null) {
-					if (errorModel.citrusErrors != null
-							&& !errorModel.citrusErrors.isEmpty()) {
-						ErrorModel.CitrusError citrusError = errorModel.citrusErrors.get(0);
-						if(citrusError!=null)
-							showDialog(citrusError.message);
-						else
-							showDialog("Please try again later.");
-					} else if (errorModel.message != null)
-						showDialog(errorModel.message);
-				} else
-					showDialog("Please try again later.");
-			}else{
-				if (response!=null){
-					if(service!=null ){
-						String name = SharedPrefManager.getInstance().getDisplayName();
-						String fileid = SharedPrefManager.getInstance().getUserFileId(SharedPrefManager.getInstance().getUserName());
-						if(isBroadCast)
-							service.sendGroupTaskMessage(name, fileid, iChatPref.getGroupOwnerName(groupUUID), selectedMemberUserName,groupUUID,displayName,statusMessage,fileId,String.valueOf(usersList.size()), XMPPMessageType.atMeXmppMessageTypeNewCreateBroadCast);
+                } catch (ClientProtocolException e) {
+                    Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());
+                } catch (IOException e) {
+                    Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());
+                }
+
+            } catch (UnsupportedEncodingException e1) {
+                Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution UnsupportedEncodingException:" + e1.toString());
+            } catch (Exception e) {
+                Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution Exception:" + e.toString());
+            }
+
+
+            return responseMsg;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+                progressDialog = null;
+            }
+            if (response != null && response.contains("error")) {
+                Gson gson = new GsonBuilder().create();
+                ErrorModel errorModel = null;
+                try {
+                    errorModel = gson.fromJson(response, ErrorModel.class);
+                } catch (Exception e) {
+                }
+                if (errorModel != null) {
+                    if (errorModel.citrusErrors != null
+                            && !errorModel.citrusErrors.isEmpty()) {
+                        ErrorModel.CitrusError citrusError = errorModel.citrusErrors.get(0);
+                        if (citrusError != null)
+                            showDialog(citrusError.message);
+                        else
+                            showDialog("Please try again later.");
+                    } else if (errorModel.message != null)
+                        showDialog(errorModel.message);
+                } else
+                    showDialog("Please try again later.");
+            } else {
+                if (response != null) {
+                    if (service != null) {
+                        String name = SharedPrefManager.getInstance().getDisplayName();
+                        String fileid = SharedPrefManager.getInstance().getUserFileId(SharedPrefManager.getInstance().getUserName());
+                        if (isBroadCast) {
+                            service.sendGroupTaskMessage(name, fileid, iChatPref.getGroupOwnerName(groupUUID), selectedMemberUserName, groupUUID, displayName, statusMessage, fileId, String.valueOf(usersList.size()), XMPPMessageType.atMeXmppMessageTypeNewCreateBroadCast);
+                        } else {
+                            for(String userName : userList) {
+                                GroupChatXmppUserPermissionCaptionData data = new GroupChatXmppUserPermissionCaptionData();
+                                data.setDisplayName(displayName);
+                                data.setAdmin("1");
+                                data.setUsername(userName);
+
+                                String json = new Gson().toJson(data).toString();
+                                service.updateGroupPermissions(groupUUID, displayName, json);
+                            }
+                        }
 //						service.removeGroupPerson(groupUUID, selectedMemberUserName);
 //						usersList.remove(selectedMemberUserName);
 //						iChatPref.removeUsersFromGroup(groupUUID, selectedMemberUserName);
@@ -2430,56 +2446,66 @@ private void getServerGroupProfile(String groupName){
 					}
 					//else
 //						showDialog("Network error in add participant.","Ok");
-				} catch (ClientProtocolException e) {
-					Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
-				} catch (IOException e) {
-					Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
-				}
-				
-			} catch (UnsupportedEncodingException e1) {
-				Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution UnsupportedEncodingException:"+e1.toString());
-			}catch(Exception e){
-				Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution Exception:"+e.toString());
-			}
-			
-			
-			
-			
-			return responseMsg;
-		}
-		
-		@Override
-		protected void onPostExecute(String response) {
-			
-			if (progressDialog != null) {
-				progressDialog.dismiss();
-				progressDialog = null;
-			}
-			if (response!=null && response.contains("error")){
-				Gson gson = new GsonBuilder().create();
-				ErrorModel errorModel = null;
-				try{
-					errorModel = gson.fromJson(response,ErrorModel.class);
-				}catch(Exception e){}
-				if (errorModel != null) {
-					if (errorModel.citrusErrors != null
-							&& !errorModel.citrusErrors.isEmpty()) {
-						ErrorModel.CitrusError citrusError = errorModel.citrusErrors.get(0);
-						if(citrusError!=null)
-							showDialog(citrusError.message);
-						else
-							showDialog("Please try again later.");
-					} else if (errorModel.message != null)
-						showDialog(errorModel.message);
-				} else
-					showDialog("Please try again later.");
-			}else{
-				if (response!=null){
-					if(service!=null){
-						String name = SharedPrefManager.getInstance().getDisplayName();
-						String fileid = SharedPrefManager.getInstance().getUserFileId(SharedPrefManager.getInstance().getUserName());
-						if(isBroadCast)
-							service.sendGroupTaskMessage(name, fileid, iChatPref.getGroupOwnerName(groupUUID), selectedMemberUserName,groupUUID,null,null,null, String.valueOf(usersList.size()), XMPPMessageType.atMeXmppMessageTypeRemoveBroadCast);
+                } catch (ClientProtocolException e) {
+                    Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());
+                } catch (IOException e) {
+                    Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());
+                }
+
+            } catch (UnsupportedEncodingException e1) {
+                Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution UnsupportedEncodingException:" + e1.toString());
+            } catch (Exception e) {
+                Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution Exception:" + e.toString());
+            }
+
+
+            return responseMsg;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+                progressDialog = null;
+            }
+            if (response != null && response.contains("error")) {
+                Gson gson = new GsonBuilder().create();
+                ErrorModel errorModel = null;
+                try {
+                    errorModel = gson.fromJson(response, ErrorModel.class);
+                } catch (Exception e) {
+                }
+                if (errorModel != null) {
+                    if (errorModel.citrusErrors != null
+                            && !errorModel.citrusErrors.isEmpty()) {
+                        ErrorModel.CitrusError citrusError = errorModel.citrusErrors.get(0);
+                        if (citrusError != null)
+                            showDialog(citrusError.message);
+                        else
+                            showDialog("Please try again later.");
+                    } else if (errorModel.message != null)
+                        showDialog(errorModel.message);
+                } else
+                    showDialog("Please try again later.");
+            } else {
+                if (response != null) {
+                    if (service != null) {
+                        String name = SharedPrefManager.getInstance().getDisplayName();
+                        String fileid = SharedPrefManager.getInstance().getUserFileId(SharedPrefManager.getInstance().getUserName());
+                        if (isBroadCast) {
+                            service.sendGroupTaskMessage(name, fileid, iChatPref.getGroupOwnerName(groupUUID), selectedMemberUserName, groupUUID, null, null, null, String.valueOf(usersList.size()), XMPPMessageType.atMeXmppMessageTypeRemoveBroadCast);
+                        } else {
+                            for(String userName : userList) {
+                                GroupChatXmppUserPermissionCaptionData data = new GroupChatXmppUserPermissionCaptionData();
+                                data.setDisplayName(displayName);
+                                data.setAdmin("0");
+                                data.setUsername(userName);
+
+                                String json = new Gson().toJson(data).toString();
+                                service.updateGroupPermissions(groupUUID, displayName, json);
+                            }
+                        }
 //						service.removeGroupPerson(groupUUID, selectedMemberUserName);
 //						usersList.remove(selectedMemberUserName);
 //						iChatPref.removeUsersFromGroup(groupUUID, selectedMemberUserName);

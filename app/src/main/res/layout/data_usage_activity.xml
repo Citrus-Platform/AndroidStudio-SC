@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/header_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/header_footer_color">
+
+        <RelativeLayout
+            android:id="@+id/historyDetailHeaderLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/id_back"
+            android:background="@color/header_footer_color"
+            android:paddingLeft="5dp">
+
+            <com.superchat.widgets.MyriadSemiboldTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:padding="@dimen/topbar_title_padding"
+                android:text="Data usage"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/id_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dip"
+            android:capitalize="characters"
+            android:drawableLeft="@drawable/back_arrow_white"
+            android:paddingBottom="15dp"
+            android:paddingLeft="15dp"
+            android:paddingTop="15dp"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:visibility="visible" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:text="MEDIA AUTO-DOWNLOAD"
+            android:textColor="@color/gray_dark"
+            android:textSize="18sp" />
+
+        <View
+            android:id="@+id/dividerLabel"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/label"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@color/dark_gray" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/dividerLabel"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/mobileDataUsageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/mobileDataUsageButtonLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="When using mobile data"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/mobileDataUsageLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/mobileDataUsageButtonLabel"
+                    android:text="ajkgsajksbas"
+                    android:textColor="@color/gray_dark" />
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/dividerDataUsageMobile"
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_below="@+id/mobileDataUsageButtonLabel"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/dark_gray"
+                android:paddingBottom="10dp" />
+
+            <RelativeLayout
+                android:id="@+id/wifiDataUsageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/wifiDataUsageButtonLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="When connected on Wi-Fi"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/wifiDataUsageLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/wifiDataUsageButtonLabel"
+                    android:text="ajkgsajksbas"
+                    android:textColor="@color/gray_dark" />
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/dividerDataUsageWifi"
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_below="@+id/mobileDataUsageButtonLabel"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/dark_gray"
+                android:paddingBottom="10dp" />
+
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

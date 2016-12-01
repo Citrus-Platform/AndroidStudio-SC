@@ -1193,7 +1193,18 @@ public class Message extends Packet {
 		/**
 		 * Chat message type to be sent for SG profile update - 32
 		 */
-		atMeXmppMessageTypeSGUpdate
+		atMeXmppMessageTypeSGUpdate,
+
+		/**
+		 * Chat message type to be sent for Bulletin image update - 33
+		 */
+		atMeXmppMessageTypeUpdateBulletin,
+
+		/**
+		 * Group Permission Update - 34
+		 */
+		atMeXmppMessageTypeAdminPermission
+		;
 		;
 
 		public static XMPPMessageType fromString(String name) {
