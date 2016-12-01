@@ -215,7 +215,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             notifyCurrent.setVisibility(View.VISIBLE);
         }*/
 
-        String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
+        String file_id = SharedPrefManager.getInstance().getSGFileId(SharedPrefManager.getInstance().getUserDomain());
 //        String file_id = DBWrapper.getInstance().getSGLogoFileID(SharedPrefManager.getInstance().getUserDomain());
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
         if (file_id != null && file_id.trim().length() > 0) {
@@ -253,7 +253,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
 
     public void updateView() {
-        String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
+        String file_id = SharedPrefManager.getInstance().getSGFileId(SharedPrefManager.getInstance().getUserDomain());
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
         if (file_id != null && file_id.trim().length() > 0) {
             setProfilePic(displayPictureCurrent, file_id);
@@ -429,7 +429,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                     owned.setOrgUrl("");
                     owned.setPrivacyType("Open");
                     owned.setAdminName(pref.getUserName());
-                    owned.setLogoFileId(pref.getSGFileId("SG_FILE_ID"));
+                    owned.setLogoFileId(pref.getSGFileId(SharedPrefManager.getInstance().getUserDomain()));
 
                     SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
                     String dateString = formatter.format(new Date(System.currentTimeMillis()));
@@ -527,7 +527,10 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         else
             invitedNotificationCount.setText("0");
 
-        String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
+        if(currentSGName != null)
+            currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
+
+        String file_id = SharedPrefManager.getInstance().getSGFileId(SharedPrefManager.getInstance().getUserDomain());
         if (file_id != null && file_id.trim().length() > 0) {
             setProfilePic(displayPictureCurrent, file_id);
         } else {

@@ -594,7 +594,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 		if (file_id != null) {
 			setProfilePic(superGroupIconView, file_id);
 			setSGFullPic(superGroupIconView, file_id);
-			SharedPrefManager.getInstance().saveSGFileId("SG_FILE_ID", file_id);
+			SharedPrefManager.getInstance().saveSGFileId(supergroup_name, file_id);
 		}
 
 		((Button) welcomeDialog.findViewById(R.id.done_button)).setOnClickListener(new OnClickListener() {
@@ -709,7 +709,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 
 	private final Handler notifyPhotoUploadHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
-			String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
+			String file_id = SharedPrefManager.getInstance().getSGFileId(SharedPrefManager.getInstance().getUserDomain());
 		}
 	};
 
@@ -1663,7 +1663,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 							joined.setOrgUrl("");
 							joined.setPrivacyType("Open");
 							joined.setAdminName(sharedPrefManager.getUserName());
-							joined.setLogoFileId(sharedPrefManager.getSGFileId("SG_FILE_ID"));
+							joined.setLogoFileId(sharedPrefManager.getSGFileId(sharedPrefManager.getUserDomain()));
 							SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
 							String dateString = formatter.format(new Date(System.currentTimeMillis()));
 							joined.setCreatedDate(dateString);
@@ -1951,7 +1951,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 							inviter = null;
 						if (json != null && json.has("logoFileId")) {
 							file_id = json.getString("logoFileId");
-							SharedPrefManager.getInstance().saveSGFileId("SG_FILE_ID", file_id);
+							SharedPrefManager.getInstance().saveSGFileId(sg_name, file_id);
 						} else
 							file_id = null;
 						if (json != null && json.has("orgName"))

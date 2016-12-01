@@ -112,7 +112,7 @@ public class ProfilePicUploader extends AsyncTask<String, Integer, String>{
 								}else if(urls[3].equals("SG_FILE_ID")){
 									serverFileId = fileId;
 									picCopy(filePath,fileId);
-									SharedPrefManager.getInstance().saveSGFileId("SG_FILE_ID", fileId);
+									SharedPrefManager.getInstance().saveSGFileId(SharedPrefManager.getInstance().getUserDomain(), fileId);
 									if(handler != null && (serverFileId!=null || !serverFileId.equals("")))
 										handler.sendEmptyMessage(0);
 									return fileId;

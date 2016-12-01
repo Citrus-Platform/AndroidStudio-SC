@@ -1595,7 +1595,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                             iPrefManager.saveBroadCastDisplayName(groupUUID, displayName);
                             iPrefManager.saveBroadcastFirstTimeName(groupUUID, displayName);
                             for (String addedUser : usersList)
-                                service.inviteUserInRoom(groupUUID, displayName, groupDiscription, addedUser, null);
+                                service.inviteUserInRoom(groupUUID, displayName, groupDiscription, addedUser, null, true);
                         }
                     }
                     Intent intent = new Intent(EsiaChatContactsScreen.this, HomeScreen.class);
@@ -1603,6 +1603,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                             | Intent.FLAG_ACTIVITY_CLEAR_TASK
                             | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
+                    finish();
                     return;
                 } else if (requestType == Constants.SHARED_ID_CREATE) {
                     //Update shared ID data.
@@ -1789,7 +1790,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                             if (!SharedPrefManager.getInstance().isUserInvited(addedUser) || !SharedPrefManager.getInstance().isDomainAdminORSubAdmin()) {
                                 service.sendGroupOwnerTaskMessage(SharedPrefManager.getInstance().getUserServerName(addedUser),
                                         SharedPrefManager.getInstance().getUserFileId(addedUser), addedUser, groupUUID, displayName, groupDiscription, fileId, "0", XMPPMessageType.atMeXmppMessageTypeNewCreateGroup);
-                                service.inviteUserInRoom(groupUUID, displayName, "", addedUser, json);
+                                service.inviteUserInRoom(groupUUID, displayName, "", addedUser, json, false);
                             }
                         }
                         json = null;

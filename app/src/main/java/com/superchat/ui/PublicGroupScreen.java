@@ -73,6 +73,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -589,36 +590,40 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                 list = new ArrayList<LoginResponseModel.GroupDetail>();
             else
                 list.clear();
-            for (LoginResponseModel.GroupDetail groups : HomeScreen.groupsData) {
-                if (type == 0 && !groups.memberType.equals("USER")) {
-                    list.add(groups);
-                } else if (type == 1) {
+            try {
+                for (LoginResponseModel.GroupDetail groups : HomeScreen.groupsData) {
+                    if (type == 0 && !groups.memberType.equals("USER")) {
+                        list.add(groups);
+                    } else if (type == 1) {
 //                    for(LoginResponseModel.GroupDetail detail : list){
 //                        if(detail.groupName.equals(groups.groupName))
 //                            exists = true;
 //                    }
 //                    if(!exists)
-                    if (list != null && !isGroupAddedInList(list, groups.groupName))
-                        list.add(groups);
+                        if (list != null && !isGroupAddedInList(list, groups.groupName))
+                            list.add(groups);
+                    }
                 }
+                if (type == 0)
+                    for (String group : SharedPrefManager.getInstance().getGroupNamesArray()) {
+                        if (group == null || group.equals(""))
+                            continue;
+                        if (SharedPrefManager.getInstance().isPublicGroup(group) || !SharedPrefManager.getInstance().isGroupMemberActive(group, SharedPrefManager.getInstance().getUserName()))
+                            continue;
+                        LoginResponseModel.GroupDetail groups = new LoginResponseModel.GroupDetail();
+                        groups.groupName = group;
+                        groups.memberType = "MEMBER";
+                        groups.displayName = SharedPrefManager.getInstance().getGroupDisplayName(group);
+                        groups.description = SharedPrefManager.getInstance().getUserStatusMessage(group);
+                        groups.numberOfMembers = SharedPrefManager.getInstance().getGroupMemberCount(group);
+                        if (groups.numberOfMembers != null && groups.numberOfMembers.equals(""))
+                            groups.numberOfMembers = "1";
+                        if (list != null && !isGroupAddedInList(list, groups.groupName))
+                            list.add(groups);
+                    }
+            }catch(ConcurrentModificationException cex){
+                cex.printStackTrace();
             }
-            if (type == 0)
-                for (String group : SharedPrefManager.getInstance().getGroupNamesArray()) {
-                    if (group == null || group.equals(""))
-                        continue;
-                    if (SharedPrefManager.getInstance().isPublicGroup(group) || !SharedPrefManager.getInstance().isGroupMemberActive(group, SharedPrefManager.getInstance().getUserName()))
-                        continue;
-                    LoginResponseModel.GroupDetail groups = new LoginResponseModel.GroupDetail();
-                    groups.groupName = group;
-                    groups.memberType = "MEMBER";
-                    groups.displayName = SharedPrefManager.getInstance().getGroupDisplayName(group);
-                    groups.description = SharedPrefManager.getInstance().getUserStatusMessage(group);
-                    groups.numberOfMembers = SharedPrefManager.getInstance().getGroupMemberCount(group);
-                    if (groups.numberOfMembers != null && groups.numberOfMembers.equals(""))
-                        groups.numberOfMembers = "1";
-                    if (list != null && !isGroupAddedInList(list, groups.groupName))
-                        list.add(groups);
-                }
             Collections.sort(list);
             ListView listView = null;
             try {

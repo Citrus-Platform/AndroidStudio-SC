@@ -75,6 +75,7 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
     private XMPPConnection connection;
     private ListView recentList = null;
     FragmentActivity fragmentactivity;
+    SharedPrefManager iprefManager;
 
     private ServiceConnection mConnection = new ServiceConnection() {
 
@@ -256,17 +257,19 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
         xmppStatusView = (ImageView) view.findViewById(R.id.id_xmpp_status);
         progressBarView = (ProgressBar) view.findViewById(R.id.id_loading);
         progressBarView.setVisibility(ProgressBar.VISIBLE);
-        if (ChatService.xmppConectionStatus) {
-            xmppStatusView.setImageResource(R.drawable.blue_dot);
-        } else {
-            xmppStatusView.setImageResource(R.drawable.red_dot);
-        }
+//        if (ChatService.xmppConectionStatus) {
+//            xmppStatusView.setImageResource(R.drawable.blue_dot);
+//        } else {
+//            xmppStatusView.setImageResource(R.drawable.red_dot);
+//        }
 //		headerBar = (RelativeLayout)view.findViewById(R.id.id_header);
 //		headerBar.setBackgroundColor(R.color.header_color);
         searchBoxView.setText("");
         searchBoxView.setVisibility(EditText.GONE);
         clearSearch.setVisibility(ImageView.GONE);
 //        superGroupIcon.setOnClickListener(this);
+
+        iprefManager = SharedPrefManager.getInstance().getInstance();
 
         searchIcon.setOnClickListener(new OnClickListener() {
             @Override
@@ -519,7 +522,7 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
         setProfileListener();
 //        if (superGroupIcon != null && SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID") != null)
 //            setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
-        ((HomeScreen) getActivity()).updateSlidingDrawer(SharedPrefManager.getInstance().getCurrentSGDisplayName(), SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
+        ((HomeScreen) getActivity()).updateSlidingDrawer(iprefManager.getCurrentSGDisplayName(), iprefManager.getSGFileId(iprefManager.getUserDomain()));
         super.onResume();
     }
 
@@ -556,6 +559,12 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
         // ChatClient.getInstance().sendOffLineMessages();
         try {
             getActivity().unbindService(mConnection);
+            searchBoxView.setVisibility(View.GONE);
+            searchIcon.setVisibility(View.VISIBLE);
+            clearSearch.setVisibility(View.GONE);
+            searchBoxView.setText("");
+            hideToolbar();
+            ((HomeScreen) getActivity()).clearFunction();
         } catch (Exception e) {
             // Just ignore that
             Log.d("MessageHistoryScreen", "Unable to un bind");

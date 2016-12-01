@@ -89,6 +89,7 @@ public class SuperGroupProfileActivity extends Activity implements OnClickListen
 	TextView sgType;
 	Button sgEditButton;
 	ImageView superGroupIconView;
+	ImageView superGroupIconViewMain;
 	ImageView superGroupPicEdit;
 	Dialog picChooserDialog;
 	String fileID;
@@ -146,12 +147,13 @@ private static final String TAG = "SuperGroupProfileActivity";
 		sgDescription = (TextView)findViewById(R.id.id_sg_description);
 		sgEditButton = (Button)findViewById(R.id.id_edit_btn);
 		superGroupIconView = (ImageView) findViewById(R.id.id_profile_pic);
+		superGroupIconViewMain = superGroupIconView;
 		superGroupIconView.setOnClickListener(new OnClickListener() {
 				
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				fileID = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
+				fileID = SharedPrefManager.getInstance().getSGFileId(SharedPrefManager.getInstance().getUserDomain());
 				String file_path = getImagePath(fileID);
 				 if(fileID!=null && !fileID.equals(""))
 						SuperChatApplication.removeBitmapFromMemCache(fileID);
@@ -202,7 +204,7 @@ private static final String TAG = "SuperGroupProfileActivity";
 			}
 		});
 		superGroupDisplayName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
-		String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
+		String file_id = SharedPrefManager.getInstance().getSGFileId(SharedPrefManager.getInstance().getUserDomain());
 		if(file_id != null && file_id.trim().length() > 0){
 			setProfilePic(superGroupIconView, file_id);
 		}
@@ -247,10 +249,16 @@ private static final String TAG = "SuperGroupProfileActivity";
 			aboutLabelView.setVisibility(View.GONE);
 			sgDescriptionLayout.setVisibility(View.GONE);
 		}
-		String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
+		final String file_id = SharedPrefManager.getInstance().getSGFileId(SharedPrefManager.getInstance().getUserDomain());
 		if(file_id != null && file_id.trim().length() > 0){
-			superGroupIconView = (ImageView) findViewById(R.id.id_profile_pic);
-			setProfilePic(superGroupIconView, file_id);
+//			superGroupIconView = superGroupIconViewMain;
+			runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					setProfilePic(superGroupIconViewMain, file_id);
+				}
+			});
 		}
 //		new GetSuperGroupProfile(SharedPrefManager.getInstance().getUserDomain()).execute();
 	}
@@ -261,7 +269,16 @@ private static final String TAG = "SuperGroupProfileActivity";
 			isEditModeOn = true;
 			editProfile = new Dialog(this,android.R.style.Theme_Black_NoTitleBar);
 			editProfile.setCanceledOnTouchOutside(false);
-			editProfile.setContentView(R.layout.supergroup_profile_edit);
+			editProfile.setContentView(R.layout.supergroup_profile_edit);//id_sg_type
+
+			if(privacy_type != null && privacy_type.equalsIgnoreCase("closed")){
+				((TextView)editProfile.findViewById(R.id.id_sg_type)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.lock, 0, 0, 0);
+				((TextView)editProfile.findViewById(R.id.id_sg_type)).setText(getString(R.string.closed_sg));
+			}
+			else{
+				((TextView)editProfile.findViewById(R.id.id_sg_type)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.lock_open, 0, 0, 0);
+				((TextView)editProfile.findViewById(R.id.id_sg_type)).setText(getString(R.string.open_sg));
+			}
 
 			sgDisplayNameBox = (EditText)editProfile.findViewById(R.id.id_sg_display_name);
 			sgRealNameBox = (TextView)editProfile.findViewById(R.id.id_sg_real_name_box);
@@ -290,7 +307,7 @@ private static final String TAG = "SuperGroupProfileActivity";
 					}
 				}
 			});
-			String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
+			String file_id = SharedPrefManager.getInstance().getSGFileId(SharedPrefManager.getInstance().getUserDomain());
     		if(file_id != null && file_id.trim().length() > 0){
     			setProfilePic(superGroupIconView, file_id);
     		}
@@ -369,6 +386,7 @@ private static final String TAG = "SuperGroupProfileActivity";
 		}
 	}
 //================================================
+	String privacy_type = null;
 	class GetSuperGroupProfile extends AsyncTask<String, String, String> {
 		
 		String domain_name;
@@ -418,7 +436,6 @@ private static final String TAG = "SuperGroupProfileActivity";
 		                String inviter = null;
 		                String file_id = null;
 		                String created_date = null;
-		                String privacy_type = null;
 		                String member_count = null;
 		                try {
 		    				JSONObject json = new JSONObject(data);
@@ -473,7 +490,7 @@ private static final String TAG = "SuperGroupProfileActivity";
 		    				if(file_id != null){
 		    					fileID = file_id;
 		    					//Save file ID here
-		    					SharedPrefManager.getInstance().saveSGFileId("SG_FILE_ID", fileID);
+		    					SharedPrefManager.getInstance().saveSGFileId(SharedPrefManager.getInstance().getUserDomain(), fileID);
 		    					setProfilePic(superGroupIconView, fileID);
 		    				}
 		    				if(json != null && json.has("orgName"))
@@ -654,7 +671,8 @@ private static final String TAG = "SuperGroupProfileActivity";
 	}
 	private final Handler notifyPhotoUploadHandler = new Handler() {
 	    public void handleMessage(android.os.Message msg) {
-//	    	String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
+	    	String file_id = SharedPrefManager.getInstance().getSGFileId(SharedPrefManager.getInstance().getUserDomain());
+			System.out.println("file_id ===> "+file_id);
 //    		if(file_id != null && file_id.trim().length() > 0){
 //    			sendUpdateSGRequest(file_id);
 //    		}
@@ -795,7 +813,7 @@ private static final String TAG = "SuperGroupProfileActivity";
 				showDialog(getString(R.string.domain_validation_alert));
 				return;
 			}
-			String fileid = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
+			String fileid = SharedPrefManager.getInstance().getSGFileId(SharedPrefManager.getInstance().getUserDomain());
 			JSONObject finalJSONbject = new JSONObject();
 			try{
 				if(sgDisplayNameBox != null && sgDisplayNameBox.getText().toString().trim().length() > 0) {
@@ -942,20 +960,19 @@ private static final String TAG = "SuperGroupProfileActivity";
 			 	org_name = orgNameBox.getText().toString().trim();
 			 	org_URL = orgURLBox.getText().toString().trim();
 			 	org_desc = sgDescriptionBox.getText().toString().trim();
-			 	backToProfileView();
 				//Braodcast message to all
 				JSONObject finalJSONbject = new JSONObject();
 				if (superGroupDisplayName != null)
 					try {
-						if(superGroupDisplayName != null )
+						if(superGroupDisplayName != null ) {
 							finalJSONbject.put("domainDisplayName", sg_display_name);
-						if (prefManager.getSGFileId("SG_FILE_ID") != null)
-							finalJSONbject.put("domainPicID", prefManager.getSGFileId("SG_FILE_ID"));
-
-						////////////////////////////////////////
-						DBWrapper.getInstance().updateSGLogoFileID(sg_real_name , prefManager.getSGFileId("SG_FILE_ID"));
-						DBWrapper.getInstance().updateSGDisplayName(sg_real_name , sg_display_name);
-						////////////////////////////////////////
+							DBWrapper.getInstance().updateSGDisplayName(sg_real_name , sg_display_name);
+						}
+						if (requestJSON.has("logoFileId")) {
+							finalJSONbject.put("domainPicID", requestJSON.get("logoFileId").toString());
+							prefManager.saveSGFileId(sg_real_name, requestJSON.get("logoFileId").toString());
+							DBWrapper.getInstance().updateSGLogoFileID(sg_real_name , requestJSON.get("logoFileId").toString());
+						}
 
 						String json_txt = finalJSONbject.toString();
 						System.out.println("Final JSON :  " + json_txt);
@@ -977,6 +994,7 @@ private static final String TAG = "SuperGroupProfileActivity";
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				backToProfileView();
 			}
 			super.onPostExecute(str);
 		}

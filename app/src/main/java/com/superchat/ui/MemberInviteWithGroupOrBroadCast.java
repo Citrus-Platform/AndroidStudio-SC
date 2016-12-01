@@ -122,7 +122,7 @@ public class MemberInviteWithGroupOrBroadCast extends Activity implements OnClic
 					String infoList = "";
 					for (String inviter : inviters) {
 						if (inviter != null && !inviter.equals("")){
-							messageService.inviteUserInRoom(groupUUID,displayName, description, inviter, null);
+							messageService.inviteUserInRoom(groupUUID,displayName, description, inviter, null, false);
 							infoList +=  inviter+",";
 						}
 					}

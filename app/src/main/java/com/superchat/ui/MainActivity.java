@@ -1164,7 +1164,7 @@ public class MainActivity extends FragmentActivity implements
 //	    	if(isForground)
 //	    		showDialog(getString(R.string.failed), getString(R.string.photo_upload_failed));
 	    	if(registrationForm != null){
-	    		String file_id = sharedPrefManager.getSGFileId("SG_FILE_ID");
+	    		String file_id = sharedPrefManager.getSGFileId(sharedPrefManager.getUserDomain());
 	    		if(file_id != null && file_id.trim().length() > 0)
 	    			registrationForm.setSGFileID(file_id);
 	    	}
@@ -1940,7 +1940,7 @@ public class MainActivity extends FragmentActivity implements
 									iPrefManager.saveUserPhone(regObj.iMobileNumber);
 									iPrefManager.saveUserLogedOut(false);
 									iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
-									iPrefManager.saveSGFileId("SG_FILE_ID", registrationForm.getSGFileID());
+									iPrefManager.saveSGFileId(domainNameView.getText().toString(), registrationForm.getSGFileID());
 								}
 							}
 							if(regAsAdmin){

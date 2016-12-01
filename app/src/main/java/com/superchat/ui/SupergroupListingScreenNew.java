@@ -463,7 +463,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
         if (file_id != null) {
             setProfilePic(superGroupIconView, file_id);
             setSGFullPic(superGroupIconView, file_id);
-            SharedPrefManager.getInstance().saveSGFileId("SG_FILE_ID", file_id);
+            SharedPrefManager.getInstance().saveSGFileId(supergroup_name, file_id);
         }
 
         ((Button) welcomeDialog.findViewById(R.id.done_button)).setOnClickListener(new OnClickListener() {
@@ -581,7 +581,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
 
     private final Handler notifyPhotoUploadHandler = new Handler() {
         public void handleMessage(android.os.Message msg) {
-            String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
+            String file_id = SharedPrefManager.getInstance().getSGFileId(SharedPrefManager.getInstance().getUserDomain());
         }
     };
 
@@ -1625,7 +1625,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                             inviter = null;
                         if (json != null && json.has("logoFileId")) {
                             file_id = json.getString("logoFileId");
-                            SharedPrefManager.getInstance().saveSGFileId("SG_FILE_ID", file_id);
+                            SharedPrefManager.getInstance().saveSGFileId(sg_name, file_id);
                         } else
                             file_id = null;
                         if (json != null && json.has("orgName"))

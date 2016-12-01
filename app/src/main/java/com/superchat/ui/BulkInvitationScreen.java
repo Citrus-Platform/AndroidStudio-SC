@@ -398,7 +398,7 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
                         owned.setOrgUrl("");
                         owned.setPrivacyType("Open");
                         owned.setAdminName(pref.getUserName());
-                        owned.setLogoFileId(pref.getSGFileId("SG_FILE_ID"));
+                        owned.setLogoFileId(pref.getSGFileId(pref.getUserDomain()));
 
                         SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
                         String dateString = formatter.format(new Date(System.currentTimeMillis()));
