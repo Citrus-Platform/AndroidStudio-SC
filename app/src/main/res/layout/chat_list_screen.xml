@@ -113,7 +113,7 @@
                         android:paddingLeft="10dp"
                         android:paddingRight="5dp"
                         android:paddingTop="10dp"
-                        android:src="@drawable/call_icon1"
+                        android:src="@drawable/call_icon_new"
                         android:visibility="visible" />
 
                     <ImageView
