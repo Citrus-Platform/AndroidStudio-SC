@@ -1,5 +1,7 @@
 package com.chat.sdk.db;
 
+import com.superchat.data.db.DatabaseConstants;
+
 public class ChatDBConstants {
 public static final byte MEDIA_NONE = 0;
 public static final byte MEDIA_READY_TO_LOAD = 1;
@@ -14,6 +16,8 @@ public static final byte MEDIA_FAILED = 4;
 	public static final String DIALED_NUMBER_FIELD = "dialed_number";
 	public static final String UNREAD_COUNT_FIELD = "unread_count";
 	public static final String SEEN_FIELD = "seen";
+	public static final String DOWNLOAD_STATUS = "download_status";
+
 	public static final String LAST_UPDATE_FIELD = "last_update";
 	public static final String READ_TIME_FIELD = "deliver_time_field";
 	public static final String MESSAGEINFO_FIELD = "type_messageinfo";
@@ -102,6 +106,11 @@ public static final byte MEDIA_FAILED = 4;
 			+ " INTEGER NOT NULL,"
 			+ ChatDBConstants.MEDIA_STATUS
 			+ " INTEGER  DEFAULT 0, "
+
+			+ DatabaseConstants.DOWNLOAD_STATUS
+			+ " INTEGER  DEFAULT 0, "
+
+
 			+ ChatDBConstants.READ_TIME_FIELD
 			+ " LONG DEFAULT 0, "
 			+ ChatDBConstants.LAST_UPDATE_FIELD

@@ -66,6 +66,8 @@ public static final byte MEDIA_FAILED = 4;
 	public static final String DOMAIN_TYPE_VALUE = "domain_type_value";
 	public static final String DOMAIN_ORG_URL = "domain_profile_pic";
 	public static final String DOMAIN_LOGO_FILE_ID = "domain_logo_file_id";
+	public static final String DOMAIN_BULLETIN_LOGO_FILE_ID = "domain_bulletin_logo_file_id";
+
 	public static final String DOMAIN_MUTE_INFO = "domain_mute_info";
 	public static final String DOMAIN_ACTIVE_INFO = "domain_active_info";
 
@@ -120,6 +122,9 @@ public static final byte MEDIA_FAILED = 4;
 			+ " LONG, "
 			+ DatabaseConstants.DOMAIN_LOGO_FILE_ID
 			+ " TEXT, "
+			+ DatabaseConstants.DOMAIN_BULLETIN_LOGO_FILE_ID
+			+ " TEXT, "
+
 			+ DatabaseConstants.DOMAIN_CREATED_DATE + " TEXT);";
 
 
@@ -268,6 +273,8 @@ public static final byte MEDIA_FAILED = 4;
 	public static final String MESSAGE_MEDIA_LENGTH = "message_media_length";
 	public static final String MESSAGE_MEDIA_LOCAL_PATH_FIELD = "message_media_local";
 	public static final String MEDIA_STATUS = "media_status";
+	public static final String DOWNLOAD_STATUS = "download_status";
+
 	//New Added Fields
 	public static final String USER_ID = "user_id";
 	public static final String USER_SG = "user_sg";
@@ -294,6 +301,11 @@ public static final byte MEDIA_FAILED = 4;
 			+ " INTEGER NOT NULL,"
 			+ DatabaseConstants.MEDIA_STATUS
 			+ " INTEGER  DEFAULT 0, "
+
+			+ DatabaseConstants.DOWNLOAD_STATUS
+			+ " INTEGER  DEFAULT 0, "
+
+
 			+ DatabaseConstants.LAST_UPDATE_FIELD
 			+ " LONG NOT NULL,"
 			+ DatabaseConstants.IS_DATE_CHANGED_FIELD

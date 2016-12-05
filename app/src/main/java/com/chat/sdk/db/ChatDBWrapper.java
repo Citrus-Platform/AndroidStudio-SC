@@ -595,6 +595,32 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 			}
 		}
 	}
+
+	public void updateDownloadStatus(String messageID) {
+		Cursor cursor = null;
+		try {
+			String sql = "UPDATE " + ChatDBConstants.TABLE_NAME_MESSAGE_INFO
+					+ " SET " + ChatDBConstants.DOWNLOAD_STATUS + "='"+ "cancel" + "' WHERE "
+					+ ChatDBConstants.MESSAGE_ID + "='" + messageID
+					+ "'";
+			cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
+			if (cursor != null) {
+				Log.d("ChatDBWrapper",
+						"updateMessageData count " + cursor.getCount());
+			}
+		} catch (Exception e) {
+			Log.e("ChatDBWrapper", "Exception in updateMessageData method "
+					+ e.toString());
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+				cursor = null;
+			}
+		}
+	}
+
+
+
 	public void updateFileDocSize(String fileUrl, String fileSize) {
 		Cursor cursor = null;
 		try {
@@ -704,6 +730,20 @@ public void saveNewNumber(String userName,String contactName, String mobileNumbe
 		}
 		return cursor;
 	}
+
+	public Cursor getDownloadStatus(String messageId){
+		String sg_name = SharedPrefManager.getInstance().getUserDomain();
+		String sql = "SELECT*FROM "
+				+ ChatDBConstants.TABLE_NAME_STATUS_INFO + " WHERE " + ChatDBConstants.MESSAGE_ID + " = '" + messageId +"'" + " AND " + ChatDBConstants.USER_SG+"='"+sg_name+"'";
+		Cursor cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
+		if (cursor != null && cursor.moveToFirst()) {
+			do {
+				Log.d("ChatDBWrapper",messageId+" getGroupOrBroadCastUsersStatus count: " + cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID)));
+			} while (cursor.moveToNext());
+		}
+		return cursor;
+	}
+
 
 	public Cursor getRecentChatList(String searchKey) {
 		String sql = "";
@@ -1929,6 +1969,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			sql = "SELECT " + ChatDBConstants._ID + ", "
 					+ ChatDBConstants.CONTACT_NAMES_FIELD + ", "
 					+ ChatDBConstants.SEEN_FIELD + ", "
+					+ ChatDBConstants.DOWNLOAD_STATUS + ", "
 					+ ChatDBConstants.MESSAGE_ID + ", "
 					+ ChatDBConstants.IS_DATE_CHANGED_FIELD + ", "
 					+ ChatDBConstants.FROM_GROUP_USER_FIELD + ", "
@@ -1956,6 +1997,7 @@ public String getMessageDeliverTime(String messageId,boolean isP2p){
 			sql = "SELECT " + ChatDBConstants._ID + ", "
 					+ ChatDBConstants.CONTACT_NAMES_FIELD + ", "
 					+ ChatDBConstants.SEEN_FIELD + ", "
+					+ ChatDBConstants.DOWNLOAD_STATUS + ", "
 					+ ChatDBConstants.MESSAGE_ID + ", "
 					+ ChatDBConstants.IS_DATE_CHANGED_FIELD + ", "
 					+ ChatDBConstants.FROM_GROUP_USER_FIELD + ", "

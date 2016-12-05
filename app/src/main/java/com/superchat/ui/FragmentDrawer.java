@@ -123,6 +123,50 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                         ownerDomainNameSet.get(i).getDomainType()));
             }
         }
+
+        ArrayList<JoinedDomainNameSet> ownerDomainNameSetTemp = DBWrapper.getInstance().getListOfOwnerArraySGs();
+        if (ownerDomainNameSetTemp != null && ownerDomainNameSetTemp.size() > 0) {
+            Collections.sort(ownerDomainNameSetTemp, new Comparator<JoinedDomainNameSet>() {
+                @Override
+                public int compare(final JoinedDomainNameSet object1, final JoinedDomainNameSet object2) {
+
+                    String itemOne = "";
+                    String itemTwo = "";
+                    //////////////////////////
+                    if (object1.getDomainDisplayName() != null && object1.getDomainDisplayName().trim().length() > 0) {
+                        itemOne = object1.getDomainDisplayName().toUpperCase();
+                    } else {
+                        itemOne = object1.getDomainName().toUpperCase();
+                    }
+                    //////////////////////////
+                    if (object2.getDomainDisplayName() != null && object2.getDomainDisplayName().trim().length() > 0) {
+                        itemTwo = object2.getDomainDisplayName().toUpperCase();
+                    } else {
+                        itemTwo = object2.getDomainName().toUpperCase();
+                    }
+                    return itemOne.compareTo(itemTwo);
+                }
+            });
+            for (int i = 0; i < ownerDomainNameSetTemp.size(); i++) {
+                String joinedDisplayName = "";
+                if (ownerDomainNameSetTemp.get(i).getDomainDisplayName() != null &&
+                        ownerDomainNameSetTemp.get(i).getDomainDisplayName().trim().length() > 0) {
+                    joinedDisplayName = ownerDomainNameSetTemp.get(i).getDomainDisplayName().trim();
+                } else {
+                    joinedDisplayName = ownerDomainNameSetTemp.get(i).getDomainName().trim();
+                }
+
+                dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
+                        joinedDisplayName,
+                        ownerDomainNameSetTemp.get(i).getDomainCount(),
+                        ownerDomainNameSetTemp.get(i).getDomainNotify(),
+                        ownerDomainNameSetTemp.get(i).getDomainName(),
+                        ownerDomainNameSetTemp.get(i).getDomainType()));
+
+//                Log.e("disp" , "is : "+joinedDisplayName);
+            }
+        }
+
         ArrayList<JoinedDomainNameSet> joinedDomainNameSetTemp = DBWrapper.getInstance().getListOfJoinedSGs();
         if (joinedDomainNameSetTemp != null && joinedDomainNameSetTemp.size() > 0) {
             Collections.sort(joinedDomainNameSetTemp, new Comparator<JoinedDomainNameSet>() {
@@ -215,7 +259,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             notifyCurrent.setVisibility(View.VISIBLE);
         }*/
 
-        String file_id = SharedPrefManager.getInstance().getSGFileId(SharedPrefManager.getInstance().getUserDomain());
+        String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
 //        String file_id = DBWrapper.getInstance().getSGLogoFileID(SharedPrefManager.getInstance().getUserDomain());
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
         if (file_id != null && file_id.trim().length() > 0) {
@@ -233,9 +277,17 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         llInvited = (LinearLayout) layout.findViewById(R.id.llInvited);
         notificationLayout = (RelativeLayout) layout.findViewById(R.id.notificationLayout);
 
-        if (SharedPrefManager.getInstance().getOwnedDomain() != null) {
-            addSGTextView.setVisibility(View.GONE);
+        //if (SharedPrefManager.getInstance().getOwnedDomain() != null) {
+
+       /* if(SharedPrefManager.getInstance().getDomainType().toString().equalsIgnoreCase("rwa"))
+        {*/
+        if (SharedPrefManager.getInstance().isDomainAdmin(SharedPrefManager.getInstance().getUserDomain()) ||
+                SharedPrefManager.getInstance().isDomainSubAdmin(SharedPrefManager.getInstance().getUserDomain())) {
+            llAddSuperGroup.setVisibility(View.VISIBLE);
+            addSGTextView.setVisibility(View.VISIBLE);
+        } else {
             llAddSuperGroup.setVisibility(View.GONE);
+            addSGTextView.setVisibility(View.GONE);
         }
 
         llAddSuperGroup.setOnClickListener(this);
@@ -253,7 +305,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
 
     public void updateView() {
-        String file_id = SharedPrefManager.getInstance().getSGFileId(SharedPrefManager.getInstance().getUserDomain());
+        String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
         if (file_id != null && file_id.trim().length() > 0) {
             setProfilePic(displayPictureCurrent, file_id);
@@ -262,10 +314,17 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             displayPictureCurrent.setImageResource(R.drawable.logo_small);
         }
         user.setText("" + SharedPrefManager.getInstance().getDisplayName() + " (You)");
-        if (SharedPrefManager.getInstance().getOwnedDomain() != null) {
-            addSGTextView.setVisibility(View.GONE);
+        //if (SharedPrefManager.getInstance().getOwnedDomain() != null) {
+
+        if (SharedPrefManager.getInstance().isDomainAdmin(SharedPrefManager.getInstance().getUserDomain()) ||
+                SharedPrefManager.getInstance().isDomainSubAdmin(SharedPrefManager.getInstance().getUserDomain())) {
+            llAddSuperGroup.setVisibility(View.VISIBLE);
+            addSGTextView.setVisibility(View.VISIBLE);
+        } else {
             llAddSuperGroup.setVisibility(View.GONE);
+            addSGTextView.setVisibility(View.GONE);
         }
+        // }
         super.onResume();
     }
 
@@ -536,6 +595,15 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         } else {
 //            setProfilePic(displayPictureCurrent, "");
             displayPictureCurrent.setImageResource(R.drawable.logo_small);
+        }
+
+        if (SharedPrefManager.getInstance().isDomainAdmin(SharedPrefManager.getInstance().getUserDomain()) ||
+                SharedPrefManager.getInstance().isDomainSubAdmin(SharedPrefManager.getInstance().getUserDomain())) {
+            llAddSuperGroup.setVisibility(View.VISIBLE);
+            addSGTextView.setVisibility(View.VISIBLE);
+        } else {
+            llAddSuperGroup.setVisibility(View.GONE);
+            addSGTextView.setVisibility(View.GONE);
         }
     }
 
