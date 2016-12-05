@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.chat.sdk.db.ChatDBConstants;
 import com.chat.sdk.db.ChatDBWrapper;
 import com.chatsdk.org.jivesoftware.smack.packet.Message;
 import com.google.gson.Gson;
@@ -14,6 +15,7 @@ import com.superchat.model.LoginResponseModel.UserResponseDetail;
 import com.superchat.model.multiplesg.InvitedDomainNameSet;
 import com.superchat.model.multiplesg.JoinedDomainNameSet;
 import com.superchat.model.multiplesg.OwnerDomainName;
+import com.superchat.model.multiplesg.ownerDomainNameSet;
 import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
@@ -797,7 +799,23 @@ private String convertStringArrayToString1(List<String> strList) {
 		dbwrapper.endTransaction();
 	}
 
-//	public Cursor getRecentChatList() {
+
+	public Cursor getDownloadStatus(String messageId){
+		String sg_name = SharedPrefManager.getInstance().getUserDomain();
+		String sql = "SELECT*FROM "
+				+ ChatDBConstants.TABLE_NAME_STATUS_INFO + " WHERE " + ChatDBConstants.MESSAGE_ID + " = '" + messageId +"'" + " AND " + ChatDBConstants.USER_SG+"='"+sg_name+"'";
+		Cursor cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
+		if (cursor != null && cursor.moveToFirst()) {
+			do {
+				Log.d("ChatDBWrapper",messageId+" getGroupOrBroadCastUsersStatus count: " + cursor.getString(cursor.getColumnIndex(ChatDBConstants.MESSAGE_ID)));
+			} while (cursor.moveToNext());
+		}
+		return cursor;
+	}
+
+
+
+	//	public Cursor getRecentChatList() {
 //		String sql = "SELECT " + "DISTINCT("
 //				+ DatabaseConstants.CONTACT_NAMES_FIELD + "), "
 //				+ DatabaseConstants._ID + ", "
@@ -2312,7 +2330,7 @@ public boolean isContactModified(String rawId, int version){
 		}
 		if (cursor != null)
 			cursor.close();
-		if(owner == 1)
+		if(owner == 1 || owner == 4)
 			return true;
 		return false;
 	}
@@ -2410,6 +2428,37 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+
+	/**
+	 * Updates Invited SG's in DB
+	 * @param list
+	 */
+	public void updateOwnerSGDataArray(ArrayList<JoinedDomainNameSet> list){
+		try{
+			for (JoinedDomainNameSet sg_data : list) {
+				ContentValues contentvalues = new ContentValues();
+				contentvalues.put(DatabaseConstants.DOMAIN_NAME, sg_data.getDomainName());
+				//contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDomainDisplayName());
+				contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDisplayName());
+				contentvalues.put(DatabaseConstants.DOMAIN_ADMIN_NAME, sg_data.getAdminName());
+				contentvalues.put(DatabaseConstants.DOMAIN_ORG_NAME, sg_data.getOrgName());
+				contentvalues.put(DatabaseConstants.DOMAIN_PRIVACY_TYPE, sg_data.getPrivacyType());
+				contentvalues.put(DatabaseConstants.DOMAIN_TYPE, sg_data.getDomainType());
+				contentvalues.put(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT, Integer.valueOf(sg_data.getUnreadCounter()));
+				contentvalues.put(DatabaseConstants.DOMAIN_CREATED_DATE, sg_data.getCreatedDate());
+				contentvalues.put(DatabaseConstants.DOMAIN_TYPE_VALUE, Integer.valueOf(4));
+				contentvalues.put(DatabaseConstants.DOMAIN_ORG_URL, sg_data.getOrgUrl());
+				contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
+				contentvalues.put(DatabaseConstants.DOMAIN_MUTE_INFO, Integer.valueOf(0));
+				long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
+				if(row > 0)
+					Log.i("DBWrapper", "updateInvitedSGData count " + row);
+			}
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+
 	/**
 	 * Add and Update Invited SG's in DB
 	 * @param list
@@ -2502,6 +2551,33 @@ public boolean isContactModified(String rawId, int version){
 			ex.printStackTrace();
 		}
 	}
+
+	/**
+	 * Returns SG profile pic ID
+	 * @param sg
+	 * @return
+	 */
+	public String getSGBulletinLogoFileID(String sg) {
+		String sg_username = null;
+		Cursor cursor = DBWrapper.getInstance().query(
+				DatabaseConstants.TABLE_NAME_MULTIPLE_SG,
+				new String[] { DatabaseConstants.DOMAIN_BULLETIN_LOGO_FILE_ID },
+				DatabaseConstants.DOMAIN_NAME + "='" + sg +"'", null,
+				null);
+		if (cursor != null) {
+			while (cursor.moveToNext())
+				sg_username = cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_BULLETIN_LOGO_FILE_ID));
+		}
+		if (cursor != null)
+			cursor.close();
+		return sg_username;
+	}
+
+	/**
+	 * Returns Display name for SG
+	 * @param sg
+	 * @return
+
 
 	/**
 	 * Returns username for that SG
@@ -2627,6 +2703,44 @@ public boolean isContactModified(String rawId, int version){
 		if (cursor != null)
 			cursor.close();
 		return user_password;
+	}
+
+
+	/**
+	 * Returns list of Joined SG's
+	 * @returnh
+	 */
+	public ArrayList<JoinedDomainNameSet> getListOfOwnerArraySGs()
+	{
+		ArrayList<JoinedDomainNameSet> joined = null;
+		Cursor cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM " +DatabaseConstants.TABLE_NAME_MULTIPLE_SG + " WHERE "
+				+ DatabaseConstants.DOMAIN_TYPE_VALUE + "=4", null);
+		try {
+			if (cursor != null && cursor.getCount() > 0) {
+				joined = new ArrayList<JoinedDomainNameSet>();
+				while (cursor.moveToNext()){
+					JoinedDomainNameSet sgdata = new JoinedDomainNameSet();
+					sgdata.setDomainName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_NAME)));
+					sgdata.setDomainDisplayName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_DISPLAY_NAME)));
+					sgdata.setAdminName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_ADMIN_NAME)));
+					sgdata.setOrgName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_ORG_NAME)));
+					sgdata.setPrivacyType(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_PRIVACY_TYPE)));
+					sgdata.setUnreadCounter(cursor.getInt(cursor.getColumnIndex(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT)));
+					sgdata.setCreatedDate(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_CREATED_DATE)));
+					sgdata.setLogoFileId(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_LOGO_FILE_ID)));
+					sgdata.setDomainMuteInfo(cursor.getInt(cursor.getColumnIndex(DatabaseConstants.DOMAIN_MUTE_INFO)));
+					sgdata.setDomainType(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_TYPE)));
+					joined.add(sgdata);
+				}
+			}
+		} catch (Exception e) {
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+				cursor = null;
+			}
+		}
+		return joined;
 	}
 
 	/**

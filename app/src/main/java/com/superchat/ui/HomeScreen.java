@@ -916,7 +916,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             updateCounterValuesAtBottomTabs();
             String file_id = DBWrapper.getInstance().getSGLogoFileID(sg_name);
             if (file_id != null)
-                prefManager.saveSGFileId(sg_name, file_id);
+                prefManager.saveSGFileId("SG_FILE_ID", file_id);
             cleanDataAndSwitchSG(sg_name);
             //Set contact and group synch's
             prefManager.setContactSynched(sg_name, false);
@@ -1130,6 +1130,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                         groupChatMetaInfo.setBroadCastActive(groupDetail.mode);
                                         sharedPrefManager.setSubGroupMetaData(groupDetail.groupName, groupChatMetaInfo);
                                     }
+                                    sharedPrefManager.saveCurrentDomainType(loginObj.type);
 
                                     sharedPrefManager.saveGroupInfo(groupDetail.groupName, SharedPrefManager.GROUP_ACTIVE_INFO, true);
                                     sharedPrefManager.saveGroupName(groupDetail.groupName, groupDetail.displayName);
@@ -4609,6 +4610,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
                 tvTabText.setText(tabText);
 
+                int flagFrag = mViewPager.getCurrentItem();
                 if (flagFrag == (position)) {
                     setSelectTabStyle(tvTabText);
                     llTabIndicator.setVisibility(View.VISIBLE);

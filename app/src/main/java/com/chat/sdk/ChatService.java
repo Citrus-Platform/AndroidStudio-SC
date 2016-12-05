@@ -1390,20 +1390,42 @@ public class ChatService extends Service implements interfaceInstances {
 							}
 							if(jsonobj.has("domainPicID") && jsonobj.getString("domainPicID").toString().trim().length() > 0) {
 //								fileId = jsonobj.getString("domainPicID").toString();
-								prefManager.saveSGFileId(prefManager.getUserDomain(), jsonobj.getString("domainPicID").toString());
-								DBWrapper.getInstance().updateSGLogoFileID(prefManager.getUserDomain() , jsonobj.getString("domainPicID").toString());
-							}
-							EventBus.getDefault().post("[SGNAMECHANGE] : "+captionTag);
-							jsonobj = null;
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
-						return;
-					}else if(xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeDeactivateUser.ordinal()){
-						Log.d(TAG, "atMeXmppMessageTypeDeactivateUser: User deactivated.");
-						String captionTag  = message.getMediaTagMessage();
-						prefManager.saveUserExistence(captionTag, false);
-						if (captionTag.equals(userMe)) {
+                                prefManager.saveSGFileId("SG_FILE_ID", jsonobj.getString("domainPicID").toString());
+                            }
+                            jsonobj = null;
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        return;
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeUpdateBulletin.ordinal()){
+                        String captionTag = message.getMediaTagMessage();
+                        System.out.println("atMeXmppMessageTypeSGUpdate received : " + captionTag);
+                        if (captionTag.contains("&quot;"))
+                            captionTag = captionTag.replace("&quot;", "\"");
+                        try {
+                            JSONObject jsonobj = new JSONObject(captionTag);
+                            if (jsonobj.has("domainDisplayName") && jsonobj.getString("domainDisplayName").toString().trim().length() > 0) {
+//								displayname = jsonobj.getString("domainDisplayName").toString();
+                                prefManager.saveCurrentSGDisplayName(jsonobj.getString("domainDisplayName").toString());
+                            }
+                            if (jsonobj.has("domainPicI6D") && jsonobj.getString("domainPicID").toString().trim().length() > 0) {
+//								fileId = jsonobj.getString("domainPicID").toString();
+                                prefManager.saveSGFileId("SG_FILE_ID", jsonobj.getString("domainPicID").toString());
+                            }
+                            if (jsonobj.has("bulletinFileId") && jsonobj.getString("bulletinFileId").toString().trim().length() > 0) {
+//								fileId = jsonobj.getString("domainPicID").toString();
+                                prefManager.saveBulletin_File_Id("BULLETIN_FILE_ID"+prefManager.getUserDomain() , jsonobj.getString("bulletinFileId").toString());
+                            }
+                            jsonobj = null;
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        return;
+                    } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeDeactivateUser.ordinal()) {
+                        Log.d(TAG, "atMeXmppMessageTypeDeactivateUser: User deactivated.");
+                        String captionTag = message.getMediaTagMessage();
+                        prefManager.saveUserExistence(captionTag, false);
+                        if (captionTag.equals(userMe)) {
 
                             //Show tha deactivate screen & switch to home.
                             DBWrapper.getInstance().updateSGActiveStatus(prefManager.getUserDomain(), false);
