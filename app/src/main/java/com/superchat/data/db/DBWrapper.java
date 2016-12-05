@@ -1959,7 +1959,7 @@ public boolean isContactModified(String rawId, int version){
 	 * Inserts an entry in DB for Owned SG/Domain
 	 * @param sg_data
      */
-	public void updateOwnedSGData(OwnerDomainName sg_data){
+	/*public void updateOwnedSGData(OwnerDomainName sg_data){
 		try{
 			SharedPrefManager prefManager = SharedPrefManager.getInstance();
 			//Update Shared Preferences for owned Domain
@@ -1985,6 +1985,39 @@ public boolean isContactModified(String rawId, int version){
 			long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
 			if(row > 0)
 				Log.i("DBWrapper", "updateOwnedSGData count " + row);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}*/
+
+	public void updateOwnedSGDataArray(ArrayList<OwnerDomainName> ownerDomainNameSet){
+		try{
+			for(OwnerDomainName sg_data : ownerDomainNameSet) {
+				SharedPrefManager prefManager = SharedPrefManager.getInstance();
+				//Update Shared Preferences for owned Domain
+				prefManager.saveOwnedDomain(sg_data.getDomainName());
+				//Save Last Online time
+				prefManager.saveLastOnline(sg_data.getDomainName(), System.currentTimeMillis());
+
+				ContentValues contentvalues = new ContentValues();
+				contentvalues.put(DatabaseConstants.DOMAIN_NAME, sg_data.getDomainName());
+				//contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDomainDisplayName());
+				contentvalues.put(DatabaseConstants.DOMAIN_DISPLAY_NAME, sg_data.getDisplayName());
+				contentvalues.put(DatabaseConstants.DOMAIN_ADMIN_NAME, sg_data.getAdminName());
+				contentvalues.put(DatabaseConstants.DOMAIN_ORG_NAME, sg_data.getOrgName());
+				contentvalues.put(DatabaseConstants.DOMAIN_PRIVACY_TYPE, sg_data.getPrivacyType());
+
+				contentvalues.put(DatabaseConstants.DOMAIN_TYPE, sg_data.getDomainType());
+				contentvalues.put(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT, Integer.valueOf(sg_data.getUnreadCounter()));
+				contentvalues.put(DatabaseConstants.DOMAIN_CREATED_DATE, sg_data.getCreatedDate());
+				contentvalues.put(DatabaseConstants.DOMAIN_TYPE_VALUE, Integer.valueOf(1));
+				contentvalues.put(DatabaseConstants.DOMAIN_ORG_URL, sg_data.getOrgUrl());
+				contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
+				contentvalues.put(DatabaseConstants.DOMAIN_MUTE_INFO, Integer.valueOf(0));
+				long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
+				if (row > 0)
+					Log.i("DBWrapper", "updateOwnedSGData count " + row);
+			}
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
@@ -2820,7 +2853,7 @@ public boolean isContactModified(String rawId, int version){
 	/**
 	 * Returns OwnerDomainName Data model object
 	 * @return
-     */
+	 */
 	public OwnerDomainName getOwnedSG()
 	{
 		OwnerDomainName sgdata = null;
@@ -2850,6 +2883,43 @@ public boolean isContactModified(String rawId, int version){
 			}
 		}
 		return sgdata;
+	}
+
+	/**
+	 * Returns OwnerDomainName Data model object
+	 * @return
+	 */
+	public ArrayList<OwnerDomainName> getOwnedSGList()
+	{
+		ArrayList<OwnerDomainName> alSgData = new ArrayList<>();
+		Cursor cursor = dbHelper.getWritableDatabase().rawQuery("SELECT * FROM "+DatabaseConstants.TABLE_NAME_MULTIPLE_SG+ " WHERE "
+				+ DatabaseConstants.DOMAIN_TYPE_VALUE + "=1", null);
+		try {
+			if (cursor != null && cursor.getCount() > 0) {
+				while (cursor.moveToNext()){
+					OwnerDomainName sgdata = new OwnerDomainName();
+					sgdata.setDomainName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_NAME)));
+					sgdata.setDomainDisplayName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_DISPLAY_NAME)));
+					sgdata.setAdminName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_ADMIN_NAME)));
+					sgdata.setOrgName(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_ORG_NAME)));
+					sgdata.setPrivacyType(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_PRIVACY_TYPE)));
+					sgdata.setUnreadCounter(cursor.getInt(cursor.getColumnIndex(DatabaseConstants.DOMAIN_UNREAD_MSG_COUNT)));
+					sgdata.setCreatedDate(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_CREATED_DATE)));
+					sgdata.setLogoFileId(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_LOGO_FILE_ID)));
+					sgdata.setDomainMuteInfo(cursor.getInt(cursor.getColumnIndex(DatabaseConstants.DOMAIN_MUTE_INFO)));
+					sgdata.setDomainType(cursor.getString(cursor.getColumnIndex(DatabaseConstants.DOMAIN_TYPE)));
+
+					alSgData.add(sgdata);
+				}
+			}
+		} catch (Exception e) {
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+				cursor = null;
+			}
+		}
+		return alSgData;
 	}
 
 }

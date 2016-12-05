@@ -100,10 +100,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
     public List<ExpandableListAdapter.Item> getSuperGroupList() {
         List<ExpandableListAdapter.Item> dataList = new ArrayList<>();
-        OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
-        ArrayList<OwnerDomainName> ownerDomainNameSet = new ArrayList<>();
-        if (owned != null)
-            ownerDomainNameSet.add(owned);
+        ArrayList<OwnerDomainName> ownerDomainNameSet = DBWrapper.getInstance().getOwnedSGList();
         if (ownerDomainNameSet != null && ownerDomainNameSet.size() > 0) {
             for (int i = 0; i < ownerDomainNameSet.size(); i++) {
                 String ownerDisplayName = "";
@@ -494,8 +491,12 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                     String dateString = formatter.format(new Date(System.currentTimeMillis()));
                     owned.setCreatedDate(dateString);
 
-                    if(owned != null)
-                        DBWrapper.getInstance().updateOwnedSGData(owned);
+                    ArrayList<OwnerDomainName> ownerDomainNameSet = new ArrayList<>();
+                    ownerDomainNameSet.add(owned);
+
+                    if((ownerDomainNameSet != null && ownerDomainNameSet.size() > 0)) {
+                        DBWrapper.getInstance().updateOwnedSGDataArray(ownerDomainNameSet);
+                    }
 
                     DBWrapper.getInstance().updateSGCredentials(SG_NAME, pref.getUserName(), pref.getUserPassword(), pref.getUserId(), true);
                     ((HomeScreen) getActivity()).switchSG(user + "_" + SG_NAME, false, null, true);

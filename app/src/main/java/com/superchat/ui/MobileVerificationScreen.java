@@ -554,9 +554,10 @@ public void onDestroy(){
 						//Update in DB also
 						MultipleSGObject gsonObject = new Gson().fromJson(arg1, MultipleSGObject.class);
 
-						OwnerDomainName owned = gsonObject.getOwnerDomainName();
-						if(owned != null)
-							DBWrapper.getInstance().updateOwnedSGData(owned);
+						ArrayList<OwnerDomainName> ownerDomainNameSet = gsonObject.getOwnerDomainNameSet();
+						if((ownerDomainNameSet != null && ownerDomainNameSet.size() > 0)) {
+							DBWrapper.getInstance().updateOwnedSGDataArray(ownerDomainNameSet);
+						}
 						ArrayList<JoinedDomainNameSet> joinedSG = new ArrayList<>();
 						joinedSG = gsonObject.getJoinedDomainNameSet();
 						if(joinedSG != null && joinedSG.size() > 0)
@@ -572,11 +573,17 @@ public void onDestroy(){
 						try {
 							json = new JSONObject(arg1);
 							//Get owner List
-							if(json != null && json.has("ownerDomainName")){
+							/*if(json != null && json.has("ownerDomainName")){
 								ownerDomainNameSet.add(json.getString("ownerDomainName"));
+							}*/
+							//invitedDomainNameSet
+							JSONArray array = json.getJSONArray("ownerDomainNameSet");
+							ownerDomainNameSet = new ArrayList<String>();
+							for(int i = 0; i < array.length(); i++){
+								ownerDomainNameSet.add(array.getString(i));
 							}
 							//invitedDomainNameSet
-							JSONArray array = json.getJSONArray("invitedDomainNameSet");
+							array = json.getJSONArray("invitedDomainNameSet");
 							invitedDomainNameSet = new ArrayList<String>();
 							for(int i = 0; i < array.length(); i++){
 								invitedDomainNameSet.add(array.getString(i));
@@ -593,8 +600,9 @@ public void onDestroy(){
 						}
 						if(regAsAdmin)
 						{
-							//Check if he has already owned a Supergroup then prompt him
-							if(ownerDomainNameSet != null && ownerDomainNameSet.size() > 0){
+							/*//Check if he has already owned a Supergroup then prompt him
+							boolean isMultipleSuperGroupSupported = true;
+							if(ownerDomainNameSet != null && ownerDomainNameSet.size() > 0 && (!isMultipleSuperGroupSupported)){
 								regAsAdmin = false;
 								Intent intent = new Intent(MobileVerificationScreen.this, SupergroupListingScreen.class);
 								bundle.putString(Constants.MOBILE_NUMBER_TXT, mobileNumber);
@@ -608,7 +616,7 @@ public void onDestroy(){
 								intent.putExtras(bundle);
 								startActivity(intent);
 								finish();
-							}else{
+							}else{*/
 								 Intent intent = new Intent(MobileVerificationScreen.this, ProfileScreen.class);
 								 bundle.putBoolean(Constants.REG_TYPE, true);
 								 bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
@@ -623,7 +631,7 @@ public void onDestroy(){
 								 intent.putExtras(bundle);
 								 startActivity(intent);
 								 finish();
-							}
+							//}
 						}else{
 							Intent intent = new Intent(MobileVerificationScreen.this, SupergroupListingScreen.class);
 							bundle.putString(Constants.MOBILE_NUMBER_TXT, mobileNumber);

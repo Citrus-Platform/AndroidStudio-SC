@@ -10,17 +10,25 @@ public class MultipleSGObject
 {
     private OwnerDomainName ownerDomainName;
 
+    private ArrayList<OwnerDomainName> ownerDomainNameSet;
+    private ArrayList<InvitedDomainNameSet> invitedDomainNameSet;
+    private ArrayList<JoinedDomainNameSet> joinedDomainNameSet;
+
+    public ArrayList<OwnerDomainName> getOwnerDomainNameSet() {
+        return ownerDomainNameSet;
+    }
+
+    public void setOwnerDomainNameSet(ArrayList<OwnerDomainName> ownerDomainNameSet) {
+        this.ownerDomainNameSet = ownerDomainNameSet;
+    }
+
     public OwnerDomainName getOwnerDomainName() { return this.ownerDomainName; }
 
     public void setOwnerDomainName(OwnerDomainName ownerDomainName) { this.ownerDomainName = ownerDomainName; }
 
-    private ArrayList<InvitedDomainNameSet> invitedDomainNameSet;
-
     public ArrayList<InvitedDomainNameSet> getInvitedDomainNameSet() { return this.invitedDomainNameSet; }
 
     public void setInvitedDomainNameSet(ArrayList<InvitedDomainNameSet> invitedDomainNameSet) { this.invitedDomainNameSet = invitedDomainNameSet; }
-
-    private ArrayList<JoinedDomainNameSet> joinedDomainNameSet;
 
     public ArrayList<JoinedDomainNameSet> getJoinedDomainNameSet() { return this.joinedDomainNameSet; }
 

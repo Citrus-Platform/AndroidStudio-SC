@@ -57,6 +57,7 @@ import com.superchat.model.AddMemberModel.MemberDetail;
 import com.superchat.model.AddMemberResponseModel;
 import com.superchat.model.ErrorModel;
 import com.superchat.model.multiplesg.OwnerDomainName;
+import com.superchat.model.multiplesg.ownerDomainNameSet;
 import com.superchat.ui.BulkInvitationAdapter.AppContact;
 import com.superchat.utils.Constants;
 import com.superchat.utils.Countries;
@@ -404,8 +405,12 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
                         String dateString = formatter.format(new Date(System.currentTimeMillis()));
                         owned.setCreatedDate(dateString);
 
-                        if(owned != null)
-                            DBWrapper.getInstance().updateOwnedSGData(owned);
+                        ArrayList<OwnerDomainName> ownerDomainNameSet = new ArrayList<>();
+                        ownerDomainNameSet.add(owned);
+
+                        if((ownerDomainNameSet != null && ownerDomainNameSet.size() > 0)) {
+                            DBWrapper.getInstance().updateOwnedSGDataArray(ownerDomainNameSet);
+                        }
 
                         DBWrapper.getInstance().updateSGCredentials(pref.getUserDomain(), pref.getUserName(), pref.getUserPassword(), pref.getUserId(), true);
                     }
