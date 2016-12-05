@@ -264,6 +264,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
     ArrayList<String> usersList = new ArrayList<String>();
     ArrayList<String> usersDisplayList = new ArrayList<String>();
     HashMap<String, String> nameMap = new HashMap<String, String>();
+    private ImageView call_option_video;
     private ImageView callOption;
     private ImageView chatOptions;
     private ImageView createPoll;
@@ -1109,6 +1110,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         attachEmoView = (ImageView) findViewById(R.id.id_attach_emoticon);
         attachMediaView = (ImageView) findViewById(R.id.id_attach_media);
         chatOptions = (ImageView) findViewById(R.id.chat_options);
+        call_option_video = (ImageView) findViewById(R.id.call_option_video);
         callOption = (ImageView) findViewById(R.id.call_option);
         createPoll = (ImageView) findViewById(R.id.create_poll);
 
@@ -1119,6 +1121,13 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 onCallClicked();
+            }
+        });
+        call_option_video.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                onVideoCallClicked();
             }
         });
 
@@ -3094,47 +3103,26 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             if (mSinchServiceInterface != null) {
                 try {
                     HomeScreen.checkForCall(userName, this, mSinchServiceInterface);
-//                    Call call = mSinchServiceInterface.callUserWithHeader(userName, HomeScreen.createHeaderForCalling(userName));
-//                    String callId = call.getCallId();
-//
-//                    Intent callScreen = new Intent(this, CallScreenActivity.class);
-//                    callScreen.putExtra(SinchService.CALL_ID, callId);
-//                    startActivity(callScreen);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            // //919910040523_p5domain
-            // String number = null;
-            // if(userName.indexOf('_') != -1)
-            // number = "+"+userName.substring(0, userName.indexOf('_'));
-            // else
-            // number = "+"+userName;
-            // final String uri = "tel:" + number;
-            // new AlertDialog.Builder(this).setMessage("Do you want to call
-            // "+number+"?")
-            // .setPositiveButton(R.string.yes,
-            // new DialogInterface.OnClickListener() {
-            //
-            // public void onClick(DialogInterface dialog,
-            // int whichButton) {
-            // //Start Native calle
-            //// Intent call = new Intent(Intent.ACTION_CALL);
-            //// call.setData(Uri.parse(uri));
-            //// startActivity(call);
-            //
-            // //Start SIP call
-            // Call call = getSinchServiceInterface().callUser(userName);
-            // String callId = call.getCallId();
-            //
-            // Intent callScreen = new Intent(ChatListScreen.this,
-            // CallScreenActivity.class);
-            // callScreen.putExtra(SinchService.CALL_ID, callId);
-            // startActivity(callScreen);
-            //
-            // }
-            // }).setNegativeButton(R.string.cancel, null).show();
+        }
+    }
 
+    public void onVideoCallClicked() {
+        if (!iChatPref.isGroupChat(userName)) {
+            if (iChatPref.isDNC(userName) && !iChatPref.isDomainAdminORSubAdmin()) {
+                Toast.makeText(this, getString(R.string.dnc_alert), Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (mSinchServiceInterface != null) {
+                try {
+                    HomeScreen.checkForVideoCall(userName, this, mSinchServiceInterface);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -5683,7 +5671,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         contentvalues.put(DatabaseConstants.USER_SG, iChatPref.getUserDomain());
 
         if (!DBWrapper.getInstance().isContactExists(tmpUserName))
-          DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
+            DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, contentvalues);
     }
 
     boolean isPlaying = false;
@@ -5834,7 +5822,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 }
                 break;
             case R.id.id_send_chat:
-            	if(!ChatService.xmppConectionStatus) {
+                if (!ChatService.xmppConectionStatus) {
                     Toast.makeText(getApplicationContext(), "Connecting please wait..", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -7446,7 +7434,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 
     private void setUIChat(boolean isBroadcastScreenMode) {
         try {
-            if(isBroadcastScreenMode){
+            if (isBroadcastScreenMode) {
                 bottom_write_bar1.setVisibility(View.GONE);
                 attachMediaView.setVisibility(View.GONE);
                 bottomBroadcastBar.setVisibility(View.VISIBLE);
@@ -7487,7 +7475,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         String groupName = userName;
 
         GroupChatMetaInfo groupChatMetaInfo = iChatPref.getSubGroupMetaData(groupName);
-        if(groupChatMetaInfo != null && groupChatMetaInfo.isBroadCastActive()) {
+        if (groupChatMetaInfo != null && groupChatMetaInfo.isBroadCastActive()) {
             if (iChatPref.isGroupChat(userName) && !isBulletinBroadcast) {
                 boolean isUserGroupAdmin = iChatPref.isUserGroupAdmin(groupName);
                 if (iChatPref.isDomainAdminORSubAdmin() || isSharedIDAdmin || isUserGroupAdmin) {

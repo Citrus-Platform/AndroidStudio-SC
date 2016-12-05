@@ -15,6 +15,7 @@ import com.sinch.android.rtc.SinchError;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallClient;
 import com.sinch.android.rtc.calling.CallClientListener;
+import com.sinch.android.rtc.video.VideoController;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
 import com.superchat.interfaces.interfaceInstances;
@@ -117,6 +118,10 @@ public class SinchService extends Service implements interfaceInstances{
 
     public class SinchServiceInterface extends Binder {
 
+        public Call callUserVideo(String userId) {
+            return mSinchClient.getCallClient().callUserVideo(userId);
+        }
+
         public Call callPhoneNumber(String phoneNumber) {
             return mSinchClient.getCallClient().callPhoneNumber(phoneNumber);
         }
@@ -135,6 +140,20 @@ public class SinchService extends Service implements interfaceInstances{
                 return mSinchClient.getCallClient().callUser(number, header);
             }
             return mSinchClient.getCallClient().callUser(number, header);
+        }
+
+
+        public Call callVideoWithHeader(String userId, Map<String, String> header) {
+            String number = DBWrapper.getInstance().getContactNumber(userId);
+            if(number == null){
+                String cc = SharedPrefManager.getInstance().getUserCountryCode();
+                if(cc != null && userId.startsWith(cc)) {
+                    number = userId.substring(0, userId.indexOf("_"));
+                    number = cc + "-" +number.substring(number.indexOf(cc) + 2);
+                }
+                return mSinchClient.getCallClient().callUserVideo(number, header);
+            }
+            return mSinchClient.getCallClient().callUserVideo(number, header);
         }
 
         public String getUserName() {
@@ -166,6 +185,13 @@ public class SinchService extends Service implements interfaceInstances{
 
         public Call getCall(String callId) {
             return mSinchClient.getCallClient().getCall(callId);
+        }
+
+        public VideoController getVideoController() {
+            if ((mSinchClient == null) && !isStarted()) {
+                return null;
+            }
+            return mSinchClient.getVideoController();
         }
     }
 
@@ -230,6 +256,11 @@ public class SinchService extends Service implements interfaceInstances{
         }
     }
 
+    enum CallType {
+        AUDIO_CALL,
+        VIDEO_CALL
+    }
+
     private class SinchCallClientListener implements CallClientListener {
 
         @Override
@@ -246,10 +277,21 @@ public class SinchService extends Service implements interfaceInstances{
      	        }
         		return;
     		}
-            Intent intent = new Intent(SinchService.this, IncomingCallScreenActivity.class);
-            intent.putExtra(CALL_ID, call.getCallId());
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            SinchService.this.startActivity(intent);
+
+            boolean isVideoCall = call.getDetails().isVideoOffered();
+
+            if(isVideoCall){
+                Log.d(TAG, "Incoming call");
+                Intent intent = new Intent(SinchService.this, IncomingCallScreenVideoActivity.class);
+                intent.putExtra(CALL_ID, call.getCallId());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                SinchService.this.startActivity(intent);
+            } else {
+                Intent intent = new Intent(SinchService.this, IncomingCallScreenActivity.class);
+                intent.putExtra(CALL_ID, call.getCallId());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                SinchService.this.startActivity(intent);
+            }
         }
     }
 }

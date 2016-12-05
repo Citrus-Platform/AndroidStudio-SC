@@ -130,14 +130,6 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 			}
 		}
 
-		// protected void onServiceConnected() {
-		// //Register the user for call
-		// if (mSinchServiceInterface!=null &&
-		// !mSinchServiceInterface.isStarted()) {
-		// mSinchServiceInterface.startClient(SharedPrefManager.getInstance().getUserName());
-		// }
-		// }
-
 		protected void onServiceDisconnected() {
 			// for subclasses
 		}

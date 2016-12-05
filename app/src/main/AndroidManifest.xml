@@ -277,6 +277,13 @@
             android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
+            android:name="com.superchat.ui.CallScreenVideoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.superchat.ui.IncomingCallScreenVideoActivity"
+            android:noHistory="true"
+            android:screenOrientation="portrait" />
+        <activity
             android:name="com.superchat.ui.PlaceCallActivity"
             android:screenOrientation="portrait" />
         <activity
