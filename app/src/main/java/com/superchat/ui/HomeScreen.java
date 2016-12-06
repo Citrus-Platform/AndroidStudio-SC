@@ -4059,7 +4059,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                         selectedTab = 1;
                     } else {
                         if (selectedTab == 1) {
-                            publicGroupFragment.setSgSwitch(true);
+                            if(isSwitchSG) {
+                                publicGroupFragment.setSgSwitch(true);
+                            }
                             if (PublicGroupScreen.isAllChannelTab)
                                 publicGroupFragment.showAllContacts(1);
                             else

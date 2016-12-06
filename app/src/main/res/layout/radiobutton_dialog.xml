@@ -52,7 +52,7 @@
             android:button="@null"
             android:textSize="17sp"
             android:drawableRight="@android:drawable/btn_radio"
-            android:text="Only when I tap bak up"/>
+            android:text="Only when I tap backup"/>
 
         <View
             android:layout_width="fill_parent"

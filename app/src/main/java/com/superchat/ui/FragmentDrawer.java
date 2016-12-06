@@ -71,7 +71,6 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     public ImageView displayPictureCurrent;
     public ImageView notifyCurrent;
     public TextView user;
-    public TextView addSGTextView;
 
     public TextView invitedNotificationCount;
     private RecyclerView recyclerView;
@@ -239,7 +238,6 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         notifyCurrent = (ImageView) layout.findViewById(R.id.notifyCurrent);
         notifyCurrent.setOnClickListener(this);
         user = (TextView) layout.findViewById(R.id.user);
-        addSGTextView = (TextView) layout.findViewById(R.id.id_add_sg_txt);
 
         invitedNotificationCount = (TextView) layout.findViewById(R.id.invitedNotificationCount);
         if (invite != null && invite.size() > 0)
@@ -274,19 +272,6 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         llInvited = (LinearLayout) layout.findViewById(R.id.llInvited);
         notificationLayout = (RelativeLayout) layout.findViewById(R.id.notificationLayout);
 
-        //if (SharedPrefManager.getInstance().getOwnedDomain() != null) {
-
-       /* if(SharedPrefManager.getInstance().getDomainType().toString().equalsIgnoreCase("rwa"))
-        {*/
-        if (SharedPrefManager.getInstance().isDomainAdmin(SharedPrefManager.getInstance().getUserDomain()) ||
-                SharedPrefManager.getInstance().isDomainSubAdmin(SharedPrefManager.getInstance().getUserDomain())) {
-            llAddSuperGroup.setVisibility(View.VISIBLE);
-            addSGTextView.setVisibility(View.VISIBLE);
-        } else {
-            llAddSuperGroup.setVisibility(View.GONE);
-            addSGTextView.setVisibility(View.GONE);
-        }
-
         llAddSuperGroup.setOnClickListener(this);
         llInvited.setOnClickListener(this);
         userContainer.setOnClickListener(this);
@@ -311,17 +296,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             displayPictureCurrent.setImageResource(R.drawable.logo_small);
         }
         user.setText("" + SharedPrefManager.getInstance().getDisplayName() + " (You)");
-        //if (SharedPrefManager.getInstance().getOwnedDomain() != null) {
 
-        if (SharedPrefManager.getInstance().isDomainAdmin(SharedPrefManager.getInstance().getUserDomain()) ||
-                SharedPrefManager.getInstance().isDomainSubAdmin(SharedPrefManager.getInstance().getUserDomain())) {
-            llAddSuperGroup.setVisibility(View.VISIBLE);
-            addSGTextView.setVisibility(View.VISIBLE);
-        } else {
-            llAddSuperGroup.setVisibility(View.GONE);
-            addSGTextView.setVisibility(View.GONE);
-        }
-        // }
         super.onResume();
     }
 
@@ -596,15 +571,6 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         } else {
 //            setProfilePic(displayPictureCurrent, "");
             displayPictureCurrent.setImageResource(R.drawable.logo_small);
-        }
-
-        if (SharedPrefManager.getInstance().isDomainAdmin(SharedPrefManager.getInstance().getUserDomain()) ||
-                SharedPrefManager.getInstance().isDomainSubAdmin(SharedPrefManager.getInstance().getUserDomain())) {
-            llAddSuperGroup.setVisibility(View.VISIBLE);
-            addSGTextView.setVisibility(View.VISIBLE);
-        } else {
-            llAddSuperGroup.setVisibility(View.GONE);
-            addSGTextView.setVisibility(View.GONE);
         }
     }
 

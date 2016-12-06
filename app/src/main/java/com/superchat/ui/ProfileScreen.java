@@ -361,6 +361,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                 break;
             case VIEWWING_AS_SELF_IN_REG:
                 setContentView(R.layout.profile_in_reg);
+                LinearLayout llSGInfoText = (LinearLayout) findViewById(R.id.llSGInfoText);
                 genderViewText = (TextView) findViewById(R.id.lbl_gender);
                 dateView = (TextView) findViewById(R.id.lbl_dob);
                 currentLocationView = (EditText) findViewById(R.id.id_location_field);
@@ -368,6 +369,8 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                 nextButtonView = (Button) findViewById(R.id.id_next_btn);
                 if (nextButtonView != null)
                     nextButtonView.setVisibility(View.VISIBLE);
+
+                llSGInfoText.setVisibility(View.VISIBLE);
                 break;
             case VIEW_SG_MEMBER:
                 setContentView(R.layout.profile_screen_view);

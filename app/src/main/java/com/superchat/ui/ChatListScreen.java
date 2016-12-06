@@ -7475,21 +7475,23 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         String groupName = userName;
 
         GroupChatMetaInfo groupChatMetaInfo = iChatPref.getSubGroupMetaData(groupName);
-        if (groupChatMetaInfo != null && groupChatMetaInfo.isBroadCastActive()) {
-            if (iChatPref.isGroupChat(userName) && !isBulletinBroadcast) {
-                boolean isUserGroupAdmin = iChatPref.isUserGroupAdmin(groupName);
-                if (iChatPref.isDomainAdminORSubAdmin() || isSharedIDAdmin || isUserGroupAdmin) {
-                    //Toast.makeText(this, "You are NOW admin or Subadmin", Toast.LENGTH_SHORT).show();
-                    setUIBroascastMode(false);
+        if(!isBulletinBroadcast) {
+            if (groupChatMetaInfo != null && groupChatMetaInfo.isBroadCastActive()) {
+                if (iChatPref.isGroupChat(userName)) {
+                    boolean isUserGroupAdmin = iChatPref.isUserGroupAdmin(groupName);
+                    if (iChatPref.isDomainAdminORSubAdmin() || isSharedIDAdmin || isUserGroupAdmin) {
+                        //Toast.makeText(this, "You are NOW admin or Subadmin", Toast.LENGTH_SHORT).show();
+                        setUIBroascastMode(false);
+                    } else {
+                        //Toast.makeText(this, "You are NOT authorized to edit", Toast.LENGTH_SHORT).show();
+                        setUIBroascastMode(true);
+                    }
                 } else {
-                    //Toast.makeText(this, "You are NOT authorized to edit", Toast.LENGTH_SHORT).show();
-                    setUIBroascastMode(true);
+                    //Toast.makeText(this, "This is not group :-P", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                //Toast.makeText(this, "This is not group :-P", Toast.LENGTH_SHORT).show();
+                setUIBroascastMode(false);
             }
-        } else {
-            setUIBroascastMode(false);
         }
     }
 }

@@ -406,6 +406,43 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
 //		}
     }
 
+    private void manipulateScreenTabsData(boolean isForceHitAllChannels){
+
+        // Temp code to refresh data forcefully
+        isForceHitAllChannels = true;
+
+        if (!isAllChannelTab) {
+//			myChannelTabLayout.setBackgroundColor(0xffcde1f5);//Color.WHITE);
+//			allChannelTabLayout.setBackgroundColor(Color.GRAY);
+            viewAllChannelLabel.setVisibility(View.GONE);
+            viewMyChannelLabel.setVisibility(View.VISIBLE);
+            allChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
+            myChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
+            if(searchEditText != null)
+                searchEditText.setText("");
+            resetSearchBox();
+        } else {
+//			myChannelTabLayout.setBackgroundColor(Color.GRAY);
+//			allChannelTabLayout.setBackgroundColor(0xffcde1f5);//Color.WHITE);
+            viewMyChannelLabel.setVisibility(View.GONE);
+            viewAllChannelLabel.setVisibility(View.VISIBLE);
+            myChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
+            allChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
+            resetSearchBox();
+        }
+        if (isAllChannelTab)
+            showAllContacts(1);
+        else
+            showAllContacts(0);
+
+        if (isForceHitAllChannels || (sgSwitch && isAllChannelTab)) {
+            if (Build.VERSION.SDK_INT >= 11)
+                new OpenGroupTaskOnServer(true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            else
+                new OpenGroupTaskOnServer(true).execute();
+        }
+    }
+
     @Override
     public void onClick(View v) {
 
@@ -422,35 +459,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
             }
 
         if(i <= 0){
-            if (!isAllChannelTab) {
-//			myChannelTabLayout.setBackgroundColor(0xffcde1f5);//Color.WHITE);
-//			allChannelTabLayout.setBackgroundColor(Color.GRAY);
-                viewAllChannelLabel.setVisibility(View.GONE);
-                viewMyChannelLabel.setVisibility(View.VISIBLE);
-                allChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
-                myChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
-                if(searchEditText != null)
-                    searchEditText.setText("");
-                resetSearchBox();
-            } else {
-//			myChannelTabLayout.setBackgroundColor(Color.GRAY);
-//			allChannelTabLayout.setBackgroundColor(0xffcde1f5);//Color.WHITE);
-                viewMyChannelLabel.setVisibility(View.GONE);
-                viewAllChannelLabel.setVisibility(View.VISIBLE);
-                myChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
-                allChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
-                resetSearchBox();
-            }
-            if (isAllChannelTab)
-                showAllContacts(1);
-            else
-                showAllContacts(0);
-            if (isAllChannelTab) {
-                if (Build.VERSION.SDK_INT >= 11)
-                    new OpenGroupTaskOnServer(true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                else
-                    new OpenGroupTaskOnServer(true).execute();
-            }
+            manipulateScreenTabsData(true);
         }
 
     }
@@ -459,8 +468,8 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
         super.onResume();
         getActivity().bindService(new Intent(getActivity(), ChatService.class), mConnection, Context.BIND_AUTO_CREATE);
         onForeground = true;
-        refreshList();
-        resetSearch();
+        /*refreshList();
+        resetSearch();*/
 //		if(HomeScreen.refreshContactList){
 //			updateCursor(null, null);
 //			HomeScreen.refreshContactList = false;
@@ -470,15 +479,8 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
             if (!isFirstTimeDialogShowing)
                 showDialog(getResources().getString(R.string.first_time_gp_creation_alert));
         }
-//        if (superGroupIcon != null && SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID") != null)
-//            setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
 
-        if(sgSwitch && isAllChannelTab){
-            if (Build.VERSION.SDK_INT >= 11)
-                new OpenGroupTaskOnServer(true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            else
-                new OpenGroupTaskOnServer(true).execute();
-        }
+        manipulateScreenTabsData(false);
     }
 
     public void onPause() {
@@ -682,10 +684,8 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
             if (allChannelLabel != null)
                 allChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
         }
-        if (isAllChannelTab)
-            showAllContacts(1);
-        else
-            showAllContacts(0);
+
+        manipulateScreenTabsData(false);
     }
 
     public void searchMyChannels(int type, String searchTxt) {

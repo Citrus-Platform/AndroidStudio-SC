@@ -656,4 +656,6 @@
     <string name="call_icon1">Call</string>
     <string name="poll_icon">Poll</string>
     <string name="chat_options">Chat option</string>
+
+    <string name="create_new_sg_text">Please complete your profile to create new SuperGroup</string>
 </resources>
