@@ -1686,8 +1686,12 @@ public class SharedPrefManager {
     }
 
     public int getChatCountOfUser(String person) {
-        int value = pref.getInt(person, 0);
-        return value;
+        try {
+            int value = pref.getInt(person, 0);
+            return value;
+        } catch(Exception e){
+            return 0;
+        }
     }
 
     public void clearSharedPref() {

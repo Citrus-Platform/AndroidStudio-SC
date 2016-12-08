@@ -280,44 +280,45 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                 String domainType = null;
                 boolean sg_found = false;
                 if (superGroupName != null && superGroupName.trim().length() > 0) {
-//                    if (invitedDomainNameSet != null) {
-//                        for (String data : invitedDomainNameSet) {
-//                            try {
-//                                json = new JSONObject(data);
-//                                if (json != null && json.has("domainName")) {
-//                                    sg_name = json.getString("domainName");
-//                                    if (sg_name.equalsIgnoreCase(superGroupName)) {
-//                                        if (json != null && json.has("adminName"))
-//                                            inviter = json.getString("adminName");
-//                                        else
-//                                            inviter = null;
-//                                        if (json != null && json.has("displayName"))
-//                                            sg_display_name = json.getString("displayName");
-//                                        else
-//                                            sg_display_name = sg_name;
-//                                        if (json != null && json.has("logoFileId"))
-//                                            file_id = json.getString("logoFileId");
-//                                        else
-//                                            file_id = null;
-//                                        if (json != null && json.has("orgName"))
-//                                            org_name = json.getString("orgName");
-//                                        else
-//                                            org_name = null;
-//                                        if (json != null && json.has("domainType"))
-//                                            domainType = json.getString("domainType");
-//                                        else
-//                                            domainType = null;
-//                                        sg_found = true;
-//                                        showWelcomeScreen(superGroupName, sg_display_name, inviter, org_name, file_id, 1, domainType);
-//                                        break;
-//                                    }
-//                                }
-//                            } catch (JSONException e) {
-//                                // TODO Auto-generated catch block
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }
+                  if (invitedDomainNameSet != null) {
+                      if (invitedDomainNameSet != null) {
+                          for (String data : invitedDomainNameSet) {
+                              try {
+                                  json = new JSONObject(data);
+                                  if (json != null && json.has("domainName")) {
+                                      sg_name = json.getString("domainName");
+                                      if (sg_name.equalsIgnoreCase(superGroupName)) {
+                                          if (json != null && json.has("adminName"))
+                                              inviter = json.getString("adminName");
+                                          else
+                                              inviter = null;
+                                          if (json != null && json.has("displayName"))
+                                              sg_display_name = json.getString("displayName");
+                                          else
+                                              sg_display_name = sg_name;
+                                          if (json != null && json.has("logoFileId"))
+                                              file_id = json.getString("logoFileId");
+                                          else
+                                              file_id = null;
+                                          if (json != null && json.has("orgName"))
+                                              org_name = json.getString("orgName");
+                                          else
+                                              org_name = null;
+                                          if (json != null && json.has("domainType"))
+                                              domainType = json.getString("domainType");
+                                          else
+                                              domainType = null;
+                                          sg_found = true;
+                                          showWelcomeScreen(superGroupName, sg_display_name, inviter, org_name, file_id, 1, domainType);
+                                          break;
+                                      }
+                                  }
+                              } catch (JSONException e) {
+                                  // TODO Auto-generated catch block
+                                  e.printStackTrace();
+                              }
+                          }
+                      }
 
                     if (!sg_found) {
 //						showWelcomeScreen(superGroupName, inviter, org_name, file_id, 0);
@@ -332,7 +333,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                     registerUserOnServer(text, selectedSGDisplayName, view);
                 }
             }
-        });
+        }});
         createSG.setOnClickListener(new OnClickListener() {
 
             @Override

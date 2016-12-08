@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.superchat.R;
+import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
@@ -140,6 +141,10 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 //                    itemControllerChild.child_sg_type.setText("[Owner]");
                 ///////////////////////////////////////////////////////
                 String fileId = DBWrapper.getInstance().getSGLogoFileID(item.actualName);
+                if(fileId == null){
+                    SharedPrefManager pref = SharedPrefManager.getInstance();
+                    fileId = pref.getSGFileId(item.actualName);
+                }
                 if (fileId != null && fileId.length() > 0) {
                     setProfilePic(itemControllerChild.displayPicture, fileId);
                 }else{
@@ -218,6 +223,18 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 });
                 break;
         }
+    }
+
+    private String getImagePath(String groupPicId){
+        if(groupPicId == null)
+            groupPicId = SharedPrefManager.getInstance().getUserFileId(SharedPrefManager.getInstance().getUserName());
+        if(groupPicId!=null){
+            String profilePicUrl = groupPicId+".jpg";
+            File file = Environment.getExternalStorageDirectory();
+            return new StringBuffer(file.getPath()).append(File.separator).append("SuperChat/").append(profilePicUrl).toString();
+//			return Environment.getExternalStorageDirectory().getPath()+ File.separator +Constants.contentProfilePhoto+groupPicId+".jpg";
+        }
+        return null;
     }
 
     @Override

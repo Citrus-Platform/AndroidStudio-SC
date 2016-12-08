@@ -99,6 +99,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import static com.superchat.utils.Constants.SG_CREATE_RESET;
+
 public class ProfileScreen extends FragmentActivity implements OnClickListener, OnItemSelectedListener {
     public static final String TAG = "ProfileScreen";
     Dialog picChooserDialog;
@@ -234,6 +236,8 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
     String userComingFromScreen;
     boolean backToPrevUI = false;
     boolean sgCreationAfterLogin = false;
+    boolean isSGCreationReset = false;
+    boolean isPictureSelected = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,6 +253,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
         boolean reg_flow = false;
 
         if (bundle != null) {
+            isSGCreationReset = bundle.getBoolean(Constants.SG_CREATE_RESET);
             sgCreationAfterLogin = bundle.getBoolean(Constants.SG_CREATE_AFTER_LOGIN);
             userComingFromScreen = bundle.getString(Constants.KEY_SCREEN_USER_COMING_FROM);
             userName = bundle.getString(Constants.CHAT_USER_NAME, userName);
@@ -1331,6 +1336,9 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
 
     public void onProfileImagePicClick(View view) {
         String fileName = iSharedPrefManager.getUserFileId(userName);
+        if(isSGCreationReset){
+            fileName = null;
+        }
         if (fileName == null || fileName.equals("") || fileName.equals("clear")) {
             if (purposeType == VIEWWING_AS_SELF_IN_REG || (picChooserDialog != null && !picChooserDialog.isShowing()
                     && userName != null && userName.equals(iSharedPrefManager.getUserName()))) {
@@ -1503,8 +1511,10 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                                 intent.putExtra(Constants.NAME, displayNameView.getText().toString().trim());
                             mobForReg = null;
                             isProfileDataValidated = true;
-                            userSelectedFileID = SharedPrefManager.getInstance()
-                                    .getUserFileId(SharedPrefManager.getInstance().getUserName());
+                            if(isPictureSelected) {
+                                userSelectedFileID = SharedPrefManager.getInstance()
+                                        .getUserFileId(SharedPrefManager.getInstance().getUserName());
+                            }
                             startActivity(intent);
                         } else
                             new UpdateProfileTaskOnServer().execute();
@@ -1544,6 +1554,8 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                 } else {
                     showDialog(getString(R.string.app_name), getString(R.string.no_image_delete));
                 }
+
+                isPictureSelected = false;
                 break;
         }
     }
@@ -1631,6 +1643,8 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                         Bitmap selectedImage = BitmapFactory.decodeFile(AppUtil.capturedPath1);
                         ((ImageView) findViewById(R.id.id_profile_pic)).setImageBitmap(selectedImage);
                         ((ImageView) findViewById(R.id.id_profile_pic)).setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                        isPictureSelected = true;
                         // ((ImageView)
                         // findViewById(R.id.id_profile_pic)).setImageURI(Uri.parse(filePath));
                         // ((ImageView)

@@ -254,15 +254,13 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
             notifyCurrent.setVisibility(View.VISIBLE);
         }*/
 
-        String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
+        SharedPrefManager pref = SharedPrefManager.getInstance();
+        String file_id = pref.getSGFileId("SG_FILE_ID");
+
 //        String file_id = DBWrapper.getInstance().getSGLogoFileID(SharedPrefManager.getInstance().getUserDomain());
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
-        if (file_id != null && file_id.trim().length() > 0) {
-            setProfilePic(displayPictureCurrent, file_id);
-        } else {
-//            setProfilePic(displayPictureCurrent, "");
-            displayPictureCurrent.setImageResource(R.drawable.logo_small);
-        }
+        setProfilePic(displayPictureCurrent);
+
         user.setText("" + SharedPrefManager.getInstance().getDisplayName() + " (You)");
 
         ///////////////////////////////////////////////
@@ -289,12 +287,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     public void updateView() {
         String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
-        if (file_id != null && file_id.trim().length() > 0) {
-            setProfilePic(displayPictureCurrent, file_id);
-        } else {
-//            setProfilePic(displayPictureCurrent, "");
-            displayPictureCurrent.setImageResource(R.drawable.logo_small);
-        }
+        setProfilePic(displayPictureCurrent);
         user.setText("" + SharedPrefManager.getInstance().getDisplayName() + " (You)");
 
         super.onResume();
@@ -362,6 +355,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 //                Bundle bundle = new Bundle();
                 intent = new Intent(getActivity(), ProfileScreen.class);
                 intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, true);
+                intent.putExtra(Constants.SG_CREATE_RESET, true);
                 intent.putExtra("MANAGE_MEMBER_BY_ADMIN", true);
                 intent.putExtra("PROFILE_EDIT_REG_FLOW", true);
                 intent.putExtra(Constants.REG_TYPE, true);
@@ -389,7 +383,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         switch (requestCode) {
             case CODE_INVITE: {
                 try {
-                    if(data != null) {
+                    if (data != null) {
                         InviteJoinDataModel model = new InviteJoinDataModel();
                         String SG_NAME = data.getStringExtra("SG_NAME");
                         model.setInviteMobileNumber(data.getStringExtra("SG_MOBILE"));
@@ -407,7 +401,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                         SharedPrefManager.getInstance().saveSGPassword(model.getInviteUserName(), model.getInviteUserPassword());
 
                         int type = DBWrapper.getInstance().getSGUserTypeValue(SG_NAME);
-                        if(type == -1) {//Not Found
+                        if (type == -1) {//Not Found
                             JoinedDomainNameSet joined = new JoinedDomainNameSet();
                             joined.setDomainName(SG_NAME);
                             joined.setDisplayName(model.getInviteSGDisplayName());
@@ -424,11 +418,11 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                             String dateString = formatter.format(new Date(System.currentTimeMillis()));
                             joined.setCreatedDate(dateString);
 
-                            if(joined != null)
+                            if (joined != null)
                                 DBWrapper.getInstance().addNewJoinedSGData(joined);
 
                             DBWrapper.getInstance().updateSGCredentials(SG_NAME, model.getInviteUserName(), model.getInviteUserPassword(), model.getInviteUserID(), true);
-                        }else {
+                        } else {
                             DBWrapper.getInstance().updateSGCredentials(SG_NAME, model.getInviteUserName(), model.getInviteUserPassword(), model.getInviteUserID(), true);
                             DBWrapper.getInstance().updateSGTypeValue(SG_NAME, 2);
                         }
@@ -460,7 +454,10 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                     owned.setOrgUrl("");
                     owned.setPrivacyType("Open");
                     owned.setAdminName(pref.getUserName());
-                    owned.setLogoFileId(pref.getSGFileId(SharedPrefManager.getInstance().getUserDomain()));
+
+                    String domainName = SharedPrefManager.getInstance().getUserDomain();
+                    String logoFileId = pref.getSGFileId(domainName);
+                    owned.setLogoFileId(logoFileId);
 
                     SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
                     String dateString = formatter.format(new Date(System.currentTimeMillis()));
@@ -469,7 +466,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                     ArrayList<OwnerDomainName> ownerDomainNameSet = new ArrayList<>();
                     ownerDomainNameSet.add(owned);
 
-                    if((ownerDomainNameSet != null && ownerDomainNameSet.size() > 0)) {
+                    if ((ownerDomainNameSet != null && ownerDomainNameSet.size() > 0)) {
                         DBWrapper.getInstance().updateOwnedSGDataArray(ownerDomainNameSet);
                     }
 
@@ -562,16 +559,10 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         else
             invitedNotificationCount.setText("0");
 
-        if(currentSGName != null)
+        if (currentSGName != null)
             currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
 
-        String file_id = SharedPrefManager.getInstance().getSGFileId(SharedPrefManager.getInstance().getUserDomain());
-        if (file_id != null && file_id.trim().length() > 0) {
-            setProfilePic(displayPictureCurrent, file_id);
-        } else {
-//            setProfilePic(displayPictureCurrent, "");
-            displayPictureCurrent.setImageResource(R.drawable.logo_small);
-        }
+        setProfilePic(displayPictureCurrent);
     }
 
     public void setUp(int fragmentId, DrawerLayout drawerLayout, final Toolbar toolbar) {
@@ -602,7 +593,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                         .getLayoutManager();
                 layoutManager.scrollToPositionWithOffset(SharedPrefManager.getInstance().getSelectedIndexNav(), 0);
                 getActivity().invalidateOptionsMenu();
-                if(HomeScreen.userDeactivated){
+                if (HomeScreen.userDeactivated) {
                     ((HomeScreen) getActivity()).switchSG(SharedPrefManager.getInstance().getUserDomain(), false, null, false);
                 }
             }
@@ -639,9 +630,14 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         mDrawerLayout.openDrawer(containerView);
     }
 
-    private boolean setProfilePic(ImageView picView, String groupPicId) {
+    private boolean setProfilePic(ImageView picView) {
 
-        groupPicId = DBWrapper.getInstance().getSGLogoFileID(SharedPrefManager.getInstance().getUserDomain());
+        String groupPicId = DBWrapper.getInstance().getSGLogoFileID(SharedPrefManager.getInstance().getUserDomain());
+        SharedPrefManager pref = SharedPrefManager.getInstance();
+        if (groupPicId == null) {
+            String domainName = pref.getUserDomain();
+            groupPicId = pref.getSGFileId(domainName);
+        }
 
 //		System.out.println("groupPicId : "+groupPicId);
         String img_path = getThumbPath(groupPicId);

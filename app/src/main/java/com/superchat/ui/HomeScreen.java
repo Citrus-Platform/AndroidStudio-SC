@@ -938,6 +938,12 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         }
     }
 
+    private void exceptionReset(){
+        if (isSwitchSG) {
+            isSwitchingSG = isContactSynching = false;
+        }
+    }
+
     boolean bulletinNotLoadedAndFromPush;
     DomainsUserTaskOnServer contactLoadingTask;
 
@@ -1233,28 +1239,23 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                     Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());
                     if (progressDialog != null)
                         progressDialog.dismiss();
-                    if (isSwitchSG) {
-                        isSwitchingSG = isContactSynching = false;
-                    }
+                    exceptionReset();
                 } catch (IOException e) {
                     Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());
+                    exceptionReset();
                 }
 
             } catch (UnsupportedEncodingException e1) {
                 Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution UnsupportedEncodingException:" + e1.toString());
                 if (progressDialog != null)
                     progressDialog.dismiss();
-                if (isSwitchSG) {
-                    isSwitchingSG = isContactSynching = false;
-                }
+                exceptionReset();
             } catch (Exception e) {
                 Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution Exception:" + e.toString());
                 e.printStackTrace();
                 if (progressDialog != null)
                     progressDialog.dismiss();
-                if (isSwitchSG) {
-                    isSwitchingSG = isContactSynching = false;
-                }
+                exceptionReset();
             }
             return str;
         }
@@ -1746,17 +1747,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                     if (progressDialog != null) {
                         progressDialog.dismiss();
                     }
-                    if (isSwitchSG) {
-                        isSwitchingSG = isContactSynching = false;
-                    }
+                    exceptionReset();
                 } catch (IOException e) {
                     Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());
                     if (progressDialog != null) {
                         progressDialog.dismiss();
                     }
-                    if (isSwitchSG) {
-                        isSwitchingSG = isContactSynching = false;
-                    }
+                    exceptionReset();
                 }
             } catch (Exception e) {
                 Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution Exception:" + e.toString());
@@ -1764,9 +1761,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 if (progressDialog != null) {
                     progressDialog.dismiss();
                 }
-                if (isSwitchSG) {
-                    isSwitchingSG = isContactSynching = false;
-                }
+                exceptionReset();
             }
             return null;
         }
@@ -2881,12 +2876,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         @Override
         protected String doInBackground(String... params) {
             // TODO Auto-generated method stub
-            String url = Constants.SERVER_URL + "/tiger/rest/sharedid/getall?domainName=" + sharedPrefManager.getUserDomain();
-            DefaultHttpClient client1 = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(url);
-            httpPost = SuperChatApplication.addHeaderInfo(httpPost, true);
-            HttpResponse response = null;
+
             try {
+                String url = Constants.SERVER_URL + "/tiger/rest/sharedid/getall?domainName=" + sharedPrefManager.getUserDomain();
+                DefaultHttpClient client1 = new DefaultHttpClient();
+                HttpPost httpPost = new HttpPost(url);
+                httpPost = SuperChatApplication.addHeaderInfo(httpPost, true);
+                HttpResponse response = null;
+
                 try {
                     response = client1.execute(httpPost);
                     final int statusCode = response.getStatusLine().getStatusCode();
@@ -3198,25 +3195,19 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 if (progressDialog != null) {
                     progressDialog.dismiss();
                 }
-                if (isSwitchSG) {
-                    isSwitchingSG = isContactSynching = false;
-                }
+                exceptionReset();
             } catch (IOException e) {
 //						contactSyncState = CONTACT_SYNC_FAILED;
                 if (progressDialog != null) {
                     progressDialog.dismiss();
                 }
-                if (isSwitchSG) {
-                    isSwitchingSG = isContactSynching = false;
-                }
+                exceptionReset();
             } catch (Exception e) {
 //						contactSyncState = CONTACT_SYNC_FAILED;
                 if (progressDialog != null) {
                     progressDialog.dismiss();
                 }
-                if (isSwitchSG) {
-                    isSwitchingSG = isContactSynching = false;
-                }
+                exceptionReset();
             }
 
         } catch (UnsupportedEncodingException e1) {
@@ -3224,17 +3215,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             if (progressDialog != null) {
                 progressDialog.dismiss();
             }
-            if (isSwitchSG) {
-                isSwitchingSG = isContactSynching = false;
-            }
+            exceptionReset();
         } catch (Exception e) {
 //					contactSyncState = CONTACT_SYNC_FAILED;
             if (progressDialog != null) {
                 progressDialog.dismiss();
             }
-            if (isSwitchSG) {
-                isSwitchingSG = isContactSynching = false;
-            }
+            exceptionReset();
         }
 //        System.out.println("[HomeScreen : Contacts ID : Done for - " + iPrefManager.getUserDomain());
         iPrefManager.setContactSynched(iPrefManager.getUserDomain(), true);
@@ -3689,9 +3676,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 public void onFailure(retrofit2.Call call, Throwable t) {
                     if (progressDialog != null) {
                         progressDialog.dismiss();
-                        if (isSwitchSG) {
-                            isSwitchingSG = isContactSynching = false;
-                        }
+                        exceptionReset();
                     }
                     super.onFailure(call, t);
                 }
@@ -4140,6 +4125,12 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                         progressDialog.dismiss();
                         progressDialog = null;
                     }
+                }
+
+                @Override
+                public void onFailure(Call call, Throwable t) {
+                    super.onFailure(call, t);
+                    exceptionReset();
                 }
             });
         } catch (Exception e) {

@@ -570,6 +570,12 @@ private static final String TAG = "SuperGroupProfileActivity";
 
 		groupPicId = DBWrapper.getInstance().getSGLogoFileID(SharedPrefManager.getInstance().getUserDomain());
 
+		SharedPrefManager pref = SharedPrefManager.getInstance();
+		if (groupPicId == null) {
+			String domainName = pref.getUserDomain();
+			groupPicId = pref.getSGFileId(domainName);
+		}
+
 		if(groupPicId == null || groupPicId != null && (groupPicId.equals("")||groupPicId.equals("clear") || groupPicId.contains("logofileid")))
 			return false;
 		String img_path = getImagePath(groupPicId);

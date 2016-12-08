@@ -35,7 +35,10 @@ public class CountryChooserScreen  extends Activity implements OnClickListener{
 	ListView listView;
 	CountryChooserAdapter adapter;
 	EditText searchBoxView;
-	
+
+	static String chooserImage = null;
+	static String chooserCountry = null;
+
 	HashMap<String ,CountryItem> allCountries = new HashMap<String,CountryItem>();
 	ArrayList<CountryItem>  dataList = new ArrayList<CountryItem>();
 	public void onCreate(Bundle savedInstanceState){

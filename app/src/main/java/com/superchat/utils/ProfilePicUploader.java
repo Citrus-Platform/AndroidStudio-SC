@@ -100,7 +100,9 @@ public class ProfilePicUploader extends AsyncTask<String, Integer, String>{
 						final String status = jsonObject.getString("status");
 						if (status.equals("error")) {
 							retry++;
-								wait(5000);
+							synchronized (this) {
+								wait(2000);
+							}
 						} else if (status.trim().equalsIgnoreCase("success")) {
 							retry++;
 							fileId =  jsonObject.getString("fileId");

@@ -24,6 +24,9 @@ public class Constants {
     public static final String VAL_SCREEN_USER_COMING_FROM_NEW_USER_AFTER_LOGIN = "newUserAfterLogin";
     public static final String VAL_SCREEN_USER_COMING_FROM_NEW_USER_BEFORE_LOGIN = "newUserBeforeLogin";
 
+    // Extras
+    public static final String SG_CREATE_RESET = "sg_create_reset";
+
 //Ireland
 //private static final String PRODUCTION_IP = "52.208.65.253";
 //public static final String LIVE_DOMAIN = "52.208.65.253";
@@ -31,14 +34,14 @@ public class Constants {
 //==============================================================
 
     // Dev Sever
-    private static final String PRODUCTION_IP = "52.24.75.58";
-    public static final String LIVE_DOMAIN = "http://52.24.75.58";
+    // private static final String PRODUCTION_IP = "52.24.75.58";
+    // public static final String LIVE_DOMAIN = "http://52.24.75.58";
 
 //==============================================================
 
-// Live Server
-//private static final String PRODUCTION_IP = "52.88.175.48";
-//public static final String 	LIVE_DOMAIN = "http://superchat3c.com";
+    // Live Server
+    private static final String PRODUCTION_IP = "52.88.175.48";
+    public static final String 	LIVE_DOMAIN = "http://superchat3c.com";
 
 
     private static final String TMP_IP = "52.74.197.243";

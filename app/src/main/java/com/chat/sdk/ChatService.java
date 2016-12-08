@@ -3316,7 +3316,10 @@ public class ChatService extends Service implements interfaceInstances {
             contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, displayName);
             if ((message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeImage || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeVideo || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeAudio)
                     && msg != null && !from.equals(SharedPrefManager.getInstance().getUserName()) && captionTag != null)
-                contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, msg);
+                if(message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeAudio)
+                    contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, captionTag);
+                else
+                    contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, msg);
             else if (captionTag != null && !captionTag.equals(""))
                 contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, captionTag);
             if (fileName != null && !fileName.equals("")) {
@@ -5306,10 +5309,12 @@ public class ChatService extends Service implements interfaceInstances {
                 byte minutes = (byte) (audio_length / 60);
                 byte seconds = (byte) (audio_length % 60);
                 String len_msg = minutes + ":" + ((seconds < 10) ? ("0" + seconds) : seconds);
-                if (audio_length > 0)
-                    msg.setBody("Sent you a voice note : " + len_msg);
-                else
-                    msg.setBody("Sent you a voice note");
+                if(captionMsg == null) {
+                    if (audio_length > 0)
+                        msg.setBody("Sent you a voice note : " + len_msg);
+                    else
+                        msg.setBody("Sent you a voice note");
+                }
 
             }
             if (url != null) {
