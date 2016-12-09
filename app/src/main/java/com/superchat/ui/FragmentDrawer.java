@@ -62,6 +62,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import static com.superchat.R.id.superGroupContainer;
+
 public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
     private static String TAG = FragmentDrawer.class.getSimpleName();
@@ -83,7 +85,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
     LinearLayout userContainer;
     LinearLayout llInvited;
-    LinearLayout llAddSuperGroup;
+    LinearLayout llAddSuperGroup, superGroupContainer;
     RelativeLayout notificationLayout;
     boolean flagNotify = false;
 
@@ -265,11 +267,13 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
         ///////////////////////////////////////////////
 
+        superGroupContainer = (LinearLayout) layout.findViewById(R.id.superGroupContainer);
         llAddSuperGroup = (LinearLayout) layout.findViewById(R.id.llAddSuperGroup);
         userContainer = (LinearLayout) layout.findViewById(R.id.userContainer);
         llInvited = (LinearLayout) layout.findViewById(R.id.llInvited);
         notificationLayout = (RelativeLayout) layout.findViewById(R.id.notificationLayout);
 
+        superGroupContainer.setOnClickListener(this);
         llAddSuperGroup.setOnClickListener(this);
         llInvited.setOnClickListener(this);
         userContainer.setOnClickListener(this);
@@ -349,6 +353,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                 intent.putExtras(bundle);
                 startActivity(intent);
                 break;
+            case R.id.superGroupContainer:
             case R.id.llAddSuperGroup: {
                 SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
                 String mobileNumber = iPrefManager.getUserPhone();

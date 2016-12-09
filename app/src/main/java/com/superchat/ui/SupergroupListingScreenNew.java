@@ -122,6 +122,10 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
         starter.putExtras(bundle);
         context.startActivity(starter);
     }
+
+    Activity activity = this;
+    Context context = this;
+
     private static final String TAG = "SupergroupListingScreen";
     HashMap<String, AppContact> allContacts = new HashMap<String, AppContact>();
     ArrayList<AppContact> dataList;
@@ -131,7 +135,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
     EditText numberEditText;
     String countryCode = "91";
     String mobileNumber = null;
-    Button joinAsMember, createSG;
+    Button btnAsUserJoin, createSG;
     String superGroupName = "";
     String displayName = null;
     String selectedSGDisplayName = null;
@@ -143,6 +147,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
     ArrayList<String> invitedDomainNameSet = null;
     boolean newUser;
     boolean showAlertForAlreadyOwnedSG;
+    EditText domaine_name;
     Dialog picChooserDialog;
     ProfilePicUploader picUploader;
     ImageView superGroupIconView;
@@ -158,7 +163,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
 //			countryCode = bundle.getString(Constants.COUNTRY_CODE_TXT);
             mobileNumber = bundle.getString(Constants.MOBILE_NUMBER_TXT);
             invitedDomainNameSetTemp = DBWrapper.getInstance().getListOfInvitedSGs();
-            if(invitedDomainNameSetTemp != null) {
+            if (invitedDomainNameSetTemp != null) {
                 invitedDomainNameSet = new ArrayList<String>(invitedDomainNameSetTemp.size());
                 for (InvitedDomainNameSet invited : invitedDomainNameSetTemp) {
                     invitedDomainNameSet.add(invited.getDomainName());
@@ -192,7 +197,6 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
         } else
             SharedPrefManager.getInstance().setFirstTime(true);
         bottomLayout = (LinearLayout) findViewById(R.id.id_bottom_layout);
-        joinAsMember = (Button) findViewById(R.id.as_user);
         createSG = (Button) findViewById(R.id.create_sg);
         final View view = getCurrentFocus();
         if (view != null) {
@@ -202,138 +206,14 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
         }
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        final EditText domaine_name = ((EditText) findViewById(R.id.id_sg_name_field));
-        domaine_name.setOnEditorActionListener(new OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if (domaine_name.getText().toString().trim().length() < 3) {
-                        Toast.makeText(SupergroupListingScreenNew.this, getString(R.string.enter_sg_name_to_continue), Toast.LENGTH_SHORT).show();
-                        return false;
-                    }
-                    superGroupName = domaine_name.getText().toString().trim();
-                    //Check if this SG exists in Left pannel then switch directly
-                    if(superGroupName != null && superGroupName.length() > 0){
-                        OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
-                        if(owned != null && superGroupName.equalsIgnoreCase(owned.getDomainName()))
-                        {
-                            Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this SuperGroup.", Toast.LENGTH_LONG).show();
-                            return false;
-                        }
-                        ArrayList<JoinedDomainNameSet> joinedDomainNameSet= DBWrapper.getInstance().getListOfJoinedSGs();
-                        if(joinedDomainNameSet != null && joinedDomainNameSet.size() > 0) {
-                            for (JoinedDomainNameSet joined : joinedDomainNameSet) {
-                                if(joined != null && superGroupName.equalsIgnoreCase(joined.getDomainName()))
-                                {
-                                    Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this SuperGroup.", Toast.LENGTH_LONG).show();
-                                    return false;
-                                }
-                            }
-                        }
-                    }
-//                    String text = domaine_name.getText().toString();
-//                    registerUserOnServer(text, selectedSGDisplayName, view);
-                    new GetSuperGroupProfile(domaine_name.getText().toString()).execute();
-                    return true;
-                }
-                return false;
-            }
-        });
+        domaine_name = ((EditText) findViewById(R.id.id_sg_name_field));
+        domaine_name.setOnEditorActionListener(new EditChangeListener());
 
-        joinAsMember.setOnClickListener(new OnClickListener() {
+        btnAsUserJoin = (Button) findViewById(R.id.as_user);
+        if (btnAsUserJoin != null) {
+            btnAsUserJoin.setOnClickListener(this);
+        }
 
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                superGroupName = domaine_name.getText().toString().trim();
-                //Check if this SG exists in Left pannel then switch directly
-                if(superGroupName != null && superGroupName.length() > 0){
-                    OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
-                    if(owned != null && superGroupName.equalsIgnoreCase(owned.getDomainName()))
-                    {
-                        Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this SuperGroup.", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                    ArrayList<JoinedDomainNameSet> joinedDomainNameSet= DBWrapper.getInstance().getListOfJoinedSGs();
-                    if(joinedDomainNameSet != null && joinedDomainNameSet.size() > 0) {
-                        for (JoinedDomainNameSet joined : joinedDomainNameSet) {
-                            if(joined != null && superGroupName.equalsIgnoreCase(joined.getDomainName()))
-                            {
-                                Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this SuperGroup.", Toast.LENGTH_LONG).show();
-                                return;
-                            }
-                        }
-                    }
-                }
-                boolean contains = false;
-                if (invitedDomainNameSet != null && invitedDomainNameSet.contains(superGroupName))
-                    contains = true;
-                if (!contains)
-                    newUser = true;
-
-                JSONObject json;
-                String sg_display_name;
-                String sg_name;
-                String inviter = null;
-                String file_id = null;
-                String org_name = null;
-                String domainType = null;
-                boolean sg_found = false;
-                if (superGroupName != null && superGroupName.trim().length() > 0) {
-                  if (invitedDomainNameSet != null) {
-                      if (invitedDomainNameSet != null) {
-                          for (String data : invitedDomainNameSet) {
-                              try {
-                                  json = new JSONObject(data);
-                                  if (json != null && json.has("domainName")) {
-                                      sg_name = json.getString("domainName");
-                                      if (sg_name.equalsIgnoreCase(superGroupName)) {
-                                          if (json != null && json.has("adminName"))
-                                              inviter = json.getString("adminName");
-                                          else
-                                              inviter = null;
-                                          if (json != null && json.has("displayName"))
-                                              sg_display_name = json.getString("displayName");
-                                          else
-                                              sg_display_name = sg_name;
-                                          if (json != null && json.has("logoFileId"))
-                                              file_id = json.getString("logoFileId");
-                                          else
-                                              file_id = null;
-                                          if (json != null && json.has("orgName"))
-                                              org_name = json.getString("orgName");
-                                          else
-                                              org_name = null;
-                                          if (json != null && json.has("domainType"))
-                                              domainType = json.getString("domainType");
-                                          else
-                                              domainType = null;
-                                          sg_found = true;
-                                          showWelcomeScreen(superGroupName, sg_display_name, inviter, org_name, file_id, 1, domainType);
-                                          break;
-                                      }
-                                  }
-                              } catch (JSONException e) {
-                                  // TODO Auto-generated catch block
-                                  e.printStackTrace();
-                              }
-                          }
-                      }
-
-                    if (!sg_found) {
-//						showWelcomeScreen(superGroupName, inviter, org_name, file_id, 0);
-                        new GetSuperGroupProfile(superGroupName).execute();
-                    }
-                } else {
-                    if (domaine_name.getText().toString().trim().length() < 3) {
-                        Toast.makeText(SupergroupListingScreenNew.this, getString(R.string.enter_sg_name_to_continue), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    String text = domaine_name.getText().toString();
-                    registerUserOnServer(text, selectedSGDisplayName, view);
-                }
-            }
-        }});
         createSG.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -376,7 +256,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                     superGroupName = invited.getDomainName();
                     String sg_name = superGroupName;
 
-                    if(invited.getDomainDisplayName() != null)
+                    if (invited.getDomainDisplayName() != null)
                         sg_display_name = invited.getDomainDisplayName();
                     else
                         sg_display_name = superGroupName;
@@ -400,6 +280,137 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
             });
         }
         getSGList(SharedPrefManager.getInstance().getUserPhone());
+    }
+
+    class EditChangeListener implements OnEditorActionListener {
+
+        @Override
+        public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (domaine_name.getText().toString().trim().length() < 3) {
+                    Toast.makeText(SupergroupListingScreenNew.this, getString(R.string.enter_sg_name_to_continue), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                superGroupName = domaine_name.getText().toString().trim();
+                //Check if this SG exists in Left pannel then switch directly
+                if (superGroupName != null && superGroupName.length() > 0) {
+                    OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
+                    if (owned != null && superGroupName.equalsIgnoreCase(owned.getDomainName())) {
+                        Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this SuperGroup.", Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+                    ArrayList<JoinedDomainNameSet> joinedDomainNameSet = DBWrapper.getInstance().getListOfJoinedSGs();
+                    if (joinedDomainNameSet != null && joinedDomainNameSet.size() > 0) {
+                        for (JoinedDomainNameSet joined : joinedDomainNameSet) {
+                            if (joined != null && superGroupName.equalsIgnoreCase(joined.getDomainName())) {
+                                Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this SuperGroup.", Toast.LENGTH_LONG).show();
+                                return false;
+                            }
+                        }
+                    }
+                }
+//                    String text = domaine_name.getText().toString();
+//                    registerUserOnServer(text, selectedSGDisplayName, view);
+                new GetSuperGroupProfile(domaine_name.getText().toString()).execute();
+                return true;
+            }
+            return false;
+        }
+    }
+
+    private void clickJoinSG() {
+        {
+            // TODO Auto-generated method stub
+            superGroupName = domaine_name.getText().toString().trim();
+            //Check if this SG exists in Left pannel then switch directly
+            if (superGroupName != null && superGroupName.length() > 0) {
+                OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
+                if (owned != null && superGroupName.equalsIgnoreCase(owned.getDomainName())) {
+                    Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this SuperGroup.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                ArrayList<JoinedDomainNameSet> joinedDomainNameSet = DBWrapper.getInstance().getListOfJoinedSGs();
+                if (joinedDomainNameSet != null && joinedDomainNameSet.size() > 0) {
+                    for (JoinedDomainNameSet joined : joinedDomainNameSet) {
+                        if (joined != null && superGroupName.equalsIgnoreCase(joined.getDomainName())) {
+                            Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this SuperGroup.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    }
+                }
+            }
+            boolean contains = false;
+            if (invitedDomainNameSet != null && invitedDomainNameSet.contains(superGroupName))
+                contains = true;
+            if (!contains)
+                newUser = true;
+
+            JSONObject json;
+            String sg_display_name;
+            String sg_name;
+            String inviter = null;
+            String file_id = null;
+            String org_name = null;
+            String domainType = null;
+            boolean sg_found = false;
+            if (superGroupName != null && superGroupName.trim().length() > 0) {
+
+                if(invitedDomainNameSet == null){
+                    invitedDomainNameSet = new ArrayList<>();
+                }
+
+                if (invitedDomainNameSet != null) {
+                    for (String data : invitedDomainNameSet) {
+                        try {
+                            json = new JSONObject(data);
+                            if (json != null && json.has("domainName")) {
+                                sg_name = json.getString("domainName");
+                                if (sg_name.equalsIgnoreCase(superGroupName)) {
+                                    if (json != null && json.has("adminName"))
+                                        inviter = json.getString("adminName");
+                                    else
+                                        inviter = null;
+                                    if (json != null && json.has("displayName"))
+                                        sg_display_name = json.getString("displayName");
+                                    else
+                                        sg_display_name = sg_name;
+                                    if (json != null && json.has("logoFileId"))
+                                        file_id = json.getString("logoFileId");
+                                    else
+                                        file_id = null;
+                                    if (json != null && json.has("orgName"))
+                                        org_name = json.getString("orgName");
+                                    else
+                                        org_name = null;
+                                    if (json != null && json.has("domainType"))
+                                        domainType = json.getString("domainType");
+                                    else
+                                        domainType = null;
+                                    sg_found = true;
+                                    showWelcomeScreen(superGroupName, sg_display_name, inviter, org_name, file_id, 1, domainType);
+                                    break;
+                                }
+                            }
+                        } catch (JSONException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+
+                    if (!sg_found) {
+//						showWelcomeScreen(superGroupName, inviter, org_name, file_id, 0);
+                        new GetSuperGroupProfile(superGroupName).execute();
+                    }
+                } else {
+                    if (domaine_name.getText().toString().trim().length() < 3) {
+                        Toast.makeText(SupergroupListingScreenNew.this, getString(R.string.enter_sg_name_to_continue), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    String text = domaine_name.getText().toString();
+                    registerUserOnServer(text, selectedSGDisplayName, btnAsUserJoin);
+                }
+            }
+        }
     }
 
     public void onResume() {
@@ -517,6 +528,11 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
 
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.as_user: {
+                //Toast.makeText(this, "btnAsUserJoin Clicked ", Toast.LENGTH_LONG).show();
+                clickJoinSG();
+                break;
+            }
             case R.id.row_layout:
                 LinearLayout ll = (LinearLayout) view.findViewById(R.id.row_layout);
                 RadioButton radio = (RadioButton) view.findViewById(R.id.id_sg_radio_button);
@@ -1039,7 +1055,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                                 if (selectedSGDisplayName != null) {
 //                                    iPrefManager.saveCurrentSGDisplayName(selectedSGDisplayName);
                                     inviteSGDisplayName = selectedSGDisplayName;
-                                }else
+                                } else
                                     inviteSGDisplayName = inviteSGName;
 
 //                                iPrefManager.saveAuthStatus(regObj.iStatus);
@@ -1114,6 +1130,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
             super.onPostExecute(str);
         }
     }
+
     //--------------------------------------------------------------------------------------------------------
     public void showDialog(String s) {
         try {
@@ -1169,7 +1186,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                     Toast.makeText(SupergroupListingScreenNew.this, getString(R.string.display_name_hint), Toast.LENGTH_SHORT).show();
                     return false;
                 }
-                if(!SuperChatApplication.isNetworkConnected()){
+                if (!SuperChatApplication.isNetworkConnected()) {
                     Toast.makeText(SupergroupListingScreenNew.this, getString(R.string.check_net_connection), Toast.LENGTH_LONG).show();
                     return false;
                 }
@@ -1242,15 +1259,15 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                 Log.i(TAG, "verifyUserSG :: response : " + arg1);
                 Gson gson = new GsonBuilder().create();
                 final RegMatchCodeModel objUserModel = gson.fromJson(arg1, RegMatchCodeModel.class);
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						if (dialog != null) {
-							dialog.dismiss();
-							dialog = null;
-						}
-					}
-				});
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog != null) {
+                            dialog.dismiss();
+                            dialog = null;
+                        }
+                    }
+                });
                 if (objUserModel.iStatus != null
                         && objUserModel.iStatus.equalsIgnoreCase("success")) {
                     SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance();
@@ -1268,13 +1285,13 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
 
 
                     Intent data = new Intent();
-                    data.putExtra("SG_MOBILE", ""+inviteMobileNumber);
-                    data.putExtra("SG_NAME", ""+inviteSGName);
-                    data.putExtra("SG_DISPLAY_NAME", ""+inviteSGDisplayName);
-                    data.putExtra("SG_FILE_ID", ""+inviteSGFileID);
-                    data.putExtra("SG_USER_NAME", ""+inviteUserName);
+                    data.putExtra("SG_MOBILE", "" + inviteMobileNumber);
+                    data.putExtra("SG_NAME", "" + inviteSGName);
+                    data.putExtra("SG_DISPLAY_NAME", "" + inviteSGDisplayName);
+                    data.putExtra("SG_FILE_ID", "" + inviteSGFileID);
+                    data.putExtra("SG_USER_NAME", "" + inviteUserName);
                     data.putExtra("SG_USER_ID", inviteUserID);
-                    data.putExtra("SG_USER_PASSWORD", ""+inviteUserPassword);
+                    data.putExtra("SG_USER_PASSWORD", "" + inviteUserPassword);
                     setResult(RESULT_OK, data);
                     finish();
 
@@ -1304,16 +1321,16 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                 Log.i(TAG, "verifyCode method onFailure: " + arg1);
                 if (welcomeDialog != null)
                     welcomeDialog.cancel();
-				runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
 
-					@Override
-					public void run() {
-						if (dialog != null) {
-							dialog.dismiss();
-							dialog = null;
-						}
-					}
-				});
+                    @Override
+                    public void run() {
+                        if (dialog != null) {
+                            dialog.dismiss();
+                            dialog = null;
+                        }
+                    }
+                });
                 showDialog(getString(R.string.network_not_responding));
                 super.onFailure(arg0, arg1);
             }
@@ -1365,7 +1382,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
 
         }
         Intent data = new Intent();
-        data.putExtra("SG_NAME",""+superGroupName);
+        data.putExtra("SG_NAME", "" + superGroupName);
         setResult(RESULT_OK, data);
         finish();
         if (welcomeDialog != null)
@@ -1435,7 +1452,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
             String logoFileId = null;
 
             String sg_name = invited.getDomainName();
-            if(invited.getDomainDisplayName() != null)
+            if (invited.getDomainDisplayName() != null)
                 sg_display_name = invited.getDomainDisplayName();
             else
                 sg_display_name = sg_name;
@@ -1671,30 +1688,31 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
     //-----------------------------------------------------------------------------------
 
     ProgressDialog dialog = null;
-        private void getSGList(final String mobileNumber){
-        try{
-            dialog = ProgressDialog.show(SupergroupListingScreenNew.this, "","Loading invite list, please wait...", true);
+
+    private void getSGList(final String mobileNumber) {
+        try {
+            dialog = ProgressDialog.show(SupergroupListingScreenNew.this, "", "Loading invite list, please wait...", true);
             Call call = objApi.getApi(this).getSGListForMobile(mobileNumber);
             System.out.println("Retrofit : Start ");
             call.enqueue(new RetrofitRetrofitCallback<MultipleSGObject>(this) {
                 @Override
                 protected void onResponseVoidzResponse(Call call, Response response) {
-                    System.out.println("Retrofit : onResponseVoidzResponse 1 - "+response.toString());
+                    System.out.println("Retrofit : onResponseVoidzResponse 1 - " + response.toString());
 
                 }
 
                 @Override
                 protected void onResponseVoidzObject(Call call, MultipleSGObject response) {
-                    System.out.println("Retrofit : onResponseVoidzObject 2 - "+response.toString());
+                    System.out.println("Retrofit : onResponseVoidzObject 2 - " + response.toString());
                     ArrayList<InvitedDomainNameSet> invitedSG = new ArrayList<>();
                     invitedSG = response.getInvitedDomainNameSet();
-                    if(invitedSG != null && invitedSG.size() > 0) {
+                    if (invitedSG != null && invitedSG.size() > 0) {
                         DBWrapper.getInstance().addAndUpdateInvitedSGData(invitedSG);
                     }
 
                     //Redraw screen.
                     invitedDomainNameSetTemp = DBWrapper.getInstance().getListOfInvitedSGs();
-                    if(invitedDomainNameSetTemp != null) {
+                    if (invitedDomainNameSetTemp != null) {
                         invitedDomainNameSet = new ArrayList<String>(invitedDomainNameSetTemp.size());
                         for (InvitedDomainNameSet invited : invitedDomainNameSetTemp) {
                             invitedDomainNameSet.add(invited.getDomainName());
@@ -1711,8 +1729,17 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                         //This is new member, show him different view
                         listView = (ListView) findViewById(R.id.id_contacts_list);
                         if (size > 0) {
-                            if(invitedSG != null && invitedSG.size() > 0)
+                            if (invitedSG != null && invitedSG.size() > 0)
                                 setContentView(R.layout.sg_listing_for_invites_from_lhs);
+
+                            domaine_name = ((EditText) findViewById(R.id.id_sg_name_field));
+                            domaine_name.setOnEditorActionListener(new EditChangeListener());
+
+                            btnAsUserJoin = (Button) findViewById(R.id.as_user);
+                            if (btnAsUserJoin != null) {
+                                btnAsUserJoin.setOnClickListener(SupergroupListingScreenNew.this);
+                            }
+
                             expandableListView = (ExpandableListView) findViewById(R.id.expandableListView);
                             expandableListDetail = new HashMap<String, ArrayList<InvitedDomainNameSet>>();
                             int list_size = invitedDomainNameSet != null ? invitedDomainNameSet.size() : 0;
@@ -1738,7 +1765,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                                     superGroupName = invited.getDomainName();
                                     String sg_name = superGroupName;
 
-                                    if(invited.getDomainDisplayName() != null && invited.getDomainDisplayName().trim().length() > 0)
+                                    if (invited.getDomainDisplayName() != null && invited.getDomainDisplayName().trim().length() > 0)
                                         sg_display_name = invited.getDomainDisplayName();
                                     else
                                         sg_display_name = superGroupName;
@@ -1770,7 +1797,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
 
                 }
             });
-        } catch(Exception e){
+        } catch (Exception e) {
             objExceptione.printStackTrace(e);
 
         }

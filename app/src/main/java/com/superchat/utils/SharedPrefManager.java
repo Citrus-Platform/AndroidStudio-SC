@@ -1472,6 +1472,7 @@ public class SharedPrefManager {
     }
 
     public String getSGPassword(String sg) {
+        sg = sg.toLowerCase();
         String value = null;
         try {
             value = pref.getString(SG_PASSWORD + sg, null);
@@ -1481,11 +1482,13 @@ public class SharedPrefManager {
     }
 
     public void saveSGPassword(String sg, String pass) {
+        sg = sg.toLowerCase();
         editor.putString(SG_PASSWORD + sg, pass);
         editor.commit();
     }
 
     public long getSGUserID(String sg) {
+        sg = sg.toLowerCase();
         long value = 0;
         try {
             value = pref.getLong(SG_USER_ID + sg, 0);
@@ -1495,6 +1498,7 @@ public class SharedPrefManager {
     }
 
     public void saveSGUserID(String sg, long userid) {
+        sg = sg.toLowerCase();
         editor.putLong(SG_USER_ID + sg, userid);
         editor.commit();
     }

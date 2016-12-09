@@ -197,6 +197,7 @@
     <string name="display_name_hint">Please enter your full name</string>
     <string name="display_name_hint_to_continue">Please enter your full name to continue</string>
     <string name="display_ur_name_hint">Please enter your name</string>
+    <string name="display_ur_name_hint_new">Enter name</string>
     <string name="status_hint">Status</string>
     <string name="didnt_receive_pin">Didn\'t receive verification code?</string>
     <string name="invalid_pin_please_try_again">INVALID PIN PLEASE TRY AGAIN</string>

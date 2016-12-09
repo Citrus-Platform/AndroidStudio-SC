@@ -2208,6 +2208,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         protected String doInBackground(String... urls) {
             String data = null;
             try {
+
 //		    	String url = Constants.SERVER_URL + "/tiger/rest/admin/domain/check?domainName="+URLEncoder.encode(domain_name, "UTF-8");
                 String url = Constants.SERVER_URL + "/tiger/rest/user/profile/getbackup";
                 Log.i(TAG, "CheckAvailability :: doInBackground : URL - " + url);

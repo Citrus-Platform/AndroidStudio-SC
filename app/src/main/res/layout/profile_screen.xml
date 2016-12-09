@@ -116,34 +116,24 @@
              
             </RelativeLayout>
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dip"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:layout_marginRight="20dip">
-            <com.superchat.widgets.MyriadSemiboldEditText
+            <EditText
                 android:id="@+id/id_display_name_field"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:hint="@string/display_name_hint"
-                android:inputType="textCapWords"
-                android:background="@null"
+				android:minWidth="1dp"
                 android:maxLength="25"
+				android:layout_marginLeft="20dip"
+				android:layout_marginRight="20dip"
+				android:background="@null"
                 android:padding="5dip"
-                android:singleLine="true"
+                android:maxLines="1"
                 android:text=""
                 android:textColor="@color/text_color_grayblack"
                 android:textSize="16sp"
-                android:layout_weight=".8"
                 android:enabled="true"
                 android:textStyle="normal" />
-            
-           
-            </LinearLayout>
-            
+
             <View
                 android:id="@+id/view_display_name"
 		        android:layout_width="fill_parent"
