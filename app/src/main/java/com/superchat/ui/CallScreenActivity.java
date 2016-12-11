@@ -189,121 +189,6 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 		mCallId = getIntent().getStringExtra(SinchService.CALL_ID);
 	}
 
-	// @Override
-	// public void onServiceConnected() {
-	// Call call = getSinchServiceInterface().getCall(mCallId);
-	// if (call != null) {
-	// call.addCallListener(new SinchCallListener());
-	// mCallerName.setText(call.getRemoteUserId());
-	// mCallState.setText(call.getState().toString());
-	// } else {
-	// Log.e(TAG, "Started with invalid callId, aborting.");
-	// finish();
-	// }
-	// }
-	private String getImagePath(String groupPicId)
-	{
-		if(groupPicId == null)
-		 groupPicId = SharedPrefManager.getInstance().getUserFileId(SharedPrefManager.getInstance().getUserName()); // 1_1_7_G_I_I3_e1zihzwn02
-		if(groupPicId!=null){
-			String profilePicUrl = groupPicId+".jpg";//AppConstants.media_get_url+
-			File file = Environment.getExternalStorageDirectory();
-//			if(groupPicId != null && groupPicId.length() > 0 && groupPicId.lastIndexOf('/')!=-1)
-//				profilePicUrl += groupPicId.substring(groupPicId.lastIndexOf('/'));
-			
-			return new StringBuffer(file.getPath()).append(File.separator).append("SuperChat/").append(profilePicUrl).toString();
-		}
-		return null;
-	}
-    private boolean setProfilePic(String userName){
-		String groupPicId = SharedPrefManager.getInstance().getUserFileId(userName);
-
-		String img_path = null;
-		Bitmap bitmap = null;
-		if(groupPicId != null) {
-			img_path = getImagePath(groupPicId);
-			bitmap = SuperChatApplication.getBitmapFromMemCache(groupPicId);
-		}
-		ImageView picView = (ImageView) findViewById(R.id.id_profile_pic);
-		if(SharedPrefManager.getInstance().getUserGender(userName).equalsIgnoreCase("female"))
-			picView.setImageResource(R.drawable.female_default);
-		else
-			picView.setImageResource(R.drawable.male_default);
-		if (bitmap != null) {
-			picView.setImageBitmap(bitmap);
-			String profilePicUrl = groupPicId+".jpg";//AppConstants.media_get_url+
-			File file = Environment.getExternalStorageDirectory();
-			String filename = file.getPath()+ File.separator + "SuperChat/"+profilePicUrl;
-			picView.setTag(filename);
-			return true;
-		}else if(img_path != null){
-			File file1 = new File(img_path);
-//			Log.d(TAG, "PicAvailibilty: "+ Uri.parse(filename)+" , "+filename+" , "+file1.exists());
-			if(file1.exists()){
-				picView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//				((ImageView) findViewById(R.id.id_profile_pic)).setImageURI(Uri.parse(img_path));
-				setThumb((ImageView) picView,img_path,groupPicId);
-				return true;
-			}
-		}else{
-			
-		}
-		if(groupPicId!=null && groupPicId.equals("clear"))
-			return true;	
-		return false;	
-	}
-	private void setThumb(ImageView imageViewl,String path, String groupPicId){
-		BitmapFactory.Options bfo = new BitmapFactory.Options();
-	    bfo.inSampleSize = 2;
-	    Bitmap bm = null;
-	    try{
-		    bm = BitmapFactory.decodeFile(path, bfo);
-		    bm = ThumbnailUtils.extractThumbnail(bm, 200, 200);
-		    bm = rotateImage(path, bm);
-		    bm = Bitmap.createScaledBitmap(bm, 200, 200, true);
-	    }catch(Exception ex){
-	    	
-	    }
-	    if(bm!=null){
-	    	imageViewl.setImageBitmap(bm);
-	    	SuperChatApplication.addBitmapToMemoryCache(groupPicId,bm);
-	    } else{
-	    	try{
-	    		imageViewl.setImageURI(Uri.parse(path));
-	    	}catch(Exception e){
-	    		
-	    	}
-	    }
-	}
-	public static Bitmap rotateImage(String path, Bitmap bm) {
-		int orientation = 1;
-	try {
-		ExifInterface exifJpeg = new ExifInterface(path);
-		  orientation = exifJpeg.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
-////			orientation = Integer.parseInt(exifJpeg.getAttribute(ExifInterface.TAG_ORIENTATION));
-		} catch (IOException e) {
-			e.printStackTrace();
-	}
-	if (orientation != ExifInterface.ORIENTATION_NORMAL)
-	{
-		int width = bm.getWidth();
-		int height = bm.getHeight();
-		Matrix matrix = new Matrix();
-		if (orientation == ExifInterface.ORIENTATION_ROTATE_90) 
-		{
-			matrix.postRotate(90);
-		} 
-		else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
-			matrix.postRotate(180);
-		} else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
-			matrix.postRotate(270);
-		}
-		return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, true);
-		}
-			
-		return bm;
-	}
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -450,4 +335,113 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 			e.printStackTrace();
 		}
 	}
+
+
+	private String getImagePath(String groupPicId)
+	{
+		if(groupPicId == null)
+			groupPicId = SharedPrefManager.getInstance().getUserFileId(SharedPrefManager.getInstance().getUserName()); // 1_1_7_G_I_I3_e1zihzwn02
+		if(groupPicId!=null){
+			String profilePicUrl = groupPicId+".jpg";//AppConstants.media_get_url+
+			File file = Environment.getExternalStorageDirectory();
+//			if(groupPicId != null && groupPicId.length() > 0 && groupPicId.lastIndexOf('/')!=-1)
+//				profilePicUrl += groupPicId.substring(groupPicId.lastIndexOf('/'));
+
+			return new StringBuffer(file.getPath()).append(File.separator).append("SuperChat/").append(profilePicUrl).toString();
+		}
+		return null;
+	}
+
+	private boolean setProfilePic(String userName){
+		String groupPicId = SharedPrefManager.getInstance().getUserFileId(userName);
+
+		String img_path = null;
+		Bitmap bitmap = null;
+		if(groupPicId != null) {
+			img_path = getImagePath(groupPicId);
+			bitmap = SuperChatApplication.getBitmapFromMemCache(groupPicId);
+		}
+		ImageView picView = (ImageView) findViewById(R.id.id_profile_pic);
+		if(SharedPrefManager.getInstance().getUserGender(userName).equalsIgnoreCase("female"))
+			picView.setImageResource(R.drawable.female_default);
+		else
+			picView.setImageResource(R.drawable.male_default);
+		if (bitmap != null) {
+			picView.setImageBitmap(bitmap);
+			String profilePicUrl = groupPicId+".jpg";//AppConstants.media_get_url+
+			File file = Environment.getExternalStorageDirectory();
+			String filename = file.getPath()+ File.separator + "SuperChat/"+profilePicUrl;
+			picView.setTag(filename);
+			return true;
+		}else if(img_path != null){
+			File file1 = new File(img_path);
+//			Log.d(TAG, "PicAvailibilty: "+ Uri.parse(filename)+" , "+filename+" , "+file1.exists());
+			if(file1.exists()){
+				picView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+//				((ImageView) findViewById(R.id.id_profile_pic)).setImageURI(Uri.parse(img_path));
+				setThumb((ImageView) picView,img_path,groupPicId);
+				return true;
+			}
+		}else{
+
+		}
+		if(groupPicId!=null && groupPicId.equals("clear"))
+			return true;
+		return false;
+	}
+
+	private void setThumb(ImageView imageViewl,String path, String groupPicId){
+		BitmapFactory.Options bfo = new BitmapFactory.Options();
+		bfo.inSampleSize = 2;
+		Bitmap bm = null;
+		try{
+			bm = BitmapFactory.decodeFile(path, bfo);
+			bm = ThumbnailUtils.extractThumbnail(bm, 200, 200);
+			bm = rotateImage(path, bm);
+			bm = Bitmap.createScaledBitmap(bm, 200, 200, true);
+		}catch(Exception ex){
+
+		}
+		if(bm!=null){
+			imageViewl.setImageBitmap(bm);
+			SuperChatApplication.addBitmapToMemoryCache(groupPicId,bm);
+		} else{
+			try{
+				imageViewl.setImageURI(Uri.parse(path));
+			}catch(Exception e){
+
+			}
+		}
+	}
+
+	public static Bitmap rotateImage(String path, Bitmap bm) {
+		int orientation = 1;
+		try {
+			ExifInterface exifJpeg = new ExifInterface(path);
+			orientation = exifJpeg.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+////			orientation = Integer.parseInt(exifJpeg.getAttribute(ExifInterface.TAG_ORIENTATION));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (orientation != ExifInterface.ORIENTATION_NORMAL)
+		{
+			int width = bm.getWidth();
+			int height = bm.getHeight();
+			Matrix matrix = new Matrix();
+			if (orientation == ExifInterface.ORIENTATION_ROTATE_90)
+			{
+				matrix.postRotate(90);
+			}
+			else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
+				matrix.postRotate(180);
+			} else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+				matrix.postRotate(270);
+			}
+			return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, true);
+		}
+
+		return bm;
+	}
+
 }

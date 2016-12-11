@@ -1216,6 +1216,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             chatWindowName = iChatPref.getGroupDisplayName(userName);
             if (iChatPref.isBroadCast(userName)) {
                 callOption.setVisibility(View.GONE);
+                call_option_video.setVisibility(View.GONE);
                 invitationEnable = true;
                 // usersList.clear();
                 chatWindowName = iChatPref.getBroadCastDisplayName(userName);
@@ -1236,6 +1237,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             } else if (iChatPref.isGroupChat(userName) || isSharedIDMessage) {
                 openedGroupName = userName;
                 callOption.setVisibility(View.GONE);
+                call_option_video.setVisibility(View.GONE);
                 if (isPollActive)
                     createPoll.setVisibility(View.VISIBLE);
                 invitationEnable = true;
@@ -1269,6 +1271,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         if (isBulletinBroadcast) {
             chatOptions.setVisibility(View.GONE);
             callOption.setVisibility(View.GONE);
+            call_option_video.setVisibility(View.GONE);
             iChatPref.saveBulletinChatCounter(iChatPref.getUserDomain(), 0);
 //            final String next_url = iChatPref.getBulletinNextURL();
 //            if(next_url != null && !next_url.equals("0"))
@@ -1285,6 +1288,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         if (isSharedIDMessage) {
 //        	chatOptions.setVisibility(View.GONE);
             callOption.setVisibility(View.GONE);
+            call_option_video.setVisibility(View.GONE);
         }
         if (iChatPref.isGroupChat(userName))
             userIcon.setImageResource(R.drawable.group_white_icon);
@@ -1518,6 +1522,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 
         if (!iChatPref.isUserExistence(userName)) {
             callOption.setVisibility(View.GONE);
+            call_option_video.setVisibility(View.GONE);
         }
         if (ChatService.xmppConectionStatus) {
             networkConnection.setVisibility(View.GONE);
@@ -1555,8 +1560,11 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         }
         if (iChatPref.isBlocked(userName) || isBulletinBroadcast || isSharedIDMessage) {
             callOption.setVisibility(View.GONE);
-        } else if (!iChatPref.isGroupChat(userName) && !iChatPref.isBroadCast(userName))
+            call_option_video.setVisibility(View.GONE);
+        } else if (!iChatPref.isGroupChat(userName) && !iChatPref.isBroadCast(userName)) {
             callOption.setVisibility(View.VISIBLE);
+            call_option_video.setVisibility(View.VISIBLE);
+        }
         if (iChatPref.isGroupChat(userName) && !isSharedIDMessage && isPollActive) {
             if (isPollActive())
                 createPoll.setVisibility(View.VISIBLE);
@@ -1922,9 +1930,11 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 if (iChatPref.isBlocked(userName)) {
                     Toast.makeText(ChatListScreen.this, getString(R.string.block_successful), Toast.LENGTH_SHORT).show();
                     callOption.setVisibility(View.GONE);
+                    call_option_video.setVisibility(View.GONE);
                 } else {
                     Toast.makeText(ChatListScreen.this, getString(R.string.unblock_successful), Toast.LENGTH_SHORT).show();
                     callOption.setVisibility(View.VISIBLE);
+                    call_option_video.setVisibility(View.VISIBLE);
                 }
 
             } else {
@@ -3002,6 +3012,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 //        	createPoll.setVisibility(View.GONE);
         if (isSharedIDMessage) {
             callOption.setVisibility(View.GONE);
+            call_option_video.setVisibility(View.GONE);
         }
         if (isSharedIDDeactivated)
             Toast.makeText(this, "This Official ID is deactivated!", Toast.LENGTH_SHORT).show();
@@ -4447,8 +4458,10 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             }
             if (iChatPref.isBlocked(userName) || isBulletinBroadcast || isSharedIDMessage) {
                 callOption.setVisibility(View.GONE);
+                call_option_video.setVisibility(View.GONE);
             } else if (!iChatPref.isGroupChat(userName) && !iChatPref.isBroadCast(userName))
                 callOption.setVisibility(View.VISIBLE);
+            call_option_video.setVisibility(View.VISIBLE);
             Cursor cursor1 = null;
             if (isBulletinBroadcast)
                 cursor1 = ChatDBWrapper.getInstance().getUserChatList(userName, CHAT_LIST_BULLETIN);
@@ -5709,6 +5722,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             attachMediaView.setVisibility(View.GONE);
             callOption.setBackgroundResource(R.drawable.call_icon);
             callOption.setVisibility(View.GONE);
+            call_option_video.setVisibility(View.GONE);
             showDialog(iChatPref.getUserServerName(userName) + " has been removed.");
             return;
         }

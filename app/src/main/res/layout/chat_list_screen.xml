@@ -127,7 +127,7 @@
                         android:paddingRight="5dp"
                         android:paddingTop="10dp"
                         android:src="@drawable/call_icon"
-                        android:visibility="gone" />
+                        android:visibility="visible" />
 
                     <ImageView
                         android:id="@+id/create_poll"
