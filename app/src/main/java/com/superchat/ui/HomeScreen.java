@@ -4803,14 +4803,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                                         version = version.substring(version.indexOf(android) + android.length());
                                         version = version.replace("_", "");
                                         versionInt = Integer.parseInt(version);
-                                        if (versionInt > 401)
+                                        if (versionInt > 405)
                                             call_allowed = true;
 
                                     } else {//SuperChat_iphone_4.0.1
                                         version = version.substring(version.lastIndexOf('_') + 1);
                                         version = version.replace(".", "");
                                         versionInt = Integer.parseInt(version);
-                                        if (versionInt > 400)
+                                        if (versionInt > 401)
                                             call_allowed = true;
                                     }
                                     if (call_allowed) {

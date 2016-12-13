@@ -16,6 +16,7 @@ import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallClient;
 import com.sinch.android.rtc.calling.CallClientListener;
 import com.sinch.android.rtc.video.VideoController;
+import com.sinch.android.rtc.video.VideoScalingType;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
 import com.superchat.interfaces.interfaceInstances;
@@ -83,6 +84,10 @@ public class SinchService extends Service implements interfaceInstances{
         if (mSinchClient == null) {
             Log.d(TAG, "SinchClient start 2");
             mUserId = userName;
+            VideoController vc = mSinchServiceInterface.getVideoController();
+            if(vc != null){
+                vc.setResizeBehaviour(VideoScalingType.ASPECT_FILL);
+            }
             mSinchClient = Sinch.getSinchClientBuilder().context(getApplicationContext()).userId(userName)
                     .applicationKey(APP_KEY)
                     .applicationSecret(APP_SECRET)

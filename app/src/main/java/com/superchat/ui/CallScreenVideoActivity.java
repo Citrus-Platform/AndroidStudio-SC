@@ -32,6 +32,7 @@ import com.sinch.android.rtc.calling.CallEndCause;
 import com.sinch.android.rtc.calling.CallState;
 import com.sinch.android.rtc.video.VideoCallListener;
 import com.sinch.android.rtc.video.VideoController;
+import com.sinch.android.rtc.video.VideoScalingType;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.utils.SharedPrefManager;
@@ -43,6 +44,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
+import static android.media.MediaRecorder.VideoSource.CAMERA;
+import static com.superchat.R.id.remoteUser;
 
 public class CallScreenVideoActivity extends Activity implements OnClickListener{
 
@@ -62,6 +67,7 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
     private TextView mCallDuration;
     private TextView mCallState;
     private TextView mCallerName;
+    private TextView tvVideoCallingText;
 
     ImageView muteButton;
     ImageView speakerButton;
@@ -96,7 +102,7 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
                                 myName = "New User";
                             if (myName != null && myName.contains("_"))
                                 myName = "+" + myName.substring(0, myName.indexOf("_"));
-                            //setProfilePic(header.get("userName"));
+                            //setProfilePic(he12ader.get("userName"));
                         }
                         mCallerName.setText(myName);
                         mCallState.setText(call.getState().toString());
@@ -104,7 +110,7 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
                         String myName = null;
                         if(header != null && header.get("fromUserName").equals(iChatPref.getUserName())) {
                             myName = iChatPref.getUserServerName(header.get("userName"));
-                            //setProfilePic(header.get("userName"));
+                            //setProfilePic(header.get("userName"));m
                         }else {
                             myName = iChatPref.getUserServerName(call.getRemoteUserId());
                             if (myName != null && myName.equals(call.getRemoteUserId()))
@@ -159,6 +165,7 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
         }
     }
 
+    VideoController vc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -168,8 +175,9 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
 
         mAudioPlayer = new AudioPlayer(this);
         mCallDuration = (TextView) findViewById(R.id.callDuration);
-        mCallerName = (TextView) findViewById(R.id.remoteUser);
+        mCallerName = (TextView) findViewById(remoteUser);
         mCallState = (TextView) findViewById(R.id.callState);
+        tvVideoCallingText = (TextView) findViewById(R.id.callState);
         Button endCallButton = (Button) findViewById(R.id.hangupButton);
 
         isMute = false;
@@ -177,6 +185,9 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
         audioManager=(AudioManager)getSystemService(AUDIO_SERVICE);
         muteButton = (ImageView)findViewById(R.id.mute_button);
         speakerButton = (ImageView)findViewById(R.id.speaker_button);
+
+        Button switchCamera = (Button) findViewById(R.id.switchCamera);
+        switchCamera.setOnClickListener(this);
 
         muteButton.setOnClickListener(this);
         speakerButton.setOnClickListener(this);
@@ -191,6 +202,8 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
         if (savedInstanceState == null) {
             mCallStart = System.currentTimeMillis();
         }
+
+        forceSpeaker();
     }
 
     @Override
@@ -274,12 +287,11 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
                 call.hangup();
             }
         }
-        if(!HomeScreen.isLaunched){
+        /*if(!HomeScreen.isLaunched){
             Intent intent = new Intent(this, HomeScreen.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//			 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
-        }
+        }*/
         finish();
     }
 
@@ -301,7 +313,7 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
             return; //early
         }
 
-        final VideoController vc = mSinchServiceInterface.getVideoController();
+        vc = mSinchServiceInterface.getVideoController();
         if (vc != null) {
             RelativeLayout localView = (RelativeLayout) findViewById(R.id.localVideo);
             localView.addView(vc.getLocalView());
@@ -313,6 +325,7 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
             });
 
             LinearLayout view = (LinearLayout) findViewById(R.id.remoteVideo);
+            //vc.setResizeBehaviour(VideoScalingType.ASPECT_FILL);
             view.addView(vc.getRemoteView());
             mVideoViewsAdded = true;
         }
@@ -323,7 +336,7 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
             return; // early
         }
 
-        VideoController vc = mSinchServiceInterface.getVideoController();
+        vc = mSinchServiceInterface.getVideoController();
         if (vc != null) {
             LinearLayout view = (LinearLayout) findViewById(R.id.remoteVideo);
             view.removeView(vc.getRemoteView());
@@ -347,10 +360,11 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
                 audioManager.setMode(AudioManager.USE_DEFAULT_STREAM_TYPE);
             }
             String endMsg = "Call ended: " + call.getDetails().toString();
-            Toast.makeText(CallScreenVideoActivity.this, endMsg, Toast.LENGTH_LONG).show();
+            //Toast.makeText(CallScreenVideoActivity.this, endMsg, Toast.LENGTH_LONG).show();
 
             endCall();
         }
+
 
         @Override
         public void onCallEstablished(Call call) {
@@ -368,6 +382,16 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
 
             mCallStart = System.currentTimeMillis();
             Log.d(TAG, "Call offered video: " + call.getDetails().isVideoOffered());
+
+            if(mCallerName != null){
+                mCallerName.setVisibility(View.GONE);
+            }
+            if(mCallState != null){
+                mCallState.setVisibility(View.GONE);
+            }
+            if(tvVideoCallingText != null){
+                tvVideoCallingText.setVisibility(View.GONE);
+            }
         }
 
         @Override
@@ -393,6 +417,13 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
     public void onClick(View view){
         try{
             switch(view.getId()){
+                case R.id.switchCamera:{
+                    if(vc != null){
+                        vc.toggleCaptureDevicePosition();
+                        //vc.setCaptureDevicePosition(CAMERA_FACING_BACK);
+                    }
+                    break;
+                }
                 case R.id.mute_button:
                     if(audioController!=null){
                         if(!isMute){
@@ -407,16 +438,7 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
                     break;
                 case R.id.speaker_button:
                     if(audioController!=null){
-                        if(isSpeaker){
-                            audioController.disableSpeaker();
-                            speakerButton.setImageResource(R.drawable.speaker);
-                            //audioManager.setSpeakerphoneOn(false);
-                        }else{
-                            audioController.enableSpeaker();
-                            speakerButton.setImageResource(R.drawable.speaker_selected);
-                            //audioManager.setSpeakerphoneOn(true);
-                        }
-                        isSpeaker = !isSpeaker;
+                        toggleSpeaker();
                     }
                     break;
             }
@@ -425,6 +447,26 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
         }
     }
 
+    private void forceSpeaker(){
+        if(audioController!=null) {
+            audioController.enableSpeaker();
+            speakerButton.setImageResource(R.drawable.speaker_selected);
+            isSpeaker = !isSpeaker;
+        }
+    }
+
+    private void toggleSpeaker(){
+        if(isSpeaker){
+            audioController.disableSpeaker();
+            speakerButton.setImageResource(R.drawable.speaker);
+            //audioManager.setSpeakerphoneOn(false);
+        }else{
+            audioController.enableSpeaker();
+            speakerButton.setImageResource(R.drawable.speaker_selected);
+            //audioManager.setSpeakerphoneOn(true);
+        }
+        isSpeaker = !isSpeaker;
+    }
 
     private String getImagePath(String groupPicId)
     {

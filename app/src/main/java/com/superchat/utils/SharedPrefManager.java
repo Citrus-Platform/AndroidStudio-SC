@@ -568,17 +568,16 @@ public class SharedPrefManager {
         editor.putBoolean(ME_ACTIVATED + userName, isFirstTime);
         editor.commit();
     }
-
     public long getLastBackUpTime() {
-        long value = pref.getLong(LAST_BACKUP_TIME, 0);
+        String sg = getUserDomain();
+        long value = pref.getLong(LAST_BACKUP_TIME + sg, 0);
         return value;
     }
-
     public void setLastBackUpTime(long time) {
-        editor.putLong(LAST_BACKUP_TIME, time);
+        String sg = getUserDomain();
+        editor.putLong(LAST_BACKUP_TIME + sg, time);
         editor.commit();
     }
-
 
     public String getBulletin_File_Id(String sg) {
         String value = pref.getString(BULLETIN_FILE_ID + sg, null);
