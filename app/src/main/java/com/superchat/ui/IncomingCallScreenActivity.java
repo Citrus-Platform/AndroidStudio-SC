@@ -26,6 +26,7 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chat.sdk.db.ChatDBWrapper;
@@ -34,6 +35,7 @@ import com.sinch.android.rtc.PushPair;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallEndCause;
 import com.sinch.android.rtc.calling.CallListener;
+import com.sinch.android.rtc.video.VideoController;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.utils.BitmapDownloader;
@@ -365,7 +367,8 @@ public class IncomingCallScreenActivity extends Activity {
     	            wakeLock.release();
     	        }
     }
-    private class SinchCallListener implements CallListener {
+
+	private class SinchCallListener implements CallListener {
 
         @Override
         public void onCallEnded(Call call) {

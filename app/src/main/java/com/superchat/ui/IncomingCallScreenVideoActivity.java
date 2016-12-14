@@ -24,6 +24,8 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chat.sdk.db.ChatDBWrapper;
@@ -32,6 +34,7 @@ import com.sinch.android.rtc.PushPair;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallEndCause;
 import com.sinch.android.rtc.video.VideoCallListener;
+import com.sinch.android.rtc.video.VideoController;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.utils.BitmapDownloader;
@@ -106,6 +109,8 @@ public class IncomingCallScreenVideoActivity extends Activity {
                     else
                         sg_name.setText(SharedPrefManager.getInstance().getUserDomain());
                     audioController = mSinchServiceInterface.getAudioController();
+
+                    showLocalVideoView();
                 } else {
                     Log.e(TAG, "Started with invalid callId, aborting");
                     finish();
@@ -336,6 +341,12 @@ public class IncomingCallScreenVideoActivity extends Activity {
         finish();
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        removeVideoViews();
+    }
+
     public void onResume() {
         super.onResume();
         bindService(new Intent(this, SinchService.class), mCallConnection,Context.BIND_AUTO_CREATE);
@@ -354,6 +365,33 @@ public class IncomingCallScreenVideoActivity extends Activity {
             wakeLock.release();
         }
     }
+
+
+    private void showLocalVideoView() {
+        if (mSinchServiceInterface == null) {
+            return; //early
+        }
+/*
+        VideoController vc = mSinchServiceInterface.getVideoController();
+        if (vc != null) {
+            RelativeLayout localVideoIncomingScreen = (RelativeLayout) findViewById(R.id.localVideoIncomingScreen);
+            localVideoIncomingScreen.addView(vc.getLocalView());
+        }*/
+    }
+
+
+    private void removeVideoViews() {
+        if (mSinchServiceInterface == null) {
+            return; // early
+        }
+/*
+        VideoController vc = mSinchServiceInterface.getVideoController();
+        if (vc != null) {
+            RelativeLayout localVideoIncomingScreen = (RelativeLayout) findViewById(R.id.localVideoIncomingScreen);
+            localVideoIncomingScreen.removeView(vc.getRemoteView());
+        }*/
+    }
+
     private class SinchCallListener implements VideoCallListener {
 
         @Override

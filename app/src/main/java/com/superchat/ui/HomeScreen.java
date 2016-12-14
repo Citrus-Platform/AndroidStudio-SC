@@ -490,8 +490,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        flagFrag = 0;
         ChatDBWrapper.getInstance(SuperChatApplication.context);
         DBWrapper.getInstance(SuperChatApplication.context);
+
+        startService(new Intent(SuperChatApplication.context, SinchService.class));
+
         //Check if user is not logged
 //        if (isServiceRunning("com.chat.sdk.ChatService")) {
 //            System.out.println("[SERVICE RUNNING - SO STOPPING]");
@@ -744,6 +749,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             // Register the user for call
             if (mSinchServiceInterface != null && !mSinchServiceInterface.isStarted()) {
                 mSinchServiceInterface.startClient(SharedPrefManager.getInstance().getUserName());
+                bindService(new Intent(HomeScreen.this, SinchService.class), mCallConnection, Context.BIND_AUTO_CREATE);
             }
         }
 
@@ -2118,6 +2124,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     public void onResume() {
         super.onResume();
         try {
+
+            invalidateOptionsMenu();
+
             isforeGround = true;
             isLaunched = true;
 

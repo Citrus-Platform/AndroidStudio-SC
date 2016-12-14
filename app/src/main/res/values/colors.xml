@@ -23,7 +23,7 @@
     
     <color name="white">#ffffffff</color>
     <color name="black">#ff000000</color>
-    <color name="color_call_screen_bg">#ff6a6b6e</color>
+    <color name="color_call_screen_bg">#000000</color>
     <color name="chat_name_color">#ff4e4d4d</color>
     <color name="gray">#ffddddcc</color>
     <color name="dark_gray">#ff8c90a9</color>

@@ -74,7 +74,6 @@
         android:layout_gravity="center"
         android:layout_marginTop="15dp"
         android:layout_weight="1"
-        android:background="#a2a3a7"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="5dp" >
@@ -107,10 +106,10 @@
 
         <Button
             android:id="@+id/hangupButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_centerInParent="true"
-            android:background="@drawable/call_disconnect" />
+            android:background="@drawable/ic_call_drop" />
     </RelativeLayout>
 
 </LinearLayout>

@@ -48,6 +48,7 @@ import java.util.TimerTask;
 import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 import static android.media.MediaRecorder.VideoSource.CAMERA;
 import static com.superchat.R.id.remoteUser;
+import static com.superchat.R.id.sg_name;
 
 public class CallScreenVideoActivity extends Activity implements OnClickListener{
 
@@ -64,9 +65,11 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
     private boolean mAddedListener = false;
     private boolean mVideoViewsAdded = false;
 
+    private LinearLayout llCallingTextBlock;
     private TextView mCallDuration;
+    private TextView remoteUser;
+    private TextView sg_name;
     private TextView mCallState;
-    private TextView mCallerName;
     private TextView tvVideoCallingText;
 
     ImageView muteButton;
@@ -88,6 +91,8 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
                 Call call = mSinchServiceInterface.getCall(mCallId);
                 if (call != null) {
                     call.addCallListener(new CallScreenVideoActivity.SinchCallListener());
+                    remoteUser = (TextView) findViewById(R.id.remoteUser);
+                    sg_name = (TextView) findViewById(R.id.sg_name);
                     Map<String, String> header = call.getHeaders();
                     if(header != null && !header.get("fromUserName").equals(iChatPref.getUserName())) {
                         String myName = header.get("displayName");
@@ -104,7 +109,7 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
                                 myName = "+" + myName.substring(0, myName.indexOf("_"));
                             //setProfilePic(he12ader.get("userName"));
                         }
-                        mCallerName.setText(myName);
+                        remoteUser.setText(myName);
                         mCallState.setText(call.getState().toString());
                     }else {
                         String myName = null;
@@ -121,13 +126,13 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
                                 myName = "+" + myName.substring(0, myName.indexOf("_"));
                             //setProfilePic(call.getRemoteUserId());
                         }
-                        mCallerName.setText(myName);
+                        remoteUser.setText(myName);
                         mCallState.setText(call.getState().toString());
                     }
                     if(SharedPrefManager.getInstance().getCurrentSGDisplayName() != null && SharedPrefManager.getInstance().getCurrentSGDisplayName().trim().length() > 0)
-                        mCallerName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
+                        sg_name.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
                     else
-                        mCallerName.setText(SharedPrefManager.getInstance().getUserDomain());
+                        sg_name.setText(SharedPrefManager.getInstance().getUserDomain());
                     audioController = mSinchServiceInterface.getAudioController();
                 } else {
                     Log.e(TAG, "Started with invalid callId, aborting.");
@@ -174,10 +179,13 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
         iChatPref = SharedPrefManager.getInstance();
 
         mAudioPlayer = new AudioPlayer(this);
+
+        llCallingTextBlock = (LinearLayout) findViewById(R.id.llCallingTextBlock);
         mCallDuration = (TextView) findViewById(R.id.callDuration);
-        mCallerName = (TextView) findViewById(remoteUser);
+        remoteUser = (TextView) findViewById(R.id.remoteUser);
+        sg_name = (TextView) findViewById(R.id.sg_name);
         mCallState = (TextView) findViewById(R.id.callState);
-        tvVideoCallingText = (TextView) findViewById(R.id.callState);
+        tvVideoCallingText = (TextView) findViewById(R.id.tvVideoCallingText);
         Button endCallButton = (Button) findViewById(R.id.hangupButton);
 
         isMute = false;
@@ -239,6 +247,8 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
         mDurationTask = new CallScreenVideoActivity.UpdateCallDurationTask();
         mTimer.schedule(mDurationTask, 0, 500);
         bindService(new Intent(this, SinchService.class), mCallConnection, Context.BIND_AUTO_CREATE);
+
+        showLocalVideoView();
     }
 
     @Override
@@ -270,7 +280,6 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
 
         Call call = mSinchServiceInterface.getCall(mCallId);
         if (call != null) {
-            mCallerName.setText(call.getRemoteUserId());
             mCallState.setText(call.getState().toString());
             if (call.getState() == CallState.ESTABLISHED) {
                 addVideoViews();
@@ -308,6 +317,20 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
         }
     }
 
+    private void showLocalVideoView() {
+        if (mVideoViewsAdded || mSinchServiceInterface == null) {
+            return; //early
+        }
+
+        vc = mSinchServiceInterface.getVideoController();
+        if (vc != null) {
+            RelativeLayout localView = (RelativeLayout) findViewById(R.id.localVideo);
+            localView.removeAllViews();
+            localView.addView(vc.getLocalView());
+        }
+    }
+
+
     private void addVideoViews() {
         if (mVideoViewsAdded || mSinchServiceInterface == null) {
             return; //early
@@ -316,16 +339,11 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
         vc = mSinchServiceInterface.getVideoController();
         if (vc != null) {
             RelativeLayout localView = (RelativeLayout) findViewById(R.id.localVideo);
+            localView.removeAllViews();
             localView.addView(vc.getLocalView());
-            localView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    vc.toggleCaptureDevicePosition();
-                }
-            });
 
             LinearLayout view = (LinearLayout) findViewById(R.id.remoteVideo);
-            //vc.setResizeBehaviour(VideoScalingType.ASPECT_FILL);
+            view.removeAllViews();
             view.addView(vc.getRemoteView());
             mVideoViewsAdded = true;
         }
@@ -383,14 +401,8 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
             mCallStart = System.currentTimeMillis();
             Log.d(TAG, "Call offered video: " + call.getDetails().isVideoOffered());
 
-            if(mCallerName != null){
-                mCallerName.setVisibility(View.GONE);
-            }
-            if(mCallState != null){
-                mCallState.setVisibility(View.GONE);
-            }
-            if(tvVideoCallingText != null){
-                tvVideoCallingText.setVisibility(View.GONE);
+            if(llCallingTextBlock != null){
+                llCallingTextBlock.setVisibility(View.GONE);
             }
         }
 
@@ -398,6 +410,7 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
         public void onCallProgressing(Call call) {
             Log.d(TAG, "Call progressing");
             mAudioPlayer.playProgressTone();
+            showLocalVideoView();
         }
 
         @Override

@@ -350,8 +350,6 @@
                             android:textSize="15sp"
                             android:visibility="gone" />
 
-                       
-
                         <ProgressBar
                             android:id="@+id/progress_voice_loader"
                             style="@android:style/Widget.ProgressBar.Horizontal"
