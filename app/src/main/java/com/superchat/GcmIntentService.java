@@ -134,17 +134,24 @@ public class GcmIntentService extends IntentService {
 					if(user == null)
 						return;
 
-					//Check For special Message type
-					if(senderUserName == null && groupName ==  null)
-					{
-						if(HomeScreen.isforeGround){
-							EventBus.getDefault().post(message);
-						} else {
-							EventBus.getDefault().post(message);
-							showSystemMessage(message);
-							GcmBroadcastReceiver.completeWakefulIntent(intent);
+					try {
+						//Check For special Message type
+						if (senderUserName == null && groupName == null) {
+							if (HomeScreen.isforeGround) {
+								if(message != null) {
+									EventBus.getDefault().post(message);
+								}
+							} else {
+								if(message != null) {
+									EventBus.getDefault().post(message);
+									showSystemMessage(message);
+									GcmBroadcastReceiver.completeWakefulIntent(intent);
+								}
+							}
+							return;
 						}
-						return;
+					} catch(Exception e){
+
 					}
 
 				if(domainName != null && !domainName.equals(currentDomain)){

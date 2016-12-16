@@ -63,6 +63,7 @@ public class MoreScreen extends Activity implements OnClickListener {
     RelativeLayout sgProfileLayout;
     RelativeLayout checkUpdateLayout;
     RelativeLayout soonzeLayout;
+    RelativeLayout id_data_usage_layout;
     RelativeLayout memberManageLayout;
     //	RelativeLayout memberStatsLayout;
     RelativeLayout privacyLayout;
@@ -91,7 +92,9 @@ public class MoreScreen extends Activity implements OnClickListener {
 
         checkUpdateLayout = (RelativeLayout) findViewById(R.id.id_checkupdate_layout);
         soonzeLayout = (RelativeLayout) findViewById(R.id.id_snooze_layout);
+        id_data_usage_layout = (RelativeLayout) findViewById(R.id.id_data_usage_layout);
         privacyLayout.setOnClickListener(this);
+        id_data_usage_layout.setOnClickListener(this);
         soonzeLayout.setOnClickListener(this);
         ((RelativeLayout) findViewById(R.id.id_chat_layout)).setOnClickListener(this);
         sharedPrefManager = SharedPrefManager.getInstance();
@@ -326,6 +329,11 @@ public class MoreScreen extends Activity implements OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.id_data_usage_layout: {
+                Intent intent = new Intent(this, DataUsageSetting.class);
+                startActivity(intent);
+                break;
+            }
             case R.id.id_chat_layout:
                 Intent intent = new Intent(this, ChatBackupScreen.class);
                 startActivity(intent);

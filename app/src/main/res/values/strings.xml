@@ -52,6 +52,7 @@
     <string name="gallery">Gallery</string>
     <string name="remove">Remove</string>
     <string name="chat">Chats</string>
+    <string name="data_usage_settings">Data usage</string>
     <string name="inbox">Inbox</string>
     <string name="small_chat">Chats</string>
     <string name="pin_not_entered">Please enter verification code.</string>

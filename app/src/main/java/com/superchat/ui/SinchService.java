@@ -96,6 +96,7 @@ public class SinchService extends Service implements interfaceInstances{
         }
 
         mSinchClient.setSupportCalling(true);
+        mSinchClient.setSupportManagedPush(true);
         mSinchClient.startListeningOnActiveConnection();
         mSinchClient.addSinchClientListener(new MySinchClientListener());
         mSinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());

@@ -72,7 +72,9 @@ public class IncomingCallScreenVideoActivity extends Activity {
                     TextView remoteUser = (TextView) findViewById(R.id.remoteUser);
                     TextView sg_name = (TextView) findViewById(R.id.sg_name);
                     Map<String, String> header = call.getHeaders();
+                    String domainName = null;
                     if(header != null) {
+                        domainName = header.get("domainName");
                         String myName = header.get("displayName");
 //							if (myName != null && myName.equalsIgnoreCase(call.getRemoteUserId()))
 //								myName = chatDBWrapper.getUsersDisplayName(call.getRemoteUserId());
@@ -104,10 +106,17 @@ public class IncomingCallScreenVideoActivity extends Activity {
                         remoteUser.setText(myName);
                         setProfilePic(call.getRemoteUserId(), null);
                     }
-                    if(SharedPrefManager.getInstance().getCurrentSGDisplayName() != null && SharedPrefManager.getInstance().getCurrentSGDisplayName().trim().length() > 0)
-                        sg_name.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
-                    else
-                        sg_name.setText(SharedPrefManager.getInstance().getUserDomain());
+
+
+                    if(domainName != null){
+                        sg_name.setText(domainName);
+                    } else {
+							if (SharedPrefManager.getInstance().getCurrentSGDisplayName() != null && SharedPrefManager.getInstance().getCurrentSGDisplayName().trim().length() > 0)
+								sg_name.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
+							else
+								sg_name.setText(SharedPrefManager.getInstance().getUserDomain());
+						}
+
                     audioController = mSinchServiceInterface.getAudioController();
 
                     showLocalVideoView();

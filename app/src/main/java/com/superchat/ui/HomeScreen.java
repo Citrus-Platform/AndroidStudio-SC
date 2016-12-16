@@ -749,7 +749,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             // Register the user for call
             if (mSinchServiceInterface != null && !mSinchServiceInterface.isStarted()) {
                 mSinchServiceInterface.startClient(SharedPrefManager.getInstance().getUserName());
-                bindService(new Intent(HomeScreen.this, SinchService.class), mCallConnection, Context.BIND_AUTO_CREATE);
             }
         }
 
