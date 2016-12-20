@@ -4413,7 +4413,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             if (pref.getUserFileId(pref.getUserName()) != null)
                 headers.put("picid", pref.getUserFileId(pref.getUserName()));
             headers.put("userId", "" + pref.getUserId());
-            headers.put("domainName", pref.getUserDomain());
+
+            if (SharedPrefManager.getInstance().getCurrentSGDisplayName() != null && SharedPrefManager.getInstance().getCurrentSGDisplayName().trim().length() > 0)
+                headers.put("domainName", SharedPrefManager.getInstance().getCurrentSGDisplayName());
+            else
+                headers.put("domainName", SharedPrefManager.getInstance().getUserDomain());
+
+            //headers.put("domainName", pref.getUserDomain());
 
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -54,16 +54,27 @@
             android:textColorHighlight="@color/header_color"
             android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/call_option"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="25dip"
-            android:background="@drawable/call_icon1"
-            android:onClick="onCallClicked"
-            android:visibility="gone" />
+		<ImageView
+			android:id="@+id/call_option"
+			android:layout_width="30dp"
+			android:layout_height="30dp"
+			android:layout_centerVertical="true"
+			android:layout_marginRight="10dip"
+			android:background="@drawable/call_icon_new"
+			android:layout_toLeftOf="@+id/call_option_video"
+			android:onClick="onCallClicked"
+			android:visibility="gone" />
+
+		<ImageView
+			android:id="@+id/call_option_video"
+			android:layout_width="30dp"
+			android:layout_height="30dp"
+			android:layout_alignParentRight="true"
+			android:layout_centerVertical="true"
+			android:layout_marginRight="25dip"
+			android:background="@drawable/video_call"
+			android:onClick="onCallClickedVideo"
+			android:visibility="gone" />
     </RelativeLayout>
 
     <ScrollView
@@ -516,7 +527,10 @@
                         android:visibility="gone" />
                 </RelativeLayout>
             </LinearLayout>
-
+
+
+
+
 
             <LinearLayout
                 android:id="@+id/groups_incommon"

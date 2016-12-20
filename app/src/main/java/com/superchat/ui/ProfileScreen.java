@@ -153,6 +153,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
     public static String oldImageFileId;
     public String userSelectedFileID;
     ImageView callOption;
+    ImageView callOptionVideo;
     private static final byte VIEWWING_AS_SELF_IN_REG = 0;
     private static final byte EDIT_BY_SELF = 1;
     private static final byte VIEW_SG_MEMBER = 2;
@@ -439,6 +440,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
         picChooserDialog.findViewById(R.id.id_gallery).setOnClickListener(this);
         picChooserDialog.findViewById(R.id.id_remove).setOnClickListener(this);
         callOption = (ImageView) findViewById(R.id.call_option);
+        callOptionVideo = (ImageView) findViewById(R.id.call_option_video);
 
         initProfile();
         setViewListener();
@@ -960,6 +962,9 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                 }
                 if (callOption != null)
                     callOption.setVisibility(View.GONE);
+                if (callOptionVideo != null)
+                    callOptionVideo.setVisibility(View.GONE);
+
                 if (emailView != null)
                     emailView.setText(iSharedPrefManager.getUserEmail());
                 String formatedNumber = iSharedPrefManager.getUserPhone();
@@ -1004,6 +1009,8 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                     mobileView.setVisibility(Button.GONE);
                 if (callOption != null)
                     callOption.setVisibility(View.VISIBLE);
+                if (callOptionVideo != null)
+                    callOptionVideo.setVisibility(View.VISIBLE);
                 if (nextButtonView != null)
                     nextButtonView.setVisibility(Button.GONE);
                 if (((ImageView) findViewById(R.id.id_edit_pic)) != null)
@@ -1174,12 +1181,17 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
         if (mSinchServiceInterface != null) {
             try {
                 HomeScreen.checkForCall(userName, this, mSinchServiceInterface);
-//                Call call = mSinchServiceInterface.callUserWithHeader(userName, HomeScreen.createHeaderForCalling(userName));
-//                String callId = call.getCallId();
-//
-//                Intent callScreen = new Intent(this, CallScreenActivity.class);
-//                callScreen.putExtra(SinchService.CALL_ID, callId);
-//                startActivity(callScreen);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public void onCallClickedVideo(View view) {
+        if (mSinchServiceInterface != null) {
+            try {
+                HomeScreen.checkForVideoCall(userName, this, mSinchServiceInterface);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -373,7 +373,9 @@ public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountL
 
         protected void onPostExecute(String result) {
             if (cursor != null && cursor.getCount() > 0) {
-                noneMessageView.setVisibility(TextView.GONE);
+                if(noneMessageView != null) {
+                    noneMessageView.setVisibility(TextView.GONE);
+                }
 //					String as[] = { DatabaseConstants.FROM_USER_FIELD};
 //					int ai[] = new int[1];
 //					ai[0] = R.id.chat_person_name;

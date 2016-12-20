@@ -40,6 +40,8 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.superchat.R.id.sg_name;
+
 public class CallScreenActivity extends Activity implements OnClickListener{
 
 	static final String TAG = CallScreenActivity.class.getSimpleName();
@@ -73,7 +75,11 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 				 if (call != null) {
 					 call.addCallListener(new SinchCallListener());
 					 Map<String, String> header = call.getHeaders();
+					 String domainDisplayName = null;
+					 String domainName = null;
 					 if(header != null && !header.get("fromUserName").equals(iChatPref.getUserName())) {
+						 domainDisplayName = header.get("domainDisplayName");
+						 domainName = header.get("domainName");
 						 String myName = header.get("displayName");
 						 if(myName != null){
 							 setProfilePic(header.get("fromUserName"));
@@ -108,10 +114,26 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 						 mCallerName.setText(myName);
 						 mCallState.setText(call.getState().toString());
 					 }
+
+					 Log.e("Calling : ", "domainDisplayName : "+ domainDisplayName + "\ndomainName : "+domainName);
+					 if(domainDisplayName != null){
+						 sgName.setText(domainDisplayName);
+					 } else if(domainName != null){
+						 sgName.setText(domainName);
+					 } else {
+						 if (SharedPrefManager.getInstance().getCurrentSGDisplayName() != null && SharedPrefManager.getInstance().getCurrentSGDisplayName().trim().length() > 0)
+							 sgName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
+						 else
+							 sgName.setText(SharedPrefManager.getInstance().getUserDomain());
+					 }
+/*
+
 					 if(SharedPrefManager.getInstance().getCurrentSGDisplayName() != null && SharedPrefManager.getInstance().getCurrentSGDisplayName().trim().length() > 0)
 						 sgName.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
 					 else
 						 sgName.setText(SharedPrefManager.getInstance().getUserDomain());
+*/
+
 					 audioController = mSinchServiceInterface.getAudioController();
 				 } else {
 					 Log.e(TAG, "Started with invalid callId, aborting.");
@@ -169,7 +191,7 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 		mAudioPlayer = new AudioPlayer(this);
 		mCallDuration = (TextView) findViewById(R.id.callDuration);
 		mCallerName = (TextView) findViewById(R.id.remoteUser);
-		sgName = (TextView) findViewById(R.id.sg_name);
+		sgName = (TextView) findViewById(sg_name);
 		mCallState = (TextView) findViewById(R.id.callState);
 		Button endCallButton = (Button) findViewById(R.id.hangupButton);
 		isMute = false;

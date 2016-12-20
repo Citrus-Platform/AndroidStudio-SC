@@ -94,7 +94,11 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
                     remoteUser = (TextView) findViewById(R.id.remoteUser);
                     sg_name = (TextView) findViewById(R.id.sg_name);
                     Map<String, String> header = call.getHeaders();
+                    String domainDisplayName = null;
+                    String domainName = null;
                     if(header != null && !header.get("fromUserName").equals(iChatPref.getUserName())) {
+                        domainDisplayName = header.get("domainDisplayName");
+                        domainName = header.get("domainName");
                         String myName = header.get("displayName");
                         if(myName != null){
                             //setProfilePic(header.get("fromUserName"));
@@ -129,10 +133,25 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
                         remoteUser.setText(myName);
                         mCallState.setText(call.getState().toString());
                     }
+
+                    String displayName = SharedPrefManager.getInstance().getGroupDisplayName(domainName);
+                    Log.e("Calling : ", "domainDisplayName : "+ domainDisplayName + "\ndomainName : "+domainName
+                            + "\ndisplayName : "+displayName);
+                    if(domainDisplayName != null){
+                        sg_name.setText(domainDisplayName);
+                    } else if(domainName != null){
+                        sg_name.setText(domainName);
+                    } else {
+                        if (SharedPrefManager.getInstance().getCurrentSGDisplayName() != null && SharedPrefManager.getInstance().getCurrentSGDisplayName().trim().length() > 0)
+                            sg_name.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
+                        else
+                            sg_name.setText(SharedPrefManager.getInstance().getUserDomain());
+                    }
+                    /*
                     if(SharedPrefManager.getInstance().getCurrentSGDisplayName() != null && SharedPrefManager.getInstance().getCurrentSGDisplayName().trim().length() > 0)
                         sg_name.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
                     else
-                        sg_name.setText(SharedPrefManager.getInstance().getUserDomain());
+                        sg_name.setText(SharedPrefManager.getInstance().getUserDomain());*/
                     audioController = mSinchServiceInterface.getAudioController();
                 } else {
                     Log.e(TAG, "Started with invalid callId, aborting.");

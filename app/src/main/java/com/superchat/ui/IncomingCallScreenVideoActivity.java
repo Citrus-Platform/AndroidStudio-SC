@@ -72,8 +72,10 @@ public class IncomingCallScreenVideoActivity extends Activity {
                     TextView remoteUser = (TextView) findViewById(R.id.remoteUser);
                     TextView sg_name = (TextView) findViewById(R.id.sg_name);
                     Map<String, String> header = call.getHeaders();
+                    String domainDisplayName = null;
                     String domainName = null;
                     if(header != null) {
+                        domainDisplayName = header.get("domainDisplayName");
                         domainName = header.get("domainName");
                         String myName = header.get("displayName");
 //							if (myName != null && myName.equalsIgnoreCase(call.getRemoteUserId()))
@@ -84,6 +86,7 @@ public class IncomingCallScreenVideoActivity extends Activity {
 //							if (myName != null && myName.equals(call.getRemoteUserId())) {
 //								myName = "New User";
 //							}
+
 //							if (myName != null && myName.contains("_"))
 //								myName = "+" + myName.substring(0, myName.indexOf("_"));
                         remoteUser.setText(myName);
@@ -107,8 +110,12 @@ public class IncomingCallScreenVideoActivity extends Activity {
                         setProfilePic(call.getRemoteUserId(), null);
                     }
 
-
-                    if(domainName != null){
+                    String displayName = SharedPrefManager.getInstance().getGroupDisplayName(domainName);
+                    Log.e("Calling : ", "domainDisplayName : "+ domainDisplayName + "\ndomainName : "+domainName
+                            + "\ndisplayName : "+displayName);
+                    if(domainDisplayName != null){
+                        sg_name.setText(domainDisplayName);
+                    } else if(domainName != null){
                         sg_name.setText(domainName);
                     } else {
 							if (SharedPrefManager.getInstance().getCurrentSGDisplayName() != null && SharedPrefManager.getInstance().getCurrentSGDisplayName().trim().length() > 0)
