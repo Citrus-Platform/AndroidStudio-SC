@@ -263,7 +263,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
         setProfilePic(displayPictureCurrent);
 
-        user.setText("" + SharedPrefManager.getInstance().getDisplayName() + " (You)");
+        user.setText("" + SharedPrefManager.getInstance().getDisplayName());
+//        user.setText("" + SharedPrefManager.getInstance().getDisplayName() + " (You)");
 
         ///////////////////////////////////////////////
 
@@ -292,7 +293,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
         setProfilePic(displayPictureCurrent);
-        user.setText("" + SharedPrefManager.getInstance().getDisplayName() + " (You)");
+        user.setText("" + SharedPrefManager.getInstance().getDisplayName());
 
         super.onResume();
     }

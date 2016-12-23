@@ -505,287 +505,287 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
     private void setViewListener() {
         if (displayNameView != null) {
             displayNameView.setFilters(new InputFilter[]{filter});
-            displayNameView.setOnFocusChangeListener(new OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        if (view_display_name != null)
-                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_blue));
-
-                        if (currentStatusView != null)
-                            currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (aboutView != null)
-                            aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
-                            currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (empIdView != null)
-                            empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (departmentView != null)
-                            departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (emailView != null)
-                            emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (designationView != null)
-                            designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (addressView != null)
-                            addressView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                    }
-                }
-            });
+//            displayNameView.setOnFocusChangeListener(new OnFocusChangeListener() {
+//                public void onFocusChange(View v, boolean hasFocus) {
+//                    if (hasFocus) {
+//                        if (view_display_name != null)
+//                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_blue));
+//
+//                        if (currentStatusView != null)
+//                            currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (aboutView != null)
+//                            aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
+//                            currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (empIdView != null)
+//                            empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (departmentView != null)
+//                            departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (emailView != null)
+//                            emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (designationView != null)
+//                            designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (addressView != null)
+//                            addressView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                    }
+//                }
+//            });
         }
 
         if (designationView != null)
-            designationView.setOnFocusChangeListener(new OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        designationView.setBackgroundResource(R.drawable.textbox_selection_bg);
-
-                        if (departmentView != null)
-                            departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                        if (view_display_name != null)
-                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-
-                        if (currentStatusView != null)
-                            currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (aboutView != null)
-                            aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
-                            currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (empIdView != null)
-                            empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (emailView != null)
-                            emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (addressView != null)
-                            addressView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                    }
-                }
-            });
+//            designationView.setOnFocusChangeListener(new OnFocusChangeListener() {
+//                public void onFocusChange(View v, boolean hasFocus) {
+//                    if (hasFocus) {
+//                        designationView.setBackgroundResource(R.drawable.textbox_selection_bg);
+//
+//                        if (departmentView != null)
+//                            departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                        if (view_display_name != null)
+//                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
+//
+//                        if (currentStatusView != null)
+//                            currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (aboutView != null)
+//                            aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
+//                            currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (empIdView != null)
+//                            empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (emailView != null)
+//                            emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (addressView != null)
+//                            addressView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                    }
+//                }
+//            });
 
         if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
-            currentLocationView.setOnFocusChangeListener(new OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        currentLocationView.setBackgroundResource(R.drawable.textbox_selection_bg);
-                        if (designationView != null)
-                            designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                        if (departmentView != null)
-                            departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                        if (view_display_name != null)
-                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-
-                        if (currentStatusView != null)
-                            currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (aboutView != null)
-                            aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (empIdView != null)
-                            empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (emailView != null)
-                            emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (addressView != null)
-                            addressView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                    }
-                }
-            });
+//            currentLocationView.setOnFocusChangeListener(new OnFocusChangeListener() {
+//                public void onFocusChange(View v, boolean hasFocus) {
+//                    if (hasFocus) {
+//                        currentLocationView.setBackgroundResource(R.drawable.textbox_selection_bg);
+//                        if (designationView != null)
+//                            designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                        if (departmentView != null)
+//                            departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                        if (view_display_name != null)
+//                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
+//
+//                        if (currentStatusView != null)
+//                            currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (aboutView != null)
+//                            aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (empIdView != null)
+//                            empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (emailView != null)
+//                            emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (addressView != null)
+//                            addressView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                    }
+//                }
+//            });
 
         if (departmentView != null && departmentView.getText() != null)
-            departmentView.setOnFocusChangeListener(new OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        departmentView.setBackgroundResource(R.drawable.textbox_selection_bg);
-
-                        if (view_display_name != null)
-                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-
-                        if (currentStatusView != null)
-                            currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (aboutView != null)
-                            aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
-                            currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (empIdView != null)
-                            empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (emailView != null)
-                            emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (designationView != null)
-                            designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (addressView != null)
-                            addressView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                    }
-                }
-            });
+//            departmentView.setOnFocusChangeListener(new OnFocusChangeListener() {
+//                public void onFocusChange(View v, boolean hasFocus) {
+//                    if (hasFocus) {
+//                        departmentView.setBackgroundResource(R.drawable.textbox_selection_bg);
+//
+//                        if (view_display_name != null)
+//                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
+//
+//                        if (currentStatusView != null)
+//                            currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (aboutView != null)
+//                            aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
+//                            currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (empIdView != null)
+//                            empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (emailView != null)
+//                            emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (designationView != null)
+//                            designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (addressView != null)
+//                            addressView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                    }
+//                }
+//            });
 
         if (currentStatusView != null)
-            currentStatusView.setOnFocusChangeListener(new OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        currentStatusView.setBackgroundResource(R.drawable.textbox_selection_bg);
-
-                        if (view_display_name != null)
-                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        if (aboutView != null)
-                            aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
-                            currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (empIdView != null)
-                            empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (departmentView != null)
-                            departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (emailView != null)
-                            emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (designationView != null)
-                            designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (addressView != null)
-                            addressView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                    }
-                }
-            });
+//            currentStatusView.setOnFocusChangeListener(new OnFocusChangeListener() {
+//                public void onFocusChange(View v, boolean hasFocus) {
+//                    if (hasFocus) {
+//                        currentStatusView.setBackgroundResource(R.drawable.textbox_selection_bg);
+//
+//                        if (view_display_name != null)
+//                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
+//                        if (aboutView != null)
+//                            aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
+//                            currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (empIdView != null)
+//                            empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (departmentView != null)
+//                            departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (emailView != null)
+//                            emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (designationView != null)
+//                            designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (addressView != null)
+//                            addressView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                    }
+//                }
+//            });
 
         if (empIdView != null)
-            empIdView.setOnFocusChangeListener(new OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        empIdView.setBackgroundResource(R.drawable.textbox_selection_bg);
-
-                        if (currentStatusView != null)
-                            currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (view_display_name != null)
-                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        if (aboutView != null)
-                            aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
-                            currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (departmentView != null)
-                            departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (emailView != null)
-                            emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (designationView != null)
-                            designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (addressView != null)
-                            addressView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                    }
-                }
-            });
+//            empIdView.setOnFocusChangeListener(new OnFocusChangeListener() {
+//                public void onFocusChange(View v, boolean hasFocus) {
+//                    if (hasFocus) {
+//                        empIdView.setBackgroundResource(R.drawable.textbox_selection_bg);
+//
+//                        if (currentStatusView != null)
+//                            currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (view_display_name != null)
+//                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
+//                        if (aboutView != null)
+//                            aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
+//                            currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (departmentView != null)
+//                            departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (emailView != null)
+//                            emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (designationView != null)
+//                            designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (addressView != null)
+//                            addressView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                    }
+//                }
+//            });
         if (isRWA()) {
             if (rwaAddressView != null) {
                 initalAddress = rwaAddressView.getText().toString();
-                rwaAddressView.setOnFocusChangeListener(new OnFocusChangeListener() {
-                    public void onFocusChange(View v, boolean hasFocus) {
-                        if (hasFocus) {
-                            rwaAddressView.setBackgroundResource(R.drawable.textbox_selection_bg);
-
-                            if (empIdView != null)
-                                empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                            if (currentStatusView != null)
-                                currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                            if (view_display_name != null)
-                                view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                            if (aboutView != null)
-                                aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                            if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
-                                currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                            if (departmentView != null)
-                                departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                            if (emailView != null)
-                                emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                            if (designationView != null)
-                                designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                        }
-                    }
-                });
+//                rwaAddressView.setOnFocusChangeListener(new OnFocusChangeListener() {
+//                    public void onFocusChange(View v, boolean hasFocus) {
+//                        if (hasFocus) {
+//                            rwaAddressView.setBackgroundResource(R.drawable.textbox_selection_bg);
+//
+//                            if (empIdView != null)
+//                                empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                            if (currentStatusView != null)
+//                                currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                            if (view_display_name != null)
+//                                view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
+//                            if (aboutView != null)
+//                                aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                            if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
+//                                currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                            if (departmentView != null)
+//                                departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                            if (emailView != null)
+//                                emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                            if (designationView != null)
+//                                designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                        }
+//                    }
+//                });
             }
         } else if (addressView != null) {
             initalAddress = addressView.getText().toString();
-            addressView.setOnFocusChangeListener(new OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        addressView.setBackgroundResource(R.drawable.textbox_selection_bg);
-
-                        if (empIdView != null)
-                            empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                        if (currentStatusView != null)
-                            currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (view_display_name != null)
-                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        if (aboutView != null)
-                            aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
-                            currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (departmentView != null)
-                            departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (emailView != null)
-                            emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (designationView != null)
-                            designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                    }
-                }
-            });
+//            addressView.setOnFocusChangeListener(new OnFocusChangeListener() {
+//                public void onFocusChange(View v, boolean hasFocus) {
+//                    if (hasFocus) {
+//                        addressView.setBackgroundResource(R.drawable.textbox_selection_bg);
+//
+//                        if (empIdView != null)
+//                            empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                        if (currentStatusView != null)
+//                            currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (view_display_name != null)
+//                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
+//                        if (aboutView != null)
+//                            aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
+//                            currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (departmentView != null)
+//                            departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (emailView != null)
+//                            emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (designationView != null)
+//                            designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                    }
+//                }
+//            });
         }
         if (aboutView != null) {
-            aboutView.setOnFocusChangeListener(new OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        aboutView.setBackgroundResource(R.drawable.textbox_selection_bg);
-                        if (addressView != null)
-                            addressView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                        if (empIdView != null)
-                            empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                        if (currentStatusView != null)
-                            currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (view_display_name != null)
-                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
-                            currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (departmentView != null)
-                            departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (emailView != null)
-                            emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (designationView != null)
-                            designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                    }
-                }
-            });
+//            aboutView.setOnFocusChangeListener(new OnFocusChangeListener() {
+//                public void onFocusChange(View v, boolean hasFocus) {
+//                    if (hasFocus) {
+//                        aboutView.setBackgroundResource(R.drawable.textbox_selection_bg);
+//                        if (addressView != null)
+//                            addressView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                        if (empIdView != null)
+//                            empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                        if (currentStatusView != null)
+//                            currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (view_display_name != null)
+//                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
+//                        if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
+//                            currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (departmentView != null)
+//                            departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (emailView != null)
+//                            emailView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (designationView != null)
+//                            designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                    }
+//                }
+//            });
         }
         if (emailView != null) {
-            emailView.setOnFocusChangeListener(new OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        emailView.setBackgroundResource(R.drawable.textbox_selection_bg);
-                        if (aboutView != null)
-                            aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (addressView != null)
-                            addressView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                        if (empIdView != null)
-                            empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                        if (currentStatusView != null)
-                            currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (view_display_name != null)
-                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
-                            currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (departmentView != null)
-                            departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-                        if (designationView != null)
-                            designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
-
-                    }
-                }
-            });
+//            emailView.setOnFocusChangeListener(new OnFocusChangeListener() {
+//                public void onFocusChange(View v, boolean hasFocus) {
+//                    if (hasFocus) {
+//                        emailView.setBackgroundResource(R.drawable.textbox_selection_bg);
+//                        if (aboutView != null)
+//                            aboutView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (addressView != null)
+//                            addressView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                        if (empIdView != null)
+//                            empIdView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                        if (currentStatusView != null)
+//                            currentStatusView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (view_display_name != null)
+//                            view_display_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
+//                        if (currentLocationView != null && purposeType != VIEWWING_AS_SELF_IN_REG)
+//                            currentLocationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (departmentView != null)
+//                            departmentView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//                        if (designationView != null)
+//                            designationView.setBackgroundResource(R.drawable.round_rect_profile_bg);
+//
+//                    }
+//                }
+//            });
         }
     }
 

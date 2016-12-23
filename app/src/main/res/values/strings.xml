@@ -51,8 +51,8 @@
     <string name="coming_soon_lbl">Coming soon</string>
     <string name="gallery">Gallery</string>
     <string name="remove">Remove</string>
-    <string name="chat">Chats</string>
-    <string name="data_usage_settings">Data usage</string>
+    <string name="chat">Chat Backup</string>
+    <string name="data_usage_settings">Auto download options</string>
     <string name="inbox">Inbox</string>
     <string name="small_chat">Chats</string>
     <string name="pin_not_entered">Please enter verification code.</string>
@@ -105,21 +105,21 @@
     <string name="change_number">Change Number</string>
     <!-- Open Groups Screen -->
     <string name="my_groups">My Groups</string>
-    <string name="open_groups">Discover</string>
+    <string name="open_groups">Open Groups</string>
     <!-- Group Info Screen -->
     <string name="groups">Groups</string>
     <string name="group_info">Group Info</string>
     <string name="message_info">Message Info</string>
     <string name="group_name">Desired group name</string>
-    <string name="enter_group_name_hinttxt">Enter Group Name*</string>
+    <string name="enter_group_name_hinttxt">Enter Group Name(*)</string>
     <string name="channel_name">Open Group Name(*)</string>
     <string name="broadcast_hint">Broadcast Name(*)</string>
     <string name="new_group">New Group</string>
     <string name="new_broadcast">New Broadcast</string>
     <string name="enter_description">Type description(*)</string>
     <string name="description">Description</string>
-    <string name="new_description">Add a description (optional) \n (Up to 500 characters.)</string>
-    <string name="new_description_optional">Add a description (optional)  - (Up to 500 characters.)</string>
+    <string name="new_description">Max 500 characters</string>
+    <string name="new_description_optional">Max 500 characters</string>
     <string name="create_closed_group_subtitle">Closed - Members cannot join without an invitation from an admin</string>
     <string name="create_open_group_subtitle">All members of your SuperGroup will be able to search for and join this group.</string>
     <string name="create_group_bottomtitle">You can have both private or public groups within your SuperGroup.</string>
@@ -399,7 +399,7 @@
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="created_by">Created by </string>
-    <string name="snooze_settings">Mute settings</string>
+    <string name="snooze_settings">Mute</string>
     <string name="privacy_settings">Privacy settings</string>
     <string name="call_privacy_settings">Call privacy settings</string>
     <string name="chat_privacy_settings">Chat privacy settings</string>
@@ -439,7 +439,7 @@
     <string name="feedback">Feedback</string>
     <string name="send_feedback">Send feedback</string>
     <string name="supergroup_profile">SuperGroup Profile</string>
-    <string name="about_supergroup">About [SuperGroup name]</string>
+    <string name="about_supergroup">About SuperGroup name</string>
     <string name="user_domain">SuperGroup</string>
     <string name="check_update">Check for app updates</string>
     <string name="manage_members">Manage Members</string>
@@ -454,12 +454,12 @@
     <string name="enter_channel_description">Tap to open group description</string>
     <string name="connecting_txt">Connecting..</string>
     <string name="select_gender">Select Gender</string>
-    <string name="open_supergroup">Open (public) – This type of SuperGroup can be searched for and joined by everyone.</string>
-    <string name="open_group">Open (Public) – This type of group can be searched for and joined by everyone.</string>
+    <string name="open_supergroup">Public – Anyone can join</string>
+    <string name="open_group">Open – This type of group can be searched for and joined by everyone.</string>
      <string name="close_group_creation_option">Closed (Private) – Private or Closed SuperGroups- these are private groups that need an invitation from the SuperGroup Admins to join.</string>
-    <string name="closed_supergroup">Closed (private) – Members cannot join without an invitation from the admins.</string>
-    <string name="select_group_type">What kind of SuperGroup is this? \nPlease select one - open (public) or closed (private)</string>
-    <string name="select_group_type_in_creation">What kind of group is this? \nPlease select one - open (public) or closed (private)</string>
+    <string name="closed_supergroup">Private – Only people you invite can join</string>
+    <string name="select_group_type">Select Public or Private</string>
+    <string name="select_group_type_in_creation">Select Public or Private</string>
     <string name="welcome_to_superchat">Welcome to Superchat</string>
     <string name="join_a_group">JOIN A GROUP</string>
     <string name="or">OR</string>
@@ -511,14 +511,14 @@
     <string name="enter_alternate_sg">"Or enter another SuperGroup’s name"</string>
     <string name="enter_alternate_sg_new">"Enter SuperGroup’s name"</string>
     <string name="creation_tell_us">"Tell us about your SuperGroup"</string>
-    <string name="creation_name_sg">"Name your SuperGroup"</string>
+    <string name="creation_name_sg">"Name your SuperGroup*"</string>
     <string name="creation_name_title">"Display Name"</string>
     <string name="creation_name_sg_address">"SuperGroup's real address"</string>
     <string name="creation_email_sg">"Please enter your email address"</string>
     <string name="creation_email_note">"Your email address will be used for special announcements for SuperGroup owners."</string>
     <string name="sg_creation_not">"This is the supergroup's address that you and team will use internally to signin to Superchat."</string>
-    <string name="creation_url_sg">"Website if any (Optional)"</string>
-    <string name="creation_orgname_sg">"What is the name of your organization, team or company? (Optional)"</string>
+    <string name="creation_url_sg">"Website if any"</string>
+    <string name="creation_orgname_sg">"What is the name of your organization, team or company?"</string>
     <string name="creation_photo_sg">"Please add a picture or logo for your SuperGroup"</string>
     <string name="bulleting_welcome1">"Welcome to "</string>
     <string name="bulleting_welcome2">" bulletin board "</string>
@@ -646,6 +646,10 @@
 
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
+
+
+    <string name="other_apps">OTHER APPS</string>
+    <string name="contacts">CONTACTS</string>
 
 
     <!-- Munish Thakur -->
