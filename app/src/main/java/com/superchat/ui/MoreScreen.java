@@ -52,6 +52,8 @@ import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import retrofit2.http.HEAD;
+
 import static android.R.attr.mode;
 import static com.superchat.R.id.switchBroadcast;
 
@@ -70,10 +72,13 @@ public class MoreScreen extends Activity implements OnClickListener {
     RelativeLayout checkUpdateLayout;
     RelativeLayout soonzeLayout;
     RelativeLayout id_data_usage_layout;
+    RelativeLayout officialIDLayout;
+    RelativeLayout memberStatsLayout;
     RelativeLayout memberManageLayout;
     //	RelativeLayout memberStatsLayout;
     RelativeLayout privacyLayout;
     TextView myNameView;
+    TextView muteSettingText;
     TextView aboutSuperGroupView;
     Switch switchSaveGalleryMedia;
     //	RoundedImageView profileIconView;
@@ -100,6 +105,7 @@ public class MoreScreen extends Activity implements OnClickListener {
 
         checkUpdateLayout = (RelativeLayout) findViewById(R.id.id_checkupdate_layout);
         soonzeLayout = (RelativeLayout) findViewById(R.id.id_snooze_layout);
+        muteSettingText = (TextView) findViewById(R.id.mute_setting_txt);
         id_data_usage_layout = (RelativeLayout) findViewById(R.id.id_data_usage_layout);
         switchSaveGalleryMedia = (Switch) findViewById(R.id.switchSaveGalleryMedia);
 
@@ -113,6 +119,8 @@ public class MoreScreen extends Activity implements OnClickListener {
             }
         });
 
+        officialIDLayout = (RelativeLayout) findViewById(R.id.id_offocial_id_layout);
+        memberStatsLayout = (RelativeLayout) findViewById(R.id.id_memberstats_layout);
         privacyLayout.setOnClickListener(this);
         id_data_usage_layout.setOnClickListener(this);
         soonzeLayout.setOnClickListener(this);
@@ -126,10 +134,19 @@ public class MoreScreen extends Activity implements OnClickListener {
             memberManageLayout = (RelativeLayout) findViewById(R.id.id_manage_members_layout);
 //			memberStatsLayout.setVisibility(View.VISIBLE);
             memberManageLayout.setVisibility(View.VISIBLE);
-            advancedSettings.setVisibility(View.VISIBLE);
+//            advancedSettings.setVisibility(View.VISIBLE);
+            officialIDLayout.setVisibility(View.VISIBLE);
+            memberStatsLayout.setVisibility(View.VISIBLE);
 //			consolePassLayout.setVisibility(View.VISIBLE);
             advancedSettings.setOnClickListener(this);
+            officialIDLayout.setOnClickListener(this);
+            memberStatsLayout.setOnClickListener(this);
             memberManageLayout.setOnClickListener(this);
+        }
+        if(sharedPrefManager.getSnoozeIndex(sharedPrefManager.getUserDomain()) > 0){
+            String time = (getResources().getStringArray(R.array.snooze_list_array))[sharedPrefManager.getSnoozeIndex(sharedPrefManager.getUserDomain())];
+            muteSettingText.setVisibility(View.VISIBLE);
+            muteSettingText.setText(time);
         }
         ((ImageView) findViewById(R.id.id_profile_pic)).setOnClickListener(new OnClickListener() {
 
@@ -349,13 +366,21 @@ public class MoreScreen extends Activity implements OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.id_offocial_id_layout:
+                Intent intent = new Intent(MoreScreen.this, SharedIDScreen.class);
+                startActivity(intent);
+                break;
+            case R.id.id_memberstats_layout:
+                intent = new Intent(MoreScreen.this, MemberStatsScreen.class);
+                startActivity(intent);
+                break;
             case R.id.id_data_usage_layout: {
-                Intent intent = new Intent(this, DataUsageSetting.class);
+                intent = new Intent(this, DataUsageSetting.class);
                 startActivity(intent);
                 break;
             }
             case R.id.id_chat_layout:
-                Intent intent = new Intent(this, ChatBackupScreen.class);
+                intent = new Intent(this, ChatBackupScreen.class);
                 startActivity(intent);
                 break;
             case R.id.id_configure_console_pass:
@@ -366,6 +391,13 @@ public class MoreScreen extends Activity implements OnClickListener {
                 showPrivacyOptionsDialog(true);
                 break;
             case R.id.id_snooze_layout:
+//                boolean expired = sharedPrefManager.isSnoozeExpired(sharedPrefManager.getUserDomain());
+//                int index = sharedPrefManager.getSnoozeIndex(sharedPrefManager.getUserDomain());
+//                if(expired && sharedPrefManager.getSnoozeIndex(sharedPrefManager.getUserDomain()) == 0) {
+//                    showSnoozeDialog();
+//                }else{
+//                    showUpdateDialog("", "Un-mute?");
+//                }
                 showSnoozeDialog();
                 break;
 //		case R.id.id_member_stats_layout:
@@ -560,7 +592,9 @@ public class MoreScreen extends Activity implements OnClickListener {
                 bteldialog.cancel();
                 sharedPrefManager.setSnoozeIndex(sharedPrefManager.getUserDomain(), spinner.getSelectedItemPosition());
                 sharedPrefManager.setSnoozeStartTime(sharedPrefManager.getUserDomain(), System.currentTimeMillis());
-                Toast.makeText(MoreScreen.this, String.valueOf(spinner.getSelectedItem()), Toast.LENGTH_SHORT).show();
+                muteSettingText.setVisibility(View.VISIBLE);
+                muteSettingText.setText(String.valueOf(spinner.getSelectedItem()));
+//                Toast.makeText(MoreScreen.this, String.valueOf(spinner.getSelectedItem()), Toast.LENGTH_SHORT).show();
                 return false;
             }
         });

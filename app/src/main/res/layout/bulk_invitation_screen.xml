@@ -74,6 +74,7 @@
         android:layout_below="@+id/header_layout_top"
         android:layout_centerHorizontal="true"
         android:background="@color/white"
+        android:layout_marginBottom="5dp"
         android:orientation="horizontal"
         android:weightSum="1" >
 
@@ -92,12 +93,16 @@
                 android:gravity="center"
                 android:orientation="vertical" >
 
-                <ImageView
+                <TextView
                     android:id="@+id/contacts_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/invite_contacts_sel"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="16sp"
+                    android:text="@string/contacts"
+                    android:textColor="@color/color_lite_blue"
                     android:visibility="visible" />
 
                 <TextView
@@ -137,12 +142,16 @@
                 android:orientation="vertical"
                 android:weightSum="2" >
 
-                <ImageView
+                <TextView
                     android:id="@+id/other_apps_icon"
                     android:layout_width="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="16sp"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/invite_otherapps"
+                    android:textColor="@color/darkest_gray"
+                    android:text="@string/other_apps"
                     android:visibility="visible" />
 
                 <TextView

@@ -104,7 +104,8 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
     TextView idBulkInfoLabel, copyLink;
     ImageView idBulkInfo;
     LinearLayout bottomLayout;
-    ImageView contactsIcon, otherAppsIcon;
+//    ImageView contactsIcon, otherAppsIcon;
+    TextView contactsIcon, otherAppsIcon;
     Dialog inviteMenualDialog;
     EditText nameEditText;
     CheckBox cbMakeSuperAdmin;
@@ -146,8 +147,9 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
         otherApps = (TextView) findViewById(R.id.text_otherapps);
         idBulkInfoLabel = (TextView) findViewById(R.id.id_select_contact);
         idBulkInfo = (ImageView) findViewById(R.id.id_bulk_info);
-        contactsIcon = (ImageView) findViewById(R.id.contacts_icon);
-        otherAppsIcon = (ImageView) findViewById(R.id.other_apps_icon);
+//        contactsIcon = (ImageView) findViewById(R.id.contacts_icon);
+        contactsIcon = (TextView) findViewById(R.id.contacts_icon);
+        otherAppsIcon = (TextView) findViewById(R.id.other_apps_icon);
         copyLink = (TextView) findViewById(R.id.id_copy_link);
         copyLink.setOnClickListener(this);
         contactTabLayout.setOnClickListener(this);
@@ -340,8 +342,12 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
                 copyLink.setVisibility(View.GONE);
                 idBulkInfo.setVisibility(View.VISIBLE);
                 idBulkInfoLabel.setVisibility(View.VISIBLE);
-                contactsIcon.setImageResource(R.drawable.invite_contacts_sel);
-                otherAppsIcon.setImageResource(R.drawable.invite_otherapps);
+
+                contactsIcon.setTextColor(getResources().getColor(R.color.color_lite_blue));
+                otherAppsIcon.setTextColor(getResources().getColor(R.color.darkest_gray));
+
+//                contactsIcon.setImageResource(R.drawable.invite_contacts_sel);
+//                otherAppsIcon.setImageResource(R.drawable.invite_otherapps);
 
 //		copyTextLable.setTextColor(getResources().getColor(R.color.black));
 //		copyTextLable.setText(getString(R.string.select_contact_send_invite));
@@ -356,11 +362,15 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
                 searchLayout.setVisibility(View.GONE);
                 idBulkInfo.setVisibility(View.GONE);
                 otherApps.setTextColor(getResources().getColor(R.color.color_lite_blue));
-                contacts.setTextColor(R.color.black);
+                contacts.setTextColor(R.color.darkest_gray);
                 idBulkInfoLabel.setVisibility(View.GONE);
                 copyLink.setVisibility(View.VISIBLE);
-                contactsIcon.setImageResource(R.drawable.invite_contacts);
-                otherAppsIcon.setImageResource(R.drawable.invite_otherapps_sel);
+
+                otherAppsIcon.setTextColor(getResources().getColor(R.color.color_lite_blue));
+                contactsIcon.setTextColor(getResources().getColor(R.color.darkest_gray));
+
+//                contactsIcon.setImageResource(R.drawable.invite_contacts);
+//                otherAppsIcon.setImageResource(R.drawable.invite_otherapps_sel);
 
 //		copyTextLable.setTextColor(getResources().getColor(R.color.header_footer_color));
 //		copyTextLable.setText(getString(R.string.copy_invite_link));

@@ -275,6 +275,51 @@
                     android:textSize="15sp" />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/md_grey_200"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:padding="16dp"
+                android:weightSum="2">
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/broadcast"
+                        android:layout_centerVertical="true"
+                        android:textSize="15dp"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <Switch
+                        android:id="@+id/switchBroadcast"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:layout_alignParentRight="true"/><!--
+                <ToggleButton
+                    android:id="@+id/toggleBroadcast"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textOff="B OFF"
+                    android:textOn="B ON"/>-->
+                </RelativeLayout>
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/id_create_group_subtitle"
                 android:layout_width="wrap_content"
@@ -316,49 +361,6 @@
                 android:layout_marginRight="20dp"
                 android:background="@color/color_lite_gray" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/md_grey_200"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:weightSum="2">
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Broadcast"
-                        android:layout_centerVertical="true"
-                        android:textSize="15dp"/>
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <Switch
-                        android:id="@+id/switchBroadcast"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:layout_alignParentRight="true"/><!--
-                <ToggleButton
-                    android:id="@+id/toggleBroadcast"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textOff="B OFF"
-                    android:textOn="B ON"/>-->
-                </RelativeLayout>
-
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

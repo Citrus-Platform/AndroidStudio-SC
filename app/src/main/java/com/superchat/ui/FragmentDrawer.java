@@ -62,6 +62,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import retrofit2.http.HEAD;
+
 import static com.superchat.R.id.superGroupContainer;
 
 public class FragmentDrawer extends Fragment implements View.OnClickListener {
@@ -265,6 +267,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
         String userDisplayName = SharedPrefManager.getInstance().getDisplayName();
         user.setText("" + userDisplayName);
+//        user.setText("" + SharedPrefManager.getInstance().getDisplayName() + " (You)");
 
         ///////////////////////////////////////////////
 

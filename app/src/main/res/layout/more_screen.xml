@@ -52,26 +52,36 @@
             android:background="@color/settings_bg_color"
             android:orientation="vertical" >
 
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
             <com.superchat.widgets.RoundedImageView
                 android:id="@+id/id_profile_pic"
-                android:layout_width="170dip"
-                android:layout_height="170dip"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
+                android:layout_width="80dip"
+                android:layout_margin="10dp"
+                android:layout_height="80dip"
                 android:scaleType="centerCrop"
                 android:src="@drawable/profile_pic" />
 
             <TextView
                 android:id="@+id/id_my_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="15dp"
                 android:padding="10dip"
                 android:text="@string/block_you"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="normal" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="@color/settings_bg_color" />
 
             <RelativeLayout
                 android:id="@+id/id_profile_layout"
@@ -105,10 +115,107 @@
                 android:background="@color/settings_bg_color" />
 
             <RelativeLayout
+                android:id="@+id/id_manage_members_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:visibility="gone" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dip"
+                    android:text="@string/manage_members"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/right_arrow"
+                    android:visibility="visible" >
+                </ImageView>
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="2dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/settings_bg_color" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/id_memberstats_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:background="@color/white" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dip"
+                    android:text="@string/view_member_stats"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/right_arrow"
+                    android:visibility="visible" >
+                </ImageView>
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="2dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/settings_bg_color" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/id_offocial_id_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:background="@color/white" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dip"
+                    android:text="@string/shared_id"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/right_arrow"
+                    android:visibility="visible" >
+                </ImageView>
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="2dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/settings_bg_color" />
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/id_privacy_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white" >
+                android:background="@color/white"
+                android:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -152,6 +259,7 @@
                     android:textStyle="normal" />
 
                 <ImageView
+                    android:id="@+id/mute_arrow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
@@ -160,45 +268,23 @@
                     android:background="@drawable/right_arrow"
                     android:visibility="visible" >
                 </ImageView>
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="2dp"
-                    android:layout_alignParentBottom="true"
-                    android:background="@color/settings_bg_color" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/id_data_usage_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:visibility="visible">
-
                 <TextView
+                    android:id="@+id/mute_setting_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/snooze_settings"
+                    android:layout_toLeftOf="@+id/mute_arrow"
                     android:padding="10dip"
-                    android:text="@string/data_usage_settings"
                     android:textColor="@color/dark_gray"
                     android:textSize="18sp"
+                    android:visibility="gone"
                     android:textStyle="normal" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/right_arrow"
-                    android:visibility="visible" >
-                </ImageView>
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
                     android:layout_alignParentBottom="true"
                     android:background="@color/settings_bg_color" />
             </RelativeLayout>
-
             <RelativeLayout
                 android:id="@+id/id_gallery_storage_layout"
                 android:layout_width="fill_parent"
@@ -263,18 +349,19 @@
                     android:background="@color/settings_bg_color" />
             </RelativeLayout>
 
+
             <RelativeLayout
-                android:id="@+id/id_manage_members_layout"
+                android:id="@+id/id_data_usage_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:visibility="gone" >
+                android:visibility="gone"
+                android:background="@color/white" >
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dip"
-                    android:text="@string/manage_members"
+                    android:text="@string/data_usage_settings"
                     android:textColor="@color/dark_gray"
                     android:textSize="18sp"
                     android:textStyle="normal" />
