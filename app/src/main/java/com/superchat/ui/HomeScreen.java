@@ -4159,7 +4159,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         drawerFragment.currentSGName.setText("" + text);
         if (fileId != null && fileId.trim().length() > 0)
             setProfilePic(drawerFragment.displayPictureCurrent, fileId);
-        drawerFragment.user.setText("" + SharedPrefManager.getInstance().getDisplayName() + "(You)");
+        drawerFragment.user.setText("" + SharedPrefManager.getInstance().getDisplayName());
     }
 
     //-------------------------------------------------------------------------

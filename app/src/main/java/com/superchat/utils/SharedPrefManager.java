@@ -150,9 +150,6 @@ public class SharedPrefManager {
 
     private final String GROUPS_FOR_SG = "groups_for_sg";
 
-    private final String DATA_USAGE_MOBILE = "data_usage_mobile";
-    private final String DATA_USAGE_WIFI = "data_usage_wifi";
-
 
     private static SharedPrefManager sharedPrefManager;
 
@@ -358,24 +355,6 @@ public class SharedPrefManager {
     public void setDataLoadedForSG(String sg, boolean flag) {
         System.out.println("Data Loaded for " + sg + " = " + flag);
         editor.putBoolean(DATA_LOADED_FOR_SG + sg, flag);
-        editor.commit();
-    }
-
-    public String isDataUsageMobile() {
-        return pref.getString(DATA_USAGE_MOBILE, null);
-    }
-
-    public void setDataUsageMobile(String param) {
-        editor.putString(DATA_USAGE_MOBILE, param);
-        editor.commit();
-    }
-
-    public String isDataUsageWifi() {
-        return pref.getString(DATA_USAGE_WIFI, null);
-    }
-
-    public void setDataUsageWifi(String param) {
-        editor.putString(DATA_USAGE_WIFI, param);
         editor.commit();
     }
 

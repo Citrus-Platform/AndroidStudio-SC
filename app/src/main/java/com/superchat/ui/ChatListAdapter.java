@@ -61,6 +61,7 @@ import com.superchat.SuperChatApplication;
 import com.superchat.data.beans.PhotoToLoad;
 import com.superchat.data.db.DatabaseConstants;
 import com.superchat.emojicon.EmojiconTextView;
+import com.superchat.helper.SuperGroupDownloadSettingsHandler;
 import com.superchat.interfaces.OnChatEditInterFace;
 import com.superchat.model.UserProfileModel;
 import com.superchat.task.ImageLoaderWorker;
@@ -865,26 +866,47 @@ public class ChatListAdapter extends SimpleCursorAdapter {
             processing.put(url, "0");
         }
 
+        SuperGroupDownloadSettingsHandler superGroupDownloadSettingsHandler;
+        private boolean isDownloadValid(int msgType){
+            boolean isDownloadValid = true;
+
+            SuperGroupDownloadSettingsHandler.DOWNLOADABLE_CONTENT_TYPE type = null;
+            if (msgType == XMPPMessageType.atMeXmppMessageTypeImage.ordinal()){
+                type = SuperGroupDownloadSettingsHandler.DOWNLOADABLE_CONTENT_TYPE.PHOTO;
+            } else if (msgType == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()){
+                type = SuperGroupDownloadSettingsHandler.DOWNLOADABLE_CONTENT_TYPE.AUDIO;
+            } else if (msgType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()){
+                type = SuperGroupDownloadSettingsHandler.DOWNLOADABLE_CONTENT_TYPE.VIDEO;
+            } else {
+                return true;
+            }
+            superGroupDownloadSettingsHandler = new SuperGroupDownloadSettingsHandler(context);
+            isDownloadValid = superGroupDownloadSettingsHandler.isDownloadable(type);
+
+            return isDownloadValid;
+        }
+
         public void download(String url, int msgType, ImageView imageView, ProgressBar pb, Object[] callbackParams) {
+
+            if(!isDownloadValid(msgType)){
+                return;
+            }
+
             processing.put(url, "1");
             BitmapDownloaderTask task = new BitmapDownloaderTask(imageView, pb, callbackParams, msgType);
             if (Build.VERSION.SDK_INT >= 11)
                 task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
             else
                 task.execute(url);
-//		    	resetPurgeTimer();
-//		    	String localPath = getBitmapFromCache(url);
-//
-//		    	if (localPath == null) {
-//		    		processing.put(url, "0");
-//		    		adaptor = (ChatListAdapter)callbackParams[0];
-//		    		forceDownload(url, imageView, pb, callbackParams);
-//		    	} else {
-//		    		cancelPotentialDownload(url, imageView, pb, callbackParams);
-////		    		imageView.setImageURI(Uri.parse(localPath));
-//		    		if(pb != null)
-//		    			pb.setVisibility(View.GONE);
-//		    	}
+        }
+
+        public void download(String url, int msgType, ImageView imageView, ProgressBar pb, Object[] callbackParams, boolean forceDownload) {
+            processing.put(url, "1");
+            BitmapDownloaderTask task = new BitmapDownloaderTask(imageView, pb, callbackParams, msgType);
+            if (Build.VERSION.SDK_INT >= 11)
+                task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
+            else
+                task.execute(url);
         }
 
         public String getProcessingForURL(String url) {
@@ -1141,8 +1163,20 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 
 //		            return downloadBitmap(url);
 
+                String SDCardFilePath = Environment.getExternalStorageDirectory().getPath() + File.separator;
+                String FolderName = "SuperChat";
+                String HideFolderPrefix = ".";
+
+                superGroupDownloadSettingsHandler = new SuperGroupDownloadSettingsHandler(context);
+                boolean isSaveInGallery = superGroupDownloadSettingsHandler.isSavedInGallery();
                 int count;
-                String filename = Environment.getExternalStorageDirectory().getPath() + File.separator + "SuperChat";
+                String filename = "";
+                if(isSaveInGallery) {
+                    filename = SDCardFilePath + HideFolderPrefix + FolderName;
+                } else {
+                    filename = SDCardFilePath + FolderName;
+                }
+
                 File file = new File(filename);
                 if (!file.exists()) {
                     file.mkdirs();

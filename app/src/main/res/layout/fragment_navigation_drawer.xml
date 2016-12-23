@@ -81,7 +81,7 @@
                 android:id="@+id/user"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=" (You)"
+                android:text=""
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 

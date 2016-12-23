@@ -1,9 +1,11 @@
 package com.superchat.ui;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -153,6 +155,8 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
                     else
                         sg_name.setText(SharedPrefManager.getInstance().getUserDomain());*/
                     audioController = mSinchServiceInterface.getAudioController();
+
+                    manageCallAudio();
                 } else {
                     Log.e(TAG, "Started with invalid callId, aborting.");
                     finish();
@@ -230,7 +234,7 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
             mCallStart = System.currentTimeMillis();
         }
 
-        forceSpeaker();
+        myReceiver = new MusicIntentReceiver();
     }
 
     @Override
@@ -247,6 +251,7 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
 
     @Override
     public void onPause() {
+        unregisterReceiver(myReceiver);
         super.onPause();
         mDurationTask.cancel();
         mTimer.cancel();
@@ -261,6 +266,10 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
 
     @Override
     public void onResume() {
+
+        IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+        registerReceiver(myReceiver, filter);
+
         super.onResume();
         mTimer = new Timer();
         mDurationTask = new CallScreenVideoActivity.UpdateCallDurationTask();
@@ -423,6 +432,8 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
             if(llCallingTextBlock != null){
                 llCallingTextBlock.setVisibility(View.GONE);
             }
+
+            manageCallAudio();
         }
 
         @Override
@@ -479,23 +490,27 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
         }
     }
 
-    private void forceSpeaker(){
+    private void forceEnableSpeaker(){
         if(audioController!=null) {
             audioController.enableSpeaker();
             speakerButton.setImageResource(R.drawable.speaker_selected);
-            isSpeaker = !isSpeaker;
+            isSpeaker = true;
+        }
+    }
+
+    private void forceDisableSpeaker(){
+        if(audioController!=null) {
+            audioController.disableSpeaker();
+            speakerButton.setImageResource(R.drawable.speaker);
+            isSpeaker = false;
         }
     }
 
     private void toggleSpeaker(){
         if(isSpeaker){
-            audioController.disableSpeaker();
-            speakerButton.setImageResource(R.drawable.speaker);
-            //audioManager.setSpeakerphoneOn(false);
+            forceDisableSpeaker();
         }else{
-            audioController.enableSpeaker();
-            speakerButton.setImageResource(R.drawable.speaker_selected);
-            //audioManager.setSpeakerphoneOn(true);
+            forceEnableSpeaker();
         }
         isSpeaker = !isSpeaker;
     }
@@ -605,6 +620,43 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
         }
 
         return bm;
+    }
+
+
+
+    /**
+     *
+     */
+
+    private void manageCallAudio(){
+        AudioManager am1 = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        if(am1.isWiredHeadsetOn()){
+            forceDisableSpeaker();
+        } else {
+            forceEnableSpeaker();
+        }
+    }
+
+    private MusicIntentReceiver myReceiver;
+
+    private class MusicIntentReceiver extends BroadcastReceiver {
+        @Override public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
+                int state = intent.getIntExtra("state", -1);
+                switch (state) {
+                    case 0:
+                        Log.d(TAG, "Headset is unplugged");
+                        forceEnableSpeaker();
+                        break;
+                    case 1:
+                        Log.d(TAG, "Headset is plugged");
+                        forceDisableSpeaker();
+                        break;
+                    default:
+                        Log.d(TAG, "I have no idea what the headset state is");
+                }
+            }
+        }
     }
 
 }

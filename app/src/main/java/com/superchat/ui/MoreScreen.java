@@ -22,15 +22,18 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chat.sdk.ChatService;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
+import com.superchat.helper.SuperGroupDownloadSettingsHandler;
 import com.superchat.utils.Constants;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.utils.Utilities;
@@ -48,6 +51,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import static android.R.attr.mode;
+import static com.superchat.R.id.switchBroadcast;
 
 public class MoreScreen extends Activity implements OnClickListener {
 
@@ -69,8 +75,10 @@ public class MoreScreen extends Activity implements OnClickListener {
     RelativeLayout privacyLayout;
     TextView myNameView;
     TextView aboutSuperGroupView;
+    Switch switchSaveGalleryMedia;
     //	RoundedImageView profileIconView;
     SharedPrefManager sharedPrefManager;
+    SuperGroupDownloadSettingsHandler superGroupDownloadSettingsHandler;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +101,18 @@ public class MoreScreen extends Activity implements OnClickListener {
         checkUpdateLayout = (RelativeLayout) findViewById(R.id.id_checkupdate_layout);
         soonzeLayout = (RelativeLayout) findViewById(R.id.id_snooze_layout);
         id_data_usage_layout = (RelativeLayout) findViewById(R.id.id_data_usage_layout);
+        switchSaveGalleryMedia = (Switch) findViewById(R.id.switchSaveGalleryMedia);
+
+        superGroupDownloadSettingsHandler = new SuperGroupDownloadSettingsHandler(this);
+
+        switchSaveGalleryMedia.setChecked(superGroupDownloadSettingsHandler.isSavedInGallery());
+
+        switchSaveGalleryMedia.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                superGroupDownloadSettingsHandler.changeMediaGallerySetting(isChecked);
+            }
+        });
+
         privacyLayout.setOnClickListener(this);
         id_data_usage_layout.setOnClickListener(this);
         soonzeLayout.setOnClickListener(this);
