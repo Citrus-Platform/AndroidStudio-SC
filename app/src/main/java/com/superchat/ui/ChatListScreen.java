@@ -4459,9 +4459,10 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             if (iChatPref.isBlocked(userName) || isBulletinBroadcast || isSharedIDMessage) {
                 callOption.setVisibility(View.GONE);
                 call_option_video.setVisibility(View.GONE);
-            } else if (!iChatPref.isGroupChat(userName) && !iChatPref.isBroadCast(userName))
+            } else if (!iChatPref.isGroupChat(userName) && !iChatPref.isBroadCast(userName)) {
                 callOption.setVisibility(View.VISIBLE);
-            call_option_video.setVisibility(View.VISIBLE);
+                call_option_video.setVisibility(View.VISIBLE);
+            }
             Cursor cursor1 = null;
             if (isBulletinBroadcast)
                 cursor1 = ChatDBWrapper.getInstance().getUserChatList(userName, CHAT_LIST_BULLETIN);

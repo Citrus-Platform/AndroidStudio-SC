@@ -48,7 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/reciever_name_text"
-                 android:background="@drawable/round_rect_profile_bg"
+                android:background="@drawable/round_rect_profile_bg"
                 android:orientation="horizontal"
                 android:visibility="gone" >
 
@@ -164,17 +164,17 @@
                 android:layout_centerInParent="true"
                 android:indeterminate="false"
                 android:progressDrawable="@drawable/style_circular_progressbar"
-                android:secondaryProgress="100" 
+                android:secondaryProgress="100"
                 android:visibility="gone" />
-			<ProgressBar
-		        android:id="@+id/progress_image_indeterminate"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_centerInParent="true"
-		        android:indeterminate="true"
-		        android:secondaryProgress="100" 
-		        android:visibility="gone"/>
-			 <TextView
+            <ProgressBar
+                android:id="@+id/progress_image_indeterminate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:indeterminate="true"
+                android:secondaryProgress="100"
+                android:visibility="gone"/>
+            <TextView
                 android:id="@+id/loading_percent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -183,6 +183,8 @@
                 android:textColor="@color/white"
                 android:textSize="12sp"
                 android:visibility="gone" />
+
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -230,7 +232,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/left_image_view"
                 android:layout_alignRight="@+id/left_image_view"
-                android:layout_below="@id/reciever_name_text"
                 android:gravity="right|bottom"
                 android:orientation="vertical"
                 android:visibility="visible" >
@@ -277,7 +278,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/time_counter"
-                        android:visibility="gone" >
+                        android:visibility="visible" >
 
                         <com.superchat.widgets.RoundedImageView
                             android:id="@+id/id_profile_pic"
@@ -352,7 +353,7 @@
                             android:textSize="15sp"
                             android:visibility="gone" />
 
-                       
+
 
                         <ProgressBar
                             android:id="@+id/progress_voice_loader"
@@ -364,42 +365,42 @@
                             android:indeterminate="false"
                             android:layout_marginTop="5dp"
                             android:progressDrawable="@drawable/style_circular_progressbar_small"
-                            android:secondaryProgress="100" 
+                            android:secondaryProgress="100"
                             android:visibility="invisible" />
                         <ProgressBar
-					        android:id="@+id/progress_voice_indeterminate"
-					        android:layout_width="wrap_content"
-					        android:layout_height="wrap_content"
-					        android:layout_centerInParent="true"
-					        android:indeterminate="true"
-					        android:secondaryProgress="100" 
-					        android:visibility="gone"/>
-                         <TextView
-	                        android:id="@+id/progress_voice_loading_percent"
-	                        android:layout_width="wrap_content"
-	                        android:layout_height="wrap_content"
-	                        android:layout_centerInParent="true"
-	                        android:text="0%"
-	                        android:textColor="@color/white"
-	                        android:textSize="12sp"
-	                        android:visibility="gone" />
+                            android:id="@+id/progress_voice_indeterminate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:indeterminate="true"
+                            android:secondaryProgress="100"
+                            android:visibility="gone"/>
+                        <TextView
+                            android:id="@+id/progress_voice_loading_percent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="0%"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:visibility="gone" />
 
-                         <com.superchat.emojicon.EmojiconTextView
-                             android:id="@+id/audio_tag"
-                             android:layout_width="wrap_content"
-                             android:layout_height="wrap_content"
-                             android:layout_below="@+id/left_audio_btn_layout"
-                             android:layout_marginLeft="6dp"
-                             android:layout_marginTop="3dp"
-                             android:autoLink="all"
-                             android:shadowColor="@color/textShadow"
-                             android:shadowDx="1"
-                             android:shadowDy="1"
-                             android:text="Audio Tag"
-                             android:textColor="@color/black"
-                             android:textSize="16sp"
-                             android:textStyle="normal"
-                             android:visibility="visible" />
+                        <com.superchat.emojicon.EmojiconTextView
+                            android:id="@+id/audio_tag"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/left_audio_btn_layout"
+                            android:layout_marginLeft="6dp"
+                            android:layout_marginTop="3dp"
+                            android:autoLink="all"
+                            android:shadowColor="@color/textShadow"
+                            android:shadowDx="1"
+                            android:shadowDy="1"
+                            android:text="Audio Tag"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:textStyle="normal"
+                            android:visibility="visible" />
 
                     </RelativeLayout>
                 </LinearLayout>
@@ -416,6 +417,14 @@
                     android:textSize="16sp"
                     android:visibility="gone" />
             </LinearLayout>
+
+            <ImageView
+                android:id="@+id/ivManageDownload"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_content_download"
+                android:layout_centerInParent="true"
+                android:visibility="visible"/>
         </RelativeLayout>
     </LinearLayout>
 
@@ -449,7 +458,7 @@
             android:textColor="@color/dark_gray"
             android:textSize="10sp" />
     </RelativeLayout>
-    
+
     <RelativeLayout
         android:id="@+id/receive_reply_layout"
         android:layout_width="match_parent"

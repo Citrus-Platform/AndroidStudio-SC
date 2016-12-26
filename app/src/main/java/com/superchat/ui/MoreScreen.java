@@ -111,7 +111,8 @@ public class MoreScreen extends Activity implements OnClickListener {
 
         superGroupDownloadSettingsHandler = new SuperGroupDownloadSettingsHandler(this);
 
-        switchSaveGalleryMedia.setChecked(superGroupDownloadSettingsHandler.isSavedInGallery());
+        boolean isSaveInGallery = superGroupDownloadSettingsHandler.isSavedInGallery();
+        switchSaveGalleryMedia.setChecked(isSaveInGallery);
 
         switchSaveGalleryMedia.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
