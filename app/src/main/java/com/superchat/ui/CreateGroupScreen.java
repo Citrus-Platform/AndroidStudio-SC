@@ -139,6 +139,8 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
         LinearLayout subTitleOpenGroupView = (LinearLayout) findViewById(R.id.id_create_open_group_subtitle);
         LinearLayout subTitleCloseGroupView = (LinearLayout) findViewById(R.id.id_create_closed_group_subtitle);
         LinearLayout group_type = (LinearLayout) findViewById(R.id.id_group_type);
+        TextView open_close = (TextView) findViewById(R.id.id_open_close_txt);
+
         ImageView xmppStatusView = (ImageView) findViewById(R.id.id_xmpp_status);
         cameraImageView = (ImageView) findViewById(R.id.id_group_camera_icon);
         cameraImageView.setOnClickListener(this);
@@ -213,22 +215,31 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
                 }
                 if (groupName != null && groupName.trim().length() > 0)
                     groupNameView.setText(groupName);
-                if (groupUUID != null && groupUUID.trim().length() > 0 && SharedPrefManager.getInstance().isGroupChat(groupUUID))
+                if (groupUUID != null && groupUUID.trim().length() > 0 && SharedPrefManager.getInstance().isGroupChat(groupUUID)) {
                     title.setText(getString(R.string.edit_group_title));
-                else
+                    radioGroup.setVisibility(View.GONE);
+                    if (SharedPrefManager.getInstance().isPublicGroup(groupUUID))
+                        open_close.setText(getString(R.string.open_gp));
+                    else
+                        open_close.setText(getString(R.string.close_gp));
+                }
+                else {
                     title.setText(getString(R.string.create_group));
+                }
 //				else if(isChannel){
 //					groupNameView.setHint(getString(R.string.channel_name));
 //				}
                 if (isChannel) {
                     group_type.setVisibility(View.VISIBLE);
-                } else if (isForGroupUpdate) {
-                    if (SharedPrefManager.getInstance().isPublicGroup(groupUUID)) {
-                        subTitleOpenGroupView.setVisibility(View.VISIBLE);
-                    } else {
-                        subTitleCloseGroupView.setVisibility(View.VISIBLE);
-                    }
                 }
+
+//                else if (isForGroupUpdate) {
+//                    if (SharedPrefManager.getInstance().isPublicGroup(groupUUID)) {
+//                        subTitleOpenGroupView.setVisibility(View.VISIBLE);
+//                    } else {
+//                        subTitleCloseGroupView.setVisibility(View.VISIBLE);
+//                    }
+//                }
 //				if(isChannel)
 //					subTitleOpenGroupView.setVisibility(View.VISIBLE);
 //				else
@@ -663,7 +674,7 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
             } else {
                 GroupChatXmppCaptionData data = new GroupChatXmppCaptionData();
 
-                data.setDisplayName(groupUUID);
+                data.setDisplayName(displayName);
 
                 if (groupDiscription != null)
                     data.setDescription(groupDiscription);

@@ -584,6 +584,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 clearFunction();
                 flagFrag = position;
                 invalidateOptionsMenu();
+                if (id_sg_name_label != null) {
+                    id_sg_name_label.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
+                }
                 // actions
                 switch (position) {
                     case 0:
@@ -2460,8 +2463,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 case 111:
                     backUpFound = false;
                     isContactSynching = false;
-                    if (mViewPager.getCurrentItem() == 2)
-                        contactsFragment.showAllContacts();
+//                    if (mViewPager.getCurrentItem() == 2)
+//                        contactsFragment.showAllContacts();
 //                    if(!iPrefManager.isBulletinLoaded(iPrefManager.getUserDomain()) && !frompush){
 //                        getBulletinMessages();
 //                    }
@@ -4159,7 +4162,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         drawerFragment.currentSGName.setText("" + text);
         if (fileId != null && fileId.trim().length() > 0)
             setProfilePic(drawerFragment.displayPictureCurrent, fileId);
-        drawerFragment.user.setText("" + SharedPrefManager.getInstance().getDisplayName() + "(You)");
+        drawerFragment.user.setText("" + SharedPrefManager.getInstance().getDisplayName());
     }
 
     //-------------------------------------------------------------------------

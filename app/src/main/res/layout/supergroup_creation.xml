@@ -1,4 +1,4 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:fillViewport="true">
@@ -701,6 +701,7 @@
                             android:layout_gravity="center"
                             android:layout_marginLeft="10dip"
                             android:gravity="center"
+                            android:visibility="gone"
                             android:text="@string/anyone_can_join"
                             android:textColor="@color/text_color_grayblack"
                             android:textSize="13sp"
@@ -725,6 +726,7 @@
                             android:layout_gravity="center"
                             android:layout_marginLeft="10dip"
                             android:gravity="center"
+                            android:visibility="gone"
                             android:text="@string/invitee_can_join"
                             android:textColor="@color/text_color_grayblack"
                             android:textSize="13sp"
@@ -760,7 +762,6 @@
                 <com.superchat.widgets.MyriadRegularTextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dip"
                     android:layout_marginTop="10dp"
                     android:gravity="center"
                     android:text="@string/creation_photo_sg"
@@ -831,4 +832,4 @@
         </ScrollView>
 
     </LinearLayout>
-</ScrollView>
+</LinearLayout>

@@ -1279,12 +1279,17 @@ public class SharedPrefManager {
     }
 
     public void saveUserEmail(String phone) {
-        editor.putString(USER_EMAIL, phone);
+        String sg = getUserDomain();
+        if(sg != null)
+            editor.putString(USER_EMAIL + sg, phone);
         editor.commit();
     }
 
     public String getUserEmail() {
-        String value = pref.getString(USER_EMAIL, null);
+        String sg = getUserDomain();
+        String value = null;
+        if(sg != null)
+            value = pref.getString(USER_EMAIL + sg, null);
         return value;
     }
 

@@ -298,7 +298,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                 residenceTypeViewLabel = (TextView) findViewById(R.id.id_residence_type_label);
                 buildingNoViewLabel = (TextView) findViewById(R.id.id_building_number_label);
                 flatNoViewLabel = (TextView) findViewById(R.id.id_flat_no_label);
-                displayNameLabel = (TextView) findViewById(R.id.id_display_name_label);
+//                displayNameLabel = (TextView) findViewById(R.id.id_display_name_label);
                 // residenceTypeView =
                 // (EditText)findViewById(R.id.id_residence_type_field);
                 buildingNoView = (EditText) findViewById(R.id.id_building_number_field);
@@ -318,7 +318,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                 residenceTypeViewLabel = (TextView) findViewById(R.id.id_residence_type_label);
                 buildingNoViewLabel = (TextView) findViewById(R.id.id_building_number_label);
                 flatNoViewLabel = (TextView) findViewById(R.id.id_flat_no_label);
-                currentLocationViewLabel = (TextView) findViewById(R.id.id_current_location_label);
+//                currentLocationViewLabel = (TextView) findViewById(R.id.id_current_location_label);
                 // residenceTypeView =
                 // (EditText)findViewById(R.id.id_residence_type_field);
                 buildingNoView = (EditText) findViewById(R.id.id_building_number_field);
@@ -813,10 +813,10 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
 
         }
         if (isRWA()) {
-            if (rwaAddressView != null)
-                rwaAddressView.setHint(getString(R.string.address));
-            if (rwaAddressViewLabel != null)
-                rwaAddressViewLabel.setText(getString(R.string.address));
+//            if (rwaAddressView != null)
+//                rwaAddressView.setHint(getString(R.string.address));
+//            if (rwaAddressViewLabel != null)
+//                rwaAddressViewLabel.setText(getString(R.string.address));
         }
         switch (purposeType) {
             case VIEWWING_AS_SELF_IN_REG:
@@ -992,8 +992,8 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                     genderSpinner.setTag("2");
                     genderSpinner.setOnItemSelectedListener(this);
                 }
-                if (displayNameLabel != null && isRWA())
-                    displayNameLabel.setText(getString(R.string.name_label));
+//                if (displayNameLabel != null && isRWA())
+//                    displayNameLabel.setText(getString(R.string.name_label));
                 break;
             case VIEW_SG_MEMBER:
 
@@ -2530,23 +2530,23 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                             currentStatusView.setText(iSharedPrefManager.getUserStatusMessage(userName));
                         }
                         if (isRWA()) {
-                            if (flatNoView != null && flatNoViewLabel != null) {
+                            if (flatNoView != null) {
                                 if (objUserModel.flatNumber != null && !objUserModel.flatNumber.equals("")) {
                                     flatNoView.setVisibility(View.VISIBLE);
-                                    flatNoViewLabel.setVisibility(View.VISIBLE);
+//                                    flatNoViewLabel.setVisibility(View.VISIBLE);
                                     flatNoView.setText(objUserModel.flatNumber);
                                 } else if (purposeType == VIEW_SG_MEMBER) {
-                                    flatNoViewLabel.setVisibility(View.GONE);
+//                                    flatNoViewLabel.setVisibility(View.GONE);
                                     flatNoView.setVisibility(View.GONE);
                                 }
                             }
-                            if (buildingNoView != null && buildingNoViewLabel != null) {
+                            if (buildingNoView != null) {
                                 if (objUserModel.buildingNumber != null && !objUserModel.buildingNumber.equals("")) {
                                     buildingNoView.setVisibility(View.VISIBLE);
-                                    buildingNoViewLabel.setVisibility(View.VISIBLE);
+//                                    buildingNoViewLabel.setVisibility(View.VISIBLE);
                                     buildingNoView.setText(objUserModel.buildingNumber);
                                 } else if (purposeType == VIEW_SG_MEMBER) {
-                                    buildingNoViewLabel.setVisibility(View.GONE);
+//                                    buildingNoViewLabel.setVisibility(View.GONE);
                                     buildingNoView.setVisibility(View.GONE);
                                 }
                             }
@@ -2666,17 +2666,17 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                                     if (isRWA()) {
                                         if (currentLocationLayout != null)
                                             currentLocationLayout.setVisibility(View.GONE);
-                                        if (currentLocationViewLabel != null)
-                                            currentLocationViewLabel.setVisibility(View.GONE);
+//                                        if (currentLocationViewLabel != null)
+//                                            currentLocationViewLabel.setVisibility(View.GONE);
                                         currentLocationView.setVisibility(View.GONE);
                                     } else if (objUserModel.address != null && !objUserModel.address.equals("")) {
                                         currentLocationView.setVisibility(View.VISIBLE);
-                                        if (purposeType == VIEW_SG_MEMBER)
-                                            currentLocationViewLabel.setVisibility(View.VISIBLE);
+//                                        if (purposeType == VIEW_SG_MEMBER)
+//                                            currentLocationViewLabel.setVisibility(View.VISIBLE);
                                         currentLocationView.setText(objUserModel.address);
                                     } else if (purposeType == VIEW_SG_MEMBER) {
                                         currentLocationView.setVisibility(View.GONE);
-                                        currentLocationViewLabel.setVisibility(View.GONE);
+//                                        currentLocationViewLabel.setVisibility(View.GONE);
                                     }
                                 }
                                 if (!isRWA())

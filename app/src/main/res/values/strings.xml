@@ -106,6 +106,9 @@
     <!-- Open Groups Screen -->
     <string name="my_groups">My Groups</string>
     <string name="open_groups">Open Groups</string>
+
+    <string name="open_gp">Open Group</string>
+    <string name="close_gp">Closed Group</string>
     <!-- Group Info Screen -->
     <string name="groups">Groups</string>
     <string name="group_info">Group Info</string>
@@ -454,12 +457,15 @@
     <string name="enter_channel_description">Tap to open group description</string>
     <string name="connecting_txt">Connecting..</string>
     <string name="select_gender">Select Gender</string>
+
     <string name="open_supergroup">Public – Anyone can join</string>
-    <string name="open_group">Open – This type of group can be searched for and joined by everyone.</string>
-     <string name="close_group_creation_option">Closed (Private) – Private or Closed SuperGroups- these are private groups that need an invitation from the SuperGroup Admins to join.</string>
     <string name="closed_supergroup">Private – Only people you invite can join</string>
+
+    <string name="open_group">Open</string>
+    <string name="close_group_creation_option">Closed</string>
+
     <string name="select_group_type">Select Public or Private</string>
-    <string name="select_group_type_in_creation">Select Public or Private</string>
+    <string name="select_group_type_in_creation">Select Open or Closed</string>
     <string name="welcome_to_superchat">Welcome to Superchat</string>
     <string name="join_a_group">JOIN A GROUP</string>
     <string name="or">OR</string>
@@ -484,7 +490,7 @@
     <string name="domain_desired_name">Enter desired name</string>
     <string name="anyone_can_join">(Anyone can join)</string>
     <string name="invitee_can_join">(Only people you invite can join)</string>
-    <string name="supergroup_validation">Please select SuperGroup type – open or close.</string>
+    <string name="supergroup_validation">Select Private or Public.</string>
     <string name="validation_privacy">You need to agree to terms and conditions to go on. </string>
     <string name="validation_dob">Please add your date of birth.</string>
     <string name="validation_gender">Please select your gender.</string>
@@ -663,5 +669,9 @@
     <string name="poll_icon">Poll</string>
     <string name="chat_options">Chat option</string>
 
+    <string name="got_it">Got It</string>
+    <string name="invite_manually">You can invite a person by manually entering number</string>
+
     <string name="create_new_sg_text">Please complete your profile to create new SuperGroup</string>
+    <string name="invite_sms">This SMS will go from your mobile phone and will be charged per your operator\'s plan.</string>
 </resources>

@@ -121,7 +121,7 @@ public class BulkInvitationAdapter extends ArrayAdapter<BulkInvitationAdapter.Ap
 //								notifyDataSetChanged();
 //								return;
 //							}
-							
+
 							if(v.getId() != R.id.contact_sel_box){
 								iCheckBox.setChecked(!checkedTagMap.get(userDisplayNumber));
 							}

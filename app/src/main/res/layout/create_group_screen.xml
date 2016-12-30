@@ -118,21 +118,21 @@
                 android:layout_marginRight="25dp"
                 android:layout_marginTop="5dp"
                 android:background="@null"
-                android:gravity="center"
+                android:gravity="left"
                 android:hint="@string/enter_group_name_hinttxt"
                 android:inputType="textCapSentences"
                 android:maxLength="22"
                 android:padding="10dp"
                 android:text=""
                 android:textColor="@color/black"
-                android:textSize="18sp"
+                android:textSize="15sp"
                 android:textStyle="normal" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
                 android:background="@color/color_lite_gray" />
 
             <RelativeLayout
@@ -166,13 +166,13 @@
                 android:id="@+id/id_group_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <com.superchat.widgets.MyriadRegularTextView
+                    android:id="@+id/id_open_close_txt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
@@ -187,35 +187,30 @@
 
                 <RadioGroup
                     android:id="@+id/radio_group"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/color_call_screen_bg"
-                    android:orientation="vertical">
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:orientation="horizontal">
 
                     <RadioButton
                         android:id="@+id/radio_open"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
                         android:checked="true"
-                        android:drawableLeft="@drawable/iconopengroup_small"
-                        android:drawablePadding="5dp"
                         android:text="@string/open_group"
-                        android:textColor="@color/white"
-                        android:textSize="14sp" />
+                        android:textColor="@color/btn_text_color"
+                        android:textSize="15sp" />
 
                     <RadioButton
                         android:id="@+id/radio_closed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="20dp"
                         android:checked="false"
-                        android:drawableLeft="@drawable/iconclosedgroup_small"
-                        android:drawablePadding="5dp"
-                        android:text="@string/closed_supergroup"
-                        android:textColor="@color/white"
-                        android:textSize="14sp" />
+                        android:text="@string/close_group_creation_option"
+                        android:textColor="@color/btn_text_color"
+                        android:textSize="15sp" />
                 </RadioGroup>
             </LinearLayout>
 
@@ -278,10 +273,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/md_grey_200"
                 android:orientation="horizontal"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
                 android:layout_marginTop="15dp"
-                android:padding="16dp"
                 android:weightSum="2">
 
                 <RelativeLayout
@@ -295,6 +290,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/broadcast"
                         android:layout_centerVertical="true"
+                        android:textColor="@color/btn_text_color"
                         android:textSize="15dp"/>
                 </RelativeLayout>
 
@@ -324,7 +320,7 @@
                 android:id="@+id/id_create_group_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="28dp"
+                android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
                 android:layout_marginTop="20dp"
                 android:layout_weight="1"
@@ -343,11 +339,11 @@
                 android:layout_marginRight="25dp"
                 android:layout_marginTop="5dp"
                 android:background="@null"
-                android:gravity="center"
+                android:gravity="left"
                 android:hint="@string/new_description"
                 android:inputType="textMultiLine|textCapSentences"
                 android:maxLength="500"
-                android:padding="20dp"
+                android:padding="10dp"
                 android:textColor="@color/text_color_on_dark_grey"
                 android:textSize="15sp"
                 android:textStyle="normal"
