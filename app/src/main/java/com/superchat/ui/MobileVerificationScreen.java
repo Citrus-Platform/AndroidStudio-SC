@@ -29,6 +29,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.chat.sdk.db.ChatDBWrapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
@@ -314,7 +315,6 @@ private final Handler myHandler = new Handler() {
 		imManager.showSoftInput(inputEditText, InputMethodManager.SHOW_IMPLICIT);
 	}
 
-	
 	public void onConfirmClick(View view) {
 		String code = inputEditText.getText().toString();
 		if(!code.equals("") && code.length()==4){

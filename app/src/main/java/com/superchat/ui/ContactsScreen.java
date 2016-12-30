@@ -188,6 +188,7 @@ public class ContactsScreen extends CustomFragmentHomeTabs implements Connection
     }
 
     public void clearHideSearch(){
+        try{
         searchBoxView.setText("");
         searchBoxView.setVisibility(View.GONE);
         clearSearch.setVisibility(View.GONE);
@@ -195,6 +196,9 @@ public class ContactsScreen extends CustomFragmentHomeTabs implements Connection
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
         hideToolbar();
+    } catch(Exception e){
+
+    }
     }
 
     public void performSearch(){

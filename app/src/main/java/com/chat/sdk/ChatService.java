@@ -1390,7 +1390,7 @@ public class ChatService extends Service implements interfaceInstances {
 							}
 							if(jsonobj.has("domainPicID") && jsonobj.getString("domainPicID").toString().trim().length() > 0) {
 //								fileId = jsonobj.getString("domainPicID").toString();
-                                prefManager.saveSGFileId("SG_FILE_ID", jsonobj.getString("domainPicID").toString());
+                                prefManager.saveSGFileId(prefManager.getUserDomain(), jsonobj.getString("domainPicID").toString());
                             }
                             jsonobj = null;
                         } catch (JSONException e) {
@@ -3323,7 +3323,10 @@ public class ChatService extends Service implements interfaceInstances {
             else if (captionTag != null && !captionTag.equals(""))
                 contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, captionTag);
             if (fileName != null && !fileName.equals("")) {
-                contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, fileName);
+                if((message.getXMPPMessageType() != XMPPMessageType.atMeXmppMessageTypeImage
+                        && message.getXMPPMessageType() != XMPPMessageType.atMeXmppMessageTypeVideo
+                        && message.getXMPPMessageType() != XMPPMessageType.atMeXmppMessageTypeAudio))
+                    contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, fileName);
             }
             if (locationMsg != null && !locationMsg.equals(""))
                 contentvalues.put(ChatDBConstants.MESSAGE_TYPE_LOCATION, locationMsg);
@@ -3570,14 +3573,17 @@ public class ChatService extends Service implements interfaceInstances {
             if ((message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeImage
                     || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeVideo
                     || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeAudio)
-                    && msg != null && !from.equals(SharedPrefManager.getInstance().getUserName()) && captionTag != null)
+                    && msg != null && !from.equals(SharedPrefManager.getInstance().getUserName()) && captionTag != null) {
                 if (message.getStatusMessageType().ordinal() == Message.StatusMessageType.broadcasttoall.ordinal())
                     contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, captionTag);
                 else
                     contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, msg);
-            else if (captionTag != null && !captionTag.equals(""))
+            }else if (captionTag != null && !captionTag.equals(""))
                 contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, captionTag);
-            if (fileName != null && !fileName.equals("")) {
+            if (fileName != null && !fileName.equals("") && !is_sent_from_console) {
+                if((message.getXMPPMessageType() != XMPPMessageType.atMeXmppMessageTypeImage
+                        && message.getXMPPMessageType() != XMPPMessageType.atMeXmppMessageTypeVideo
+                        && message.getXMPPMessageType() != XMPPMessageType.atMeXmppMessageTypeAudio))
                 contentvalues.put(ChatDBConstants.MEDIA_CAPTION_TAG, fileName);
             }
             if (message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeLocation) {

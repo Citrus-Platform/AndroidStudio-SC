@@ -107,215 +107,115 @@
              
             </RelativeLayout>
 
-            <com.superchat.widgets.MyriadRegularTextView
-                 android:id="@+id/id_display_name_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dip"
-                android:text="@string/employee_name"
-                android:textColor="@color/text_color_grayblack"
-                android:drawableLeft="@drawable/profile_name"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="10dp"
-                android:textStyle="normal" />
-			<com.superchat.widgets.MyriadSemiboldEditText
-                android:id="@+id/id_display_name_field"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="20dip"
-                android:layout_marginRight="20dip"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/round_rect_profile_bg"
-                android:hint="@string/employee_name"
-                android:inputType="textCapWords"
-                android:maxLength="160"
-                android:padding="10dip"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="@color/text_color_grayblack"
-                android:textSize="16sp"
-                android:textStyle="normal" />
-            
-            
-            
-            <com.superchat.widgets.MyriadRegularTextView
-                android:id="@+id/id_empid_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dip"
-                android:text="@string/employee_id"
-                android:textColor="@color/text_color_grayblack"
-                android:drawableLeft="@drawable/profile_empid"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="10dp"
-                android:textStyle="normal" />
-		<com.superchat.widgets.MyriadSemiboldEditText
-                android:id="@+id/id_empid_field"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="20dip"
-                android:layout_marginRight="20dip"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/round_rect_profile_bg"
-                android:hint="@string/employee_id"
-                android:maxLength="160"
-                android:padding="10dip"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="@color/text_color_grayblack"
-                android:inputType="textCapWords"
-                android:textSize="16sp"
-                android:textStyle="normal" />
-            
-            <com.superchat.widgets.MyriadRegularTextView
-                 android:id="@+id/id_department_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dip"
-                android:text="@string/department"
-                android:textColor="@color/text_color_grayblack"
-                android:drawableLeft="@drawable/profile_department_"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="10dp"
-                android:textStyle="normal" />
-			<com.superchat.widgets.MyriadSemiboldEditText
-                android:id="@+id/id_department_field"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="20dip"
-                android:layout_marginRight="20dip"
-                android:layout_marginBottom="10dip"
-                android:background="@drawable/round_rect_profile_bg"
-                android:hint="@string/department"
-                android:maxLength="160"
-                android:padding="10dip"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="@color/text_color_grayblack"
-                android:inputType="textCapWords"
-                android:textSize="16sp"
-                android:textStyle="normal" />
+			<android.support.design.widget.TextInputLayout
+				android:layout_width="match_parent"
+				android:layout_marginLeft="20dip"
+				android:layout_marginRight="20dip"
+				android:layout_height="wrap_content">
+				<EditText
+					android:id="@+id/id_display_name_field"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/employee_name"
+					android:inputType="textCapWords"
+					android:maxLines="1"
+					android:maxLength="160"
+					android:imeOptions="actionNext"/>
+			</android.support.design.widget.TextInputLayout>
 
-            <com.superchat.widgets.MyriadRegularTextView
-                android:id="@+id/id_designation_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dip"
-                android:text="@string/designation"
-                android:textColor="@color/text_color_grayblack"
-                android:drawableLeft="@drawable/profile_designation"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="10dp"
-                android:textStyle="normal" />
+			<android.support.design.widget.TextInputLayout
+				android:layout_width="match_parent"
+				android:layout_marginLeft="20dip"
+				android:layout_marginRight="20dip"
+				android:layout_height="wrap_content">
+				<EditText
+					android:id="@+id/id_empid_field"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/employee_id"
+					android:inputType="textCapWords"
+					android:maxLines="1"
+					android:maxLength="160"
+					android:imeOptions="actionNext"/>
+			</android.support.design.widget.TextInputLayout>
 
-            <com.superchat.widgets.MyriadSemiboldEditText
-                android:id="@+id/id_designation_field"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="10dip"
-                android:layout_marginLeft="20dip"
-                android:layout_marginRight="20dip"
-                android:background="@drawable/round_rect_profile_bg"
-                android:hint="@string/designation"
-                android:maxLength="160"
-                android:padding="10dip"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="@color/text_color_grayblack"
-                android:inputType="textCapWords"
-                android:textSize="16sp"
-                android:textStyle="normal" />
-            <com.superchat.widgets.MyriadRegularTextView
-			     android:id="@+id/id_address_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dip"
-                android:text="@string/work_address"
-                android:textColor="@color/text_color_grayblack"
-                android:drawableLeft="@drawable/profile_location"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="10dp"
-                android:textStyle="normal" />
-			<com.superchat.widgets.MyriadSemiboldEditText
-			    android:id="@+id/id_address_field"
-			    android:layout_width="fill_parent"
-			    android:layout_height="wrap_content"
-			    android:layout_marginBottom="10dip"
-			    android:layout_marginLeft="20dip"
-			    android:layout_marginRight="20dip"
-			    android:background="@drawable/round_rect_profile_bg"
-			    android:hint="@string/work_address"
-			    android:inputType="textCapSentences|textMultiLine"
-			    android:maxLength="100"
-			    android:padding="10dip"
-			    android:textColor="@color/text_color_grayblack"
-			    android:textSize="16sp"
-			    android:textStyle="normal" />
-            <com.superchat.widgets.MyriadRegularTextView
-                android:id="@+id/id_flat_no_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dip"
-                android:text="@string/flat_number"
-                android:textColor="@color/text_color_grayblack"
-                 android:drawableLeft="@drawable/flat_no"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="10dp"
-                android:textStyle="normal" />
-			<com.superchat.widgets.MyriadSemiboldEditText
-			    android:id="@+id/id_flat_no_field"
-			    android:layout_width="fill_parent"
-			    android:layout_height="wrap_content"
-			    android:layout_marginBottom="10dip"
-			    android:layout_marginLeft="20dip"
-			    android:layout_marginRight="20dip"
-			    android:background="@drawable/round_rect_profile_bg"
-			    android:hint="@string/flat_number"
-			     android:inputType="textCapSentences"
-			    android:maxLines="1"
-			    android:maxLength="25"
-			    android:padding="10dip"
-			    android:textColor="@color/text_color_grayblack"
-			    android:textSize="16sp"
-			    android:textStyle="normal" />
-			<com.superchat.widgets.MyriadRegularTextView
-			    android:id="@+id/id_building_number_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dip"
-                android:text="@string/building_number"
-                android:textColor="@color/text_color_grayblack"
-                android:drawableLeft="@drawable/building"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="10dp"
-                android:textStyle="normal" />
-			<com.superchat.widgets.MyriadSemiboldEditText
-			    android:id="@+id/id_building_number_field"
-			    android:layout_width="fill_parent"
-			    android:layout_height="wrap_content"
-			    android:layout_marginBottom="10dip"
-			    android:layout_marginLeft="20dip"
-			    android:layout_marginRight="20dip"
-			    android:background="@drawable/round_rect_profile_bg"
-			    android:hint="@string/building_number"
-			    android:inputType="textCapSentences"
-			    android:maxLines="1"
-			    android:maxLength="25"
-			    android:padding="10dip"
-			    android:textColor="@color/text_color_grayblack"
-			    android:textSize="16sp"
-			    android:textStyle="normal" />
+			<android.support.design.widget.TextInputLayout
+				android:layout_width="match_parent"
+				android:layout_marginLeft="20dip"
+				android:layout_marginRight="20dip"
+				android:layout_height="wrap_content">
+				<EditText
+					android:id="@+id/id_department_field"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/department"
+					android:inputType="textCapWords"
+					android:maxLines="1"
+					android:maxLength="160"
+					android:imeOptions="actionNext"/>
+			</android.support.design.widget.TextInputLayout>
+
+			<android.support.design.widget.TextInputLayout
+				android:layout_width="match_parent"
+				android:layout_marginLeft="20dip"
+				android:layout_marginRight="20dip"
+				android:layout_height="wrap_content">
+				<EditText
+					android:id="@+id/id_designation_field"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/designation"
+					android:inputType="textCapWords"
+					android:maxLength="160"
+					android:imeOptions="actionNext"/>
+			</android.support.design.widget.TextInputLayout>
+
+			<android.support.design.widget.TextInputLayout
+				android:layout_width="match_parent"
+				android:layout_marginLeft="20dip"
+				android:layout_marginRight="20dip"
+				android:layout_height="wrap_content">
+				<EditText
+					android:id="@+id/id_address_field"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/work_address"
+					android:inputType="textCapWords"
+					android:maxLength="160"
+					android:imeOptions="actionNext"/>
+			</android.support.design.widget.TextInputLayout>
+
+			<android.support.design.widget.TextInputLayout
+				android:layout_width="match_parent"
+				android:layout_marginLeft="20dip"
+				android:layout_marginRight="20dip"
+				android:layout_height="wrap_content">
+				<EditText
+					android:id="@+id/id_flat_no_field"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/flat_number"
+					android:inputType="textCapWords"
+					android:maxLength="25"
+					android:imeOptions="actionNext"/>
+			</android.support.design.widget.TextInputLayout>
+
+			<android.support.design.widget.TextInputLayout
+				android:layout_width="match_parent"
+				android:layout_marginLeft="20dip"
+				android:layout_marginRight="20dip"
+				android:layout_height="wrap_content">
+				<EditText
+					android:id="@+id/id_building_number_field"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/building_number"
+					android:inputType="textCapWords"
+					android:maxLength="25"
+					android:imeOptions="actionNext"/>
+			</android.support.design.widget.TextInputLayout>
+
+
 			<com.superchat.widgets.MyriadRegularTextView
 			     android:id="@+id/id_residence_type_label"
                 android:layout_width="wrap_content"
@@ -323,7 +223,6 @@
                 android:layout_marginLeft="20dip"
                 android:text="@string/residence_type"
                 android:textColor="@color/text_color_grayblack"
-                 android:drawableLeft="@drawable/owner"
                 android:drawablePadding="5dp"
                 android:gravity="center_vertical"
                 android:layout_marginBottom="10dp"
@@ -336,52 +235,24 @@
                 android:layout_marginRight="20dip"
                 android:layout_marginBottom="10dip"
                 android:entries="@array/residence_type_options"
-		        android:prompt="@string/residence_type"
-    		/>
-			<com.superchat.widgets.MyriadSemiboldEditText
-			    android:id="@+id/id_residence_type_field"
-			    android:layout_width="fill_parent"
-			    android:layout_height="wrap_content"
-			    android:layout_marginBottom="10dip"
-			    android:layout_marginLeft="20dip"
-			    android:layout_marginRight="20dip"
-			    android:background="@drawable/round_rect_profile_bg"
-			    android:hint="@string/residence_type"
-			    android:inputType="textCapSentences|textMultiLine"
-			    android:maxLength="160"
-			    android:padding="10dip"
-			    android:textColor="@color/text_color_grayblack"
-			    android:textSize="16sp"
-			    android:visibility="gone"
-			    android:textStyle="normal" />
-			<com.superchat.widgets.MyriadRegularTextView
-			     android:id="@+id/id_rwa_address_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dip"
-                android:text="@string/address"
-                android:textColor="@color/text_color_grayblack"
-                android:drawableLeft="@drawable/profile_location"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="10dp"
-                android:textStyle="normal" 
-                android:visibility="gone"/>
-			<com.superchat.widgets.MyriadSemiboldEditText
-			    android:id="@+id/id_rwa_address_field"
-			    android:layout_width="fill_parent"
-			    android:layout_height="wrap_content"
-			    android:layout_marginBottom="10dip"
-			    android:layout_marginLeft="20dip"
-			    android:layout_marginRight="20dip"
-			    android:background="@drawable/round_rect_profile_bg"
-			    android:hint="@string/address"
-			    android:inputType="textCapSentences|textMultiLine"
-			    android:maxLength="100"
-			    android:padding="10dip"
-			    android:textColor="@color/text_color_grayblack"
-			    android:textSize="16sp"
-			    android:textStyle="normal" />
+		        android:prompt="@string/residence_type"/>
+
+			<android.support.design.widget.TextInputLayout
+				android:layout_width="match_parent"
+				android:layout_marginLeft="20dip"
+				android:layout_marginRight="20dip"
+				android:layout_height="wrap_content">
+				<EditText
+					android:id="@+id/id_rwa_address_field"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/address"
+					android:inputType="textCapSentences|textMultiLine"
+					android:maxLength="100"
+					android:imeOptions="actionNext"/>
+			</android.support.design.widget.TextInputLayout>
+
+
 			<LinearLayout
                 android:id="@+id/groups_incommon"
                 android:layout_width="fill_parent"
@@ -418,71 +289,37 @@
 	        android:layout_marginBottom="5dp"
 	        android:background="@color/dark_gray" />
        </LinearLayout>
-		<com.superchat.widgets.MyriadRegularTextView
-                android:id="@+id/id_mobile_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dip"
-                android:text="@string/number"
-                android:textColor="@color/text_color_grayblack"
-                android:drawableLeft="@drawable/profile_number"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="10dp"
-                android:textStyle="normal" />
 
-		<com.superchat.widgets.MyriadSemiboldEditText
-		    android:id="@+id/id_mobile_field"
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content"
-		    android:layout_marginBottom="10dip"
-		    android:layout_marginLeft="20dip"
-		    android:layout_marginRight="20dip"
-		    android:background="@drawable/round_rect_profile_bg"
-		    android:ems="10"
-		    android:hint="@string/number"
-		    android:maxLength="160"
-		    android:padding="10dip"
-		    android:singleLine="true"
-		    android:textColor="@color/text_color_grayblack"
-		    android:textSize="16sp"
-		    android:enabled="false"
-		    android:textStyle="normal" >
+			<android.support.design.widget.TextInputLayout
+				android:layout_width="match_parent"
+				android:layout_marginLeft="20dip"
+				android:layout_marginRight="20dip"
+				android:layout_height="wrap_content">
+				<EditText
+					android:id="@+id/id_mobile_field"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/number"
+					android:maxLength="100"
+					android:enabled="false"
+					android:imeOptions="actionNext"/>
+			</android.support.design.widget.TextInputLayout>
 
-		    <requestFocus />
-		</com.superchat.widgets.MyriadSemiboldEditText>
+			<android.support.design.widget.TextInputLayout
+				android:layout_width="match_parent"
+				android:layout_marginLeft="20dip"
+				android:layout_marginRight="20dip"
+				android:layout_height="wrap_content">
+				<EditText
+					android:id="@+id/id_email_field"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:hint="@string/email_profile"
+					android:maxLength="100"
+					android:inputType="textEmailAddress"
+					android:imeOptions="actionNext"/>
+			</android.support.design.widget.TextInputLayout>
 
-            <com.superchat.widgets.MyriadRegularTextView
-                android:id="@+id/id_email_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dip"
-                android:text="@string/email_profile"
-                android:textColor="@color/text_color_grayblack"
-                android:drawableLeft="@drawable/profile_emailid"
-                android:drawablePadding="5dp"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="10dp"
-                android:textStyle="normal" />
-
-            <com.superchat.widgets.MyriadSemiboldEditText
-                android:id="@+id/id_email_field"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="20dip"
-                android:layout_marginRight="20dip"
-                android:layout_marginBottom="10dip"
-                android:background="@drawable/round_rect_profile_bg"
-                android:hint="@string/email_profile"
-                android:maxLength="160"
-                android:padding="10dip"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="@color/text_color_grayblack"
-                android:textSize="16sp"
-                android:textStyle="normal" />
-            
             <com.superchat.widgets.MyriadRegularTextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -490,7 +327,6 @@
                 android:drawablePadding="5dp"
                 android:layout_marginTop="10dp"
                 android:text="@string/gender"
-                android:drawableLeft="@drawable/profile_gender"
                 android:gravity="center_vertical"
                 android:textColor="@color/text_color_grayblack"
                 android:textStyle="normal" />

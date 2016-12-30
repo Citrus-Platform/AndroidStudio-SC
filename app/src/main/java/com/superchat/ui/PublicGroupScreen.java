@@ -128,7 +128,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if(searchBoxView != null){
+            if (searchBoxView != null) {
 
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(searchBoxView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
@@ -137,9 +137,8 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                 searchEditText.setVisibility(EditText.GONE);
                 clearSearch.setVisibility(ImageView.GONE);
             }
-        }
-        else {
-            if(searchBoxView != null){
+        } else {
+            if (searchBoxView != null) {
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(searchBoxView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
@@ -219,35 +218,40 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
         return view;
     }
 
-    public void clearHideSearch(){
-        resetSearchBox();
-        hideToolbar();
-    }
-
-    public void performSearch(){
-        try{
-            searchEditText.setVisibility(View.VISIBLE);
-            clearSearch.setVisibility(View.VISIBLE);
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(searchBoxView, InputMethodManager.SHOW_IMPLICIT);
-        } catch(Exception e){
+    public void clearHideSearch() {
+        try {
+            resetSearchBox();
+            hideToolbar();
+        } catch (Exception e) {
 
         }
     }
 
-    public boolean isSearchOn(){
+    public void performSearch() {
+        try {
+            searchEditText.setVisibility(View.VISIBLE);
+            clearSearch.setVisibility(View.VISIBLE);
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(searchBoxView, InputMethodManager.SHOW_IMPLICIT);
+        } catch (Exception e) {
+
+        }
+    }
+
+    public boolean isSearchOn() {
         return isSearchOn;
     }
-    public void resetSearchBox(){
-        if(searchEditText == null)
+
+    public void resetSearchBox() {
+        if (searchEditText == null)
             return;
-        if(searchBoxView.getText().toString().trim().length() > 0){
+        if (searchBoxView.getText().toString().trim().length() > 0) {
             searchBoxView.setText("");
-            Timer timer=new Timer();
+            Timer timer = new Timer();
             long DELAY = 800; // milliseconds
             timer.cancel();
             timer = new Timer();
-            if(isSearchOn)
+            if (isSearchOn)
                 timer.schedule(
                         new TimerTask() {
                             @Override
@@ -261,7 +265,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                         },
                         DELAY
                 );
-        }else{
+        } else {
             searchEditText.setText("");
             searchEditText.setVisibility(View.GONE);
 //            superGroupIcon.setVisibility(View.VISIBLE);
@@ -270,8 +274,9 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
             isSearchOn = false;
         }
     }
-    public void resetSearch(){
-        if(searchEditText != null){
+
+    public void resetSearch() {
+        if (searchEditText != null) {
             searchEditText.setText("");
             searchEditText.setVisibility(View.GONE);
             searchBoxView.setVisibility(View.GONE);
@@ -411,7 +416,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
 //		}
     }
 
-    private void manipulateScreenTabsData(boolean isForceHitAllChannels){
+    private void manipulateScreenTabsData(boolean isForceHitAllChannels) {
 
         try {
             // Temp code to refresh data forcefully
@@ -447,7 +452,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                 else
                     new OpenGroupTaskOnServer(true).execute();
             }
-        } catch(Exception e){
+        } catch (Exception e) {
 
         }
     }
@@ -467,7 +472,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                     break;
             }
 
-        if(i <= 0){
+        if (i <= 0) {
             manipulateScreenTabsData(true);
         }
 
@@ -507,7 +512,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
 
     private boolean sgSwitch;
 
-    public void setSgSwitch(boolean sgSwitch){
+    public void setSgSwitch(boolean sgSwitch) {
         this.sgSwitch = sgSwitch;
 
     }
@@ -588,16 +593,17 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
     }
 
     ArrayList<LoginResponseModel.GroupDetail> list = null;
+
     public void showAllContacts(int type) {
-        synchronized(this) {
+        synchronized (this) {
             FragmentActivity fragmentactivity = getActivity();
             String as[] = {DatabaseConstants.CONTACT_NAMES_FIELD};
             int ai[] = new int[1];
             ai[0] = R.id.id_contact_name;
             boolean exists = false;
-            if(list != null)
+            if (list != null)
                 list.clear();
-            if(list == null)
+            if (list == null)
                 list = new ArrayList<LoginResponseModel.GroupDetail>();
             else
                 list.clear();
@@ -632,7 +638,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                         if (list != null && !isGroupAddedInList(list, groups.groupName))
                             list.add(groups);
                     }
-            }catch(ConcurrentModificationException cex){
+            } catch (ConcurrentModificationException cex) {
                 cex.printStackTrace();
             }
             Collections.sort(list);
@@ -975,7 +981,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                             str += line;
                         }
                         if (str != null && !str.equals("")) {
-                            System.out.println(TAG+"OpenGroupTaskOnServer :: response : "+str);
+                            System.out.println(TAG + "OpenGroupTaskOnServer :: response : " + str);
                             Gson gson = new GsonBuilder().create();
                             LoginResponseModel loginObj = gson.fromJson(str, LoginResponseModel.class);
                             if (loginObj != null) {

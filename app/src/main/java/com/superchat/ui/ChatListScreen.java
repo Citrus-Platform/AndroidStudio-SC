@@ -4463,6 +4463,8 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 callOption.setVisibility(View.VISIBLE);
                 call_option_video.setVisibility(View.VISIBLE);
             }
+            call_option_video.setVisibility(View.VISIBLE);
+
             Cursor cursor1 = null;
             if (isBulletinBroadcast)
                 cursor1 = ChatDBWrapper.getInstance().getUserChatList(userName, CHAT_LIST_BULLETIN);

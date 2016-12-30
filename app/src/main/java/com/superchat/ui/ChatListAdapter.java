@@ -177,6 +177,9 @@ public class ChatListAdapter extends SimpleCursorAdapter {
     private void handleImageDownloadingUIStart(final ViewHolder viewholder) {
         //viewholder.leftImgProgressIndeterminate.setVisibility(View.VISIBLE);
         viewholder.progressbar.setVisibility(ProgressBar.VISIBLE);
+        viewholder.leftImgProgressIndeterminate.setVisibility(ProgressBar.VISIBLE);
+        viewholder.progressNew.setVisibility(ProgressBar.VISIBLE);
+
         //viewholder.progressPercent.setVisibility(ProgressBar.VISIBLE);
 
         viewholder.progressbar.setProgress(0);
@@ -290,6 +293,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
         GoogleMap mapReceiver;
 
 
+        private ProgressBar progressNew;
         private ProgressBar progressbar;
         private ProgressBar rightImgProgressBar;
         private ProgressBar leftImgProgressIndeterminate;
@@ -403,8 +407,9 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                         ((ChatListScreen) context).chatInfoIv.setVisibility(View.VISIBLE);
                     }
                 }
-                if (checkedTagMap.get(key) && messageType == XMPPMessageType.atMeXmppMessageTypeNormal.ordinal())
+                if (checkedTagMap.get(key) && messageType == XMPPMessageType.atMeXmppMessageTypeNormal.ordinal()) {
                     ((ChatListScreen) context).chatCopyIv.setVisibility(View.VISIBLE);
+                }
 //				iEditListener.onChatEditEnable("Y");
             }
         };
@@ -1030,6 +1035,8 @@ public class ChatListAdapter extends SimpleCursorAdapter {
             if (getIfAysncAvailable(url) != null) {
                 return;
             }
+
+            downloadStarted(viewHolder, downloadType);
 
             processing.put(url, "1");
             BitmapDownloaderTask task = new BitmapDownloaderTask(viewHolder, imageView, pb, callbackParams, msgType, downloadType);
@@ -2269,12 +2276,16 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 boolean isDownloadCancel = async.cancel(true);
                 Log.e("MUNISH TAG", "isDownloadCancel : " + isDownloadCancel);
 
+                if(viewHolder.leftImgProgressIndeterminate != null)
+                viewHolder.leftImgProgressIndeterminate.setVisibility(ProgressBar.GONE);
+
+                viewHolder.progressNew.setVisibility(ProgressBar.GONE);
+
                 downloadStopped(viewHolder, downloadType, url);
             } else {
                 viewHolder.downloadForce(viewHolder, url, msgType,
                         imageView, pb, callbackParams, true, downloadType);
 
-                downloadStarted(viewHolder, downloadType);
             }
         }
     }
@@ -4407,7 +4418,8 @@ public class ChatListAdapter extends SimpleCursorAdapter {
         viewholder.locationLayoutReceiver = (RelativeLayout) view.findViewById(R.id.location_layout_r);
         viewholder.locationLayoutReceiver.setOnLongClickListener(viewholder.onLongPressListener);
         viewholder.mapviewReceiver = (ImageView) view.findViewById(R.id.mapview_receiver);
-        viewholder.ivManageDownload = (ImageView) view.findViewById(ivManageDownload);
+        viewholder.ivManageDownload = (ImageView) view.findViewById(R.id.ivManageDownload);
+
         viewholder.locationNameReceiver = (TextView) view.findViewById(R.id.location_name_r);
         viewholder.locationNameAddressReceiver = (TextView) view.findViewById(R.id.location_address_r);
 
@@ -4418,6 +4430,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 
         viewholder.receiveImgView = (ImageView) view.findViewById(R.id.left_image_view);
 
+        viewholder.progressNew = (ProgressBar) view.findViewById(R.id.progressNew);
         viewholder.progressbar = (ProgressBar) view.findViewById(R.id.progress_image_loader);
         viewholder.leftImgProgressIndeterminate = (ProgressBar) view.findViewById(R.id.progress_image_indeterminate);
         viewholder.rightImgProgressBar = (ProgressBar) view.findViewById(R.id.right_progress_image_loader);

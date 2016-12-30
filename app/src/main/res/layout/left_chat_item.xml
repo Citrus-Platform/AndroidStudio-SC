@@ -419,13 +419,27 @@
                     android:visibility="gone" />
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/ivManageDownload"
+            <RelativeLayout
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/ic_content_download"
-                android:layout_centerInParent="true"
-                android:visibility="visible"/>
+                android:layout_centerInParent="true">
+
+                <ImageView
+                    android:id="@+id/ivManageDownload"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_content_download"
+                    android:visibility="gone"/>
+                <ProgressBar
+                    android:id="@+id/progressNew"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerInParent="true"
+                    android:indeterminate="true"
+                    android:secondaryProgress="100"
+                    android:visibility="gone"/>
+            </RelativeLayout>
+
         </RelativeLayout>
     </LinearLayout>
 

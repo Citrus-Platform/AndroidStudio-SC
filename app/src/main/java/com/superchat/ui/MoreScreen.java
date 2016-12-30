@@ -144,7 +144,7 @@ public class MoreScreen extends Activity implements OnClickListener {
             memberStatsLayout.setOnClickListener(this);
             memberManageLayout.setOnClickListener(this);
         }
-        if(sharedPrefManager.getSnoozeIndex(sharedPrefManager.getUserDomain()) > 0){
+        if((sharedPrefManager.getSnoozeExpiryTime(sharedPrefManager.getUserDomain()) - System.currentTimeMillis()) > 0){
             String time = (getResources().getStringArray(R.array.snooze_list_array))[sharedPrefManager.getSnoozeIndex(sharedPrefManager.getUserDomain())];
             muteSettingText.setVisibility(View.VISIBLE);
             muteSettingText.setText(time);

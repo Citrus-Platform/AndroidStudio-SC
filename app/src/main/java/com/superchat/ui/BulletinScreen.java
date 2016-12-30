@@ -373,11 +373,14 @@ public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountL
 //	    	 else
 //				noneMessageView.setVisibility(View.VISIBLE);
 
-            if (ChatService.xmppConectionStatus) {
-                xmppStatusView.setImageResource(R.drawable.blue_dot);
-            } else {
-                xmppStatusView.setImageResource(R.drawable.red_dot);
+            if(xmppStatusView != null) {
+                if (ChatService.xmppConectionStatus) {
+                    xmppStatusView.setImageResource(R.drawable.blue_dot);
+                } else {
+                    xmppStatusView.setImageResource(R.drawable.red_dot);
+                }
             }
+
             if(progressBarView != null)
                 progressBarView.setVisibility(ProgressBar.GONE);
             super.onPostExecute(result);

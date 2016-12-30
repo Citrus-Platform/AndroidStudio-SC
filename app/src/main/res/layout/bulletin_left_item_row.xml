@@ -412,6 +412,14 @@
                     android:textSize="16sp"
                     android:visibility="gone" />
             </LinearLayout>
+
+            <ImageView
+                android:id="@+id/ivManageDownload"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_content_download"
+                android:layout_centerInParent="true"
+                android:visibility="gone"/>
         </RelativeLayout>
     </LinearLayout>
 

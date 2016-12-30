@@ -295,6 +295,27 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
 //				}
 //
 //			});
+        if(inviteFromReg || sgCreationAfterLogin)
+            showInviteTooltip();
+    }
+    public void showInviteTooltip() {
+        final Dialog dialog = new Dialog(this, R.style.TranparentDialog);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setContentView(R.layout.invite_tooltip_overlay);
+        ((TextView) dialog.findViewById(R.id.id_ok)).setText("Got it");
+        ((TextView) dialog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                dialog.cancel();
+
+                return false;
+            }
+        });
+        final Window window = dialog.getWindow();
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+        dialog.show();
     }
 
     public void onClick(View view) {
@@ -338,6 +359,7 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
                 bottomLayout.setVisibility(View.VISIBLE);
                 viewContacts.setVisibility(View.VISIBLE);
                 otherApps.setTextColor(R.color.black);
+                viewContacts.setBackgroundColor(getResources().getColor(R.color.color_lite_blue));
                 contacts.setTextColor(getResources().getColor(R.color.color_lite_blue));
                 copyLink.setVisibility(View.GONE);
                 idBulkInfo.setVisibility(View.VISIBLE);
@@ -361,6 +383,7 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
                 viewOtherApps.setVisibility(View.VISIBLE);
                 searchLayout.setVisibility(View.GONE);
                 idBulkInfo.setVisibility(View.GONE);
+                viewOtherApps.setBackgroundColor(getResources().getColor(R.color.color_lite_blue));
                 otherApps.setTextColor(getResources().getColor(R.color.color_lite_blue));
                 contacts.setTextColor(R.color.darkest_gray);
                 idBulkInfoLabel.setVisibility(View.GONE);

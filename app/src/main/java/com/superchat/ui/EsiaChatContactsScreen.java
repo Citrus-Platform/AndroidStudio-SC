@@ -900,11 +900,11 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
 
                             allUsersWithRole = new ArrayList<GroupRoleCreationAdapter.UserInfo>();
                             ArrayList<GroupRoleCreationAdapter.UserInfo> allTempUsersWithRole = new ArrayList<GroupRoleCreationAdapter.UserInfo>();
-                            if (inviters.contains(SharedPrefManager.getInstance().getUserName())) {
-                                GroupRoleCreationAdapter.UserInfo info = new GroupRoleCreationAdapter.UserInfo(SharedPrefManager.getInstance().getUserName(), "You", null);
-                                allUsersWithRole.add(info);
-                                allTempUsersWithRole.add(info);
-                            }
+//                            if (inviters.contains(SharedPrefManager.getInstance().getUserName())) {
+//                                GroupRoleCreationAdapter.UserInfo info = new GroupRoleCreationAdapter.UserInfo(SharedPrefManager.getInstance().getUserName(), "You", null);
+//                                allUsersWithRole.add(info);
+//                                allTempUsersWithRole.add(info);
+//                            }
                             for (String member : inviters) {
                                 String dispName = SharedPrefManager.getInstance().getUserServerName(member);
                                 if (SharedPrefManager.getInstance().getUserName().equals(member))

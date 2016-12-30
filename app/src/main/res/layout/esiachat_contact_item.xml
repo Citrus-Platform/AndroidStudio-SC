@@ -72,7 +72,7 @@
               android:layout_marginTop="2dip"
            android:layout_marginRight="30dip"
             android:button="@drawable/custom_check_box"
-            android:visibility="visible" />
+            android:visibility="gone" />
     <ImageView
         android:id="@+id/ivOverFlowMenuMembers"
         android:layout_width="50dip"

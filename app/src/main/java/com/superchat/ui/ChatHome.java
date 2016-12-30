@@ -312,11 +312,15 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
     }
 
     public void clearHideSearch(){
-        searchBoxView.setVisibility(View.GONE);
-        clearSearch.setVisibility(View.GONE);
-        searchBoxView.setText("");
+        try {
+            searchBoxView.setVisibility(View.GONE);
+            searchBoxView.setText("");
+            clearSearch.setVisibility(View.GONE);
 
-        hideToolbar();
+            hideToolbar();
+        } catch(Exception e){
+
+        }
     }
 
     public boolean isSearchOn(){

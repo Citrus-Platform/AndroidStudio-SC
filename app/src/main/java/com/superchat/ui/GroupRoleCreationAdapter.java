@@ -67,7 +67,7 @@ public class GroupRoleCreationAdapter  extends ArrayAdapter<GroupRoleCreationAda
 	public int maxCount;
 	public int cuerrentMemberCount;
 	ArrayList<UserInfo> data;
-	boolean isOwnerSelectionAllowed = true;
+	boolean isOwnerSelectionAllowed = false;
 	public static class UserInfo implements Comparable{
 		private boolean isSelectionCompulsory;
 		public String userName="";
@@ -130,8 +130,9 @@ public class GroupRoleCreationAdapter  extends ArrayAdapter<GroupRoleCreationAda
 			checkedTagMap.put(SharedPrefManager.getInstance().getUserName(), true);
 			}
 		
-		isOwnerSelectionAllowed = SharedPrefManager.getInstance().isDomainAdminORSubAdmin();
-		
+//		isOwnerSelectionAllowed = SharedPrefManager.getInstance().isDomainAdminORSubAdmin();
+		isOwnerSelectionAllowed = false;
+
 		mDrawableBuilder = TextDrawable.builder().beginConfig().toUpperCase().endConfig().round();
 	}
 	public HashMap<String, Boolean> getSelectedItems() {

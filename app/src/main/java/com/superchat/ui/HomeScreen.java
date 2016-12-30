@@ -584,6 +584,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 clearFunction(position);
                 flagFrag = position;
                 invalidateOptionsMenu();
+                if (id_sg_name_label != null) {
+                    id_sg_name_label.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
+                }
                 // actions
                 switch (position) {
                     case 0:
@@ -1267,9 +1270,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
         @Override
         protected void onPostExecute(String str) {
-            if (progressDialog != null) {
-                progressDialog.dismiss();
-                progressDialog = null;
+            try {
+                if (progressDialog != null) {
+                    progressDialog.dismiss();
+                    progressDialog = null;
+                }
+            } catch(Exception e){
+
             }
             boolean new_user = false;
             JSONObject finalJSONbject = new JSONObject();
@@ -2460,8 +2467,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 case 111:
                     backUpFound = false;
                     isContactSynching = false;
-                    if (mViewPager.getCurrentItem() == 2)
-                        contactsFragment.showAllContacts();
+//                    if (mViewPager.getCurrentItem() == 2)
+//                        contactsFragment.showAllContacts();
 //                    if(!iPrefManager.isBulletinLoaded(iPrefManager.getUserDomain()) && !frompush){
 //                        getBulletinMessages();
 //                    }
