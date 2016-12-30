@@ -67,7 +67,6 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
     private boolean onForeground;
     EditText searchBoxView;
     ImageView clearSearch;
-    ImageView searchIcon;
 //    ImageView superGroupIcon;
     ImageView xmppStatusView;
     ProgressBar progressBarView;
@@ -222,9 +221,6 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
                 searchBoxView.setText("");
                 searchBoxView.setVisibility(EditText.GONE);
                 clearSearch.setVisibility(ImageView.GONE);
-
-                searchIcon.setVisibility(View.VISIBLE);
-
             }
         }
         else {
@@ -235,8 +231,6 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
                 searchBoxView.setText("");
                 searchBoxView.setVisibility(EditText.GONE);
                 clearSearch.setVisibility(ImageView.GONE);
-
-                searchIcon.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -248,7 +242,6 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
         View view = layoutinflater.inflate(R.layout.chat_home, null);
         noneMessageView = (LinearLayout) view.findViewById(R.id.center_layout);
         searchBoxView = (EditText) view.findViewById(R.id.id_search_field);
-        searchIcon = (ImageView) view.findViewById(R.id.id_search_icon);
         clearSearch = (ImageView) view.findViewById(R.id.id_back_arrow);
 
         toolbar_child_fragment_tab = (Toolbar) view.findViewById(R.id.toolbar_child_fragment_tab);
@@ -271,27 +264,15 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
 
         iprefManager = SharedPrefManager.getInstance().getInstance();
 
-        searchIcon.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                performSearch();
-            }
-        });
         clearSearch.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                searchBoxView.setVisibility(View.GONE);
-                searchIcon.setVisibility(View.VISIBLE);
-                clearSearch.setVisibility(View.GONE);
-                searchBoxView.setText("");
-                InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-
-                hideToolbar();
+                clearHideSearch();
                 ((HomeScreen) getActivity()).clearFunction();
             }
         });
+
         searchBoxView.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable editable) {
                 if (adapter == null)
@@ -329,6 +310,15 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
 //			service.setTypingListener(this);
         return view;
     }
+
+    public void clearHideSearch(){
+        searchBoxView.setVisibility(View.GONE);
+        clearSearch.setVisibility(View.GONE);
+        searchBoxView.setText("");
+
+        hideToolbar();
+    }
+
     public boolean isSearchOn(){
         return isSearchOn;
     }
@@ -336,7 +326,6 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
         if(searchBoxView != null){
             searchBoxView.setText("");
             searchBoxView.setVisibility(View.GONE);
-            searchIcon.setVisibility(View.VISIBLE);
 
             searchBoxView.setVisibility(View.GONE);
             clearSearch.setVisibility(View.GONE);
@@ -349,7 +338,6 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
 
             searchBoxView.setVisibility(View.VISIBLE);
             clearSearch.setVisibility(View.VISIBLE);
-            searchIcon.setVisibility(View.GONE);
             isSearchOn = true;
             searchBoxView.requestFocus();
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -560,7 +548,6 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
         try {
             getActivity().unbindService(mConnection);
             searchBoxView.setVisibility(View.GONE);
-            searchIcon.setVisibility(View.VISIBLE);
             clearSearch.setVisibility(View.GONE);
             searchBoxView.setText("");
             hideToolbar();

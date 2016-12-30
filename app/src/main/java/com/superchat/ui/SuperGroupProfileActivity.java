@@ -347,8 +347,11 @@ private static final String TAG = "SuperGroupProfileActivity";
 //					}
 //				});
 
-			if(sg_display_name != null)
+			if(sg_display_name != null) {
 				sgDisplayNameBox.setText(sg_display_name);
+			} else if(sg_real_name != null){
+				sgDisplayNameBox.setText(sg_real_name);
+			}
 			if(sg_real_name != null)
 				sgRealNameBox.setText(sg_real_name);
 			if(org_URL != null)

@@ -198,11 +198,11 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
 
             @Override
             public void onClick(View v) {
-                resetSearchBox();
+                clearHideSearch();
+
                 InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
-                hideToolbar();
                 ((HomeScreen) getActivity()).clearFunction();
             }
         });
@@ -217,6 +217,11 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
 //		superGroupName.setText(SharedPrefManager.getInstance().getUserDomain());
 //		setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
         return view;
+    }
+
+    public void clearHideSearch(){
+        resetSearchBox();
+        hideToolbar();
     }
 
     public void performSearch(){

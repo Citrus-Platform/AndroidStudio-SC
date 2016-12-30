@@ -161,6 +161,19 @@ public class ChatListAdapter extends SimpleCursorAdapter {
         }
     }
 
+    private void downloadProgress(final ViewHolder viewholder, DOWNLOAD_TYPE downloadType) {
+        if (viewholder != null) {
+            viewholder.ivManageDownload.setImageDrawable(context.getResources().getDrawable(iconStopDownload));
+            viewholder.ivManageDownload.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void goneProgress(final ViewHolder viewholder, DOWNLOAD_TYPE downloadType) {
+        if (viewholder != null) {
+            viewholder.ivManageDownload.setVisibility(View.GONE);
+        }
+    }
+
     private void handleImageDownloadingUIStart(final ViewHolder viewholder) {
         //viewholder.leftImgProgressIndeterminate.setVisibility(View.VISIBLE);
         viewholder.progressbar.setVisibility(ProgressBar.VISIBLE);
@@ -1034,6 +1047,18 @@ public class ChatListAdapter extends SimpleCursorAdapter {
             return ((String) processing.get(url));
         }
 
+        public boolean isURLExistForDownloading(String url) {
+            boolean isURLExist = false;
+            if(isURLExist){
+                if(processing != null){
+                    if(processing.containsKey(url)){
+                        isURLExist = true;
+                    }
+                }
+            }
+            return isURLExist;
+        }
+
         /**
          * Returns true if the current download has been canceled or if there was no download in
          * progress on this image view.
@@ -1313,6 +1338,8 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 if ((progressDownload > 0 && progressDownload < 5)) {
                     downloadStarted(viewHolder, downloadType);
                 }
+
+                //downloadProgress(viewHolder, downloadType);
             }
 
             /**
@@ -2379,13 +2406,15 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 
         }
         int progressValue = 0;
-
+        boolean isURLExistForDownloading = false;
         // My sent messages
         if (viewholder.userName.equals(myUserName)) {
             viewholder.leftFileLayout.setVisibility(View.GONE);
             viewholder.leftFileTypeView.setVisibility(View.GONE);
             viewholder.leftPersonPicLayout.setVisibility(View.GONE);
             String progress = viewholder.getProcessingForURL(viewholder.mediaLocalPath);
+            isURLExistForDownloading = viewholder.isURLExistForDownloading(viewholder.mediaLocalPath);
+
             if (progress != null && !progress.equals("")) {
                 try {
                     progressValue = Integer.parseInt(progress);
@@ -2524,22 +2553,24 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 } else if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()) {
                     ((ImageView) viewholder.rightFileLayout.findViewById(R.id.id_file_image)).setVisibility(View.GONE);
                     viewholder.sendImgView.setVisibility(View.GONE);
+
+                    Object[] params = new Object[]{this,
+                            viewholder.key, cursor,
+                            viewholder.voiceLoadingPercent, url};
+                    DOWNLOAD_TYPE downloadType = DOWNLOAD_TYPE.AUDIO;
+
                     if (viewholder.getProcessingForURL(url) == null) {
                         Log.d("ChatListAdapter", "media url found for download " + url);
-                        Object[] params = new Object[]{this,
-                                viewholder.key, cursor,
-                                viewholder.voiceLoadingPercent, url};
-                        DOWNLOAD_TYPE downloadType = DOWNLOAD_TYPE.AUDIO;
-
                         viewholder.download(viewholder, url, viewholder.messageType,
                                 viewholder.playSenderView,
                                 viewholder.voiceDownloadingBar, params, downloadType);
 
-                        viewholder.ivManageDownload.setOnClickListener(new OnClickDownload(viewholder, url, viewholder.messageType,
-                                viewholder.playSenderView, viewholder.voiceDownloadingBar, params, downloadType));
-
 //                    ((ProgressBar) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_bar_indeterminate)).setVisibility(View.VISIBLE);
                     }
+
+                    viewholder.ivManageDownload.setOnClickListener(new OnClickDownload(viewholder, url, viewholder.messageType,
+                            viewholder.playSenderView, viewholder.voiceDownloadingBar, params, downloadType));
+
                     ((ProgressBar) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_bar)).setVisibility(View.GONE);
 //                    if (viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null) {
 //                        processing.put(viewholder.mediaLocalPath, "0");
@@ -2548,20 +2579,21 @@ public class ChatListAdapter extends SimpleCursorAdapter {
 
                 } else if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()) {
                     viewholder.voiceSenderLayout.setVisibility(View.GONE);
+
+                    final Object[] params = new Object[]{this,
+                            viewholder.key, cursor,
+                            viewholder.progressPercent, url};
+
+                    DOWNLOAD_TYPE downloadType = DOWNLOAD_TYPE.VIDEO;
+
                     if (viewholder.getProcessingForURL(url) == null) {
-                        final Object[] params = new Object[]{this,
-                                viewholder.key, cursor,
-                                viewholder.progressPercent, url};
-
-                        DOWNLOAD_TYPE downloadType = DOWNLOAD_TYPE.VIDEO;
-
                         viewholder.download(viewholder, url, viewholder.messageType,
                                 viewholder.sendImgView,
                                 viewholder.progressbar, params, downloadType);
-
-                        viewholder.ivManageDownload.setOnClickListener(new OnClickDownload(viewholder, url, viewholder.messageType,
-                                viewholder.sendImgView, viewholder.progressbar, params, downloadType));
                     }
+
+                    viewholder.ivManageDownload.setOnClickListener(new OnClickDownload(viewholder, url, viewholder.messageType,
+                            viewholder.sendImgView, viewholder.progressbar, params, downloadType));
 
                     android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(url);
                     if (bitmap != null) {
@@ -3152,6 +3184,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
             viewholder.leftPersonDefaultPic.setVisibility(View.GONE);
 
         } else if (!isBroadCastChat) {
+            isURLExistForDownloading = viewholder.isURLExistForDownloading(url);
             String progress = viewholder.getProcessingForURL(url);
             if (progress != null && !progress.equals("")) {
                 try {
@@ -3654,46 +3687,50 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                         viewholder.receiveImgView.setBackgroundResource(0);
                         viewholder.playRecieverView.setVisibility(View.INVISIBLE);
                         viewholder.receiveImgView.setVisibility(View.GONE);
+
+                        Object[] params = new Object[]{this,
+                                viewholder.key, cursor,
+                                viewholder.voiceLoadingPercent, url};
+
+                        DOWNLOAD_TYPE downloadType = DOWNLOAD_TYPE.AUDIO;
+
                         if (viewholder.getProcessingForURL(url) == null && viewholder.mediaLocalPath == null) {
                             Log.d("ChatListAdapter", "media url found for download " + url);
                             viewholder.playRecieverSeekBar.setVisibility(View.INVISIBLE);
                             viewholder.progressbar.setVisibility(View.GONE);
                             viewholder.progressPercent.setVisibility(View.GONE);
                             viewholder.leftImgProgressIndeterminate.setVisibility(View.GONE);
-                            Object[] params = new Object[]{this,
-                                    viewholder.key, cursor,
-                                    viewholder.voiceLoadingPercent, url};
-
-                            DOWNLOAD_TYPE downloadType = DOWNLOAD_TYPE.AUDIO;
 
                             viewholder.download(viewholder, url, viewholder.messageType,
                                     viewholder.playRecieverView,
                                     viewholder.voiceDownloadingBar, params, downloadType);
                             viewholder.progressPercent.setVisibility(View.GONE);
-
-                            viewholder.ivManageDownload.setOnClickListener(new OnClickDownload(viewholder, url, viewholder.messageType,
-                                    viewholder.playRecieverView, viewholder.voiceDownloadingBar, params, downloadType));
-
                         }
+
+                        viewholder.ivManageDownload.setOnClickListener(new OnClickDownload(viewholder, url, viewholder.messageType,
+                                viewholder.playRecieverView, viewholder.voiceDownloadingBar, params, downloadType));
+
                         viewholder.playRecieverView.setVisibility(View.INVISIBLE);
                         viewholder.playRecieverSeekBar.setVisibility(View.INVISIBLE);
                         viewholder.voiceLoadingPercent.setVisibility(View.GONE);
                         viewholder.voiceDownloadingBar.setVisibility(View.INVISIBLE);
                     } else if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()) {
-                        if (viewholder.getProcessingForURL(url) == null && viewholder.mediaLocalPath == null) {
-                            final Object[] params = new Object[]{this,
-                                    viewholder.key, cursor,
-                                    viewholder.progressPercent, url};
+                        final Object[] params = new Object[]{this,
+                                viewholder.key, cursor,
+                                viewholder.progressPercent, url};
 
-                            DOWNLOAD_TYPE downloadType = DOWNLOAD_TYPE.VIDEO;
+                        DOWNLOAD_TYPE downloadType = DOWNLOAD_TYPE.VIDEO;
+
+                        if (viewholder.getProcessingForURL(url) == null && viewholder.mediaLocalPath == null) {
 
                             viewholder.download(viewholder, url, viewholder.messageType,
                                     viewholder.receiveImgView,
                                     viewholder.progressbar, params, downloadType);
-
-                            viewholder.ivManageDownload.setOnClickListener(new OnClickDownload(viewholder, url, viewholder.messageType,
-                                    viewholder.receiveImgView, viewholder.progressbar, params, downloadType));
                         }
+
+                        viewholder.ivManageDownload.setOnClickListener(new OnClickDownload(viewholder, url, viewholder.messageType,
+                                viewholder.receiveImgView, viewholder.progressbar, params, downloadType));
+
 
                         android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(url);
                         if (bitmap != null) {
@@ -3717,20 +3754,20 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                         viewholder.leftImgProgressIndeterminate.setVisibility(View.GONE);
                         viewholder.voiceRecieverInnerLayout.setVisibility(View.INVISIBLE);
                     } else {
+                        Object[] params = new Object[]{this, viewholder.key, cursor,
+                                viewholder.progressPercent, url};
+
+                        DOWNLOAD_TYPE downloadType = DOWNLOAD_TYPE.IMAGE;
+
                         if (viewholder.getProcessingForURL(url) == null && viewholder.mediaLocalPath == null) {
-                            Object[] params = new Object[]{this, viewholder.key, cursor,
-                                    viewholder.progressPercent, url};
-
-                            DOWNLOAD_TYPE downloadType = DOWNLOAD_TYPE.IMAGE;
-
                             viewholder.download(viewholder, url, viewholder.messageType,
                                     viewholder.receiveImgView,
                                     viewholder.progressbar, params, downloadType);
-
-                            viewholder.ivManageDownload.setOnClickListener(new OnClickDownload(viewholder, url, viewholder.messageType,
-                                    viewholder.receiveImgView, viewholder.progressbar, params, downloadType));
-
                         }
+
+                        viewholder.ivManageDownload.setOnClickListener(new OnClickDownload(viewholder, url, viewholder.messageType,
+                                viewholder.receiveImgView, viewholder.progressbar, params, downloadType));
+
                         android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(url);
                         if (bitmap != null) {
                             viewholder.receiveImgView.setImageBitmap(bitmap);
@@ -3760,15 +3797,22 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                         viewholder.progressbar.setVisibility(ProgressBar.GONE);
                         viewholder.progressPercent.setVisibility(ProgressBar.GONE);
                         viewholder.leftImgProgressIndeterminate.setVisibility(View.GONE);
+
+                        if(!isURLExistForDownloading) {
+                            //goneProgress(viewholder, DOWNLOAD_TYPE.AUDIO);
+                        }
+
                         if (progressValue <= 100) {
                             if (progressValue > 1 && progressValue < 100) {
                                 viewholder.voiceDownloadIndeterminateBar.setVisibility(ProgressBar.GONE);
                                 viewholder.voiceDownloadingBar.setVisibility(ProgressBar.VISIBLE);
                                 viewholder.voiceLoadingPercent.setVisibility(View.VISIBLE);
                                 viewholder.voiceDownloadingBar.setProgress(progressValue);
+
+                                downloadProgress(viewholder, DOWNLOAD_TYPE.AUDIO);
                                 //viewholder.voiceLoadingPercent.setText(String.valueOf(progressValue) + "%");
                             } else {
-                                viewholder.voiceDownloadIndeterminateBar.setVisibility(ProgressBar.VISIBLE);
+                                //viewholder.voiceDownloadIndeterminateBar.setVisibility(ProgressBar.VISIBLE);
                                 viewholder.voiceDownloadingBar.setVisibility(ProgressBar.GONE);
                                 viewholder.voiceLoadingPercent.setVisibility(View.GONE);
                             }
@@ -3782,6 +3826,15 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                         viewholder.voiceDownloadIndeterminateBar.setVisibility(ProgressBar.GONE);
                         viewholder.voiceLoadingPercent.setVisibility(View.GONE);
                         viewholder.voiceDownloadingBar.setVisibility(ProgressBar.GONE);
+
+                        if(!isURLExistForDownloading) {
+                            if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()) {
+                                //goneProgress(viewholder, DOWNLOAD_TYPE.VIDEO);
+                            } else if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeImage.ordinal()) {
+                                //goneProgress(viewholder, DOWNLOAD_TYPE.IMAGE);
+                            }
+                        }
+
                         if (progressValue <= 100) {
                             if (progressValue > 1 && progressValue < 100) {
                                 viewholder.leftImgProgressIndeterminate.setVisibility(View.GONE);
@@ -3789,6 +3842,12 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                                 //viewholder.progressPercent.setVisibility(ProgressBar.VISIBLE);
                                 //viewholder.progressPercent.setText(String.valueOf(progress) + "%");
                                 viewholder.progressbar.setProgress(progressValue);
+
+                                if(viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal()) {
+                                    downloadProgress(viewholder, DOWNLOAD_TYPE.VIDEO);
+                                } else if(viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeImage.ordinal()) {
+                                    downloadProgress(viewholder, DOWNLOAD_TYPE.IMAGE);
+                                }
                             } else {
                                 viewholder.leftImgProgressIndeterminate.setVisibility(View.GONE);
                                 viewholder.progressbar.setVisibility(ProgressBar.INVISIBLE);

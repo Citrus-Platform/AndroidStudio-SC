@@ -71,7 +71,6 @@ public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountL
     private boolean onForeground;
     EditText searchBoxView;
     ImageView clearSearch;
-    ImageView searchIcon;
     ImageView xmppStatusView;
     ProgressBar progressBarView;
     private ChatService service;
@@ -121,8 +120,6 @@ public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountL
                 searchBoxView.setVisibility(EditText.GONE);
                 clearSearch.setVisibility(ImageView.GONE);
 
-//                searchIcon.setVisibility(View.VISIBLE);
-
             }
         }
         else {
@@ -133,8 +130,6 @@ public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountL
                 searchBoxView.setText("");
                 searchBoxView.setVisibility(EditText.GONE);
                 clearSearch.setVisibility(ImageView.GONE);
-
-//                searchIcon.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -146,7 +141,6 @@ public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountL
         View view = layoutinflater.inflate(R.layout.chat_home, null);
         noneMessageView = (LinearLayout) view.findViewById(R.id.center_layout);
         searchBoxView = (EditText) view.findViewById(R.id.id_search_field);
-        searchIcon = (ImageView) view.findViewById(R.id.id_search_icon);
         clearSearch = (ImageView) view.findViewById(R.id.id_back_arrow);
 
         toolbar_child_fragment_tab = (Toolbar) view.findViewById(R.id.toolbar_child_fragment_tab);
@@ -166,20 +160,11 @@ public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountL
         searchBoxView.setText("");
         searchBoxView.setVisibility(EditText.GONE);
         clearSearch.setVisibility(ImageView.GONE);
-        searchIcon.setVisibility(ImageView.GONE);
-
-        searchIcon.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                performSearch();
-            }
-        });
         clearSearch.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 searchBoxView.setVisibility(View.GONE);
-//                searchIcon.setVisibility(View.VISIBLE);
 //                superGroupIcon.setVisibility(View.VISIBLE);
                 clearSearch.setVisibility(View.GONE);
                 searchBoxView.setText("");
@@ -200,7 +185,6 @@ public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountL
         try {
             searchBoxView.setVisibility(View.VISIBLE);
             clearSearch.setVisibility(View.VISIBLE);
-            searchIcon.setVisibility(View.GONE);
 
             searchBoxView.requestFocus();
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -530,8 +514,6 @@ public class BulletinScreen extends CustomFragmentHomeTabs implements ChatCountL
             onForeground = true;
             ChatService.setConnectionStatusListener(this);
             setProfileListener();
-            if (searchIcon != null)
-                searchIcon.setVisibility(ImageView.GONE);
         }catch(Exception ex){
             ex.printStackTrace();
         }

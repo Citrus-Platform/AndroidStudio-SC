@@ -164,7 +164,7 @@ public class ContactsScreen extends CustomFragmentHomeTabs implements Connection
 
             @Override
             public void onClick(View v) {
-                clearSearchOfFragment();
+                clearHideSearch();
                 ((HomeScreen) getActivity()).clearFunction();
             }
         });
@@ -187,7 +187,7 @@ public class ContactsScreen extends CustomFragmentHomeTabs implements Connection
         return view;
     }
 
-    public void clearSearchOfFragment(){
+    public void clearHideSearch(){
         searchBoxView.setText("");
         searchBoxView.setVisibility(View.GONE);
         clearSearch.setVisibility(View.GONE);

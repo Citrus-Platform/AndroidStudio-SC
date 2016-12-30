@@ -69,12 +69,21 @@ public class GroupRoleCreationAdapter  extends ArrayAdapter<GroupRoleCreationAda
 	ArrayList<UserInfo> data;
 	boolean isOwnerSelectionAllowed = true;
 	public static class UserInfo implements Comparable{
+		private boolean isSelectionCompulsory;
 		public String userName="";
 		public UserInfo(String userName,String displayName, String displayNumber){
 			this.displayName = displayName;
 			this.displayNumber = displayNumber;
 			this.userName = userName;
 		}
+		public boolean isSelectionCompulsory() {
+			return isSelectionCompulsory;
+		}
+
+		public void setSelectionCompulsory(boolean selectionCompulsory) {
+			isSelectionCompulsory = selectionCompulsory;
+		}
+
 		public String getUserName() {
 			return userName;
 		}
@@ -171,7 +180,7 @@ public class GroupRoleCreationAdapter  extends ArrayAdapter<GroupRoleCreationAda
 		return null;
 	}
 	public void setItems(String user,boolean flg){
-			checkedTagMap.put(user, flg);
+		checkedTagMap.put(user, flg);
 	}
 	public void removeSelectedItems(){
 		checkedTagMap.clear();
@@ -282,7 +291,13 @@ public class GroupRoleCreationAdapter  extends ArrayAdapter<GroupRoleCreationAda
 				ownerCheckedMap.put(viewholder.userNames,isChecked);
 			}
 			viewholder.iOwnerChooseBox.setChecked(isChecked);
-			
+
+			/*
+			if(map.isSelectionCompulsory()){
+				viewholder.iOwnerChooseBox.setChecked(true);
+			} else {
+				viewholder.iOwnerChooseBox.setChecked(false);
+			}*/
 			viewholder.iCheckBox.setTag(viewholder.userNames);
 			viewholder.iOwnerChooseBox.setTag(viewholder.userNames);
 //			viewholder.iOwnerChooseBox.setChecked(true);
@@ -342,7 +357,7 @@ public class GroupRoleCreationAdapter  extends ArrayAdapter<GroupRoleCreationAda
 								checked = checkedTagMap.get(userNames);
 								if(checked){
 									if(SharedPrefManager.getInstance().isDomainAdminORSubAdmin() && userNames.equals(SharedPrefManager.getInstance().getUserName())){
-										Toast.makeText(context, "You need to be part of this Official ID!", Toast.LENGTH_SHORT).show();
+										Toast.makeText(context, "You can’t deselect yourself", Toast.LENGTH_SHORT).show();
 										return;
 									}
 									else
@@ -362,7 +377,7 @@ public class GroupRoleCreationAdapter  extends ArrayAdapter<GroupRoleCreationAda
 								checked = checkedTagMap.get(userNames);
 								if(checked){
 									if(SharedPrefManager.getInstance().isDomainAdminORSubAdmin() && userNames.equals(SharedPrefManager.getInstance().getUserName())){
-										Toast.makeText(context, "You need to be part of this Official ID!", Toast.LENGTH_SHORT).show();
+										Toast.makeText(context, "You can’t deselect yourself", Toast.LENGTH_SHORT).show();
 										iCheckBox.setChecked(true);
 										return;
 									}

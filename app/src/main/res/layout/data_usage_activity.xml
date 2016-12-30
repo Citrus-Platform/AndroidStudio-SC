@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:padding="@dimen/topbar_title_padding"
-                android:text="Data usage"
+                android:text="@string/data_usage_settings"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />

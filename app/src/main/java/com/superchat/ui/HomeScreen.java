@@ -581,7 +581,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
             @Override
             public void onPageSelected(int position) {
-                clearFunction();
+                clearFunction(position);
                 flagFrag = position;
                 invalidateOptionsMenu();
                 // actions
@@ -4508,7 +4508,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 break;
             }
             case R.id.action_search: {
-                selectFragment(flagFrag);
+                selectSearchFragment(flagFrag);
                 break;
             }
             case R.id.create_broadcast_list: {
@@ -4538,7 +4538,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         return super.onOptionsItemSelected(item);
     }
 
-    public void selectFragment(int i) {
+    public void selectSearchFragment(int i) {
 
         Log.e("here", "coming i : " + i);
 
@@ -4567,6 +4567,20 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
     }
 
+    public void hideSearchFragment(int i) {
+
+        Log.e("here", "coming i : " + i);
+
+        if (i == 0) {
+            chatFragment.clearHideSearch();
+        } else if (i == 1) {
+            publicGroupFragment.clearHideSearch();
+        } else if (i == 2) {
+            contactsFragment.clearHideSearch();
+        } else {
+        }
+    }
+
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
@@ -4584,6 +4598,17 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             viewPagerTab.setVisibility(View.VISIBLE);
         }
 
+        hideKeyboard(HomeScreen.this);
+        //tabLayout.setVisibility(View.VISIBLE);
+    }
+
+    public void clearFunction(int position) {
+        mToolbar.setVisibility(View.VISIBLE);
+        if (viewPagerTab != null) {
+            viewPagerTab.setVisibility(View.VISIBLE);
+        }
+
+        hideSearchFragment(position);
         hideKeyboard(HomeScreen.this);
         //tabLayout.setVisibility(View.VISIBLE);
     }

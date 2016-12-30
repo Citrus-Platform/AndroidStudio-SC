@@ -273,7 +273,6 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                         groupRoleCreationAdapter.add(info);
                     }
 
-//					groupRoleCreationAdapter = new GroupRoleCreationAdapter(EsiaChatContactsScreen.this,R.layout.esiachat_contact_item,list,Constants.GROUP_USER_CHAT_CREATE);
 //					groupRoleCreationAdapter.setEditableContact(true);
                     groupRoleCreationAdapter.notifyDataSetChanged();
 //					contactList.setAdapter(groupRoleCreationAdapter);
@@ -304,7 +303,6 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                         groupRoleCreationAdapter.add(info);
                     }
 
-//				groupRoleCreationAdapter = new GroupRoleCreationAdapter(EsiaChatContactsScreen.this,R.layout.esiachat_contact_item,list,Constants.GROUP_USER_CHAT_CREATE);
                     groupRoleCreationAdapter.setEditableContact(true);
                     groupRoleCreationAdapter.notifyDataSetChanged();
 //				contactList.setAdapter(groupRoleCreationAdapter);
