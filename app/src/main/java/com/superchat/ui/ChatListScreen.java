@@ -1546,6 +1546,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 //       if((isSharedIDMessage && iChatPref.isDomainAdmin()) || isSharedIDDeactivated || isSharedIDAdmin){
 //    	   ((RelativeLayout)findViewById(R.id.bottom_write_bar1)).setVisibility(View.GONE);
 //    	   callOption.setVisibility(View.GONE);
+//         call_option_video.setVisibility(View.GONE);
 //       }
         if (typingText != null && iChatPref != null) {
 
@@ -4463,7 +4464,6 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 callOption.setVisibility(View.VISIBLE);
                 call_option_video.setVisibility(View.VISIBLE);
             }
-            call_option_video.setVisibility(View.VISIBLE);
 
             Cursor cursor1 = null;
             if (isBulletinBroadcast)

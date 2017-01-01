@@ -430,10 +430,17 @@
                     android:layout_height="30dp"
                     android:src="@drawable/ic_content_download"
                     android:visibility="gone"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
                 <ProgressBar
                     android:id="@+id/progressNew"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_centerInParent="true"
                     android:indeterminate="true"
                     android:secondaryProgress="100"
