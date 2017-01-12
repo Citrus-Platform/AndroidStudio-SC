@@ -55,6 +55,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class PrivacyCallSettings extends Activity implements OnClickListener {
+	
+	public static void start(Context context) {
+	    Intent starter = new Intent(context, PrivacyCallSettings.class);
+	    context.startActivity(starter);
+	}
+
 	public static final String TAG = "PrivacyCallSettings";
 	LinearLayout allCallAllowLayout;
 	LinearLayout noCallAllowLayout;

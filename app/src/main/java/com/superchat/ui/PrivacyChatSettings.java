@@ -90,6 +90,8 @@ public class PrivacyChatSettings  extends Activity implements OnClickListener {
 		backView.setOnClickListener(this);
 		allMessageAllowLayout.setOnClickListener(this);
 		noMessageAllowLayout.setOnClickListener(this);
+
+
 		if(pref.isDNM(pref.getUserName()))
 			CHAT_PRIVACY_TYPE = NO_MESSAGES_ALLOWED;
 		updateClick();

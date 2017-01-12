@@ -27,7 +27,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:orientation="horizontal"/>
+            android:orientation="horizontal" />
 
         <RelativeLayout
             android:id="@+id/localVideo"
@@ -47,8 +47,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="left"
-            android:paddingLeft="20dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingLeft="20dp">
 
             <TextView
                 android:id="@+id/remoteUser"
@@ -69,7 +69,6 @@
                 android:textSize="14sp" />
 
 
-
             <TextView
                 android:id="@+id/sg_name"
                 android:layout_width="wrap_content"
@@ -84,11 +83,12 @@
                 android:id="@+id/callState"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:text="Ringing"
                 android:textAllCaps="true"
-                android:layout_marginTop="5dp"
                 android:textColor="@color/white"
                 android:textSize="14sp" />
+
             <TextView
                 android:id="@+id/callDuration"
                 android:layout_width="wrap_content"
@@ -97,75 +97,91 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="4dp"
                 android:text="00:00"
-                android:visibility="gone"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/sinch_purple"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:visibility="gone" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/audio_panel"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="15dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="5dp"
-            android:visibility="invisible">
-
-            <ImageView
-                android:id="@+id/mute_button"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_weight="1"
-                android:src="@drawable/mute" />
-
-            <View
-                android:layout_width="0.1dp"
-                android:layout_height="35dp"
-                android:background="@color/white" />
-
-            <ImageView
-                android:id="@+id/speaker_button"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_weight="1"
-                android:src="@drawable/speaker" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/bottomPanel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:orientation="horizontal"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="10dp">
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/switchCamera"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginRight="20dp"
-                android:layout_centerInParent="true"
-                android:background="@drawable/ic_switch_camera"
-                android:paddingBottom="20dp"
-                android:paddingTop="20dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/mute_button"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/mute" />
+
+                <View
+                    android:layout_width="0.1dp"
+                    android:layout_height="35dp"
+                    android:background="@color/white" />
+
+                <ImageView
+                    android:id="@+id/speaker_button"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/speaker" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/bottomPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/switchCamera"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/ic_switch_camera"
+                    android:paddingBottom="20dp"
+                    android:paddingTop="20dp" />
 
 
-            <Button
-                android:id="@+id/hangupButton"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginLeft="20dp"
-                android:background="@drawable/ic_call_drop"
-                android:paddingBottom="20dp"
-                android:paddingTop="20dp"
-                />
+                <Button
+                    android:id="@+id/hangupButton"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginLeft="20dp"
+                    android:background="@drawable/ic_call_drop"
+                    android:paddingBottom="20dp"
+                    android:paddingTop="20dp" />
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <Button
+                    android:id="@+id/btnSendLog"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Send Log"/>
+            </LinearLayout>
         </LinearLayout>
 
     </RelativeLayout>

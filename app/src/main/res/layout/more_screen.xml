@@ -3,13 +3,13 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/screen_background_color"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/id_header_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/header_footer_color" >
+        android:background="@color/header_footer_color">
 
         <com.superchat.widgets.MyriadSemiboldTextView
             style="@style/style_screen_title"
@@ -44,13 +44,13 @@
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:scrollbars="none" >
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:background="@color/settings_bg_color"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -58,24 +58,24 @@
                 android:layout_marginTop="15dp"
                 android:orientation="horizontal">
 
-            <com.superchat.widgets.RoundedImageView
-                android:id="@+id/id_profile_pic"
-                android:layout_width="80dip"
-                android:layout_margin="10dp"
-                android:layout_height="80dip"
-                android:scaleType="centerCrop"
-                android:src="@drawable/profile_pic" />
+                <com.superchat.widgets.RoundedImageView
+                    android:id="@+id/id_profile_pic"
+                    android:layout_width="80dip"
+                    android:layout_height="80dip"
+                    android:layout_margin="10dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/profile_pic" />
 
-            <TextView
-                android:id="@+id/id_my_name"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="15dp"
-                android:padding="10dip"
-                android:text="@string/block_you"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="normal" />
+                <TextView
+                    android:id="@+id/id_my_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="15dp"
+                    android:padding="10dip"
+                    android:text="@string/block_you"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <View
@@ -87,7 +87,7 @@
                 android:id="@+id/id_profile_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white" >
+                android:background="@color/white">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -105,8 +105,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/right_arrow"
-                    android:visibility="visible" >
-                </ImageView>
+                    android:visibility="visible"></ImageView>
             </RelativeLayout>
 
             <View
@@ -119,7 +118,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:visibility="gone" >
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -137,8 +136,8 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/right_arrow"
-                    android:visibility="visible" >
-                </ImageView>
+                    android:visibility="visible"></ImageView>
+
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -150,8 +149,8 @@
                 android:id="@+id/id_memberstats_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:background="@color/white" >
+                android:background="@color/white"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -169,8 +168,8 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/right_arrow"
-                    android:visibility="visible" >
-                </ImageView>
+                    android:visibility="visible"></ImageView>
+
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -182,8 +181,8 @@
                 android:id="@+id/id_offocial_id_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:background="@color/white" >
+                android:background="@color/white"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -201,8 +200,8 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/right_arrow"
-                    android:visibility="visible" >
-                </ImageView>
+                    android:visibility="visible"></ImageView>
+
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -233,8 +232,8 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/right_arrow"
-                    android:visibility="visible" >
-                </ImageView>
+                    android:visibility="visible"></ImageView>
+
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -247,7 +246,7 @@
                 android:id="@+id/id_snooze_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white" >
+                android:background="@color/white">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -266,19 +265,20 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/right_arrow"
-                    android:visibility="visible" >
-                </ImageView>
+                    android:visibility="visible"></ImageView>
+
                 <TextView
                     android:id="@+id/mute_setting_txt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/snooze_settings"
                     android:layout_toLeftOf="@+id/mute_arrow"
                     android:padding="10dip"
+                    android:text="@string/snooze_settings"
                     android:textColor="@color/dark_gray"
                     android:textSize="18sp"
-                    android:visibility="gone"
-                    android:textStyle="normal" />
+                    android:textStyle="normal"
+                    android:visibility="gone" />
+
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -290,8 +290,8 @@
                 android:id="@+id/id_chat_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:visibility="visible"
-                android:background="@color/white" >
+                android:background="@color/white"
+                android:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -309,8 +309,8 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/right_arrow"
-                    android:visibility="visible" >
-                </ImageView>
+                    android:visibility="visible"></ImageView>
+
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -322,8 +322,8 @@
                 android:id="@+id/id_data_usage_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:visibility="visible"
-                android:background="@color/white" >
+                android:background="@color/white"
+                android:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -341,8 +341,8 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/right_arrow"
-                    android:visibility="visible" >
-                </ImageView>
+                    android:visibility="visible"></ImageView>
+
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -371,10 +371,10 @@
                     android:id="@+id/switchSaveGalleryMedia"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="true"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="10dp"/>
+                    android:layout_marginRight="10dp"
+                    android:checked="true" />
 
                 <View
                     android:layout_width="fill_parent"
@@ -388,7 +388,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:visibility="gone" >
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -406,8 +406,8 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/right_arrow"
-                    android:visibility="visible" >
-                </ImageView>
+                    android:visibility="visible"></ImageView>
+
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -420,7 +420,7 @@
                 android:id="@+id/id_supergroup_profile"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white" >
+                android:background="@color/white">
 
                 <TextView
                     android:id="@+id/id_about_supergroup"
@@ -439,8 +439,8 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/right_arrow"
-                    android:visibility="visible" >
-                </ImageView>
+                    android:visibility="visible"></ImageView>
+
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -453,8 +453,8 @@
                 android:id="@+id/id_advanced_settings"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:background="@color/white" >
+                android:background="@color/white"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/id_shared_id"
@@ -473,8 +473,8 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/right_arrow"
-                    android:visibility="visible" >
-                </ImageView>
+                    android:visibility="visible"></ImageView>
+
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -504,8 +504,8 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/right_arrow"
-                    android:visibility="visible" >
-                </ImageView>
+                    android:visibility="visible"></ImageView>
+
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -517,7 +517,7 @@
                 android:id="@+id/id_block_list_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone" >
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -535,8 +535,8 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/right_arrow"
-                    android:visibility="visible" >
-                </ImageView>
+                    android:visibility="visible"></ImageView>
+
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -559,6 +559,7 @@
                     android:textColor="@color/dark_gray"
                     android:textSize="18sp"
                     android:textStyle="normal" />
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -566,8 +567,8 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/right_arrow"
-                    android:visibility="visible" >
-                </ImageView>
+                    android:visibility="visible"></ImageView>
+
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -599,8 +600,40 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/right_arrow"
-                    android:visibility="visible" >
-                </ImageView>
+                    android:visibility="visible"></ImageView>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="2dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/settings_bg_color" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/id_open_console"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dip"
+                    android:text="@string/open_console_text"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/right_arrow"
+                    android:visibility="visible" />
+
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
@@ -612,8 +645,8 @@
                 android:id="@+id/id_configure_console_pass"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:visibility="visible"
-                android:background="@color/white">
+                android:background="@color/white"
+                android:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -623,6 +656,7 @@
                     android:textColor="@color/dark_gray"
                     android:textSize="18sp"
                     android:textStyle="normal" />
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -630,9 +664,9 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/right_arrow"
-                    android:visibility="visible" >
-                </ImageView>
+                    android:visibility="visible"></ImageView>
             </RelativeLayout>
+
         </LinearLayout>
     </ScrollView>
 

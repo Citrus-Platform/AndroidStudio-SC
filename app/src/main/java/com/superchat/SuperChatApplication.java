@@ -22,6 +22,7 @@ import android.support.v4.util.LruCache;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
 
 import com.crashlytics.android.Crashlytics;
@@ -61,6 +62,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import io.fabric.sdk.android.Fabric;
+import me.anwarshahriar.calligrapher.Calligrapher;
 
 //import com.crashlytics.android.Crashlytics;
 //import com.google.android.gms.analytics.GoogleAnalytics;
@@ -113,7 +115,7 @@ public class SuperChatApplication extends MultiDexApplication {
 	public static synchronized SuperChatApplication getInstance() {
 		return mInstance;
 	}
-	
+
 	public void onCreate() {
 		super.onCreate();
 		Fabric.with(this, new Crashlytics());
@@ -127,7 +129,7 @@ public class SuperChatApplication extends MultiDexApplication {
 			countrySet.add(country.getCode()+"");
 		}
 		try{
-			
+
 			Constants.countryCode = "+91";
 			TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
 			String countryCode = tm.getSimCountryIso();
@@ -137,11 +139,11 @@ public class SuperChatApplication extends MultiDexApplication {
 			if(countryCode!=null)
 				Constants.countryCode = "+"+Countries.getCodeValue(countryCode).getCode();
 		}catch(Exception e){}
-		
+
         final int id = android.os.Process.myPid();
         Log.d(TAG, "onCreate getUidForName myPid: "+ id);
         Log.d(TAG, "onCreate getUidForName : "+ getAppNameByPID(context, id));
-        
+
 		getContentResolver().registerContentObserver(ContactsContract.Data.CONTENT_URI, true, new ContentObserver(null){
 			long time2 = 0;
 			   @Override
@@ -165,7 +167,7 @@ public class SuperChatApplication extends MultiDexApplication {
 					        	}
 					   }
 			        }
-			   
+
 			   });
 		mMemoryCache = new LruCache((int)(Runtime.getRuntime().maxMemory() / 1024L) / 8) {
 
@@ -208,7 +210,7 @@ public class SuperChatApplication extends MultiDexApplication {
 	        }
 	 }
 	public static String getAppNameByPID(Context context, int pid){
-	    ActivityManager manager 
+	    ActivityManager manager
 	               = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 
 	    for(RunningAppProcessInfo processInfo : manager.getRunningAppProcesses()){
@@ -447,7 +449,7 @@ public class SuperChatApplication extends MultiDexApplication {
 //		}).start();
 //
 //	}
-	
+
 	public static void copyContactsAsync() {
 		(new Thread() {
 
@@ -505,7 +507,7 @@ public class SuperChatApplication extends MultiDexApplication {
 								try{
 									dbwrapper.deleteRow(DatabaseConstants.TABLE_NAME_CONTACT_NAMES, previousRawId);
 								}catch(Exception e){
-									
+
 								}
 							}
 							try{
@@ -513,7 +515,7 @@ public class SuperChatApplication extends MultiDexApplication {
 								if( compositeNumber!=null && !compositeNumber.equals("") && compositeNumber.endsWith(","))
 									compositeNumber = compositeNumber.substring(0, compositeNumber.length()-1);
 								}catch(Exception e){}
-								
+
 //								if( isDuplicate && (compositeNumber == null || !compositeNumber.contains(","))){
 //									try{
 ////										Log.d(TAG, "copyContactsAsync compositeNumber deleteRows start :: "+compositeNumber);
@@ -521,13 +523,13 @@ public class SuperChatApplication extends MultiDexApplication {
 ////									Log.d(TAG, "compositeNumber deleteRows end:: "+deleteRows);
 //									}catch(Exception e){}
 //								} else
-							
+
 								if(compositeNumber != null && !compositeNumber.equals(""))
 								{
 //									if(compositeNumber.contains("9826466151"))
 //										Log.d(TAG, "copyContactsAsync compositeNumber 9826466151 start :: "+isDuplicate+" , "+compositeNumber);
 //									dbwrapper.updateCompositeContacts(String.valueOf(contactId),compositeNumber); // central
-									
+
 									compositeNumber = "";
 								}
 							}
@@ -545,7 +547,7 @@ public class SuperChatApplication extends MultiDexApplication {
 						String version = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.RawContacts.VERSION));
 //						String timeStamp = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.LAST_TIME_CONTACTED));
 //						Log.d(TAG, "state details : "+contactId+" , "+_id+" , "+_raw_id+" , "+contactName);//+version+" , "+timeStamp);
-						
+
 						ContentValues contentvalues = new ContentValues();
 						contentvalues.put(
 								DatabaseConstants.NAME_CONTACT_ID_FIELD,
@@ -565,13 +567,13 @@ public class SuperChatApplication extends MultiDexApplication {
 								Integer.valueOf(0));
 //						contentvalues.put(DatabaseConstants.USER_SIP_ADDRESS,
 //								"");
-						
+
 //						dbwrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NAMES,contentvalues);  // central
-						
+
 						compositeNumber = "";
 						totalContacts = 0;
 					}
-					
+
 					if(dbwrapper.isNumberExists(s)){
 						isDuplicate = true;
 						continue;
@@ -602,12 +604,12 @@ public class SuperChatApplication extends MultiDexApplication {
 					// Integer.valueOf(j2));
 					contentvalues1.put(DatabaseConstants.STATE_FIELD,
 							Integer.valueOf(0));
-					
+
 //					 dbwrapper.insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues1); // central
 					uniqueNumbers.add(s);
 					 totalContacts++;
 //					Log.i(TAG, "commiting the batch");
-					
+
 					}catch(Exception e){
 						isDuplicate = true;
 						Log.d(TAG, "copyContactsAsync compositeNumber Exception :: "+compositeNumber);
@@ -656,11 +658,11 @@ public class SuperChatApplication extends MultiDexApplication {
 	private static void serverUpdateContactsInfo(final ContactsScreen obj,List<String> numbers){
 		SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
 		ContactUploadModel model = new ContactUploadModel(iPrefManager.getUserId(), null, numbers);
-		  String JSONstring = new Gson().toJson(model);		    
+		  String JSONstring = new Gson().toJson(model);
 		    DefaultHttpClient client1 = new DefaultHttpClient();
-		   
+
 			Log.d(TAG, "serverUpdateCreateGroupInfo request:"+JSONstring);
-			
+
 			 HttpPost httpPost = new HttpPost(Constants.SERVER_URL+ "/tiger/rest/user/login");
 //	         httpPost.setEntity(new UrlEncodedFormEntity(JSONstring));
 			 HttpResponse response = null;
@@ -676,7 +678,7 @@ public class SuperChatApplication extends MultiDexApplication {
 				            String line = "";
 				            String str = "";
 				            while ((line = rd.readLine()) != null) {
-				            	
+
 				            	str+=line;
 				            }
 				            if(str!=null &&!str.equals("")){
@@ -703,18 +705,18 @@ public class SuperChatApplication extends MultiDexApplication {
 //										contentvalues.put(
 //												DatabaseConstants.USER_SIP_ADDRESS,
 //												userDetail.iSipAddress);
-										
+
 //										contentvalues.put(DatabaseConstants.USER_NAME_FIELD,userDetail.userName);
 //										contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(1));
 //										contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,userDetail.mobileNumber);		
-										
+
 //										DBWrapper.getInstance().updateAtMeDirectStatus(contentvalues,DatabaseConstants.CONTACT_NUMBERS_FIELD);
 //										DBWrapper.getInstance().updateAtMeContactDetails(contentvalues,userDetail.mobileNumber);
 //										DBWrapper.getInstance().updateUserNameInContacts(userDetail.userName,userDetail.mobileNumber);
-										
+
 										contentvalues.put(DatabaseConstants.USER_NAME_FIELD,userDetail.userName);
 										contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(1));
-										contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,userDetail.mobileNumber);	
+										contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,userDetail.mobileNumber);
 										int id = userDetail.userName.hashCode();
 										if (id < -1)
 											id = -(id);
@@ -722,7 +724,7 @@ public class SuperChatApplication extends MultiDexApplication {
 										contentvalues.put(DatabaseConstants.RAW_CONTACT_ID,Integer.valueOf(id));
 										contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, userDetail.mobileNumber);//userDetail.name);
 										contentvalues.put(DatabaseConstants.IS_FAVOURITE_FIELD,Integer.valueOf(0));
-										
+
 										contentvalues.put(DatabaseConstants.DATA_ID_FIELD,Integer.valueOf("5"));
 										contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
 										contentvalues.put(DatabaseConstants.STATE_FIELD,Integer.valueOf(0));
@@ -734,7 +736,7 @@ public class SuperChatApplication extends MultiDexApplication {
 
 										if (!DBWrapper.getInstance().isContactExists(userDetail.userName))
 											DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues); // central
-										 
+
 										if(userDetail!=null && userDetail.imageFileId!=null && !userDetail.imageFileId.equals("")){
 											if(iPrefManager.getUserFileId(userDetail.userName) == null || !iPrefManager.getUserFileId(userDetail.userName).equals(userDetail.imageFileId))
 												new BitmapDownloader().execute(userDetail.imageFileId);
@@ -751,7 +753,7 @@ public class SuperChatApplication extends MultiDexApplication {
 								}else
 									contactSyncState = CONTACT_SYNC_FAILED;
 				            }
-				           
+
 			            }else
 			            	contactSyncState = CONTACT_SYNC_FAILED;
 				} catch (ClientProtocolException e) {
@@ -761,13 +763,13 @@ public class SuperChatApplication extends MultiDexApplication {
 				}catch(Exception e){
 					contactSyncState = CONTACT_SYNC_FAILED;
 				}
-				 
+
 			} catch (UnsupportedEncodingException e1) {
 				contactSyncState = CONTACT_SYNC_FAILED;
 			}catch(Exception e){
 				contactSyncState = CONTACT_SYNC_FAILED;
 			}
-		
+
 	}
 	public static void syncContactsWithServer(final ContactsScreen obj,final List<String> numbers){
 		if (contactSyncState == CONTACT_SYNC_IDLE) {
@@ -938,26 +940,26 @@ public class SuperChatApplication extends MultiDexApplication {
 			if(str.startsWith("00"))
 			isCountryCheckingNeeded = true;
 			if(str.length()>1)
-				while(str.startsWith("0")){					
+				while(str.startsWith("0")){
 					if(str.length()>1)
 						str = str.substring(1);
 					else break;
 				}
-			
-			
+
+
 		boolean isPlus = str.contains("+")?true:false;
 		if(isPlus)
 			isCountryCheckingNeeded = true;
-		
+
 		str = str.replace(" ","");
 		str = str.replace("+","");
 		str = str.replace("-","");
 		str = str.replace("(","");
 		str = str.replace(")","");
-		
+
 		if(str.length()<8)
 			return str;
-		
+
 		String replacingCode = null;
 		boolean isNumberModified = false;
 		if(isCountryCheckingNeeded){
@@ -977,7 +979,7 @@ public class SuperChatApplication extends MultiDexApplication {
 			else
 				str = code+"-"+str;
 		}
-		
+
 //		if(str.length()<=11){
 //			str = Constants.countryCode.replace("+", "")+"-"+str;
 //		}else{
@@ -1093,4 +1095,36 @@ public class SuperChatApplication extends MultiDexApplication {
 	    {
 	        return (TelephonyManager)context.getSystemService("phone");
 	    }
-	}
+    /**
+     * Setting Fonts
+     */
+    public enum FONT_TYPE {
+		ARIAL_REGULAR("Arial.ttf"),
+        LATO_REGULAR("Lato-Regular.ttf"),
+        LATO_LIGHT("Lato-Light.ttf"),
+        LATO_BOLD("Lato-Bold.ttf"),
+        ALEXBRUSH_REGULAR("AlexBrush-Regular.ttf"),
+        AVENIRNEXTLTPO_REGULAR("AvenirNextLTPro-Regular.ttf"),
+        QUOTE("Quote.ttf");
+
+        private final String font;
+
+        FONT_TYPE(final String font) {
+            this.font = font;
+        }
+
+        public String getFont() {
+            return this.font;
+        }
+    }
+
+    public void settingFont(FONT_TYPE type, View... itemViews) {
+        if (itemViews != null) {
+            for (View itemView : itemViews) {
+                Calligrapher calligrapher = new Calligrapher(this);
+                calligrapher.setFont(itemView, type.getFont());
+            }
+        }
+    }
+
+}

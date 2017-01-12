@@ -1,17 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="colorPrimary">#ff009dd6</color>
-    <color name="colorPrimaryDark">#008dc0</color>
+    <color name="colorPrimaryDark">#1D5B8F</color>
+    <color name="colorPrimary">#517DA2</color>
     <color name="textColorPrimary">#FFFFFF</color>
     <color name="windowBackground">#FFFFFF</color>
     <color name="navigationBarColor">#007dab</color>
-    <color name="colorAccent">#ff009dd6</color>
+    <color name="colorAccent">#517DA2</color>
     <color name="colorGray">#ff6e7072</color>
+
+    <color name="colorDrawerHubSelected">#3B5C77</color>
+    <color name="colorDrawerHubUnSelected">#466C8C</color>
+    <!-- Text Color -->
+    <color name="textColorPagerUnselected">#BFE2FF</color>
+    <color name="textColorPagerSelected">#FFFFFF</color>
+    <color name="textColorListHeading">#323232</color>
+    <color name="textColorListText">#969696</color>
+    <color name="textColorListSubText">#969696</color>
 
     <color name="header_color">#fff2750f</color>
     <color name="screen_background_color">#ffffffff</color>
-    <color name="header_footer_color">#ff009dd6</color>
+    <color name="header_footer_color">#517DA2</color>
      
     <color name="home_sub_footer_color">#ffa3a5a8</color>
     <color name="btn_text_color">#ff4f4f4f</color>
@@ -111,12 +120,9 @@
     <color name ="nav_sel">#7d7d7d</color>
     <color name ="nav">#c2c2c2</color>
     <color name ="audio_tag_bg_color">#94d7e6</color>
-<!--
-    <color name="colorPrimary">#ff009dd6</color>
-    <color name="colorPrimaryDark">#008dc0</color>
-    <color name="textColorPrimary">#FFFFFF</color>
-    <color name="windowBackground">#FFFFFF</color>
-    <color name="navigationBarColor">#007dab</color>
-    <color name="colorAccent">#ff009dd6</color>
-    <color name="colorGray">#ff6e7072</color>-->
+
+
+    <color name ="divider">#969696</color>
+    <color name ="divider_medium">@color/md_grey_300</color>
+    <color name ="divider_light">@color/md_grey_100</color>
 </resources>

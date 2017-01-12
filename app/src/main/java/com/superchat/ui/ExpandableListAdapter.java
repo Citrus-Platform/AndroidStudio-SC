@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -40,10 +41,12 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     private List<Item> data;
     public Context context;
+    private ConnectorDrawer connectorDrawer;
 
-    public ExpandableListAdapter(List<Item> data, Context context) {
+    public ExpandableListAdapter(List<Item> data, Context context, ConnectorDrawer connectorDrawer) {
         this.data = data;
         this.context = context;
+        this.connectorDrawer = connectorDrawer;
     }
 
     @Override
@@ -75,19 +78,37 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 final ListHeaderViewHolder itemController = (ListHeaderViewHolder) holder;
                 itemController.refferalItem = item;
                 itemController.header_title.setText(item.text);
+                itemController.btn_expand_toggle.setImageResource(R.drawable.right_arrow);
 
-                if (item.text.equalsIgnoreCase("Super Group")) {
-                    itemController.btn_expand_toggle.setImageResource(R.drawable.ic_launcher);
+                if (item.text.equalsIgnoreCase(FragmentDrawer.HEADER_OPEN_HUB)) {
+
+                } else if (item.text.equalsIgnoreCase(FragmentDrawer.HEADER_NEW_INVITATION)) {
+
+                } else if (item.text.equalsIgnoreCase(FragmentDrawer.HEADER_CREATE_NEW_HUB)) {
+
                 } else {
                     if (item.invisibleChildren == null) {
-                        itemController.btn_expand_toggle.setImageResource(R.drawable.ic_launcher);
+                        itemController.btn_expand_toggle.setImageResource(R.drawable.arrow_up);
                     } else {
-                        itemController.btn_expand_toggle.setImageResource(R.drawable.ic_launcher);
+                        itemController.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
                     }
-
-                    itemController.btn_expand_toggle.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                }
+                itemController.llHeaderExpandable.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (item.text.equalsIgnoreCase(FragmentDrawer.HEADER_OPEN_HUB)) {
+                            if (connectorDrawer != null) {
+                                connectorDrawer.eventClickedOpenHub();
+                            }
+                        } else if (item.text.equalsIgnoreCase(FragmentDrawer.HEADER_NEW_INVITATION)) {
+                            if (connectorDrawer != null) {
+                                connectorDrawer.eventClickedInvitaion();
+                            }
+                        } else if (item.text.equalsIgnoreCase(FragmentDrawer.HEADER_CREATE_NEW_HUB)) {
+                            if (connectorDrawer != null) {
+                                connectorDrawer.eventClickedCreateNewHub();
+                            }
+                        } else {
                             if (item.invisibleChildren == null) {
                                 item.invisibleChildren = new ArrayList<Item>();
                                 int count = 0;
@@ -97,7 +118,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                                     count++;
                                 }
                                 notifyItemRangeRemoved(pos + 1, count);
-                                itemController.btn_expand_toggle.setImageResource(R.drawable.ic_launcher);
+                                itemController.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
                             } else {
                                 int pos = data.indexOf(itemController.refferalItem);
                                 int index = pos + 1;
@@ -106,12 +127,12 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                                     index++;
                                 }
                                 notifyItemRangeInserted(pos + 1, index - pos - 1);
-                                itemController.btn_expand_toggle.setImageResource(R.drawable.ic_launcher);
+                                itemController.btn_expand_toggle.setImageResource(R.drawable.arrow_up);
                                 item.invisibleChildren = null;
                             }
                         }
-                    });
-                }
+                    }
+                });
 
                 break;
             case CHILD:
@@ -120,20 +141,20 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                 itemControllerChild.child_title.setText(item.text);
 
-                if(item.domainType != null) {
+                if (item.domainType != null) {
 
                     String domainTypeShowing = item.domainType;
 
-                    if(item.domainType.equalsIgnoreCase("rwa")){
+                    if (item.domainType.equalsIgnoreCase("rwa")) {
                         domainTypeShowing = domainTypeShowing.toUpperCase();
-                    }else if(item.domainType.equalsIgnoreCase("company")){
+                    } else if (item.domainType.equalsIgnoreCase("company")) {
                         domainTypeShowing = "Corporate";
-                    }else{
+                    } else {
                         domainTypeShowing = "Others";
                     }
 
-                    if(DBWrapper.getInstance().isSGOwner(item.actualName))
-                     itemControllerChild.child_sg_type.setText("OWNER [ " + domainTypeShowing + " ]");
+                    if (DBWrapper.getInstance().isSGOwner(item.actualName))
+                        itemControllerChild.child_sg_type.setText("OWNER [ " + domainTypeShowing + " ]");
                     else
                         itemControllerChild.child_sg_type.setText("[ " + domainTypeShowing + " ]");
                 }
@@ -141,13 +162,13 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 //                    itemControllerChild.child_sg_type.setText("[Owner]");
                 ///////////////////////////////////////////////////////
                 String fileId = DBWrapper.getInstance().getSGLogoFileID(item.actualName);
-                if(fileId == null){
+                if (fileId == null) {
                     SharedPrefManager pref = SharedPrefManager.getInstance();
                     fileId = pref.getSGFileId(item.actualName);
                 }
                 if (fileId != null && fileId.length() > 0) {
                     setProfilePic(itemControllerChild.displayPicture, fileId);
-                }else{
+                } else {
 //                    setProfilePic(itemControllerChild.displayPicture, null);//logo_small
                     itemControllerChild.displayPicture.setImageResource(R.drawable.logo_small);
                 }
@@ -181,16 +202,16 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                 if (item.text.equalsIgnoreCase(SharedPrefManager.getInstance().getCurrentSGDisplayName()) ||
                         item.actualName.equalsIgnoreCase(SharedPrefManager.getInstance().getUserDomain())) {
-                    itemControllerChild.container.setBackgroundColor(context.getResources().getColor(R.color.header_footer_color));
+                    itemControllerChild.container.setBackgroundColor(context.getResources().getColor(R.color.colorDrawerHubSelected));
                 } else {
-                    itemControllerChild.container.setBackgroundColor(context.getResources().getColor(R.color.md_grey_600));
+                    itemControllerChild.container.setBackgroundColor(context.getResources().getColor(R.color.colorDrawerHubUnSelected));
                 }
 
                 //activate or not////////////
                 boolean active = DBWrapper.getInstance().isSGActive(item.actualName);
                 if (active) {
                     itemControllerChild.btn_active_toggle.setVisibility(View.GONE);
-                } else{
+                } else {
                     itemControllerChild.btn_active_toggle.setVisibility(View.VISIBLE);
                     itemControllerChild.btn_active_toggle.setBackgroundResource(R.drawable.deactivated);
                 }
@@ -218,6 +239,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                         if (context != null) {
                             HomeScreen.userDeactivated = false;
                             ((HomeScreen) context).switchSG(user + "_" + item.actualName, false, null, false);
+                            notifyItemChanged(position);
                         }
                     }
                 });
@@ -225,11 +247,11 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-    private String getImagePath(String groupPicId){
-        if(groupPicId == null)
+    private String getImagePath(String groupPicId) {
+        if (groupPicId == null)
             groupPicId = SharedPrefManager.getInstance().getUserFileId(SharedPrefManager.getInstance().getUserName());
-        if(groupPicId!=null){
-            String profilePicUrl = groupPicId+".jpg";
+        if (groupPicId != null) {
+            String profilePicUrl = groupPicId + ".jpg";
             File file = Environment.getExternalStorageDirectory();
             return new StringBuffer(file.getPath()).append(File.separator).append("SuperChat/").append(profilePicUrl).toString();
 //			return Environment.getExternalStorageDirectory().getPath()+ File.separator +Constants.contentProfilePhoto+groupPicId+".jpg";
@@ -248,12 +270,14 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     private static class ListHeaderViewHolder extends RecyclerView.ViewHolder {
+        public LinearLayout llHeaderExpandable;
         public TextView header_title;
         public ImageView btn_expand_toggle;
         public Item refferalItem;
 
         public ListHeaderViewHolder(View itemView) {
             super(itemView);
+            llHeaderExpandable = (LinearLayout) itemView.findViewById(R.id.llHeaderExpandable);
             header_title = (TextView) itemView.findViewById(R.id.header_title);
             btn_expand_toggle = (ImageView) itemView.findViewById(R.id.btn_expand_toggle);
         }
@@ -272,30 +296,33 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         public ListChildViewHolder(View itemView) {
             super(itemView);
+
             displayPicture = (ImageView) itemView.findViewById(R.id.displayPicture);
             child_title = (TextView) itemView.findViewById(R.id.child_title);
             child_sg_type = (TextView) itemView.findViewById(R.id.child_sg_type);
             child_notificationCount = (TextView) itemView.findViewById(R.id.child_notificationCount);
             btn_notify_toggle = (ImageView) itemView.findViewById(R.id.btn_notify_toggle);
-            btn_active_toggle = (ImageView)itemView.findViewById(R.id.btn_active_toggle);
+            btn_active_toggle = (ImageView) itemView.findViewById(R.id.btn_active_toggle);
 //            countContainer = (RelativeLayout) itemView.findViewById(R.id.countContainer);
             container = (RelativeLayout) itemView.findViewById(R.id.container);
+
+            SuperChatApplication.getInstance().settingFont(SuperChatApplication.FONT_TYPE.LATO_BOLD, itemView);
         }
     }
 
     public static class Item {
         public int type;
-        public String actualName;
-        public String text;
-        public String count;
-        public String notify;
-        public String domainType;
-        public List<Item> invisibleChildren;
+        public String actualName = "";
+        public String text = "";
+        public String count = "";
+        public String notify = "";
+        public String domainType = "";
+        public List<Item> invisibleChildren = new ArrayList<>();
 
         public Item() {
         }
 
-        public Item(int type, String text, String count, String notify , String actualName, String domainType) {
+        public Item(int type, String text, String count, String notify, String actualName, String domainType) {
             this.type = type;
             this.text = text;
             this.actualName = actualName;
@@ -303,6 +330,15 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             this.count = count;
             this.notify = notify;
+        }
+
+        public Item(int type, String text, List<Item> invisibleChildren) {
+            this.type = type;
+            this.text = text;
+            this.invisibleChildren = invisibleChildren;
+            if (invisibleChildren != null) {
+                this.count = "" + invisibleChildren.size();
+            }
         }
     }
 

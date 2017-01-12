@@ -25,6 +25,8 @@ import com.superchat.utils.Utilities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,10 +42,11 @@ import android.widget.Toast;
 
 
 
-public class GenerateConsolePasswordActivity extends Activity{
+public class GenerateConsolePasswordActivity extends Activity implements OnClickListener{
 
 	EditText password;
 	EditText confirmPassword;
+	TextView tvWebConsoleLink;
 	Button submit;
 	String pass;
 	String confPass;
@@ -53,10 +56,14 @@ public class GenerateConsolePasswordActivity extends Activity{
 		super.onCreate(bundle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.generate_password);
+
+		tvWebConsoleLink = (TextView) findViewById(R.id.tvWebConsoleLink);
+		tvWebConsoleLink.setOnClickListener(this);
 		password = (EditText)findViewById(R.id.id_pass);
 		confirmPassword = (EditText)findViewById(R.id.id_conf_pass);
 		submit = (Button)findViewById(R.id.id_submit);
-		
+
+		password.clearFocus();
 		submit.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -64,7 +71,7 @@ public class GenerateConsolePasswordActivity extends Activity{
 				generateRequest();
 			}
 		});
-		
+
 		((TextView)findViewById(R.id.id_back)).setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -109,7 +116,24 @@ public class GenerateConsolePasswordActivity extends Activity{
 		}
 		new GeneratePasswordTask(obj, null).execute();
 	}
-//=========================================================
+
+	@Override
+	public void onClick(View view) {
+		int id = view.getId();
+		switch(id){
+			case R.id.tvWebConsoleLink:{
+				try {
+					Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(tvWebConsoleLink.getText().toString()));
+					startActivity(intent);
+				} catch(Exception e){
+					Toast.makeText(this, "Not supported", Toast.LENGTH_SHORT).show();
+				}
+				break;
+			}
+		}
+	}
+
+	//=========================================================
 	public class GeneratePasswordTask extends AsyncTask<String, String, String> {
 		JSONObject requestJSON;
 		ProgressDialog progressDialog = null;
@@ -119,7 +143,7 @@ public class GenerateConsolePasswordActivity extends Activity{
 			this.view1 = view1;
 		}
 		@Override
-		protected void onPreExecute() {		
+		protected void onPreExecute() {
 			progressDialog = ProgressDialog.show(GenerateConsolePasswordActivity.this, "", "Generating. Please wait...", true);
 			super.onPreExecute();
 		}
@@ -131,7 +155,7 @@ public class GenerateConsolePasswordActivity extends Activity{
 			String url = Constants.SERVER_URL+ "/tiger/rest/user/genconsolepwd";
 			HttpPost httpPost = new HttpPost(url);
 			Log.i(TAG, "SignupTaskForAdmin :: doInBackground:  url:"+url);
-			 httpPost = SuperChatApplication.addHeaderInfo(httpPost, true);
+			httpPost = SuperChatApplication.addHeaderInfo(httpPost, true);
 			HttpResponse response = null;
 			try {
 				httpPost.setEntity(new StringEntity(requestJSON.toString()));
@@ -153,7 +177,7 @@ public class GenerateConsolePasswordActivity extends Activity{
 				} catch (IOException e) {
 					Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:"+e.toString());
 				}
-				
+
 			} catch (UnsupportedEncodingException e1) {
 				Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution UnsupportedEncodingException:"+e1.toString());
 			}catch(Exception e){
@@ -176,7 +200,7 @@ public class GenerateConsolePasswordActivity extends Activity{
 						ErrorModel.CitrusError citrusError = errorModel.citrusErrors.get(0);
 						Toast.makeText(GenerateConsolePasswordActivity.this, citrusError.message, Toast.LENGTH_SHORT).show();
 					} else if (errorModel.message != null)
-					Toast.makeText(GenerateConsolePasswordActivity.this, errorModel.message, Toast.LENGTH_SHORT).show();
+						Toast.makeText(GenerateConsolePasswordActivity.this, errorModel.message, Toast.LENGTH_SHORT).show();
 				} else
 					Toast.makeText(GenerateConsolePasswordActivity.this, "Please try again later.", Toast.LENGTH_SHORT).show();
 			}else if(str != null ){

@@ -37,21 +37,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.internal.zzip;
 import com.superchat.R;
 import com.superchat.data.db.DBWrapper;
-import com.superchat.model.SGroupListObject;
 import com.superchat.model.multiplesg.InviteJoinDataModel;
 import com.superchat.model.multiplesg.InvitedDomainNameSet;
 import com.superchat.model.multiplesg.JoinedDomainNameSet;
 import com.superchat.model.multiplesg.OwnerDomainName;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
-import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.widgets.RoundedImageView;
-
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,11 +57,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import retrofit2.http.HEAD;
-
-import static com.superchat.R.id.superGroupContainer;
-
-public class FragmentDrawer extends Fragment implements View.OnClickListener {
+public class FragmentDrawer extends Fragment implements View.OnClickListener, ConnectorDrawer {
 
     private static String TAG = FragmentDrawer.class.getSimpleName();
 
@@ -102,9 +93,11 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     ArrayList<String> invitedDomainNameSet = new ArrayList<String>();
 
     public List<ExpandableListAdapter.Item> getSuperGroupList() {
-        List<ExpandableListAdapter.Item> dataList = new ArrayList<>();
+        List<ExpandableListAdapter.Item> parentDataList = new ArrayList<>();
         ArrayList<OwnerDomainName> ownerDomainNameSet = DBWrapper.getInstance().getOwnedSGList();
         if (ownerDomainNameSet != null && ownerDomainNameSet.size() > 0) {
+            List<ExpandableListAdapter.Item> childDataList = new ArrayList<>();
+
             for (int i = 0; i < ownerDomainNameSet.size(); i++) {
                 String ownerDisplayName = "";
                 if (ownerDomainNameSet.get(i).getDomainDisplayName() != null &&
@@ -115,17 +108,21 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                         ownerDisplayName = ownerDomainNameSet.get(i).getDomainName().trim();
                 }
 
-                dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
+                childDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
                         ownerDisplayName,
                         ownerDomainNameSet.get(i).getDomainCount(),
                         ownerDomainNameSet.get(i).getDomainNotify(),
                         ownerDomainNameSet.get(i).getDomainName(),
                         ownerDomainNameSet.get(i).getDomainType()));
             }
+
+            parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, HEADER_OWNED_HUB, childDataList));
         }
 
         ArrayList<JoinedDomainNameSet> ownerDomainNameSetTemp = DBWrapper.getInstance().getListOfOwnerArraySGs();
         if (ownerDomainNameSetTemp != null && ownerDomainNameSetTemp.size() > 0) {
+            List<ExpandableListAdapter.Item> childDataList = new ArrayList<>();
+
             Collections.sort(ownerDomainNameSetTemp, new Comparator<JoinedDomainNameSet>() {
                 @Override
                 public int compare(final JoinedDomainNameSet object1, final JoinedDomainNameSet object2) {
@@ -156,7 +153,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                     joinedDisplayName = ownerDomainNameSetTemp.get(i).getDomainName().trim();
                 }
 
-                dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
+                childDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
                         joinedDisplayName,
                         ownerDomainNameSetTemp.get(i).getDomainCount(),
                         ownerDomainNameSetTemp.get(i).getDomainNotify(),
@@ -165,10 +162,14 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
 //                Log.e("disp" , "is : "+joinedDisplayName);
             }
+
+
+            parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, HEADER_OWNED_HUB, childDataList));
         }
 
         ArrayList<JoinedDomainNameSet> joinedDomainNameSetTemp = DBWrapper.getInstance().getListOfJoinedSGs();
         if (joinedDomainNameSetTemp != null && joinedDomainNameSetTemp.size() > 0) {
+            List<ExpandableListAdapter.Item> childDataList = new ArrayList<>();
             Collections.sort(joinedDomainNameSetTemp, new Comparator<JoinedDomainNameSet>() {
                 @Override
                 public int compare(final JoinedDomainNameSet object1, final JoinedDomainNameSet object2) {
@@ -198,7 +199,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                 } else {
                     joinedDisplayName = joinedDomainNameSetTemp.get(i).getDomainName().trim();
                 }
-                dataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
+                childDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
                         joinedDisplayName,
                         joinedDomainNameSetTemp.get(i).getDomainCount(),
                         joinedDomainNameSetTemp.get(i).getDomainNotify(),
@@ -207,10 +208,22 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
 
 //                Log.e("disp" , "is : "+joinedDisplayName);
             }
+
+            parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, HEADER_JOINED_HUB, childDataList));
         }
-        return dataList;
+
+        parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, HEADER_OPEN_HUB, null));
+        parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, HEADER_NEW_INVITATION, null));
+        parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, HEADER_CREATE_NEW_HUB, null));
+
+        return parentDataList;
     }
 
+    public static final String HEADER_OPEN_HUB = "Open Hub";
+    public static final String HEADER_NEW_INVITATION = "New Invitation";
+    public static final String HEADER_CREATE_NEW_HUB = "Create New Hub";
+    public static final String HEADER_OWNED_HUB = "Oenwed Hub";
+    public static final String HEADER_JOINED_HUB = "Joined Hub";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -249,15 +262,6 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         else
             invitedNotificationCount.setText("0");
 
-
-        /*int muteId = DBWrapper.getInstance().getSGMuteInfo(SharedPrefManager.getInstance().getUserDomain());
-
-        if (muteId == 0) {
-            notifyCurrent.setVisibility(View.GONE);
-        } else {
-            notifyCurrent.setVisibility(View.VISIBLE);
-        }*/
-
         SharedPrefManager pref = SharedPrefManager.getInstance();
         String file_id = pref.getSGFileId("SG_FILE_ID");
 
@@ -285,7 +289,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         displayPictureCurrent.setOnClickListener(this);
         currentSGName.setOnClickListener(this);
 
-        adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity());
+        adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity(), this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
         return layout;
@@ -322,33 +326,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                 showSnoozeDialog();
                 break;
             }
-            /*case R.id.notificationLayout: {
-                if (flagNotify == true) {
-                    flagNotify = false;
-                    notifyCurrent.setBackgroundResource(R.drawable.ic_icon_navigation_mute);
-                } else {
-                    flagNotify = true;
-                    notifyCurrent.setBackgroundResource(R.drawable.ic_icon_navigation_unmute);
-                }
-
-                break;
-            }*/
             case R.id.llInvited: {
-                //if (invitedDomainNameSet != null && invitedDomainNameSet.size() > 0) {
-                SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
-                String number = iPrefManager.getUserPhone();
-
-                Bundle bundle = new Bundle();
-                bundle.putString(Constants.MOBILE_NUMBER_TXT, number);
-                bundle.putStringArrayList(SupergroupListingScreenNew.KEY_INVITED_DOMAIN_SET, invitedDomainNameSet);
-                bundle.putBoolean(SupergroupListingScreenNew.KEY_SHOW_OWNED_ALERT, false);
-
-                Intent starter = new Intent(getActivity(), SupergroupListingScreenNew.class);
-                starter.putExtras(bundle);
-                startActivityForResult(starter, CODE_INVITE);
-                /*} else {
-                    Toast.makeText(getActivity(), "Invited List is empty", Toast.LENGTH_SHORT).show();
-                }*/
+                eventClickedInvitaion();
                 break;
             }
             case R.id.userContainer:
@@ -361,24 +340,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
                 break;
             case R.id.superGroupContainer:
             case R.id.llAddSuperGroup: {
-                SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
-                String mobileNumber = iPrefManager.getUserPhone();
-//                Bundle bundle = new Bundle();
-                intent = new Intent(getActivity(), ProfileScreen.class);
-                intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, true);
-                intent.putExtra(Constants.SG_CREATE_RESET, true);
-                intent.putExtra("MANAGE_MEMBER_BY_ADMIN", true);
-                intent.putExtra("PROFILE_EDIT_REG_FLOW", true);
-                intent.putExtra(Constants.REG_TYPE, true);
-                //SPECIAL DATA FOR BACK
-                intent.putExtra("PROFILE_FIRST", true);
-                if (mobileNumber.indexOf('-') != -1)
-                    intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber.substring(mobileNumber.indexOf('-') + 1));
-                else
-                    intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber);
-//                intent.putExtra(Constants.REG_TYPE, "ADMIN");
-//                intent.putExtra("REGISTER_SG", true);
-                startActivityForResult(intent, CODE_ADD_SUPERGROUP);
+                eventClickedCreateNewHub();
                 break;
             }
         }
@@ -492,6 +454,48 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void eventClickedCreateNewHub() {
+        SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
+        String mobileNumber = iPrefManager.getUserPhone();
+//                Bundle bundle = new Bundle();
+        Intent intent = new Intent(getActivity(), ProfileScreen.class);
+        intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, true);
+        intent.putExtra(Constants.SG_CREATE_RESET, true);
+        intent.putExtra("MANAGE_MEMBER_BY_ADMIN", true);
+        intent.putExtra("PROFILE_EDIT_REG_FLOW", true);
+        intent.putExtra(Constants.REG_TYPE, true);
+        //SPECIAL DATA FOR BACK
+        intent.putExtra("PROFILE_FIRST", true);
+        if (mobileNumber.indexOf('-') != -1)
+            intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber.substring(mobileNumber.indexOf('-') + 1));
+        else
+            intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber);
+//                intent.putExtra(Constants.REG_TYPE, "ADMIN");
+//                intent.putExtra("REGISTER_SG", true);
+        startActivityForResult(intent, CODE_ADD_SUPERGROUP);
+    }
+
+    @Override
+    public void eventClickedInvitaion() {
+        SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
+        String number = iPrefManager.getUserPhone();
+
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.MOBILE_NUMBER_TXT, number);
+        bundle.putStringArrayList(SupergroupListingScreenNew.KEY_INVITED_DOMAIN_SET, invitedDomainNameSet);
+        bundle.putBoolean(SupergroupListingScreenNew.KEY_SHOW_OWNED_ALERT, false);
+
+        Intent starter = new Intent(getActivity(), SupergroupListingScreenNew.class);
+        starter.putExtras(bundle);
+        startActivityForResult(starter, CODE_INVITE);
+    }
+
+    @Override
+    public void eventClickedOpenHub() {
+        OpenHubSearchScreen.start(getActivity());
+    }
+
     public static interface ClickListener {
         public void onClick(View view, int position);
 
@@ -548,11 +552,14 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     }
 
     public void initialize() {
-        adapter.notifyDataSetChanged();
-        /////////////////////////////////////
-        adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity());
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        recyclerView.setAdapter(adapter);
+        // Comment this
+        {
+            adapter.notifyDataSetChanged();
+            /////////////////////////////////////
+            adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity(), this);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+            recyclerView.setAdapter(adapter);
+        }
         /////////////////////////////////////
         boolean muteId = SharedPrefManager.getInstance().isSnoozeExpired(SharedPrefManager.getInstance().getUserDomain());
         if (muteId) {
@@ -631,12 +638,12 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener {
     }
 
     public void fragmentOpen() {
-        if (HomeScreen.updateNavDrawer) {
+        /*if (HomeScreen.updateNavDrawer) {
             HomeScreen.updateNavDrawer = false;
-            adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity());
+            adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity(), this);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
             recyclerView.setAdapter(adapter);
-        }
+        }*/
         updateView();
         mDrawerLayout.openDrawer(containerView);
     }

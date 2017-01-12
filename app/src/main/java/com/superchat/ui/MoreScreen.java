@@ -55,7 +55,9 @@ import javax.net.ssl.HttpsURLConnection;
 import retrofit2.http.HEAD;
 
 import static android.R.attr.mode;
+import static com.superchat.R.drawable.i;
 import static com.superchat.R.id.switchBroadcast;
+import static com.superchat.R.id.tvWebConsoleLink;
 
 public class MoreScreen extends Activity implements OnClickListener {
 
@@ -68,6 +70,7 @@ public class MoreScreen extends Activity implements OnClickListener {
     RelativeLayout blockListLayout;
     RelativeLayout feedbackLayout;
     RelativeLayout consolePassLayout;
+    RelativeLayout id_open_console;
     RelativeLayout sgProfileLayout;
     RelativeLayout checkUpdateLayout;
     RelativeLayout soonzeLayout;
@@ -100,6 +103,7 @@ public class MoreScreen extends Activity implements OnClickListener {
         blockListLayout = (RelativeLayout) findViewById(R.id.id_block_list_layout);
         feedbackLayout = (RelativeLayout) findViewById(R.id.id_feedback_layout);
         consolePassLayout = (RelativeLayout) findViewById(R.id.id_configure_console_pass);
+        id_open_console = (RelativeLayout) findViewById(R.id.id_open_console);
         sgProfileLayout = (RelativeLayout) findViewById(R.id.id_supergroup_profile);
         privacyLayout = (RelativeLayout) findViewById(R.id.id_privacy_layout);
 
@@ -190,6 +194,7 @@ public class MoreScreen extends Activity implements OnClickListener {
         blockListLayout.setOnClickListener(this);
         feedbackLayout.setOnClickListener(this);
         consolePassLayout.setOnClickListener(this);
+        id_open_console.setOnClickListener(this);
         profileIconLayout.setOnClickListener(this);
 //		sharedID.setOnClickListener(this);
 //		accountIconLayout.setOnClickListener(this);
@@ -384,12 +389,22 @@ public class MoreScreen extends Activity implements OnClickListener {
                 intent = new Intent(this, ChatBackupScreen.class);
                 startActivity(intent);
                 break;
+            case R.id.id_open_console:{
+                try {
+                    Intent intentOpenWeb = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.text_activate_web_console_link)));
+                    startActivity(intentOpenWeb);
+                } catch(Exception e){
+                    Toast.makeText(this, "Not supported", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
             case R.id.id_configure_console_pass:
                 intent = new Intent(this, GenerateConsolePasswordActivity.class);
                 startActivity(intent);
                 break;
             case R.id.id_privacy_layout:
-                showPrivacyOptionsDialog(true);
+                PrivacySettings.start(this);
+                //showPrivacyOptionsDialog(true);
                 break;
             case R.id.id_snooze_layout:
 //                boolean expired = sharedPrefManager.isSnoozeExpired(sharedPrefManager.getUserDomain());

@@ -35,6 +35,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -155,6 +156,7 @@ import ch.boye.httpclientandroidlib.entity.mime.content.FileBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static com.superchat.R.drawable.i;
 import static com.superchat.R.id.id_sg_name_label;
 import static com.superchat.R.id.llTabIndicator;
 
@@ -481,7 +483,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     //EditText searchBoxView;
     //ImageView clearSearch;
 
-    public static int flagFrag = 0;
+    public int flagFrag = 0;
 
     TextView id_sg_name_label;
     SmartTabLayout viewPagerTab;
@@ -591,7 +593,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 switch (position) {
                     case 0:
                         break;
-                    case 2:
+                    case 1:
                         if (contactsFragment != null && contactsFragment.adapter != null && isContactRefreshed) {
                             contactsFragment.showAllContacts();
                             contactsFragment.setPorfileListener();
@@ -602,7 +604,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                         iPrefManager.saveNewContactsCounter(iPrefManager.getUserDomain(), contactsCount);
                         notificationHandler.sendEmptyMessage(0);
                         break;
-                    case 1:
+                    case 2:
                         publicGroupFragment.refreshList();
                         publicGroupFragment.restScreen();
                         break;
@@ -2662,9 +2664,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             switch (position) {
                 case 0:
                     return chatFragment;
-                case 1:
-                    return publicGroupFragment;//new PublicGroupScreen();
                 case 2:
+                    return publicGroupFragment;//new PublicGroupScreen();
+                case 1:
                     if (contactsFragment != null) {
                         return contactsFragment;
                     }
@@ -2680,14 +2682,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         @Override
         public CharSequence getPageTitle(int position) {
             return getTabText(position);
-
-            /*Drawable image = ContextCompat.getDrawable(HomeScreen.this, R.drawable.addplay);
-            image.setBounds(0, 0, image.getIntrinsicWidth(), image.getIntrinsicHeight());
-            SpannableString sb = new SpannableString(" ");
-            ImageSpan imageSpan = new ImageSpan(image, ImageSpan.ALIGN_BOTTOM);
-            sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            return sb;*/
-
         }
 
     }
@@ -4374,12 +4368,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         }
     }
 
-    public void openDrawer() {
-        drawerFragment.adapter.notifyDataSetChanged();
-        drawerFragment.fragmentOpen();
-    }
-    //----------------------------------------------------
-
     @Override
     public void onStart() {
         super.onStart();
@@ -4461,14 +4449,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 invite_member.setVisible(false);
                 break;
             }
-            case 1: {
+            case 2: {
                 compose_icon.setVisible(false);
                 sync_id.setVisible(false);
                 create_broadcast_list.setVisible(false);
                 invite_member.setVisible(false);
                 break;
             }
-            case 2: {
+            case 1: {
                 compose_icon.setVisible(false);
                 id_create_group_icon.setVisible(false);
                 id_create_group_text.setVisible(false);
@@ -4545,9 +4533,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         return super.onOptionsItemSelected(item);
     }
 
-    public void selectSearchFragment(int i) {
+    public void selectSearchFragment(int flagFrag) {
 
-        Log.e("here", "coming i : " + i);
+        Log.e("here", "coming i : " + flagFrag);
 
         if (viewPagerTab != null) {
             viewPagerTab.setVisibility(View.GONE);
@@ -4556,13 +4544,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             mToolbar.setVisibility(View.GONE);
         }
 
-        if (i == 0) {
+        if (flagFrag == 0) {
             chatFragment.selectFrag();
             chatFragment.performSearch();
-        } else if (i == 1) {
+        } else if (flagFrag == 2) {
             publicGroupFragment.selectFrag();
             publicGroupFragment.performSearch();
-        } else if (i == 2) {
+        } else if (flagFrag == 1) {
             contactsFragment.selectFrag();
             contactsFragment.performSearch();
         } else {
@@ -4680,14 +4668,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     private void setSelectTabStyle(TextView tvTab) {
         if (tvTab != null) {
             tvTab.setTypeface(tvTab.getTypeface(), Typeface.BOLD);
-            tvTab.setTextColor(getResources().getColor(R.color.white));
+            tvTab.setTextColor(ContextCompat.getColor(this, R.color.textColorPagerSelected));
         }
     }
 
 
     private void setUnSelectTabStyle(TextView tvTab) {
         tvTab.setTypeface(tvTab.getTypeface(), Typeface.NORMAL);
-        tvTab.setTextColor(getResources().getColor(R.color.md_blue_grey_100));
+        tvTab.setTextColor(ContextCompat.getColor(this, R.color.textColorPagerUnselected));
     }
 
     public void setTabsCustom() {
@@ -4736,7 +4724,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         String inboxString = "Inbox";
         String bulletinString = "Bulletin";
         String contactString = "Contacts";
-        String[] titles = new String[]{"" + inboxString, "Groups", "" + contactString, "" + bulletinString};
+        String groupString = "Groups";
+        String[] titles = new String[]{"" + inboxString, "" + contactString, "" + groupString, "" + bulletinString};
         return titles[position].toUpperCase();
     }
 

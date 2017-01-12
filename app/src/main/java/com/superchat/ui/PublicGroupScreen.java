@@ -428,7 +428,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                 viewAllChannelLabel.setVisibility(View.GONE);
                 viewMyChannelLabel.setVisibility(View.VISIBLE);
                 allChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
-                myChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
+                myChannelLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
                 if (searchEditText != null)
                     searchEditText.setText("");
                 resetSearchBox();
@@ -438,7 +438,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                 viewMyChannelLabel.setVisibility(View.GONE);
                 viewAllChannelLabel.setVisibility(View.VISIBLE);
                 myChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
-                allChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
+                allChannelLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
                 resetSearchBox();
             }
             if (isAllChannelTab)
@@ -688,7 +688,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
             if (allChannelLabel != null)
                 allChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
             if (myChannelLabel != null)
-                myChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
+                myChannelLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
         } else {
             if (viewMyChannelLabel != null) {
                 viewMyChannelLabel.setVisibility(View.GONE);
@@ -697,7 +697,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
             if (myChannelLabel != null)
                 myChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
             if (allChannelLabel != null)
-                allChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
+                allChannelLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
         }
 
         manipulateScreenTabsData(false);

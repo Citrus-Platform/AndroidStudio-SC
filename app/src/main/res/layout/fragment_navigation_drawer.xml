@@ -4,140 +4,102 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_grey_600">
+    android:background="@color/colorAccent">
 
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/nav_header_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:scrollbars="vertical">
+        android:scrollbars="vertical"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:id="@+id/notificationLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
             android:padding="10dp">
 
             <ImageView
                 android:id="@+id/notifyCurrent"
                 android:layout_width="70dp"
-                android:layout_height="20dp"/>
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"/>
         </RelativeLayout>
 
-        <com.superchat.widgets.RoundedImageView
-            android:id="@+id/displayPictureCurrent"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/notificationLayout"
-            android:layout_centerVertical="true"
-            android:layout_margin="10dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/logo_small"
-            android:visibility="visible" />
-
-        <TextView
-            android:id="@+id/currentSGName"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/displayPictureCurrent"
-            android:ellipsize="end"
-            android:gravity="center|left"
-            android:singleLine="true"
-            android:text="SuperGroup Name"
-            android:textColor="@color/white"
-            android:textSize="22sp" />
-    </RelativeLayout>
+            android:orientation="horizontal"
+            android:background="@color/transparent_black"
+            android:padding="10dp">
 
-    <LinearLayout
-        android:id="@+id/llSeperator1"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_below="@id/nav_header_container"
-        android:background="@color/white"
-        android:orientation="vertical" />
-
-    <LinearLayout
-        android:id="@+id/loginLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/llSeperator1"
-        android:orientation="vertical"
-        android:paddingBottom="5dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="5dp">
-
-        <LinearLayout
-            android:id="@+id/userContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/user"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="@color/white"
-                android:textSize="18sp" />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/superGroupContainer"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:layout_marginTop="5dp"
-            android:layout_weight="10"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/id_add_sg_txt"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="8"
-                android:text="Create SuperGroup"
-                android:layout_gravity="center_vertical"
-                android:textColor="@color/white"
-                android:textSize="17sp" />
+            <com.superchat.widgets.RoundedImageView
+                android:id="@+id/displayPictureCurrent"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_below="@+id/notificationLayout"
+                android:layout_centerVertical="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/logo_small"
+                android:visibility="visible" />
 
             <LinearLayout
-                android:id="@+id/llAddSuperGroup"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:gravity="right|center"
-                android:orientation="horizontal">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:paddingLeft="10dp">
 
-                <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:paddingBottom="5dp"
-                    android:paddingTop="5dp"
-                    android:src="@drawable/ic_icon_navigation_plus" />
+                <TextView
+                    android:id="@+id/currentSGName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="SuperGroup Name"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
+                <LinearLayout
+                    android:id="@+id/loginLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/userContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/user"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
-
     <LinearLayout
-        android:id="@+id/llSeperator2"
+        android:id="@+id/llSeperator1"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_below="@id/loginLayout"
-        android:background="@color/white"
-        android:orientation="vertical" />
+        android:layout_height="0dp"
+        android:layout_below="@id/nav_header_container"
+        android:background="@color/divider"
+        android:orientation="vertical"
+        android:visibility="visible" />
 
     <RelativeLayout
         android:id="@+id/superGroupsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/llSeperator2"
         android:background="@color/blue_focused"
         android:visibility="gone">
 
@@ -176,59 +138,111 @@
         android:id="@+id/drawerList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/llInvited"
-        android:layout_below="@id/divider" />
+        android:layout_above="@+id/llBottom"
+        android:layout_below="@+id/llSeperator1" />
 
     <LinearLayout
-        android:id="@+id/llInvited"
+        android:id="@+id/llBottom"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/md_grey_900"
-        android:paddingBottom="20dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="20dp"
-        android:weightSum="10">
+        android:background="@color/md_grey_800"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:weightSum="2">
 
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="8"
+            android:id="@+id/superGroupContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/id_add_sg_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Invited SuperGroups"
-                android:textColor="@color/white" />
-
-
-            <TextView
-                android:id="@+id/invitedNotificationCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:background="@drawable/round_count_navigation"
-                android:text="0"
+                android:text="Create Hub"
                 android:textColor="@color/white"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textSize="17sp" />
+
+            <LinearLayout
+                android:id="@+id/llAddSuperGroup"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="right|center"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
+                    android:src="@drawable/ic_icon_navigation_plus" />
+            </LinearLayout>
         </LinearLayout>
 
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/divider_light" />
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:id="@+id/llInvited"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="right|center"
+            android:layout_weight="1"
+            android:gravity="center"
             android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:src="@drawable/ic_icon_navigation_right_arrow" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Invited Hub"
+                    android:textColor="@color/white"
+                    android:textSize="17sp" />
+
+
+                <TextView
+                    android:id="@+id/invitedNotificationCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/round_count_navigation"
+                    android:text="0"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="right|center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:src="@drawable/ic_icon_navigation_right_arrow" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

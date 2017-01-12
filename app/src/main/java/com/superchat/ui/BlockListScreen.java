@@ -32,6 +32,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class BlockListScreen  extends Activity {
+
+	public static void start(Context context) {
+	    Intent starter = new Intent(context, BlockListScreen.class);
+	    context.startActivity(starter);
+	}
+
 	// XmppChatClient chatClient;
     public ChatService messageService;
     BlockListAdapter adapter;

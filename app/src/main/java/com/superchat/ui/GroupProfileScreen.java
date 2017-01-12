@@ -36,6 +36,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
@@ -44,6 +45,7 @@ import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -118,6 +120,8 @@ import java.util.TimeZone;
 import java.util.UUID;
 
 import static android.R.attr.data;
+import static com.superchat.R.drawable.popup;
+import static com.superchat.R.id.switchChatSettings;
 
 public class GroupProfileScreen extends Activity implements OnClickListener, ProfileUpdateListener, VoiceMediaHandler, OnMenuItemClickListener {
     public final static String TAG = "GroupProfileScreen";
@@ -157,6 +161,7 @@ public class GroupProfileScreen extends Activity implements OnClickListener, Pro
     private ImageView editGroupView;
     private TextView muteGroupView;
     private ImageView groupIconView;
+	private Switch switchMuteGroup;
     private SharedPrefManager iChatPref;
     private Dialog memberOptionDialog;
     private HashMap<String, String> hashMap;
@@ -261,8 +266,11 @@ public class GroupProfileScreen extends Activity implements OnClickListener, Pro
     };
 	protected void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		//requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.group_info_screen);
+
+		iChatPref = SharedPrefManager.getInstance();
+
 		mediaScrollLayout = (LinearLayout)findViewById(R.id.id_media_scroll_view); 
 		docsScrollLayout = (LinearLayout)findViewById(R.id.id_docs_scroll_view); 
 		mediaCountView = (TextView)findViewById(R.id.id_media_count); 
@@ -281,8 +289,9 @@ public class GroupProfileScreen extends Activity implements OnClickListener, Pro
 		ownerName = (TextView)findViewById(R.id.id_created_by);
 		statusView = (TextView)findViewById(R.id.id_status_message); 
 		groupIconView = (ImageView) findViewById(R.id.id_group_icon);
-		editGroupView = (ImageView)findViewById(R.id.id_edit_group); 
-		
+		editGroupView = (ImageView)findViewById(R.id.id_edit_group);
+
+		switchMuteGroup = (Switch) findViewById(R.id.switchMuteGroup);
 		leaveBtnView = (TextView)findViewById(R.id.id_leave_btn);
 		leaveBtnView.setOnClickListener(this);
 		
@@ -309,8 +318,7 @@ public class GroupProfileScreen extends Activity implements OnClickListener, Pro
 		addGroupParticipantLayout.setVisibility(View.GONE);
 		adminLayout.setVisibility(View.GONE);
 		ownerLayout = (RelativeLayout)findViewById(R.id.id_owner_layout); 
-		
-		iChatPref = SharedPrefManager.getInstance();
+
 		addGroupParticipantLayout.setOnClickListener(this);
 		addMemberView.setOnClickListener(this);
 		leaveGroupChatView.setOnClickListener(this);
@@ -327,14 +335,25 @@ public class GroupProfileScreen extends Activity implements OnClickListener, Pro
 		clearGroupChatView.setOnClickListener(this);
 		activePollView.setOnClickListener(this);
 		Bundle tmpBundle = getIntent().getExtras();
+
+		if(!iChatPref.isOwner(groupUUID, iChatPref.getUserName())) {// if(!iChatPref.isDomainAdmin() || iChatPref.isPublicGroup(groupUUID) || isDeleteItem)
+			deleteGroupView.setVisibility(View.GONE);
+			isDeleteItem = false;
+		}
+/*
 		if(!iChatPref.isDomainAdminORSubAdmin()){
 			deleteGroupView.setVisibility(View.GONE);
 			isDeleteItem = false;
-			}
+			}*/
 		if(tmpBundle!=null){
 			isBroadCast = tmpBundle.getBoolean(Constants.BROADCAST, false);
 			isOpenChannel = tmpBundle.getBoolean(Constants.OPEN_CHANNEL, false);
-			if(!iChatPref.isDomainAdminORSubAdmin() || isBroadCast){
+			/*if(!iChatPref.isDomainAdminORSubAdmin() || isBroadCast){
+				deleteGroupView.setVisibility(View.GONE);
+				isDeleteItem = true;
+			}*/
+
+			if(!iChatPref.isOwner(groupUUID, iChatPref.getUserName()) || isBroadCast){
 				deleteGroupView.setVisibility(View.GONE);
 				isDeleteItem = true;
 			}
@@ -388,6 +407,27 @@ public class GroupProfileScreen extends Activity implements OnClickListener, Pro
 				title.setText(displayName);
 
 		}
+
+		boolean isMute = iChatPref.isMute(groupUUID);
+		if(isMute){
+			switchMuteGroup.setChecked(true);
+		} else {
+			switchMuteGroup.setChecked(false);
+		}
+
+
+		switchMuteGroup.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+				iChatPref.setMute(groupUUID, isChecked);
+				if (isChecked) {
+					Toast.makeText(GroupProfileScreen.this, "Group Mute!", Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(GroupProfileScreen.this, "Group Unmute!", Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
+
 		if(displayName.contains("##$^##"))
 			displayNameView.setText(displayName.substring(0, displayName.indexOf("##$^##")));
     	else
@@ -1096,7 +1136,15 @@ private void getServerGroupProfile(String groupName){
 			}else{
 				((TextView)relativeLayout.findViewById(R.id.user_type)).setVisibility(View.GONE);
 			}
-			((TextView)relativeLayout.findViewById(R.id.id_contact_status)).setText(iChatPref.getUserStatusMessage(text));
+
+			TextView tvUserStatus = ((TextView) relativeLayout.findViewById(R.id.id_contact_status));
+			String userStatus = iChatPref.getUserStatusMessage(text);
+			if(userStatus != null && userStatus.trim().length() > 0) {
+				tvUserStatus.setVisibility(View.VISIBLE);
+				tvUserStatus.setText(iChatPref.getUserStatusMessage(text));
+			} else {
+				tvUserStatus.setVisibility(View.GONE);
+			}
 			((TextView)relativeLayout.findViewById(R.id.id_contact_name)).setText(tmpText);
 			textView.setTextColor(Color.DKGRAY);
 			textView.setTextSize(18);
@@ -1179,13 +1227,15 @@ private void getServerGroupProfile(String groupName){
 			textView.setLayoutParams(params);
 			relativeLayout.setTag(text);
 			mainLayout.addView(relativeLayout);
-			
+/*
+
 			View v = new View(this);
 			v.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 2));
 			v.setBackgroundColor(Color.parseColor("#B3B3B3"));
 			v.setTag(text+"line");
 			mainLayout.addView(v);
-			
+*/
+
 //			if(statusText!=null)
 //				mainLayout.addView(statusTextView);
 		}
@@ -2587,8 +2637,14 @@ private void getServerGroupProfile(String groupName){
 //					setPic((RoundedImageView) mainLayout.findViewById(R.id.contact_icon), (ImageView) mainLayout.findViewById(R.id.contact_icon_default), iChatPref.getUserServerNameIfExists(userName), userName);
 					if(userDisplayName != null)
 						((TextView)view.findViewById(R.id.id_contact_name)).setText(userDisplayName);
-					if(status != null)
-						((TextView)view.findViewById(R.id.id_contact_status)).setText(status);
+
+					TextView tvUserStatus = ((TextView) view.findViewById(R.id.id_contact_status));
+					if(status != null && status.trim().length() > 0) {
+						tvUserStatus.setVisibility(View.VISIBLE);
+						tvUserStatus.setText(iChatPref.getUserStatusMessage(status));
+					} else {
+						tvUserStatus.setVisibility(View.GONE);
+					}
 				}
 				else if(tag != null){
 //					setPic((RoundedImageView) mainLayout.findViewById(R.id.contact_icon), (ImageView) mainLayout.findViewById(R.id.contact_icon_default), iChatPref.getUserServerNameIfExists(tag), tag);

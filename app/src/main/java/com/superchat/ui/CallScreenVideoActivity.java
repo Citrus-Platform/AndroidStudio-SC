@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -38,6 +40,8 @@ import com.sinch.android.rtc.video.VideoScalingType;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilTemp;
+import com.superchat.utils.Utilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,6 +77,7 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
     private TextView sg_name;
     private TextView mCallState;
     private TextView tvVideoCallingText;
+    private Button btnSendLog;
 
     ImageView muteButton;
     ImageView speakerButton;
@@ -210,6 +215,7 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
         mCallState = (TextView) findViewById(R.id.callState);
         tvVideoCallingText = (TextView) findViewById(R.id.tvVideoCallingText);
         Button endCallButton = (Button) findViewById(R.id.hangupButton);
+        btnSendLog = (Button) findViewById(R.id.btnSendLog);
 
         isMute = false;
         isSpeaker = false;
@@ -220,6 +226,7 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
         Button switchCamera = (Button) findViewById(R.id.switchCamera);
         switchCamera.setOnClickListener(this);
 
+        btnSendLog.setOnClickListener(this);
         muteButton.setOnClickListener(this);
         speakerButton.setOnClickListener(this);
         endCallButton.setOnClickListener(new OnClickListener() {
@@ -484,6 +491,10 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
                         toggleSpeaker();
                     }
                     break;
+                case R.id.btnSendLog: {
+                    UtilTemp.sendLogs(this, audioManager);
+                    break;
+                }
             }
         }catch(Exception e){
             e.printStackTrace();

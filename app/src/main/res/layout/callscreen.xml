@@ -4,27 +4,29 @@
     android:layout_height="match_parent"
     android:background="@color/color_call_screen_bg"
     android:orientation="vertical"
-    android:weightSum="5" >
-<RelativeLayout
+    android:weightSum="5">
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.5"
-        android:orientation="vertical" >
-    
-    <com.superchat.widgets.RoundedImageView
-        android:id="@+id/id_profile_pic"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-       android:layout_centerInParent="true"
-        android:layout_gravity="center"
-        android:scaleType="centerCrop"
-        android:src="@drawable/profile_pic" />
-</RelativeLayout>
+        android:orientation="vertical">
+
+        <com.superchat.widgets.RoundedImageView
+            android:id="@+id/id_profile_pic"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/profile_pic" />
+    </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.5"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/remoteUser"
@@ -45,12 +47,13 @@
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="16sp" />
+
         <TextView
             android:id="@+id/sg_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
             android:text="SuperChat"
             android:textAllCaps="true"
             android:textColor="@color/white"
@@ -76,7 +79,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="5dp" >
+        android:padding="5dp">
 
         <ImageView
             android:id="@+id/mute_button"
@@ -102,7 +105,7 @@
         android:id="@+id/bottomPanel"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_weight="1">
 
         <Button
             android:id="@+id/hangupButton"
@@ -111,5 +114,18 @@
             android:layout_centerInParent="true"
             android:background="@drawable/ic_call_drop" />
     </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btnSendLog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Send Log" />
+    </LinearLayout>
 
 </LinearLayout>

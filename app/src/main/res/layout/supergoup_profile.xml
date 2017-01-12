@@ -1,287 +1,361 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/id_profile_screen"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/screen_background_color"
+    android:orientation="vertical">
 
-
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/id_profile_screen"
+    <RelativeLayout
+        android:id="@+id/header_layout"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical"
-        android:background="@color/screen_background_color">
+        android:layout_height="wrap_content"
+        android:background="@color/header_footer_color">
 
         <RelativeLayout
-            android:id="@+id/header_layout"
+            android:id="@+id/historyDetailHeaderLayout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@color/header_footer_color" >
+            android:background="@color/header_footer_color">
 
-            <RelativeLayout
-                android:id="@+id/historyDetailHeaderLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/header_footer_color" >
-
-                <!--
-                ImageView
-                android:id="@+id/tvTopBarTitle"
+            <com.superchat.widgets.MyriadSemiboldTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:layout_gravity="center_horizontal"
                 android:padding="@dimen/topbar_title_padding"
-                android:background="@drawable/esiachat_white"
-                android:textSize="25sp"
-                android:textColor="@color/white" 
-                android:layout_margin="10dip"/
-                -->
-
-                <com.superchat.widgets.MyriadSemiboldTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:layout_gravity="center_horizontal"
-                    android:padding="@dimen/topbar_title_padding"
-                     android:text="@string/sg_profile"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-            </RelativeLayout>
-            
-            <TextView
-	            android:id="@+id/id_back"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_centerVertical="true"
-	            android:layout_marginLeft="5dip"
-	            android:capitalize="characters"
-	            android:drawableLeft="@drawable/back_arrow_white"
-	            android:padding="15dp"
-	            android:text=""
-	            android:visibility="visible"
-	            android:textColor="@color/white"
-	            android:textSize="12sp" />
-            <Button
-                android:id="@+id/id_edit_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="5dip"
-                android:background="@null"
-                android:text="@string/edit_txt"
+                android:text="@string/sg_profile"
                 android:textColor="@color/white"
-                android:textColorHighlight="@color/header_color"
-                android:visibility="gone" />
+                android:textSize="20sp"
+                android:textStyle="bold" />
         </RelativeLayout>
-<ScrollView
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+
+        <TextView
+            android:id="@+id/id_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dip"
+            android:capitalize="characters"
+            android:drawableLeft="@drawable/back_arrow_white"
+            android:padding="15dp"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/id_edit_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dip"
+            android:background="@null"
+            android:text="@string/edit_txt"
+            android:textColor="@color/white"
+            android:textColorHighlight="@color/header_color"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" 
+            android:orientation="vertical"
             android:paddingBottom="20dip">
-                
-      <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dip"
-        android:layout_marginRight="20dip"
-        android:layout_marginTop="5dp"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="5dip" >
-        <com.superchat.widgets.MyriadRegularTextView
-            android:id="@+id/id_sg_display_name"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_gravity="left"
-            android:gravity="center"
-            android:singleLine="true"
-            android:text="SuperGroups's Name"
-            android:textColor="@color/darkest_gray"
-            android:textSize="22sp"
-            android:textStyle="bold" />
-         <com.superchat.widgets.MyriadRegularTextView
-             android:id="@+id/id_sg_name"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:singleLine="true"
-            android:text="Permanent Name : "
-            android:textColor="@color/darkest_gray"
-            android:textSize="20sp"
-            android:visibility="gone"
-            android:textStyle="normal" />
-         
-         <com.superchat.widgets.MyriadRegularTextView
-            android:id="@+id/id_sg_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:singleLine="true"
-            android:drawablePadding="5dp"
-            android:drawableLeft="@drawable/lock"
-            android:text="@string/closed_sg"
-            android:textColor="@color/darkest_gray"
-            android:textSize="16sp"
-            android:visibility="invisible"
-            android:textStyle="normal" />
-        	
-        
-    </LinearLayout>
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal" >
+                android:orientation="vertical">
 
-                <com.superchat.widgets.RoundedImageView
-                    android:id="@+id/id_profile_pic"
-                    android:layout_width="120dip"
-                    android:layout_height="120dip"
-                    android:layout_marginTop="10dp"
-                     android:layout_centerHorizontal="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/logo_small" />
-                 <LinearLayout
-		            android:layout_width="150dp"
-                    android:layout_alignParentBottom="true"
-		            android:gravity="right"
-		            android:visibility="gone"
-		            android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/id_edit_pic"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:onClick="onProfilePicClick"
-                    android:src="@drawable/profile_camera" />
-             </LinearLayout>>
-            </RelativeLayout>
-            
-     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dip"
-        android:layout_marginRight="20dip"
-        android:gravity="left"
-        android:orientation="vertical"
-        android:padding="5dip" >
-         <com.superchat.widgets.MyriadRegularTextView
-             android:id="@+id/id_created_on"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="Created On "
-            android:textColor="@color/darkest_gray"
-            android:textSize="18sp"
-            android:visibility="gone"
-            android:textStyle="normal" />
-         
-         <LinearLayout
-		            android:layout_width="fill_parent"
-                    android:layout_alignParentBottom="true"
-		            android:gravity="center"
-		            android:visibility="visible"
-		            android:orientation="horizontal"
-		            android:layout_height="wrap_content">
-                <com.superchat.widgets.RoundedImageView
-                    android:id="@+id/id_owners_pic"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center_horizontal"
-                    android:visibility="gone"
-                    android:src="@drawable/logo_small" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="110dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal">
+
+                        <com.superchat.widgets.RoundedImageView
+                            android:id="@+id/id_profile_pic"
+                            android:layout_width="80dip"
+                            android:layout_height="80dip"
+                            android:layout_centerHorizontal="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/logo_small" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:gravity="right"
+                            android:visibility="gone">
+
+                            <ImageView
+                                android:id="@+id/id_edit_pic"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:onClick="onProfilePicClick"
+                                android:src="@drawable/profile_camera" />
+                        </LinearLayout>
+                        >
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="5dp"
+                        android:layout_gravity="center_vertical">
+
+                        <com.superchat.widgets.MyriadRegularTextView
+                            android:id="@+id/id_sg_display_name"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="left"
+                            android:maxLines="1"
+                            android:text="Hub Name"
+                            android:textColor="@color/black"
+                            android:textSize="18sp"/>
+
+                        <LinearLayout
+                            android:id="@+id/id_sg_description_layout"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:visibility="visible">
+
+                            <com.superchat.widgets.MyriadRegularTextView
+                                android:id="@+id/id_about_label"
+                                android:layout_width="fill_parent"
+                                android:layout_height="0dp"
+                                android:gravity="center"
+                                android:singleLine="true"
+                                android:text=""
+                                android:textColor="@color/darkest_gray"
+                                android:textSize="18sp"
+                                android:textStyle="normal" />
+                            <TextView
+                                android:id="@+id/id_sg_description"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:text=""
+                                android:textColor="@color/textColorListText"
+                                android:textSize="13sp"
+                                android:textStyle="normal" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:weightSum="2"
+                            android:orientation="horizontal"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/hub_profile_type_text"
+                                android:textSize="16sp"
+                                android:textColor="@color/black"/>
+
+                            <com.superchat.widgets.MyriadRegularTextView
+                                android:id="@+id/id_sg_type"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_gravity="center"
+                                android:maxLines="1"
+                                android:textColor="@color/darkest_gray"
+                                android:textSize="16sp"
+                                android:textStyle="normal"
+                                android:visibility="visible" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/divider" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:weightSum="2"
+                            android:orientation="horizontal"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/hub_profile_owner_text"
+                                android:textSize="16sp"
+                                android:textColor="@color/black"/>
+
+                            <com.superchat.widgets.MyriadRegularTextView
+                                android:id="@+id/id_owner_name"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_gravity="center"
+                                android:maxLines="1"
+                                android:textColor="@color/darkest_gray"
+                                android:textSize="16sp"
+                                android:textStyle="normal"
+                                android:visibility="visible" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/divider" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:weightSum="2"
+                            android:orientation="horizontal"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/hub_profile_Members_text"
+                                android:textSize="16sp"
+                                android:textColor="@color/black"/>
+
+                            <com.superchat.widgets.MyriadRegularTextView
+                                android:id="@+id/id_member_count"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_gravity="center"
+                                android:maxLines="1"
+                                android:textColor="@color/darkest_gray"
+                                android:textSize="16sp"
+                                android:textStyle="normal"
+                                android:visibility="visible" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/divider" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:weightSum="2"
+                            android:orientation="horizontal"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/hub_profile_created_text"
+                                android:textSize="16sp"
+                                android:textColor="@color/black"/>
+
+                            <com.superchat.widgets.MyriadRegularTextView
+                                android:id="@+id/id_created_on"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_gravity="center"
+                                android:maxLines="1"
+                                android:textColor="@color/darkest_gray"
+                                android:textSize="16sp"
+                                android:textStyle="normal"
+                                android:visibility="visible" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/divider" />
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dip"
+                android:layout_marginRight="20dip"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="5dip">
+
                 <com.superchat.widgets.MyriadRegularTextView
-		            android:id="@+id/id_owner_name"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:layout_gravity="center"
-		            android:layout_marginLeft="10dp"
-		            android:gravity="center"
-		            android:singleLine="true"
-		            android:text="Owner's Name"
-		            android:textColor="@color/darkest_gray"
-		            android:textSize="18sp"
-		            android:visibility="gone"
-		            android:textStyle="normal" />
-             </LinearLayout>
-        
-         <com.superchat.widgets.MyriadRegularTextView
-            android:id="@+id/id_admin_count"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:singleLine="true"
-            android:text="Admins"
-            android:textColor="@color/darkest_gray"
-            android:textSize="18sp"
-            android:visibility="gone"
-            android:textStyle="normal" />
-         
-         <com.superchat.widgets.MyriadRegularTextView
-            android:id="@+id/id_member_count"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:singleLine="true"
-            android:text="Members"
-            android:textColor="@color/darkest_gray"
-            android:textSize="18sp"
-            android:visibility="gone"
-            android:textStyle="normal" />
-        
-    </LinearLayout>
-    
-     <LinearLayout
-         android:id="@+id/id_sg_description_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dip"
-        android:layout_marginRight="20dip"
-        android:layout_marginTop="5dp"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone"
-        android:padding="5dip" >
+                    android:id="@+id/id_sg_name"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="Permanent Name : "
+                    android:textColor="@color/darkest_gray"
+                    android:textSize="20sp"
+                    android:textStyle="normal"
+                    android:visibility="gone" />
 
-         <com.superchat.widgets.MyriadRegularTextView
-             android:id="@+id/id_about_label"
-             android:layout_width="fill_parent"
-             android:layout_height="wrap_content"
-             android:gravity="center"
-             android:singleLine="true"
-             android:text="About"
-             android:textColor="@color/darkest_gray"
-             android:textSize="18sp"
-             android:textStyle="normal" />
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/id_sg_description"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginTop="5dp"
-            android:padding="10dp"
-            android:gravity="center"
-        	android:background="@drawable/round_rect_profile_bg"
-            android:text="SuperGroups's Description"
-            android:textColor="@color/darkest_gray"
-            android:textSize="15sp"
-            android:textStyle="normal" />
-        	
-        
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dip"
+                android:layout_marginRight="20dip"
+                android:gravity="left"
+                android:orientation="vertical"
+                android:padding="5dip">
+
+                <com.superchat.widgets.MyriadRegularTextView
+                    android:id="@+id/id_admin_count"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="Admins"
+                    android:textColor="@color/darkest_gray"
+                    android:textSize="18sp"
+                    android:textStyle="normal"
+                    android:visibility="gone" />
+            </LinearLayout>
+
         </LinearLayout>
-        </ScrollView>
-    </LinearLayout>
+    </ScrollView>
+</LinearLayout>
 

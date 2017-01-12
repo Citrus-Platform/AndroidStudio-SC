@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.superchat"
     android:installLocation="preferExternal"
-    android:versionCode="110"
-    android:versionName="4.1.0">
+    android:versionCode="999"
+    android:versionName="9.9.9">
 
     <uses-sdk
         android:minSdkVersion="13"
@@ -116,8 +116,11 @@
          <activity
             android:name="com.superchat.ui.PrivacyCallSettings"
             android:screenOrientation="portrait"></activity>
-         <activity
+        <activity
             android:name="com.superchat.ui.PrivacyChatSettings"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.superchat.ui.PrivacySettings"
             android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.superchat.ui.SupergroupListingScreen"
@@ -200,7 +203,8 @@
             android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.superchat.ui.GenerateConsolePasswordActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"></activity>
          <activity
             android:name="com.superchat.ui.ChatBackupScreen"
             android:screenOrientation="portrait"></activity>
@@ -298,6 +302,9 @@
             android:screenOrientation="portrait" />
          <activity
             android:name="com.superchat.ui.MemberStatsScreen"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.superchat.ui.OpenHubSearchScreen"
             android:screenOrientation="portrait" />
 
         <service android:name="com.chat.sdk.ChatService">

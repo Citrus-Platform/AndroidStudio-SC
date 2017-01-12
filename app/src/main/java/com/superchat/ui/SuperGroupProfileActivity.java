@@ -81,7 +81,6 @@ public class SuperGroupProfileActivity extends Activity implements OnClickListen
 	boolean isClosed;
 	TextView createdOn;
 	TextView ownerName;
-	ImageView ownerImageView;
 	TextView adminCount;
 	TextView memberCount;
 	TextView sgDescription;
@@ -140,6 +139,7 @@ private static final String TAG = "SuperGroupProfileActivity";
 		super.onCreate(bundle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.supergoup_profile);
+
 		aboutLabelView = (TextView)findViewById(R.id.id_about_label);
 		superGroupDisplayName = (TextView)findViewById(R.id.id_sg_display_name);
 		superGroupName = (TextView)findViewById(R.id.id_sg_name);
@@ -147,9 +147,12 @@ private static final String TAG = "SuperGroupProfileActivity";
 		sgDescription = (TextView)findViewById(R.id.id_sg_description);
 		sgEditButton = (Button)findViewById(R.id.id_edit_btn);
 		superGroupIconView = (ImageView) findViewById(R.id.id_profile_pic);
+
+		SuperChatApplication.getInstance().settingFont(SuperChatApplication.FONT_TYPE.LATO_BOLD, superGroupDisplayName);
+
 		superGroupIconViewMain = superGroupIconView;
 		superGroupIconView.setOnClickListener(new OnClickListener() {
-				
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
@@ -171,7 +174,7 @@ private static final String TAG = "SuperGroupProfileActivity";
 		if(SharedPrefManager.getInstance().isDomainAdmin(SharedPrefManager.getInstance().getUserDomain())){
 			sgEditButton.setVisibility(View.VISIBLE);
 			sgEditButton.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
 					showProfileEditDialog();
@@ -180,7 +183,6 @@ private static final String TAG = "SuperGroupProfileActivity";
 		}
 		createdOn = (TextView)findViewById(R.id.id_created_on);
 		ownerName = (TextView)findViewById(R.id.id_owner_name);
-		ownerImageView = (ImageView)findViewById(R.id.id_owners_pic);
 		adminCount = (TextView)findViewById(R.id.id_admin_count);
 		memberCount = (TextView)findViewById(R.id.id_member_count);
 		sgDescriptionLayout = (LinearLayout)findViewById(R.id.id_sg_description_layout);
@@ -208,7 +210,6 @@ private static final String TAG = "SuperGroupProfileActivity";
 		if(file_id != null && file_id.trim().length() > 0){
 			setProfilePic(superGroupIconView, file_id);
 		}
-//		setProfilePic(ownerImageView, SharedPrefManager.getInstance().getUserFileId(SharedPrefManager.getInstance().getUserName()));
 		new GetSuperGroupProfile(SharedPrefManager.getInstance().getUserDomain()).execute();
 	}
 
@@ -272,12 +273,12 @@ private static final String TAG = "SuperGroupProfileActivity";
 			editProfile.setContentView(R.layout.supergroup_profile_edit);//id_sg_type
 
 			if(privacy_type != null && privacy_type.equalsIgnoreCase("closed")){
-				((TextView)editProfile.findViewById(R.id.id_sg_type)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.lock, 0, 0, 0);
-				((TextView)editProfile.findViewById(R.id.id_sg_type)).setText(getString(R.string.closed_sg));
+				//((TextView)editProfile.findViewById(R.id.id_sg_type)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.lock, 0, 0, 0);
+				((TextView)editProfile.findViewById(R.id.id_sg_type)).setText(getString(R.string.private_hub));
 			}
 			else{
-				((TextView)editProfile.findViewById(R.id.id_sg_type)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.lock_open, 0, 0, 0);
-				((TextView)editProfile.findViewById(R.id.id_sg_type)).setText(getString(R.string.open_sg));
+				//((TextView)editProfile.findViewById(R.id.id_sg_type)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.lock_open, 0, 0, 0);
+				((TextView)editProfile.findViewById(R.id.id_sg_type)).setText(getString(R.string.public_hub));
 			}
 
 			sgDisplayNameBox = (EditText)editProfile.findViewById(R.id.id_sg_display_name);
@@ -503,7 +504,7 @@ private static final String TAG = "SuperGroupProfileActivity";
 		    				if(json != null && json.has("numberOfMembers")){
 		    					member_count = json.getString("numberOfMembers");
 		    					memberCount.setVisibility(View.VISIBLE);
-		    					memberCount.setText("Members ("+member_count+")");
+		    					memberCount.setText(""+member_count);
 		    				}
 		    				else
 		    					member_count = null;
@@ -514,7 +515,7 @@ private static final String TAG = "SuperGroupProfileActivity";
 		    					if(created_date.indexOf(' ') != created_date.lastIndexOf(' ' ))
 		    						created_date = created_date.substring(0, created_date.lastIndexOf(' ' ));
 		    					createdOn.setVisibility(View.VISIBLE);
-		    					createdOn.setText("Created on "+created_date +"\n by");
+		    					createdOn.setText(created_date);
 		    				}
 		    				else
 		    					created_date = null;
@@ -530,13 +531,13 @@ private static final String TAG = "SuperGroupProfileActivity";
 		                if(privacy_type != null && privacy_type.equalsIgnoreCase("closed")){
 //		                	showDialog("This SuperGroup only accepts members by invitation");
 		                	isClosed = true;
-		                	sgType.setCompoundDrawablesWithIntrinsicBounds(R.drawable.lock, 0, 0, 0);
-		                	sgType.setText(getString(R.string.closed_sg));
+		                	//sgType.setCompoundDrawablesWithIntrinsicBounds(R.drawable.lock, 0, 0, 0);
+		                	sgType.setText(getString(R.string.private_hub));
 		                }
 		                else{
 		                	isClosed = false;
-		                	sgType.setCompoundDrawablesWithIntrinsicBounds(R.drawable.lock_open, 0, 0, 0);
-		                	sgType.setText(getString(R.string.open_sg));
+		                	//sgType.setCompoundDrawablesWithIntrinsicBounds(R.drawable.lock_open, 0, 0, 0);
+		                	sgType.setText(getString(R.string.public_hub));
 		                }
 	            }else if(data.contains("error")){
 	            	Gson gson = new GsonBuilder().create();

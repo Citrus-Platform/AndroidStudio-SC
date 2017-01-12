@@ -19,3 +19,25 @@ allprojects {
         maven { url "https://jitpack.io" }
     }
 }
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+// Define versions in a single place
+ext {
+    // Sdk and tools
+    minSdkVersion = 16
+    targetSdkVersion = 16
+    compileSdkVersion = 23
+    buildToolsVersion = '23.0.0'
+
+    // Application Versions
+    versionCode = 10
+    versionName = "1.0.9"
+
+    // App dependencies
+    supportLibraryVersion = '23+'
+    googleServiceVersion = '9.2.1'
+    guavaVersion = '19.0'
+}
