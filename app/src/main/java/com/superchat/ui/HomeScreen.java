@@ -157,6 +157,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 import static com.superchat.R.drawable.i;
+import static com.superchat.R.id.count;
 import static com.superchat.R.id.id_sg_name_label;
 import static com.superchat.R.id.llTabIndicator;
 
@@ -948,7 +949,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         }
     }
 
-    private void exceptionReset(){
+    private void exceptionReset() {
         if (isSwitchSG) {
             isSwitchingSG = isContactSynching = false;
         }
@@ -1277,7 +1278,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                     progressDialog.dismiss();
                     progressDialog = null;
                 }
-            } catch(Exception e){
+            } catch (Exception e) {
 
             }
             boolean new_user = false;
@@ -2297,29 +2298,50 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         }
     }
 
+    public void clearBackPressSearch(int flagFrag) {
+
+        Log.e("here", "coming i : " + flagFrag);
+        isSearchOn = false;
+
+        if (flagFrag == 0) {
+            chatFragment.eventBackOnToolbar();
+        } else if (flagFrag == 2) {
+            publicGroupFragment.eventBackOnToolbar();
+        } else if (flagFrag == 1) {
+            contactsFragment.eventBackOnToolbar();
+        } else {
+        }
+
+        hideKeyboard(HomeScreen.this);
+
+    }
 
     @Override
     public void onBackPressed() {
-        int count = getFragmentManager().getBackStackEntryCount();
-        if (publicGroupFragment.isSearchOn()) {
-            publicGroupFragment.resetSearch();
-            return;
-        } else if (mViewPager.getCurrentItem() == 0 && chatFragment.isSearchOn()) {
-            chatFragment.resetSearch();
-            return;
-        }
-        if (userDeactivated) {
-            return;
-        }
-
-        if (count == 0) {
-//	        super.onBackPressed();
-            moveTaskToBack(true);
-            //additional code
+        if (isSearchOn) {
+            clearBackPressSearch(flagFrag);
         } else {
-            getFragmentManager().popBackStack();
-        }
 
+            int count = getFragmentManager().getBackStackEntryCount();
+            if (publicGroupFragment.isSearchOn()) {
+                publicGroupFragment.resetSearch();
+                return;
+            } else if (mViewPager.getCurrentItem() == 0 && chatFragment.isSearchOn()) {
+                chatFragment.resetSearch();
+                return;
+            }
+            if (userDeactivated) {
+                return;
+            }
+
+            if (count == 0) {
+//	        super.onBackPressed();
+                moveTaskToBack(true);
+                //additional code
+            } else {
+                getFragmentManager().popBackStack();
+            }
+        }
     }
 
     public void getShareInfo() {
@@ -2521,6 +2543,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 ////			}
 //		}
         syncProcessStart(false);
+        clearBackPressSearch(flagFrag);
     }
 
     protected void onDestroy() {
@@ -4054,7 +4077,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                         selectedTab = 1;
                     } else {
                         if (selectedTab == 1) {
-                            if(isSwitchSG) {
+                            if (isSwitchSG) {
                                 publicGroupFragment.setSgSwitch(true);
                             }
                             if (PublicGroupScreen.isAllChannelTab)
@@ -4533,10 +4556,12 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         return super.onOptionsItemSelected(item);
     }
 
+    private boolean isSearchOn = false;
+
     public void selectSearchFragment(int flagFrag) {
 
         Log.e("here", "coming i : " + flagFrag);
-
+        isSearchOn = true;
         if (viewPagerTab != null) {
             viewPagerTab.setVisibility(View.GONE);
         }
@@ -4588,6 +4613,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     }
 
     public void clearFunction() {
+        isSearchOn = false;
         mToolbar.setVisibility(View.VISIBLE);
         if (viewPagerTab != null) {
             viewPagerTab.setVisibility(View.VISIBLE);
@@ -4598,6 +4624,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     }
 
     public void clearFunction(int position) {
+        isSearchOn = false;
         mToolbar.setVisibility(View.VISIBLE);
         if (viewPagerTab != null) {
             viewPagerTab.setVisibility(View.VISIBLE);

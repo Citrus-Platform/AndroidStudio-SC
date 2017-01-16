@@ -268,8 +268,7 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
 
             @Override
             public void onClick(View v) {
-                clearHideSearch();
-                ((HomeScreen) getActivity()).clearFunction();
+                eventBackOnToolbar();
             }
         });
 
@@ -301,14 +300,12 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
 
         });
 
-//		superGroupName.setText(SharedPrefManager.getInstance().getUserDomain());
-//		setSGProfilePic(superGroupIcon, SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID"));
-//		Tracker t = ((SuperChatApplication) SuperChatApplication.context).getTracker(TrackerName.APP_TRACKER);
-//        t.setScreenName("Chat List Screen");
-//        t.send(new HitBuilders.AppViewBuilder().build());
-//        if(service!=null)
-//			service.setTypingListener(this);
         return view;
+    }
+
+    public void eventBackOnToolbar(){
+        clearHideSearch();
+        ((HomeScreen) getActivity()).clearFunction();
     }
 
     public void clearHideSearch(){
