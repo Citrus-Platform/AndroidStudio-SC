@@ -1,9 +1,11 @@
 package com.superchat.model;
 
+import java.io.Serializable;
+
 /**
  * Created by citrus on 9/21/2016.
  */
-public class SGroupListObject {
+public class SGroupListObject implements Serializable{
 
     private String domainName;
     private String adminName;
@@ -16,6 +18,7 @@ public class SGroupListObject {
     private String domainCount;
     private String domainNotify;
     private String domainDisplayName;
+    private String description;
 
     public void setDomainDisplayName(String domainDisplayName) {
         this.domainDisplayName = domainDisplayName;
@@ -103,5 +106,13 @@ public class SGroupListObject {
 
     public String getCreatedDate() {
         return createdDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

@@ -91,6 +91,7 @@ import com.superchat.ui.ChatListScreen;
 import com.superchat.ui.HomeScreen;
 import com.superchat.ui.HomeScreen.GetSharedIDListFromServer;
 import com.superchat.ui.RegistrationOptions;
+import com.superchat.ui.SinchService;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
@@ -249,6 +250,7 @@ public class ChatService extends Service implements interfaceInstances {
                 ChatDBWrapper.getInstance().clearMessageDB();
                 DBWrapper.getInstance().clearAllDB();
                 stopService(new Intent(this, ChatService.class));
+                stopService(new Intent(this, SinchService.class));
             }
             try {
                 Intent intent1 = new Intent(context, ChatService.class);
@@ -1982,7 +1984,8 @@ public class ChatService extends Service implements interfaceInstances {
                     String user = fromName;
                     if (fromName != null && fromName.contains("@")) {
                         user = fromName.substring(0, fromName.indexOf('@'));
-                        fromName = DBWrapper.getInstance().getChatName(user);
+                        fromName = DBWrapper.getInstance().getChatNameForP2P(user, message.getDisplayName());
+//                        fromName = DBWrapper.getInstance().getChatName(user);
                     }
                     if (user.equals(userMe)) {
                         Log.d(TAG, "Self messaging is not allowed.");
@@ -2638,6 +2641,7 @@ public class ChatService extends Service implements interfaceInstances {
                         .getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
                 boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
+                Log.i(TAG, "chatLogin() :: isConnected = "+isConnected+" and xmppConectionStatus = "+xmppConectionStatus);
                 if (isConnected && !xmppConectionStatus) {
 
                     String userName = "";
@@ -2650,8 +2654,9 @@ public class ChatService extends Service implements interfaceInstances {
                         userName = prefManager.getUserName();
                         password = prefManager.getUserPassword();
                     }
+                    Log.e(TAG, "chatLogin: userName = " + userName);
+                    Log.e(TAG, "chatLogin: password = " + password);
                     SmackAndroid.init(SuperChatApplication.context);
-                    Log.e(TAG, "chatLogin: userName === " + userName);
                     userMe = userName;
                     ConnectionConfiguration connConfig = null;
                     try {

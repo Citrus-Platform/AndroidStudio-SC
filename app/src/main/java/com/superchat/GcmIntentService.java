@@ -163,11 +163,13 @@ public class GcmIntentService extends IntentService {
 				}else{
 					Log.i(TAG, "isMyServiceRunning : false");
 					if(!ChatService.xmppConectionStatus){
-						Log.i(TAG, "ChatService.xmppConectionStatus: "+ChatService.xmppConectionStatus);
+						Log.i(TAG, "ChatService.xmppConnectionStatus: "+ChatService.xmppConectionStatus);
 						ChatService.xmppConectionStatus = false;
 						stopService(new Intent(SuperChatApplication.context, ChatService.class));
+						startService(new Intent(SuperChatApplication.context, ChatService.class));
+					}else{
+						Log.i(TAG, "isMyServiceRunning : True");
 					}
-					startService(new Intent(SuperChatApplication.context, ChatService.class));
 				}
 //                if(!isMyServiceRunning(ChatService.class, SuperChatApplication.context))
 //                {
@@ -373,6 +375,9 @@ public class GcmIntentService extends IntentService {
    //========================================
     public void showNotificationForP2PMessage(String screen, String domainName, String from, String displayName,
 			String msg, byte messageType, int mediaType, boolean forOtherSG) {
+		if(screen != null && screen.equals("bulletin") && from != null && from.equals("admin")){
+			return;
+		}
     	SharedPrefManager sharedPref = SharedPrefManager.getInstance();
 		 if(displayName!=null && displayName.contains("#786#"))
 			 displayName = displayName.substring(0, displayName.indexOf("#786#"));

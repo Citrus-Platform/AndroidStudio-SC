@@ -38,6 +38,8 @@ import com.sinch.android.rtc.calling.CallListener;
 import com.sinch.android.rtc.video.VideoController;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
+import com.superchat.retrofit.api.RetrofitRetrofitCallback;
+import com.superchat.retrofit.response.model.ConferenceInfoResponse;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.widgets.RoundedImageView;
@@ -46,6 +48,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import retrofit2.Response;
+
+import static com.superchat.interfaces.interfaceInstances.objApi;
 
 public class IncomingCallScreenActivity extends Activity {
 
@@ -74,7 +80,9 @@ public class IncomingCallScreenActivity extends Activity {
 						Map<String, String> header = call.getHeaders();
 						String domainDisplayName = null;
 						String domainName = null;
-						if(header != null) {
+//						if(call.getRemoteUserId() != null)
+//							getConfereneceInfo(call.getRemoteUserId());
+						if(header != null && !header.isEmpty()) {
 							domainDisplayName = header.get("domainDisplayName");
 							domainName = header.get("domainName");
 							String myName = header.get("displayName");
@@ -424,4 +432,35 @@ public class IncomingCallScreenActivity extends Activity {
             }
         }
     };
+	//-------------------------------------------------------------------------------------------------
+	private void getConfereneceInfo(final String id) {
+		try {
+			retrofit2.Call call = objApi.getApi(this).getConferenceInfo(id);
+			objApi.setRequestType(1);
+			call.enqueue(new RetrofitRetrofitCallback<ConferenceInfoResponse>(this) {
+				@Override
+				protected void onResponseVoidzResponse(retrofit2.Call call, Response response) {
+
+				}
+
+				@Override
+				protected void onResponseVoidzObject(retrofit2.Call call, ConferenceInfoResponse response) {
+					System.out.println("Retrofit : onResponseVoidzObject 2 - " + response.toString());
+
+				}
+
+				@Override
+				protected void common() {
+
+				}
+
+				@Override
+				public void onFailure(retrofit2.Call call, Throwable t) {
+					super.onFailure(call, t);
+				}
+			});
+		} catch (Exception e) {
+
+		}
+	}
 }

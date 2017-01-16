@@ -7,6 +7,18 @@ package com.superchat.model.multiplesg;
 public class InvitedDomainNameSet
 {
     private String domainName;
+    private String description;
+    private int domainMuteInfo;
+    private String domainDisplayName;
+    private String adminName;
+    private String orgName;
+    private String orgUrl;
+    private String privacyType;
+    private String displayName;
+    private String logoFileId;
+    private String domainType;
+    private int unreadCounter;
+    private String createdDate;
 
     public int getDomainMuteInfo() {
         return domainMuteInfo;
@@ -15,8 +27,6 @@ public class InvitedDomainNameSet
     public void setDomainMuteInfo(int domainMuteInfo) {
         this.domainMuteInfo = domainMuteInfo;
     }
-
-    private int domainMuteInfo;
 
     public String getDomainName() { return this.domainName; }
 
@@ -30,57 +40,37 @@ public class InvitedDomainNameSet
         this.domainDisplayName = domainDisplayName;
     }
 
-    private String domainDisplayName;
-
-    private String adminName;
-
     public String getAdminName() { return this.adminName; }
 
     public void setAdminName(String adminName) { this.adminName = adminName; }
-
-    private String orgName;
 
     public String getOrgName() { return this.orgName; }
 
     public void setOrgName(String orgName) { this.orgName = orgName; }
 
-    private String orgUrl;
-
     public String getOrgUrl() { return this.orgUrl; }
 
     public void setOrgUrl(String orgUrl) { this.orgUrl = orgUrl; }
-
-    private String privacyType;
 
     public String getPrivacyType() { return this.privacyType; }
 
     public void setPrivacyType(String privacyType) { this.privacyType = privacyType; }
 
-    private String displayName;
-
     public String getDisplayName() { return this.displayName; }
 
     public void setDisplayName(String displayName) { this.displayName = displayName; }
-
-    private String logoFileId;
 
     public String getLogoFileId() { return this.logoFileId; }
 
     public void setLogoFileId(String logoFileId) { this.logoFileId = logoFileId; }
 
-    private String domainType;
-
     public String getDomainType() { return this.domainType; }
 
     public void setDomainType(String domainType) { this.domainType = domainType; }
 
-    private int unreadCounter;
-
     public int getUnreadCounter() { return this.unreadCounter; }
 
     public void setUnreadCounter(int unreadCounter) { this.unreadCounter = unreadCounter; }
-
-    private String createdDate;
 
     public String getCreatedDate() { return this.createdDate; }
 

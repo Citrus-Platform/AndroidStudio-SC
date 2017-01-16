@@ -160,6 +160,7 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
                     else
                         sg_name.setText(SharedPrefManager.getInstance().getUserDomain());*/
                     audioController = mSinchServiceInterface.getAudioController();
+                    audioController.unmute();
 
                     manageCallAudio();
                 } else {
@@ -424,7 +425,8 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
             Log.d(TAG, "Call established");
             mAudioPlayer.stopProgressTone();
             mCallState.setText(call.getState().toString());
-            setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+//            setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+            setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
             AudioController audioController = mSinchServiceInterface.getAudioController();
             audioController.enableSpeaker();
 
@@ -440,7 +442,7 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
                 llCallingTextBlock.setVisibility(View.GONE);
             }
 
-            manageCallAudio();
+//            manageCallAudio();
         }
 
         @Override

@@ -46,6 +46,10 @@ import com.superchat.data.db.DBWrapper;
 import com.superchat.model.ErrorModel;
 import com.superchat.model.RegMatchCodeModel;
 import com.superchat.model.RegistrationForm;
+import com.superchat.model.RegistrationFormResponse;
+import com.superchat.model.SGroupListObject;
+import com.superchat.retrofit.api.RetrofitRetrofitCallback;
+import com.superchat.retrofit.response.model.ResponseOpenDomains;
 import com.superchat.utils.AppUtil;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
@@ -73,6 +77,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Response;
+
+import static com.superchat.interfaces.interfaceInstances.objApi;
+import static com.superchat.interfaces.interfaceInstances.objExceptione;
 
 public class OpenHubSearchScreen extends AppCompatActivity implements OnClickListener {
 
@@ -99,6 +110,8 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
     ImageView superGroupIconView;
     boolean pendingProfile;
 
+    ArrayList<SGroupListObject> openDomainListMain;
+    ArrayList<SGroupListObject> openDomainListSearched;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -114,7 +127,49 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        new GetSuperGroupProfile(superGroupName).execute();
+        getOpenHubs("");
+    }
+
+    private void getOpenHubs(final String searchText){
+        Call call = objApi.getApi(this).getOpenHubs(""+searchText);
+        call.enqueue(new RetrofitRetrofitCallback<ResponseOpenDomains>(this) {
+
+            @Override
+            protected void onResponseVoidzResponse(Call call, Response response) {
+
+            }
+
+            @Override
+            protected void onResponseVoidzObject(Call call, ResponseOpenDomains response) {
+                if(response != null && response.getOpenDomainList() != null){
+                    if(searchText != null && searchText.length() > 0){
+                        openDomainListSearched.clear();
+                        openDomainListSearched.addAll(response.getOpenDomainList());
+                    } else {
+                        openDomainListMain.clear();
+                        openDomainListMain.addAll(response.getOpenDomainList());
+                    }
+                    refreshList();
+                } else {
+
+                }
+            }
+
+            @Override
+            protected void common() {
+
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                super.onFailure(call, t);
+                objExceptione.printStackTrace(t);
+            }
+        });
+    }
+
+    private void refreshList(){
+
     }
 
     @Override

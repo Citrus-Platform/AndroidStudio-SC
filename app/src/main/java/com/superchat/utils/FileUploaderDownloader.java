@@ -117,6 +117,7 @@ public class FileUploaderDownloader extends AsyncTask<String, Integer, String>{
 					  String filePath = urls[0];
 					  String fileId = urls[1];
 	                  String getUrl = Constants.media_get_url + fileId + ".scb";
+					  System.out.println("File Backup URL = "+getUrl);
 	                  URL url = new URL(getUrl);
 	                  URLConnection conection = url.openConnection();
 	                  conection.connect();
@@ -198,8 +199,9 @@ public class FileUploaderDownloader extends AsyncTask<String, Integer, String>{
 			if(handler != null)
 				handler.sendEmptyMessage(0);
 		}else{
-			if(fileDownloadResponseHandler != null)
+			if(fileDownloadResponseHandler != null){
 				fileDownloadResponseHandler.onFileDownloadResposne(null, 0, null);
+			}
 		}
 	}
 

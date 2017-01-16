@@ -197,10 +197,9 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
 
             @Override
             public void onClick(View v) {
+                eventBackOnToolbar();
                 InputMethodManager imm = (InputMethodManager) getActivity().getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-
-                eventBackOnToolbar();
             }
         });
 //		view.findViewById(R.id.id_add_icon).setOnClickListener(new OnClickListener() {

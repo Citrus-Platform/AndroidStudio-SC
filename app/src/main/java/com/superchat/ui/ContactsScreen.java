@@ -197,8 +197,7 @@ public class ContactsScreen extends CustomFragmentHomeTabs implements Connection
         searchBoxView.setVisibility(View.GONE);
         clearSearch.setVisibility(View.GONE);
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-        //imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-            imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
 
         hideToolbar();
     } catch(Exception e){

@@ -12,6 +12,8 @@ import android.media.AudioManager;
 import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -30,6 +32,8 @@ import com.sinch.android.rtc.calling.CallEndCause;
 import com.sinch.android.rtc.calling.CallListener;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
+import com.superchat.retrofit.api.RetrofitRetrofitCallback;
+import com.superchat.retrofit.response.model.ConferenceInfoResponse;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.utils.UtilTemp;
 
@@ -41,8 +45,11 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.superchat.R.id.btnSendLog;
+import retrofit2.Response;
+import retrofit2.http.HEAD;
+
 import static com.superchat.R.id.sg_name;
+import static com.superchat.interfaces.interfaceInstances.objApi;
 
 public class CallScreenActivity extends Activity implements OnClickListener {
 
@@ -452,8 +459,6 @@ public class CallScreenActivity extends Activity implements OnClickListener {
         try {
             ExifInterface exifJpeg = new ExifInterface(path);
             orientation = exifJpeg.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
-////			orientation = Integer.parseInt(exifJpeg.getAttribute(ExifInterface.TAG_ORIENTATION));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -472,6 +477,35 @@ public class CallScreenActivity extends Activity implements OnClickListener {
         }
 
         return bm;
-    }
+	}
+//----------------------------------------------------------------
+	private void getConfereneceInfo(final String id) {
+		try {
+			retrofit2.Call call = objApi.getApi(this).getConferenceInfo(id);
+			call.enqueue(new RetrofitRetrofitCallback<ConferenceInfoResponse>(this) {
+				@Override
+				protected void onResponseVoidzResponse(retrofit2.Call call, Response response) {
 
+				}
+
+				@Override
+				protected void onResponseVoidzObject(retrofit2.Call call, ConferenceInfoResponse response) {
+					System.out.println("Retrofit : onResponseVoidzObject 2 - " + response.toString());
+
+				}
+
+				@Override
+				protected void common() {
+
+				}
+
+				@Override
+				public void onFailure(retrofit2.Call call, Throwable t) {
+					super.onFailure(call, t);
+				}
+			});
+		} catch (Exception e) {
+
+		}
+	}
 }

@@ -970,6 +970,8 @@ public class MainActivity extends FragmentActivity implements
             if (cc == null || (cc != null && cc.trim().length() == 0)) {
                 TelephonyManager tm = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
                 cc = tm.getNetworkCountryIso();
+                if (cc == null || (cc != null && cc.trim().length() == 0))
+                    cc = "in";
                 if (cc != null && cc.trim().length() != 0) {
                     Countries.Country countryObj = Countries.getCodeValue(cc);
                     if (countryObj != null) {

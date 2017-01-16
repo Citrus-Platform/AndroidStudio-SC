@@ -109,7 +109,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.sinch.android.rtc.calling.Call;
+import com.sinch.android.rtc.PushPair;
+import com.sinch.android.rtc.calling.CallListener;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
@@ -121,6 +122,7 @@ import com.superchat.emojicon.EmojiconsPopup;
 import com.superchat.emojicon.EmojiconsPopup.OnEmojiconBackspaceClickedListener;
 import com.superchat.emojicon.EmojiconsPopup.OnSoftKeyboardOpenCloseListener;
 import com.superchat.emojicon.emoji.Emojicon;
+import com.superchat.helper.UtilGlobal;
 import com.superchat.interfaces.OnChatEditInterFace;
 import com.superchat.interfaces.interfaceInstances;
 import com.superchat.model.BulletinGetMessageDataModel;
@@ -129,6 +131,10 @@ import com.superchat.model.GroupChatServerModel;
 import com.superchat.model.GroupChatBroadcastInfo;
 import com.superchat.model.UserProfileModel;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
+import com.superchat.retrofit.request.model.ConferenceCalloutRequest;
+import com.superchat.retrofit.request.model.UserAdminRequest;
+import com.superchat.retrofit.response.model.ConferenceCalloutResponse;
+import com.superchat.retrofit.response.model.UserAdminResponse;
 import com.superchat.time.RadialPickerLayout;
 import com.superchat.time.TimePickerDialog;
 import com.superchat.utils.AndroidBmpUtil;
@@ -187,6 +193,7 @@ import java.util.Vector;
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
 import me.leolin.shortcutbadger.ShortcutBadger;
+import retrofit2.Call;
 import retrofit2.Response;
 
 import static com.superchat.R.id.create_doodle;
@@ -297,7 +304,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
     private LinearLayout audioRecordLayout;
     private XMPPConnection xmppConnection;
     ImageView xmppStatusView;
-    LinearLayout networkConnection;
+//    LinearLayout networkConnection;
     //    boolean isVideoTagged = true;
 //    boolean isPictureTagged = true;
     byte taggingType = NO_TAGGING;
@@ -1105,7 +1112,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         userIcon = (RoundedImageView) findViewById(R.id.id_chat_icon);
         userIconDefault = (ImageView) findViewById(R.id.id_chat_icon_default);
         xmppStatusView = (ImageView) findViewById(R.id.id_xmpp_status);
-        networkConnection = (LinearLayout) findViewById(R.id.connecting_layout);
+//        networkConnection = (LinearLayout) findViewById(R.id.connecting_layout);
         micView = (ImageView) findViewById(R.id.id_mic);
         attachEmoView = (ImageView) findViewById(R.id.id_attach_emoticon);
         attachMediaView = (ImageView) findViewById(R.id.id_attach_media);
@@ -1120,7 +1127,43 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                onCallClicked();
+//                if(iChatPref.isGroupChat(userName)){
+//                    //Check if group Information is available, else first get the Group information and do a call-out to all members.
+//                    if (mSinchServiceInterface != null) {
+//                        try {
+//                            com.sinch.android.rtc.calling.Call call = mSinchServiceInterface.callGroup(userName, createHeaderForCalling(userName));
+//                            String callId = call.getCallId();
+//                            Intent callScreen = new Intent(ChatListScreen.this, CallScreenActivity.class);
+//                            callScreen.putExtra(SinchService.CALL_ID, callId);
+//                            startActivity(callScreen);
+//                            call.addCallListener(new CallListener() {
+//                                @Override
+//                                public void onCallProgressing(com.sinch.android.rtc.calling.Call call) {
+//                                    System.out.println("callGroup :: onCallProgressing - "+call.getCallId());
+//                                    conferenceCallOut(userName, "91-9910968484", call.getCallId());
+//                                }
+//
+//                                @Override
+//                                public void onCallEstablished(com.sinch.android.rtc.calling.Call call) {
+//
+//                                }
+//
+//                                @Override
+//                                public void onCallEnded(com.sinch.android.rtc.calling.Call call) {
+//
+//                                }
+//
+//                                @Override
+//                                public void onShouldSendPushNotification(com.sinch.android.rtc.calling.Call call, List<PushPair> list) {
+//
+//                                }
+//                            });
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }else
+                    onCallClicked();
             }
         });
         call_option_video.setOnClickListener(new OnClickListener() {
@@ -1148,13 +1191,13 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             }
         });
         setAudioRecorderUIPoint();
-        if (ChatService.xmppConectionStatus) {
-            networkConnection.setVisibility(View.GONE);
-//            xmppStatusView.setImageResource(R.drawable.blue_dot);
-        } else {
-            networkConnection.setVisibility(View.VISIBLE);
-//            xmppStatusView.setImageResource(R.drawable.red_dot);
-        }
+
+//        if (ChatService.xmppConectionStatus) {
+//            networkConnection.setVisibility(View.GONE);
+//        } else {
+//            networkConnection.setVisibility(View.VISIBLE);
+//        }
+
 //        userIcon.setOnClickListener(this);
 //        bottomPanel =  ((RelativeLayout)findViewById(R.id.bottom_write_bar1));
         final ImageView sendButton = (ImageView) findViewById(R.id.id_send_chat);
@@ -1236,7 +1279,10 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 
             } else if (iChatPref.isGroupChat(userName) || isSharedIDMessage) {
                 openedGroupName = userName;
+
+                //Commented to support Group Call
                 callOption.setVisibility(View.GONE);
+
                 call_option_video.setVisibility(View.GONE);
                 if (isPollActive)
                     createPoll.setVisibility(View.VISIBLE);
@@ -1524,15 +1570,12 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             callOption.setVisibility(View.GONE);
             call_option_video.setVisibility(View.GONE);
         }
-        if (ChatService.xmppConectionStatus) {
-            networkConnection.setVisibility(View.GONE);
-//       		bottomPanel.setVisibility(View.VISIBLE);
-//            xmppStatusView.setImageResource(R.drawable.blue_dot);
-        } else {
-            networkConnection.setVisibility(View.VISIBLE);
-//       		bottomPanel.setVisibility(View.GONE);
-//            xmppStatusView.setImageResource(R.drawable.red_dot);
-        }
+
+//        if (ChatService.xmppConectionStatus) {
+//            networkConnection.setVisibility(View.GONE);
+//        } else {
+//            networkConnection.setVisibility(View.VISIBLE);
+//        }
 
         if (isBulletinBroadcast) {
             if (isBulletinBroadcastForAdmin()) {
@@ -1622,6 +1665,30 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 }
             }
         });
+    }
+
+    public static Map<String, String> createHeaderForCalling(String user) {
+        Map<String, String> headers = new HashMap<String, String>();
+        SharedPrefManager pref = SharedPrefManager.getInstance();
+        try {
+            headers.put("userName", user);
+            headers.put("fromUserName", pref.getUserName());
+            headers.put("displayName", pref.getDisplayName());
+            if (pref.getUserFileId(pref.getUserName()) != null)
+                headers.put("picid", pref.getUserFileId(pref.getUserName()));
+            headers.put("userId", "" + pref.getUserId());
+
+            if (SharedPrefManager.getInstance().getCurrentSGDisplayName() != null && SharedPrefManager.getInstance().getCurrentSGDisplayName().trim().length() > 0)
+                headers.put("domainName", SharedPrefManager.getInstance().getCurrentSGDisplayName());
+            else
+                headers.put("domainName", SharedPrefManager.getInstance().getUserDomain());
+
+            //headers.put("domainName", pref.getUserDomain());
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return headers;
     }
 
     boolean flinging = false;
@@ -4450,13 +4517,11 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 
     private final Handler notifyChatRecieveHandler1 = new Handler() {
         public void handleMessage(android.os.Message msg) {
-            if (ChatService.xmppConectionStatus) {
-                networkConnection.setVisibility(View.GONE);
-                xmppStatusView.setImageResource(R.drawable.blue_dot);
-            } else {
-                networkConnection.setVisibility(View.VISIBLE);
-                xmppStatusView.setImageResource(R.drawable.red_dot);
-            }
+//            if (ChatService.xmppConectionStatus) {
+//                networkConnection.setVisibility(View.GONE);
+//            } else {
+//                networkConnection.setVisibility(View.VISIBLE);
+//            }
             if (iChatPref.isBlocked(userName) || isBulletinBroadcast || isSharedIDMessage) {
                 callOption.setVisibility(View.GONE);
                 call_option_video.setVisibility(View.GONE);
@@ -5505,7 +5570,7 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 
                     @Override
                     public void onSuccess(int arg0, String arg1) {
-                        Log.d("AsyncHttpClient", "AsyncHttpClient onSuccess: " + arg1);
+                        Log.i("AsyncHttpClient", "AsyncHttpClient onSuccess: " + arg1);
 
                         Gson gson = new GsonBuilder().create();
                         GroupChatServerModel objUserModel = gson.fromJson(arg1, GroupChatServerModel.class);
@@ -5840,7 +5905,9 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
                 break;
             case R.id.id_send_chat:
                 if (!ChatService.xmppConectionStatus) {
-                    Toast.makeText(getApplicationContext(), "Connecting please wait..", Toast.LENGTH_SHORT).show();
+                    Toast toast = Toast.makeText(getApplicationContext(), "Connecting please wait..", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 0);
+                    toast.show();
                     return;
                 }
                 String newMessage = typingEditText.getText().toString().trim();
@@ -6646,42 +6713,30 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
     public void notifyConnectionChange() {
         if (onForeground) {
             notifyConnectionChangeHandler.sendEmptyMessage(0);
-//            System.out.print("==========XMPP Connected======");
-            runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (ChatService.xmppConectionStatus) {
-                        if (networkConnection != null)
-                            networkConnection.setVisibility(View.GONE);
-//                        if (xmppStatusView != null)
-//                            xmppStatusView.setImageResource(R.drawable.blue_dot);
-//	            	 if(bottomPanel != null)
-//	            		 bottomPanel.setVisibility(View.VISIBLE);
-                    } else {
-                        if (networkConnection != null)
-                            networkConnection.setVisibility(View.VISIBLE);
-//                        if (xmppStatusView != null)
-//                            xmppStatusView.setImageResource(R.drawable.red_dot);
-//	            	 if(bottomPanel != null)
-//	            		 bottomPanel.setVisibility(View.GONE);
-                    }
-                }
-            });
+//            runOnUiThread(new Runnable() {
+//
+//                @Override
+//                public void run() {
+//                    if (ChatService.xmppConectionStatus) {
+//                        if (networkConnection != null)
+//                            networkConnection.setVisibility(View.GONE);
+//                    } else {
+//                        if (networkConnection != null)
+//                            networkConnection.setVisibility(View.VISIBLE);
+//                    }
+//                }
+//            });
         }
 
     }
 
     private final Handler notifyConnectionChangeHandler = new Handler() {
         public void handleMessage(android.os.Message msg) {
-            if (ChatService.xmppConectionStatus) {
-                networkConnection.setVisibility(View.GONE);
-//                xmppStatusView.setImageResource(R.drawable.blue_dot);
-            } else {
-                networkConnection.setVisibility(View.VISIBLE);
-//                xmppStatusView.setImageResource(R.drawable.red_dot);
-            }
-
+//            if (ChatService.xmppConectionStatus) {
+//                networkConnection.setVisibility(View.GONE);
+//            } else {
+//                networkConnection.setVisibility(View.VISIBLE);
+//            }
         }
     };
     // @Override
@@ -7033,6 +7088,48 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         System.out.println(stackTraceElements.toString());*/
     }
 
+    //-------------------------------------------------------------------
+    private void conferenceCallOut(final String groupName, final String userName, final String callID) {
+        try {
+            final ProgressDialog progressDialog = ProgressDialog.show(this, "", "Loading. Please wait...", true);
+
+            ConferenceCalloutRequest request = new ConferenceCalloutRequest();
+            ConferenceCalloutRequest.ConferenceCallout callout = new ConferenceCalloutRequest().new ConferenceCallout();
+            ConferenceCalloutRequest.Destination dest = new ConferenceCalloutRequest().new Destination();
+            dest.setType("username");
+            dest.setEndpoint(userName);
+            callout.setDestination(dest);
+            callout.setCli(groupName);
+            callout.setConferenceId(groupName);
+            request.setConferenceCallout(callout);
+
+
+            objApi.setRequestType(1);
+            retrofit2.Call call = objApi.getApi(this).callOut(request);
+
+            progressDialog.show();
+            call.enqueue(new RetrofitRetrofitCallback<ConferenceCalloutResponse>(this) {
+                @Override
+                protected void onResponseVoidzResponse(retrofit2.Call call, Response response) {
+                }
+
+                @Override
+                protected void onResponseVoidzObject(retrofit2.Call call, ConferenceCalloutResponse response) {
+                    if (response != null && response.getCallId() != null ) {
+                        System.out.println("conferenceCallOut : "+response.getCallId());
+                    }
+                }
+
+                @Override
+                protected void common() {
+                    progressDialog.cancel();
+                }
+            });
+
+        } catch (Exception e) {
+
+        }
+    }
     //-------------------------------------------------------------------
     private void getBulletinMessages(final String url, final View header) {
         try {
