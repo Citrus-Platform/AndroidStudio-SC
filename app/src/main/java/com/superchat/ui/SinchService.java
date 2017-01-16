@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.sinch.android.rtc.AudioController;
 import com.sinch.android.rtc.ClientRegistration;
+import com.sinch.android.rtc.PushPair;
 import com.sinch.android.rtc.Sinch;
 import com.sinch.android.rtc.SinchClient;
 import com.sinch.android.rtc.SinchClientListener;
@@ -15,6 +16,7 @@ import com.sinch.android.rtc.SinchError;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallClient;
 import com.sinch.android.rtc.calling.CallClientListener;
+import com.sinch.android.rtc.calling.CallListener;
 import com.sinch.android.rtc.video.VideoController;
 import com.sinch.android.rtc.video.VideoScalingType;
 import com.superchat.SuperChatApplication;
@@ -24,6 +26,7 @@ import com.superchat.model.UserProfileModel;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.utils.SharedPrefManager;
 
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Response;
@@ -39,8 +42,8 @@ public class SinchService extends Service implements interfaceInstances{
 //    private static final String APP_SECRET = "VWq5RrOaaEqkyYukzCCahw==";
 //    private static final String ENVIRONMENT = "sandbox.sinch.com";
 
-	private static final String APP_KEY = "bceec279-151d-483c-933f-1eed6c0c6cb6";
-    private static final String APP_SECRET = "Gd9DlpvF7ki/CZV/yZAwvg==";
+	public static final String APP_KEY = "bceec279-151d-483c-933f-1eed6c0c6cb6";
+    public static final String APP_SECRET = "Gd9DlpvF7ki/CZV/yZAwvg==";
     private static final String ENVIRONMENT = "clientapi.sinch.com";
     public static final String CALL_ID = "CALL_ID";
     static final String TAG = SinchService.class.getSimpleName();
@@ -137,21 +140,57 @@ public class SinchService extends Service implements interfaceInstances{
         }
         public Call callUserWithHeader(String userId, Map<String, String> header) {
             String number = DBWrapper.getInstance().getContactNumber(userId);
-            if(number == null){
+            System.out.println("<<<<Calling 1 >>>> "+number);
+            if(number == null || (number != null && number.indexOf('-') == -1)){
                 String cc = SharedPrefManager.getInstance().getUserCountryCode();
                 if(cc != null && userId.startsWith(cc)) {
                     number = userId.substring(0, userId.indexOf("_"));
                     number = cc + "-" +number.substring(number.indexOf(cc) + 2);
                 }
+                System.out.println("<<<<Calling 2 >>>> "+number);
                 return mSinchClient.getCallClient().callUser(number, header);
             }
+            System.out.println("<<<<Calling 3 >>>> "+number);
             return mSinchClient.getCallClient().callUser(number, header);
+        }
+
+        public Call callGroup(String groupID, Map<String, String> header){
+            CallClient callClient = mSinchClient.getCallClient();
+//            callClient.addCallClientListener(new CallClientListener() {
+//                @Override
+//                public void onIncomingCall(CallClient callClient, Call call) {
+//                    System.out.println("callGroup :: onIncomingCall - "+call.getCallId());
+//                }
+//            });
+            Call call = callClient.callConference(groupID, header);
+//            call.addCallListener(new CallListener() {
+//                @Override
+//                public void onCallProgressing(Call call) {
+//
+//                }
+//
+//                @Override
+//                public void onCallEstablished(Call call) {
+//
+//                }
+//
+//                @Override
+//                public void onCallEnded(Call call) {
+//
+//                }
+//
+//                @Override
+//                public void onShouldSendPushNotification(Call call, List<PushPair> list) {
+//
+//                }
+//            });
+            return call;
         }
 
 
         public Call callVideoWithHeader(String userId, Map<String, String> header) {
             String number = DBWrapper.getInstance().getContactNumber(userId);
-            if(number == null){
+            if(number == null || (number != null && number.indexOf('-') == -1)){
                 String cc = SharedPrefManager.getInstance().getUserCountryCode();
                 if(cc != null && userId.startsWith(cc)) {
                     number = userId.substring(0, userId.indexOf("_"));
@@ -276,6 +315,7 @@ public class SinchService extends Service implements interfaceInstances{
 //    		WakeLock wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK,
 //    		        "com.superchat.onCall");
 //    		wakeLock.acquire();
+            Map<String, String> header = call.getHeaders();
             if(call!=null && call.getRemoteUserId()!=null && SharedPrefManager.getInstance().isBlocked(call.getRemoteUserId()) ){
 //            	 Call callTmp = mSinchServiceInterface.getCall(mCallId);
      	        if (call != null) {

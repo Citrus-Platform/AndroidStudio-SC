@@ -9,7 +9,10 @@ import com.superchat.model.RegistrationForm;
 import com.superchat.model.RegistrationFormResponse;
 import com.superchat.model.UserProfileModel;
 import com.superchat.model.multiplesg.MultipleSGObject;
+import com.superchat.retrofit.request.model.ConferenceCalloutRequest;
 import com.superchat.retrofit.request.model.UserAdminRequest;
+import com.superchat.retrofit.response.model.ConferenceCalloutResponse;
+import com.superchat.retrofit.response.model.ConferenceInfoResponse;
 import com.superchat.retrofit.response.model.UserAdminResponse;
 
 import retrofit2.Call;
@@ -55,5 +58,11 @@ public interface RetrofitInterface {
 
     @GET(PREFIX_URL + "user/domainprofiledata")
     Call<MultipleSGObject> getSGListForMobile(@Query("mobileNumber") String mobileNumber);
+
+    @POST("/v1/callouts")
+    Call<ConferenceCalloutResponse> callOut(@Body ConferenceCalloutRequest requestObject);
+
+    @GET("/conferences/id/")
+    Call<ConferenceInfoResponse> getConferenceInfo(@Query("") String myConference);
 
 }

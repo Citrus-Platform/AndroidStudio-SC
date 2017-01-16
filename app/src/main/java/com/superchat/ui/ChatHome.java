@@ -268,8 +268,7 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
 
             @Override
             public void onClick(View v) {
-                clearHideSearch();
-                ((HomeScreen) getActivity()).clearFunction();
+                eventBackOnToolbar();
             }
         });
 
@@ -309,6 +308,11 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
 //        if(service!=null)
 //			service.setTypingListener(this);
         return view;
+    }
+
+    public void eventBackOnToolbar(){
+        clearHideSearch();
+        ((HomeScreen) getActivity()).clearFunction();
     }
 
     public void clearHideSearch(){

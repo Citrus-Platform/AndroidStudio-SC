@@ -95,10 +95,15 @@ public class ChatBackupRestoreScreen extends Activity implements OnClickListener
 	@Override
 	public void onFileDownloadResposne(View view, int type, byte[] data) {
 		// TODO Auto-generated method stub
-		if(Build.VERSION.SDK_INT >= 11)
-			new RestoreMessagesInDB().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-		else
-			new RestoreMessagesInDB().execute();
+		if(type != -1) {
+			if (Build.VERSION.SDK_INT >= 11)
+				new RestoreMessagesInDB().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			else
+				new RestoreMessagesInDB().execute();
+		}else {
+			setResult(Activity.RESULT_OK);
+			finish();
+		}
 	}
 	@Override
 	public void onFileDownloadResposne(View view, int[] type, String[] file_urls, String[] file_paths) {

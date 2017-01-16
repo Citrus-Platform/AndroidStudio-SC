@@ -142,10 +142,11 @@ EsiaSplashScreen extends Activity {
 //            Utilities.sRegId = regid;
             Log.i(TAG, "onCreate :: getRegistrationId saved ===> " + Constants.regid);
 //            testPushMessage("");
-            if (Constants.regid.isEmpty())
-            {
-                registerInBackgroundLocal();
-            }
+
+//            if (Constants.regid.isEmpty()){
+//                registerInBackgroundLocal();
+//            }
+            registerInBackgroundLocal();
         }
         else
         {

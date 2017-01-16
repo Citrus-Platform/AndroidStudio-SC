@@ -475,49 +475,41 @@ private String convertStringArrayToString1(List<String> strList) {
 	return str;
 }
 
-	public String getChatName(String userName) {
+	public String getChatNameForP2P(String userName, String displayName) {
+		String tmpNumber = null;
 		 if (userName!=null && !userName.contains("#786#")){
 				try{
-				String tmpNumber = userName;//formatNumber(userName.replaceFirst("m", "+"));
+				 tmpNumber = userName;
 				if(tmpNumber.contains("_") )
 					tmpNumber= formatNumber(tmpNumber.substring(0,tmpNumber.indexOf("_")));
 				int contactId = getContactIDFromData(
 						DatabaseConstants.CONTACT_NUMBERS_FIELD + " = ?",
 						new String[] { tmpNumber });
-				if(contactId!=-1){
+				if(contactId != -1){
 					ContentValues contentvalues = new ContentValues();
-		//			contentvalues.put(
-		//					DatabaseConstants.USER_SIP_ADDRESS,
-		//					userDetail.iSipAddress);
-					contentvalues.put(
-							DatabaseConstants.USER_NAME_FIELD,userName);
-					contentvalues.put(
-							DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(1));
-					
+					contentvalues.put(DatabaseConstants.USER_NAME_FIELD,userName);
+					contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(1));
 					contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,tmpNumber);
+//					if(displayName != null)
+//						contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, displayName);
 					updateAtMeDirectStatus(contentvalues,DatabaseConstants.CONTACT_NUMBERS_FIELD);
 					updateAtMeContactDetails(contentvalues,tmpNumber);
 					updateUserNameInContacts(userName,tmpNumber);
 				}
 				}catch(Exception e){
-					
+					e.printStackTrace();
 				}
 			}
 		String contactPerson = userName;
 		String sg = SharedPrefManager.getInstance().getUserDomain();
 		String sql1 = "SELECT "+DatabaseConstants.CONTACT_NAMES_FIELD+" FROM "+ DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS+" WHERE "+DatabaseConstants.USER_NAME_FIELD + "='" + userName + "' AND " + DatabaseConstants.USER_SG + "='"+sg+"'";// UNION"+
-//				" SELECT "+DatabaseConstants.CONTACT_NAMES_FIELD+" FROM "+ DatabaseConstants.TABLE_NAME_CONTACT_EMAILS+" WHERE "+DatabaseConstants.USER_NAME_FIELD + "='" + userName + "'";
 		Cursor cursor = dbHelper.getWritableDatabase().rawQuery(sql1, null);
-		//		Cursor cursor = DBWrapper.getInstance().query(
-//				DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,
-//				new String[] { DatabaseConstants.CONTACT_NAMES_FIELD },
-//				DatabaseConstants.USER_NAME_FIELD + "='" + userName + "'",
-//				null, null);
 		try {
 			if (cursor != null) {
 				while (cursor.moveToNext()){
-					contactPerson = cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD))+"#786#"+userName;// Log.d(TAG,
-				// TAG+"::"+cursor.getString(cursor.getColumnIndex("name"))+" + "+cursor.getString(cursor.getColumnIndex("DatabaseConstants.NAME_CONTACT_ID_FIELD")));
+					contactPerson = cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD));
+					if(contactPerson != null && !contactPerson.contains("#786#"))
+						contactPerson = contactPerson +  "#786#" + userName;
 					break;
 				}
 			}
@@ -530,34 +522,119 @@ private String convertStringArrayToString1(List<String> strList) {
 		}
 		if(contactPerson!=null && contactPerson.startsWith("#786#"))
 			contactPerson = userName;
-		
-		if (userName.equals(contactPerson)) {
-			String sql = "SELECT "+DatabaseConstants.CONTACT_NAMES_FIELD+" FROM "+ DatabaseConstants.TABLE_NAME_MESSAGE_INFO
-					+ " WHERE ("
-					+ DatabaseConstants.CONTACT_NAMES_FIELD + "!='" + userName
-					+ "' AND ("+DatabaseConstants.FROM_USER_FIELD + "='" + userName+ "' OR "+DatabaseConstants.TO_USER_FIELD + "='" + userName+"'))";
-			cursor = ChatDBWrapper.getInstance(SuperChatApplication.context).executeRawQuery(sql);
-			try {
-				if (cursor != null) {
-					if(cursor.moveToLast()){
-						contactPerson = cursor
-						.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD))+"#786#"+userName;// Log.d(TAG,
-					// TAG+"::"+cursor.getString(cursor.getColumnIndex("name"))+" + "+cursor.getString(cursor.getColumnIndex("DatabaseConstants.NAME_CONTACT_ID_FIELD")));
-						}
+
+		if (userName.equals(contactPerson) && displayName != null) {
+			contactPerson = displayName +  "#786#" + userName;
+			if (!DBWrapper.getInstance().isContactExists(userName) && !userName.equals(SharedPrefManager.getInstance().getUserName())) {
+				addNewContactEntry(displayName, userName, tmpNumber);
+			}
+		}
+		if (!userName.equals(contactPerson)) {
+			updateContactName(contactPerson, userName);
+		}
+		return contactPerson;
+	}
+	private void addNewContactEntry(String displayName, String tmpUserName, String tmpMobile) {
+		try {
+			String number = DBWrapper.getInstance().getContactNumber(tmpUserName);
+			if (number != null && !number.equals(""))
+				return;
+			ContentValues contentvalues = new ContentValues();
+			contentvalues.put(DatabaseConstants.USER_NAME_FIELD, tmpUserName);
+			contentvalues.put(DatabaseConstants.VOPIUM_FIELD, Integer.valueOf(2));
+			contentvalues.put(DatabaseConstants.DATA_ID_FIELD, Integer.valueOf("5"));
+			contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD, tmpMobile);
+			contentvalues.put(DatabaseConstants.STATE_FIELD, Integer.valueOf(0));
+			contentvalues.put(DatabaseConstants.CONTACT_NAMES_FIELD, displayName);
+			contentvalues.put(DatabaseConstants.PHONE_NUMBER_TYPE_FIELD, "1");
+			int id = tmpUserName.hashCode();
+			if (id < -1)
+				id = -(id);
+			contentvalues.put(DatabaseConstants.NAME_CONTACT_ID_FIELD, Integer.valueOf(id));
+			contentvalues.put(DatabaseConstants.RAW_CONTACT_ID, Integer.valueOf(id));
+			//Save USerID and SG in DB
+			contentvalues.put(DatabaseConstants.USER_ID, SharedPrefManager.getInstance().getUserId());
+			contentvalues.put(DatabaseConstants.USER_SG, SharedPrefManager.getInstance().getUserDomain());
+			if (!DBWrapper.getInstance().isContactExists(tmpUserName))
+				DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS,contentvalues);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public String getChatName(String userName) {
+		 if (userName!=null && !userName.contains("#786#")){
+				try{
+				String tmpNumber = userName;
+				if(tmpNumber.contains("_") )
+					tmpNumber= formatNumber(tmpNumber.substring(0,tmpNumber.indexOf("_")));
+				int contactId = getContactIDFromData(
+						DatabaseConstants.CONTACT_NUMBERS_FIELD + " = ?",
+						new String[] { tmpNumber });
+				if(contactId!=-1){
+					ContentValues contentvalues = new ContentValues();
+					contentvalues.put(DatabaseConstants.USER_NAME_FIELD,userName);
+					contentvalues.put(DatabaseConstants.VOPIUM_FIELD,Integer.valueOf(1));
+					contentvalues.put(DatabaseConstants.CONTACT_NUMBERS_FIELD,tmpNumber);
+					updateAtMeDirectStatus(contentvalues,DatabaseConstants.CONTACT_NUMBERS_FIELD);
+					updateAtMeContactDetails(contentvalues,tmpNumber);
+					updateUserNameInContacts(userName,tmpNumber);
 				}
-			} catch (Exception e) {
-			} finally {
-				if (cursor != null) {
-					cursor.close();
-					cursor = null;
+				}catch(Exception e){
+					e.printStackTrace();
 				}
 			}
+		String contactPerson = userName;
+		String sg = SharedPrefManager.getInstance().getUserDomain();
+		String sql1 = "SELECT "+DatabaseConstants.CONTACT_NAMES_FIELD+" FROM "+ DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS+" WHERE "+DatabaseConstants.USER_NAME_FIELD + "='" + userName + "' AND " + DatabaseConstants.USER_SG + "='"+sg+"'";// UNION"+
+		Cursor cursor = dbHelper.getWritableDatabase().rawQuery(sql1, null);
+		try {
+			if (cursor != null) {
+				while (cursor.moveToNext()){
+					contactPerson = cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD));
+					if(contactPerson != null && !contactPerson.contains("#786#"))
+						contactPerson = contactPerson +  "#786#" + userName;
+					break;
+				}
+			}
+		} catch (Exception e) {
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+				cursor = null;
+			}
+		}
+		if(contactPerson!=null && contactPerson.startsWith("#786#"))
+			contactPerson = userName;
+
+		if (userName.equals(contactPerson)) {
+//			String sql = "SELECT "+DatabaseConstants.CONTACT_NAMES_FIELD+" FROM "+ DatabaseConstants.TABLE_NAME_MESSAGE_INFO
+//					+ " WHERE ("
+//					+ DatabaseConstants.CONTACT_NAMES_FIELD + "!='" + userName
+//					+ "' AND ("+DatabaseConstants.FROM_USER_FIELD + "='" + userName+ "' OR "+DatabaseConstants.TO_USER_FIELD + "='" + userName+"'))";
+//			cursor = ChatDBWrapper.getInstance(SuperChatApplication.context).executeRawQuery(sql);
+//			try {
+//				if (cursor != null) {
+//					if(cursor.moveToLast()){
+//						contactPerson = cursor.getString(cursor.getColumnIndex(DatabaseConstants.CONTACT_NAMES_FIELD));
+//						if(contactPerson != null && !contactPerson.contains("#786#"))
+//							contactPerson = contactPerson +  "#786#" + userName;
+//						}
+//				}
+//			} catch (Exception e) {
+//			} finally {
+//				if (cursor != null) {
+//					cursor.close();
+//					cursor = null;
+//				}
+//			}
 		}
 		if(SharedPrefManager.getInstance().isBroadCast(userName)){
 			contactPerson = SharedPrefManager.getInstance().getBroadCastDisplayName(userName);
 		}
 		if(SharedPrefManager.getInstance().isGroupChat(userName)){
-			contactPerson = SharedPrefManager.getInstance().getGroupDisplayName(userName)+"#786#"+userName;
+			contactPerson = SharedPrefManager.getInstance().getGroupDisplayName(userName);
+			if(contactPerson != null && !contactPerson.contains("#786#"))
+				contactPerson = contactPerson +  "#786#" + userName;
 		}
 		if (!userName.equals(contactPerson)) {
 			updateContactName(contactPerson, userName);
@@ -1538,7 +1615,7 @@ public boolean isContactModified(String rawId, int version){
 		boolean username = true;
 		String sql = "SELECT * FROM "
 				+ DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS + " WHERE "
-				+ DatabaseConstants.USER_NAME_FIELD + "='" + user_name+"'";
+				+ DatabaseConstants.USER_NAME_FIELD + "='" + user_name+"' AND " + DatabaseConstants.USER_SG + "='" + SharedPrefManager.getInstance().getUserDomain() + "'";
 
 		Cursor cursor = dbHelper.getWritableDatabase().rawQuery(sql, null);
 		if(cursor == null || cursor.getCount()==0)

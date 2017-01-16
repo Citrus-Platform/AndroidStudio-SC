@@ -11,6 +11,7 @@ import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.AudioManager;
 import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
@@ -58,6 +59,7 @@ public class IncomingCallScreenVideoActivity extends Activity {
     ChatDBWrapper chatDBWrapper;
     private SinchService.SinchServiceInterface mSinchServiceInterface;
     AudioController audioController;
+    VideoController videoController;
     // Screen wake lock for incoming call
     private PowerManager.WakeLock wakeLock;
     private PowerManager powerManager;
@@ -127,6 +129,7 @@ public class IncomingCallScreenVideoActivity extends Activity {
 						}
 
                     audioController = mSinchServiceInterface.getAudioController();
+                    audioController.unmute();
 
                     showLocalVideoView();
                 } else {
@@ -422,12 +425,17 @@ public class IncomingCallScreenVideoActivity extends Activity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);//intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
+            setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
             finish();
         }
 
         @Override
         public void onCallEstablished(Call call) {
             Log.d(TAG, "Call established");
+//            setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+            setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
+            AudioController audioController = mSinchServiceInterface.getAudioController();
+            audioController.enableSpeaker();
         }
 
         @Override

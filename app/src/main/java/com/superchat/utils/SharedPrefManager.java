@@ -1330,6 +1330,7 @@ public class SharedPrefManager {
     }
 
     public void saveUserName(String name) {
+        System.out.println("<< saveUserName >> : "+name);
         editor.putString(USER_NAME_ID, name);
         editor.commit();
     }
@@ -1346,7 +1347,7 @@ public class SharedPrefManager {
     }
 
     public void saveUserDomain(String domain) {
-//		System.out.println("<< Domain >> : "+domain);
+		System.out.println("<< Domain >> : "+domain);
         editor.putString(USER_DOMAIN, domain);
         editor.commit();
     }
