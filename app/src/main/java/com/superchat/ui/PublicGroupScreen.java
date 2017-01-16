@@ -823,20 +823,6 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
             }
             HomeScreen.groupsData.add(tmpGroup);
 
-//			FragmentActivity fragmentactivity = getActivity();
-//			ArrayList<LoginResponseModel.GroupDetail> list = new ArrayList<LoginResponseModel.GroupDetail>();
-//			for(LoginResponseModel.GroupDetail groups : HomeScreen.groupsData){
-//				
-////				LoginResponseModel.GroupDetail info = new LoginResponseModel.GroupDetail();
-//				if(!isAllChannelTab && !groups.memberType.equals("USER"))
-//					list.add(groups);
-//				else if(isAllChannelTab)
-//					list.add(groups);
-//			}
-//			
-//			adapter = new PublicGroupAdapter(this,fragmentactivity,
-//					R.layout.public_group_items, list,Constants.GROUP_USER_CHAT_CREATE);
-//			getListView().setAdapter(adapter);
             try {
                 if (adapter != null) {
                     adapter.clear();
@@ -889,40 +875,6 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
         }
     }
 
-    private void updateCursor(String s, String as[]) {
-//		Log.i(TAG, "Updating cursor");
-////		cursor = DBWrapper.getInstance().query(DatabaseConstants.TABLE_NAME_CONTACT_NAMES, null, s, as,
-////				DatabaseConstants.VOPIUM_FIELD+" DESC, "+DatabaseConstants.CONTACT_NAMES_FIELD +" COLLATE NOCASE");
-//		if(s==null){
-//			s = DatabaseConstants.VOPIUM_FIELD + "!=?";
-//			as = (new String[] { "2" });
-//		}
-//		cursor = DBWrapper.getInstance().query(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, null, s, as,
-//				DatabaseConstants.VOPIUM_FIELD+" ASC, "+DatabaseConstants.CONTACT_NAMES_FIELD +" COLLATE NOCASE");
-//		if (cursor != null && adapter != null)
-//		{
-////			adapter.changeCursor(cursor);
-//			adapter.notifyDataSetChanged();
-//		}
-    }
-
-    //	@Override
-//	public void notifyConnectionChange() {
-//		if(onForeground){
-//			((HomeScreen)getActivity()).runOnUiThread(new Runnable() {
-//				
-//				@Override
-//				public void run() {
-//					if(ChatService.xmppConectionStatus){
-//						xmppStatusView.setImageResource(R.drawable.blue_dot);
-//					}else{
-//						xmppStatusView.setImageResource(R.drawable.red_dot);
-//						}
-//				}
-//				});
-//		}
-//		
-//	}
     private class OpenGroupTaskOnServer extends AsyncTask<String, String, String> {
         LoginModel loginForm;
         ProgressDialog progressDialog = null;
