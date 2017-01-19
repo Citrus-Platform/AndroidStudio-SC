@@ -312,7 +312,12 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
 
     public void eventBackOnToolbar(){
         clearHideSearch();
-        ((HomeScreen) getActivity()).clearFunction();
+        try {
+            if(((HomeScreen) getActivity()) != null)
+                ((HomeScreen) getActivity()).clearFunction();
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     public void clearHideSearch(){

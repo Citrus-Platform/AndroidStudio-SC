@@ -9,8 +9,10 @@ import com.superchat.model.RegistrationForm;
 import com.superchat.model.RegistrationFormResponse;
 import com.superchat.model.UserProfileModel;
 import com.superchat.model.multiplesg.MultipleSGObject;
+import com.superchat.retrofit.request.model.ConferenceCalloutFromServerRequest;
 import com.superchat.retrofit.request.model.ConferenceCalloutRequest;
 import com.superchat.retrofit.request.model.UserAdminRequest;
+import com.superchat.retrofit.response.model.ConferenceCalloutFromServerResponse;
 import com.superchat.retrofit.response.model.ConferenceCalloutResponse;
 import com.superchat.retrofit.response.model.ConferenceInfoResponse;
 import com.superchat.retrofit.response.model.UserAdminResponse;
@@ -61,6 +63,9 @@ public interface RetrofitInterface {
 
     @POST("/v1/callouts")
     Call<ConferenceCalloutResponse> callOut(@Body ConferenceCalloutRequest requestObject);
+
+    @POST(PREFIX_URL + "sinch/groupcall")
+    Call<ConferenceCalloutFromServerResponse> callOutFromServer(@Body ConferenceCalloutFromServerRequest requestObject);
 
     @GET("/conferences/id/")
     Call<ConferenceInfoResponse> getConferenceInfo(@Query("") String myConference);

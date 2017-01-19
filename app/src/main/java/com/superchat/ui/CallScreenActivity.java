@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chat.sdk.db.ChatDBWrapper;
@@ -58,12 +59,15 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 	private UpdateCallDurationTask mDurationTask;
 
 	private String mCallId;
+	private boolean isReceived;
+	private boolean isGroupCall;
 	private long mCallStart = 0;
 
 	private TextView mCallDuration;
 	private TextView mCallState;
 	private TextView mCallerName;
 	private TextView sgName;
+	private LinearLayout groupLayout;
 	SharedPrefManager iChatPref;
 	ChatDBWrapper chatDBWrapper;
 	ImageView muteButton;
@@ -85,7 +89,7 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 					 Map<String, String> header = call.getHeaders();
 					 String domainDisplayName = null;
 					 String domainName = null;
-					 if(header != null && !header.get("fromUserName").equals(iChatPref.getUserName())) {
+					 if(header != null && header.size() > 0 && header.get("fromUserName") != null && !header.get("fromUserName").equals(iChatPref.getUserName())) {
 						 domainDisplayName = header.get("domainDisplayName");
 						 domainName = header.get("domainName");
 						 String myName = header.get("displayName");
@@ -106,18 +110,25 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 						 mCallState.setText(call.getState().toString());
 					 }else {
 						 String myName = null;
-						 if(header != null && header.get("fromUserName").equals(iChatPref.getUserName())) {
+						 if(header != null && header.size() > 0 && header.get("fromUserName").equals(iChatPref.getUserName())) {
 							 myName = iChatPref.getUserServerName(header.get("userName"));
 							 setProfilePic(header.get("userName"));
 						 }else {
-							 myName = iChatPref.getUserServerName(call.getRemoteUserId());
-							 if (myName != null && myName.equals(call.getRemoteUserId()))
+							 if(iChatPref.isGroupChat(call.getRemoteUserId()) || isGroupCall) {
+								 String group = call.getRemoteUserId();
+								 myName = iChatPref.getGroupDisplayName(call.getRemoteUserId());
+								 groupLayout.setVisibility(View.VISIBLE);
+								 setProfilePic(iChatPref.getUserFileId(group));
+							 }else{
 								 myName = iChatPref.getUserServerName(call.getRemoteUserId());
-							 if (myName != null && myName.equals(call.getRemoteUserId()))
-								 myName = "New User";
-							 if (myName != null && myName.contains("_"))
-								 myName = "+" + myName.substring(0, myName.indexOf("_"));
-							 setProfilePic(call.getRemoteUserId());
+								 if (myName != null && myName.equals(call.getRemoteUserId()))
+									 myName = iChatPref.getUserServerName(call.getRemoteUserId());
+								 if (myName != null && myName.equals(call.getRemoteUserId()))
+									 myName = "New User";
+								 if (myName != null && myName.contains("_"))
+									 myName = "+" + myName.substring(0, myName.indexOf("_"));
+								 setProfilePic(call.getRemoteUserId());
+							 }
 						 }
 						 mCallerName.setText(myName);
 						 mCallState.setText(call.getState().toString());
@@ -134,6 +145,9 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 						 else
 							 sgName.setText(SharedPrefManager.getInstance().getUserDomain());
 					 }
+
+					 if(mSinchServiceInterface != null && isReceived && (iChatPref.isGroupChat(call.getRemoteUserId()) || isGroupCall))
+					 	mSinchServiceInterface.callGroup(call.getRemoteUserId(), null);
 /*
 
 					 if(SharedPrefManager.getInstance().getCurrentSGDisplayName() != null && SharedPrefManager.getInstance().getCurrentSGDisplayName().trim().length() > 0)
@@ -199,6 +213,7 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 		mAudioPlayer = new AudioPlayer(this);
 		mCallDuration = (TextView) findViewById(R.id.callDuration);
 		mCallerName = (TextView) findViewById(R.id.remoteUser);
+		groupLayout = (LinearLayout) findViewById(R.id.id_group_call);
 		sgName = (TextView) findViewById(sg_name);
 		mCallState = (TextView) findViewById(R.id.callState);
 		Button endCallButton = (Button) findViewById(R.id.hangupButton);
@@ -217,6 +232,8 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 		});
 		mCallStart = System.currentTimeMillis();
 		mCallId = getIntent().getStringExtra(SinchService.CALL_ID);
+		isGroupCall = getIntent().getBooleanExtra(SinchService.GROUP_CALL, false);
+		isReceived = getIntent().getBooleanExtra(SinchService.GROUP_CALL_RECEIVED, false);
 	}
 
 	@Override
@@ -252,15 +269,18 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 		if(mSinchServiceInterface!=null){
 			 Call call = mSinchServiceInterface.getCall(mCallId);
 			 if (call != null) {
-			 call.hangup();
+			 	call.hangup();
 			 }
+			if(isGroupCall) {
+				mSinchServiceInterface.stopClient();
+				mSinchServiceInterface.startClient(iChatPref.getUserName());
+			}
 		 }
-		if(!HomeScreen.isLaunched){
-			Intent intent = new Intent(this, HomeScreen.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//			 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intent);
-		}
+//		if(!HomeScreen.isLaunched){
+//			Intent intent = new Intent(this, HomeScreen.class);
+//			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//			startActivity(intent);
+//		}
 		finish();
 	}
 //boolean isFirstActivity(){
@@ -392,10 +412,14 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 			bitmap = SuperChatApplication.getBitmapFromMemCache(groupPicId);
 		}
 		ImageView picView = (ImageView) findViewById(R.id.id_profile_pic);
-		if(SharedPrefManager.getInstance().getUserGender(userName).equalsIgnoreCase("female"))
-			picView.setImageResource(R.drawable.female_default);
-		else
-			picView.setImageResource(R.drawable.male_default);
+		if(isGroupCall){
+			picView.setImageResource(R.drawable.group_call_def);
+		}else {
+			if (SharedPrefManager.getInstance().getUserGender(userName).equalsIgnoreCase("female"))
+				picView.setImageResource(R.drawable.female_default);
+			else
+				picView.setImageResource(R.drawable.male_default);
+		}
 		if (bitmap != null) {
 			picView.setImageBitmap(bitmap);
 			String profilePicUrl = groupPicId+".jpg";//AppConstants.media_get_url+

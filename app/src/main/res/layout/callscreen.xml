@@ -5,6 +5,23 @@
     android:background="@color/color_call_screen_bg"
     android:orientation="vertical"
     android:weightSum="5" >
+    <LinearLayout
+        android:id="@+id/id_group_call"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:visibility="gone"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="14dp"
+            android:text="  Group Call"
+            android:textColor="@color/white"
+            android:drawableLeft="@drawable/group_call"
+            android:textSize="18sp" />
+    </LinearLayout>
 <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
