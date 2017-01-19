@@ -10,6 +10,7 @@ import android.widget.Button;
 
 import com.superchat.R;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.MyriadRegularTextView;
 
 public class WelcomeScreen extends Activity implements OnClickListener {
@@ -20,6 +21,9 @@ public class WelcomeScreen extends Activity implements OnClickListener {
 		super.onCreate(bundle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.welcome_screen);
+
+		UtilSetFont.setFontMainScreen(this);
+
 		iPrefManager = SharedPrefManager.getInstance();
 		String domain = iPrefManager.getUserDomain();
 		final String name = iPrefManager.getDisplayName();

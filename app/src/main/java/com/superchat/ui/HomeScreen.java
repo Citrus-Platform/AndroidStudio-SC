@@ -98,6 +98,7 @@ import com.superchat.utils.FileDownloadResponseHandler;
 import com.superchat.utils.FileUploaderDownloader;
 import com.superchat.utils.NetWork;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.MyriadRegularTextView;
 import com.superchat.widgets.RoundedImageView;
 
@@ -723,6 +724,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 checkForBackUpAndUploadBackup();
             }
         }
+
+        UtilSetFont.setFontMainScreen(this);
+
     }
 
     private boolean isVerifiedUser(String mobileNumber) {
@@ -4661,6 +4665,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
         try {
             if (tab != null) {
+
+                UtilSetFont.setFontMainScreen(view);
 
                 RelativeLayout rlTabMainLayout = (RelativeLayout) tab.findViewById(R.id.rlTabMainLayout);
                 LinearLayout llTabIndicator = (LinearLayout) tab.findViewById(R.id.llTabIndicator);

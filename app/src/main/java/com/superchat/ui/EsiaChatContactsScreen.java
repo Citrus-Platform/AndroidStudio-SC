@@ -56,6 +56,7 @@ import com.superchat.utils.Constants;
 import com.superchat.utils.GroupCreateTaskOnServer;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -149,6 +150,9 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.esia_chat_contact_screen);
+
+        UtilSetFont.setFontMainScreen(this);
+
 
         createGroupView = (TextView) findViewById(R.id.id_create_group);
         sendBroadCastView = (TextView) findViewById(R.id.id_broadcast_message);

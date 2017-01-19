@@ -46,6 +46,7 @@ import com.superchat.model.multiplesg.OwnerDomainName;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.RoundedImageView;
 
 import java.io.File;
@@ -222,7 +223,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
     public static final String HEADER_OPEN_HUB = "Open Hub";
     public static final String HEADER_NEW_INVITATION = "New Invitation";
     public static final String HEADER_CREATE_NEW_HUB = "Create New Hub";
-    public static final String HEADER_OWNED_HUB = "Oenwed Hub";
+    public static final String HEADER_OWNED_HUB = "Owned Hub";
     public static final String HEADER_JOINED_HUB = "Joined Hub";
 
     @Override
@@ -246,6 +247,9 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
                              Bundle savedInstanceState) {
         // Inflating view layout
         View layout = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+
+        UtilSetFont.setFontMainScreen(layout);
+
         recyclerView = (RecyclerView) layout.findViewById(R.id.drawerList);
         ArrayList<InvitedDomainNameSet> invite = DBWrapper.getInstance().getListOfInvitedSGs();
 

@@ -19,6 +19,7 @@ import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.RTMediaPlayer;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.utils.VoiceMediaHandler;
 import com.superchat.widgets.MyriadSemiboldTextView;
 
@@ -97,6 +98,9 @@ public class UsersProfileScreen extends Activity implements OnClickListener,Voic
 		super.onCreate(bundle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.users_info_screen);
+
+		UtilSetFont.setFontMainScreen(this);
+
 		prefManager = SharedPrefManager.getInstance();
 		mediaScrollLayout = (LinearLayout)findViewById(R.id.id_media_scroll_view); 
 		docsScrollLayout = (LinearLayout)findViewById(R.id.id_docs_scroll_view); 

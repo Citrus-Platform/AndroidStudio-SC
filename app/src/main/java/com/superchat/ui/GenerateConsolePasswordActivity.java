@@ -21,6 +21,7 @@ import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.model.ErrorModel;
 import com.superchat.utils.Constants;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.utils.Utilities;
 
 import android.app.Activity;
@@ -56,6 +57,8 @@ public class GenerateConsolePasswordActivity extends Activity implements OnClick
 		super.onCreate(bundle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.generate_password);
+
+		UtilSetFont.setFontMainScreen(this);
 
 		tvWebConsoleLink = (TextView) findViewById(R.id.tvWebConsoleLink);
 		tvWebConsoleLink.setOnClickListener(this);

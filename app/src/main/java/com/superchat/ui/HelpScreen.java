@@ -9,6 +9,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 
 import com.superchat.R;
+import com.superchat.utils.UtilSetFont;
 
 public class HelpScreen extends Activity{
 
@@ -19,6 +20,7 @@ public class HelpScreen extends Activity{
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.help_screen);
 
+		UtilSetFont.setFontMainScreen(this);
 
 		(findViewById(R.id.help_back)).setOnClickListener(new OnClickListener() {
 

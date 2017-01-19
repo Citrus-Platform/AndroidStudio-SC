@@ -10,6 +10,7 @@ import com.superchat.utils.ColorGenerator;
 import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -175,8 +176,10 @@ public class DomainTypesAdapter extends ArrayAdapter<DomainTypesAdapter.DomainTy
 		{
 			viewholder = (ViewHolder)row.getTag();
 		}
-		
-		
+
+		UtilSetFont.setFontMainScreen(row);
+
+
 		DomainType map = (DomainType)getItem(position);
 		viewholder.domainTypeLabel = map.getLabel();
 		viewholder.domainTypeInfo =map.getInfo();

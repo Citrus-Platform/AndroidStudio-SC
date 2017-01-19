@@ -42,6 +42,7 @@ import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.retrofit.response.model.ConferenceInfoResponse;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.RoundedImageView;
 
 import java.io.File;
@@ -162,6 +163,9 @@ public class IncomingCallScreenActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.incoming);
+
+		UtilSetFont.setFontMainScreen(this);
+
         keyguardLock =((KeyguardManager) getSystemService(Activity.KEYGUARD_SERVICE)).newKeyguardLock(KEYGUARD_SERVICE);
         powerManager = ((PowerManager) getSystemService(Context.POWER_SERVICE));
         wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "TAG");

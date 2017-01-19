@@ -59,6 +59,7 @@ import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.ProfilePicUploader;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.MyriadSemiboldTextView;
 import com.superchat.widgets.RoundedImageView;
 
@@ -137,6 +138,9 @@ public class CreateSharedIDActivity extends Activity implements OnClickListener{
 		super.onCreate(bundle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.create_shared_id);
+
+		UtilSetFont.setFontMainScreen(this);
+
 		((ImageView)findViewById(R.id.id_back)).setOnClickListener(this);
 		groupNameView =(EditText)findViewById(R.id.id_group_name);
 		createSharedID =(RelativeLayout)findViewById(R.id.id_create_shared_id_layout);

@@ -29,6 +29,7 @@ import com.superchat.model.PrivacyStatusModel;
 import com.superchat.ui.GroupProfileScreen.ChannelLeaveJoinOnInfo;
 import com.superchat.utils.Constants;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -89,6 +90,9 @@ public class PrivacyCallSettings extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.call_block_settings);
+
+		UtilSetFont.setFontMainScreen(this);
+
 		pref = SharedPrefManager.getInstance();
 		allCallAllowLayout = (LinearLayout)findViewById(R.id.id_all_call_allow_layout);
 		noCallAllowLayout = (LinearLayout)findViewById(R.id.id_no_call_allow_layout);

@@ -36,6 +36,7 @@ import com.superchat.SuperChatApplication;
 import com.superchat.helper.SuperGroupDownloadSettingsHandler;
 import com.superchat.utils.Constants;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.utils.Utilities;
 
 import org.greenrobot.eventbus.EventBus;
@@ -92,6 +93,9 @@ public class MoreScreen extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.more_screen);
+
+        UtilSetFont.setFontMainScreen(this);
+
         profileIconLayout = (RelativeLayout) findViewById(R.id.id_profile_layout);
 //		advancedSettings = (RelativeLayout)findViewById(R.id.id_advanced_settings);
 //		sharedID = (RelativeLayout)findViewById(R.id.id_shared);
@@ -207,6 +211,8 @@ public class MoreScreen extends Activity implements OnClickListener {
 //        t.setScreenName("More Options Screen");
 //        t.send(new HitBuilders.AppViewBuilder().build());
 //		setProfilePic(sharedPrefManager.getUserName());
+
+        UtilSetFont.setFontMainScreen(this);
     }
 
     private boolean setProfilePic(String userName) {

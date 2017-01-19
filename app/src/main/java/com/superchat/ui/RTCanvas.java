@@ -41,6 +41,7 @@ import com.superchat.rtcamera.DgCamActivity;
 import com.superchat.utils.AppUtil;
 import com.superchat.utils.CompressImage;
 import com.superchat.utils.Constants;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.utils.Utilities;
 
 import java.io.File;
@@ -169,6 +170,8 @@ public class RTCanvas extends Activity implements OnColorChangedListener {
 		PackageManager pm = getPackageManager();
 		frontCam = pm.hasSystemFeature("android.hardware.camera.front");
 		rearCam = pm.hasSystemFeature(PackageManager.FEATURE_CAMERA);
+
+		UtilSetFont.setFontMainScreen(this);
 	}
 
 	@Override

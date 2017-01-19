@@ -25,6 +25,7 @@ import com.superchat.model.ErrorModel;
 import com.superchat.model.PrivacyStatusModel;
 import com.superchat.utils.Constants;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -79,6 +80,9 @@ public class PrivacyChatSettings  extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.chat_block_settings);
+
+		UtilSetFont.setFontMainScreen(this);
+		
 		pref = SharedPrefManager.getInstance();
 		allMessageAllowLayout = (LinearLayout)findViewById(R.id.id_all_msg_allow_layout);
 		noMessageAllowLayout = (LinearLayout)findViewById(R.id.id_no_msg_allow_layout);

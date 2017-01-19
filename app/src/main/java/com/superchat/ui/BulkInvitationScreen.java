@@ -62,6 +62,7 @@ import com.superchat.ui.BulkInvitationAdapter.AppContact;
 import com.superchat.utils.Constants;
 import com.superchat.utils.Countries;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -118,6 +119,10 @@ public class BulkInvitationScreen extends Activity implements OnClickListener, O
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.bulk_invitation_screen);
+
+        // Setting Font - By Munish Thakur
+        UtilSetFont.setFontMainScreen(this);
+
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             if(bundle.getBoolean(Constants.REG_TYPE))

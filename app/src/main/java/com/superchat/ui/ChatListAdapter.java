@@ -76,6 +76,7 @@ import com.superchat.utils.MediaEngine;
 import com.superchat.utils.MyBase64;
 import com.superchat.utils.RTMediaPlayer;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.utils.Utilities;
 import com.superchat.utils.VoiceMediaHandler;
 import com.superchat.widgets.RoundedImageView;
@@ -4322,6 +4323,9 @@ public class ChatListAdapter extends SimpleCursorAdapter {
     public View newView(Context context1, Cursor cursor, ViewGroup viewgroup) {
 
         final View view = LayoutInflater.from(context).inflate(layout, null); // mInflater.inflate(layout, viewgroup, false);//
+
+        UtilSetFont.setFontMainScreen(view);
+
         final ViewHolder viewholder = new ViewHolder();
         viewholder.messageType = cursor.getInt(cursor.getColumnIndex(ChatDBConstants.MESSAGE_TYPE_FIELD));
         viewholder.leftRightCompositeView = (RelativeLayout) view.findViewById(R.id.left_right_composite);

@@ -26,6 +26,7 @@ import com.superchat.model.ErrorModel;
 import com.superchat.utils.ColorGenerator;
 import com.superchat.utils.Constants;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.RoundedImageView;
 
 import android.app.AlertDialog;
@@ -130,6 +131,8 @@ public class MemberStatsAdapter extends ArrayAdapter<MemberStatsAdapter.UserInfo
 		{
 			viewholder = (ViewHolder)row.getTag();
 		}
+
+		UtilSetFont.setFontMainScreen(row);
 		
 		UserInfo info = (UserInfo)getItem(position);
 		final String item = info.displayName;

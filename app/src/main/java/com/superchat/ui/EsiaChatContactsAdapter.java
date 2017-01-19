@@ -54,6 +54,7 @@ import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.ProfilePicDownloader;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.RoundedImageView;
 
 import org.apache.http.HttpEntity;
@@ -272,6 +273,9 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
     public View newView(Context context1, Cursor cursor, ViewGroup viewgroup) {
         View view = LayoutInflater.from(context).inflate(layout, null);
+
+        UtilSetFont.setFontMainScreen(view);
+
         final ViewHolder viewholder = new ViewHolder();
         viewholder.ivOverFlowMenuMembers = (ImageView) view.findViewById(R.id.ivOverFlowMenuMembers);
         viewholder.image = (ImageView) view.findViewById(R.id.contact_icon);

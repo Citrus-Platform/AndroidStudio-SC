@@ -18,11 +18,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -50,6 +54,9 @@ import com.superchat.model.RegistrationFormResponse;
 import com.superchat.model.SGroupListObject;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.retrofit.response.model.ResponseOpenDomains;
+import com.superchat.ui.Adapters.connectors.OpenGroupAdapterConnector;
+import com.superchat.ui.Adapters.decorators.DividerItemDecoration;
+import com.superchat.ui.Adapters.recycler.OpenGroupRecyclerAdapter;
 import com.superchat.utils.AppUtil;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
@@ -79,13 +86,18 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static android.R.attr.category;
 import static com.superchat.interfaces.interfaceInstances.objApi;
 import static com.superchat.interfaces.interfaceInstances.objExceptione;
+import static com.superchat.interfaces.interfaceInstances.objGlobal;
+import static com.superchat.interfaces.interfaceInstances.objToast;
 
-public class OpenHubSearchScreen extends AppCompatActivity implements OnClickListener {
+public class OpenHubSearchScreen extends AppCompatActivity implements OnClickListener, SearchView.OnQueryTextListener, OpenGroupAdapterConnector {
 
     public static void start(Context context) {
         Bundle bundle = new Bundle();
@@ -98,6 +110,12 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
     Activity activity = this;
     Context context = this;
 
+    @BindView(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout swipeRefreshLayout;
+
+    @BindView(R.id.rvOpenGroups)
+    RecyclerView rvOpenGroups;
+
     private Toolbar toolbar;
     private static final String TAG = "OpenHubSearchScreen";
     String countryCode = "91";
@@ -109,9 +127,12 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
     ProfilePicUploader picUploader;
     ImageView superGroupIconView;
     boolean pendingProfile;
+    private boolean isApiCallRunning = false;
 
-    ArrayList<SGroupListObject> openDomainListMain;
-    ArrayList<SGroupListObject> openDomainListSearched;
+    ArrayList<SGroupListObject> openDomainListToShow = new ArrayList<>();
+    ArrayList<SGroupListObject> openDomainListMain = new ArrayList<>();
+    ArrayList<SGroupListObject> openDomainListSearched = new ArrayList<>();
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -120,18 +141,55 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
         init();
     }
 
-    private void init(){
+    private void init() {
+        ButterKnife.bind(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Open Hubs");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        getOpenHubs("");
+        swipeRefreshLayout.setRefreshing(false);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                doRefresh();
+            }
+        });
+
+        setUpOpenGroupAdapter();
+        getOpenHubs("", false);
+        List_scrollListener();
+
+
+        SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
+        String number = iPrefManager.getUserPhone();
+        mobileNumber = number;
     }
 
-    private void getOpenHubs(final String searchText){
-        Call call = objApi.getApi(this).getOpenHubs(""+searchText);
+    private void doRefresh() {
+        String query = searchView.getQuery().toString();
+        getOpenHubs(query, false);
+    }
+
+    ResponseOpenDomains responseData = null;
+    Call call = null;
+
+    private void getOpenHubs(final String searchText, boolean isLoadFromNextUrl) {
+
+        if (call != null && !call.isCanceled()) {
+            call.cancel();
+        }
+
+        isApiCallRunning = true;
+        if (isLoadFromNextUrl && responseData != null && responseData.getNextUrl() != null
+                && responseData.getNextUrl().trim().length() > 0) {
+            String nextUrl = responseData.getNextUrl();
+            call = objApi.getApi(this).getOpenHubsMore(nextUrl);
+        } else {
+            openDomainListToShow.clear();
+            call = objApi.getApi(this).getOpenHubs("" + searchText);
+        }
         call.enqueue(new RetrofitRetrofitCallback<ResponseOpenDomains>(this) {
 
             @Override
@@ -141,14 +199,20 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
 
             @Override
             protected void onResponseVoidzObject(Call call, ResponseOpenDomains response) {
-                if(response != null && response.getOpenDomainList() != null){
-                    if(searchText != null && searchText.length() > 0){
+                responseData = response;
+                if (response != null && response.getOpenDomainList() != null) {
+                    if (searchText != null && searchText.length() > 0) {
                         openDomainListSearched.clear();
                         openDomainListSearched.addAll(response.getOpenDomainList());
+
+                        openDomainListToShow.addAll(openDomainListSearched);
                     } else {
                         openDomainListMain.clear();
                         openDomainListMain.addAll(response.getOpenDomainList());
+
+                        openDomainListToShow.addAll(openDomainListMain);
                     }
+
                     refreshList();
                 } else {
 
@@ -157,7 +221,10 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
 
             @Override
             protected void common() {
-
+                isApiCallRunning = false;
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
             }
 
             @Override
@@ -168,18 +235,75 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
         });
     }
 
-    private void refreshList(){
+    LinearLayoutManager layoutManager;
+    OpenGroupRecyclerAdapter adapter;
+
+    private void setUpOpenGroupAdapter() {
+        adapter = new OpenGroupRecyclerAdapter(this, this, this, openDomainListToShow);
+        layoutManager = new LinearLayoutManager(this);
+        rvOpenGroups.setLayoutManager(layoutManager);
+        rvOpenGroups.setAdapter(adapter);
+        rvOpenGroups.setNestedScrollingEnabled(true);
+
+        DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(rvOpenGroups.getContext(),
+                layoutManager.getOrientation());
+        rvOpenGroups.addItemDecoration(mDividerItemDecoration);
 
     }
+
+    private void refreshList() {
+        adapter.notifyDataSetChanged();
+    }
+
+    private SearchView searchView;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.searchview_menu, menu);
         // Retrieve the SearchView and plug it into SearchManager
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        searchView.setOnQueryTextListener(this);
         return true;
+    }
+
+    public void List_scrollListener() {
+
+        rvOpenGroups.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                if (!(isApiCallRunning) /*&& isMoredataToLoad*/) {
+                    if (responseData != null) {
+                        String nextUrl = responseData.getNextUrl();
+                        if (nextUrl != null && nextUrl.trim().length() > 0) {
+                            getOpenHubs("", true);
+                        }
+                    }
+                } else {
+                    objToast.makeToast(OpenHubSearchScreen.this, "More Result Loading.. Please Wait.", objGlobal.MODE_RELEASE);
+                }
+            }
+        });
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        getOpenHubs(newText, false);
+        return false;
+    }
+
+    @Override
+    public void getGroupClickedInfo(SGroupListObject sGroupListObject) {
+        if (sGroupListObject != null) {
+            showWelcomeScreen(sGroupListObject);
+        }
     }
 
     public void onResume() {
@@ -205,7 +329,29 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
 
     Dialog welcomeDialog = null;
 
-    public void showWelcomeScreen(final String supergroup_name, final String sg_display_name, final String inviter_name, final String org_name, final String file_id, final int type, final String domainType) {
+    public void showWelcomeScreen(SGroupListObject sGroupListObject) {
+
+        String domainName = sGroupListObject.getDomainName();
+        String adminName = sGroupListObject.getAdminName();
+        String orgName = sGroupListObject.getOrgName();
+        String orgUrl = sGroupListObject.getOrgUrl();
+        String privacyType = sGroupListObject.getPrivacyType();
+        String logoFileId = sGroupListObject.getLogoFileId();
+        String domainType = sGroupListObject.getDomainType();
+        String createdDate = sGroupListObject.getCreatedDate();
+        String domainCount = sGroupListObject.getDomainCount();
+        String domainNotify = sGroupListObject.getDomainNotify();
+        String domainDisplayName = sGroupListObject.getDomainDisplayName();
+        String description = sGroupListObject.getDescription();
+
+
+        final String supergroup_name = domainName;
+        final String sg_display_name = domainDisplayName;
+        final String inviter_name = adminName;
+        final String org_name = orgName;
+        final String file_id = logoFileId;
+        final int type = 1;
+
         SharedPrefManager.getInstance().setDomainType(domainType);
         welcomeDialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar);
         welcomeDialog.setCanceledOnTouchOutside(false);
@@ -293,7 +439,10 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
 
     public void onClick(View view) {
         switch (view.getId()) {
-
+            case android.R.id.home: {
+                finish();
+                break;
+            }
             case R.id.row_layout:
                 LinearLayout ll = (LinearLayout) view.findViewById(R.id.row_layout);
                 RadioButton radio = (RadioButton) view.findViewById(R.id.id_sg_radio_button);
@@ -909,119 +1058,5 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
         });
     }
 
-    //============================================================
-    class GetSuperGroupProfile extends AsyncTask<String, String, String> {
-
-        String domain_name;
-        ProgressDialog progressDialog = null;
-
-        public GetSuperGroupProfile(final String domain_name) {
-            this.domain_name = domain_name;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            progressDialog = ProgressDialog.show(OpenHubSearchScreen.this, "", "Loading. Please wait...", true);
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(String... urls) {
-            try {
-                String url = Constants.SERVER_URL + "/tiger/rest/admin/domain/profile?domainName=" + URLEncoder.encode(domain_name, "UTF-8");
-                Log.i(TAG, "GetSuperGroupProfile :: doInBackground : URL - " + url);
-                HttpGet httppost = new HttpGet(url);
-                HttpClient httpclient = new DefaultHttpClient();
-                HttpResponse response = httpclient.execute(httppost);
-                // StatusLine stat = response.getStatusLine();
-                int status = response.getStatusLine().getStatusCode();
-                if (status == 200) {
-                    HttpEntity entity = response.getEntity();
-                    String data = EntityUtils.toString(entity);
-                    return data;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        protected void onPostExecute(String data) {
-            if (progressDialog != null) {
-                progressDialog.dismiss();
-                progressDialog = null;
-            }
-            if (data != null) {
-                Log.i(TAG, "GetSuperGroupProfile :: onPostExecute : response data - " + data);
-                if (data.contains("success")) {
-                    String sg_display_name = null;
-                    String sg_name = null;
-                    String inviter = null;
-                    String file_id = null;
-                    String org_name = null;
-                    String privacy_type = null;
-                    String domainType = null;
-                    try {
-                        JSONObject json = new JSONObject(data);
-                        if (json != null && json.has("domainName")) {
-                            sg_name = json.getString("domainName");
-                            superGroupName = sg_name;
-                        } else
-                            sg_name = null;
-                        if (json != null && json.has("displayName"))
-                            sg_display_name = json.getString("displayName");
-                        else
-                            sg_display_name = sg_name;
-                        if (json != null && json.has("adminName"))
-                            inviter = json.getString("adminName");
-                        else
-                            inviter = null;
-                        if (json != null && json.has("logoFileId")) {
-                            file_id = json.getString("logoFileId");
-                            SharedPrefManager.getInstance().saveSGFileId(sg_name, file_id);
-                        } else
-                            file_id = null;
-                        if (json != null && json.has("orgName"))
-                            org_name = json.getString("orgName");
-                        else
-                            org_name = null;
-                        if (json != null && json.has("privacyType"))
-                            privacy_type = json.getString("privacyType");
-                        else
-                            privacy_type = "open";
-                        if (json != null && json.has("domainType"))
-                            domainType = json.getString("domainType");
-                        else
-                            domainType = null;
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                    if (privacy_type != null && privacy_type.equalsIgnoreCase("closed"))
-                        showDialog("This SuperGroup only accepts members by invitation");
-                    else
-                        showWelcomeScreen(superGroupName, sg_display_name, inviter, org_name, file_id, 0, domainType);
-                } else if (data.contains("error")) {
-                    Gson gson = new GsonBuilder().create();
-                    ErrorModel errorModel = gson.fromJson(data, ErrorModel.class);
-                    if (errorModel != null) {
-                        if (errorModel.citrusErrors != null && !errorModel.citrusErrors.isEmpty()) {
-                            ErrorModel.CitrusError citrusError = errorModel.citrusErrors.get(0);
-                            if (citrusError != null && citrusError.code.equals("20021")) {
-                                showDialog(citrusError.message);
-                            } else
-                                showDialog(citrusError.message);
-                        } else if (errorModel.message != null)
-                            showDialog(errorModel.message);
-                    } else
-                        showDialog("Please try again later.");
-                }
-            } else
-                showDialog("Please try again later.");
-        }
-    }
 }
 

@@ -18,7 +18,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.ListFragment;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -44,7 +43,7 @@ import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
-import com.superchat.widgets.ContactsAdapter;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.RoundedImageView;
 
 import java.io.File;
@@ -118,6 +117,9 @@ public class ContactsScreen extends CustomFragmentHomeTabs implements Connection
     public View onCreateView(LayoutInflater layoutinflater,
                              ViewGroup viewgroup, Bundle bundle) {
         View view = layoutinflater.inflate(R.layout.contact_home, null);
+
+        UtilSetFont.setFontMainScreen(view);
+
         searchBoxView = (EditText) view.findViewById(R.id.id_search_field);
 
         toolbar_child_fragment_tab = (Toolbar) view.findViewById(R.id.toolbar_child_fragment_tab);

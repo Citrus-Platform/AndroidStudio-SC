@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.chat.sdk.db.ChatDBWrapper;
 import com.superchat.R;
+import com.superchat.utils.UtilSetFont;
 
 public class ContactUsScreen extends Activity{
 
@@ -25,6 +26,8 @@ public class ContactUsScreen extends Activity{
 		super.onCreate(bundle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.contact_us_screen);
+
+		UtilSetFont.setFontMainScreen(this);
 
 
 		(findViewById(R.id.help_back)).setOnClickListener(new OnClickListener() {

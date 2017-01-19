@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.superchat.R;
+import com.superchat.utils.UtilSetFont;
 
 //import android.app.ListFragment;
 
@@ -15,6 +16,8 @@ public class TempFragment extends Fragment {
 	public View onCreateView(LayoutInflater layoutinflater,
 							 ViewGroup viewgroup, Bundle bundle) {
 		View view = layoutinflater.inflate(R.layout.contact_home, null);
+
+		UtilSetFont.setFontMainScreen(view);
 
 		return view;
 	}

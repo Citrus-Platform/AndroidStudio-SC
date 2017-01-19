@@ -1,6 +1,7 @@
 package com.superchat.ui;
 
 import com.superchat.R;
+import com.superchat.utils.UtilSetFont;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +15,8 @@ public class LoginChangeScreen extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.login_change_screen);
+
+		UtilSetFont.setFontMainScreen(this);
 	}
 
 	public void onExistingSignInClick(View view) {

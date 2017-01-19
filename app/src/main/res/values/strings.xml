@@ -9,10 +9,10 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="superchat_welcome">Welcome to</string>
-    <string name="verification_code_sent">Please enter the verification code sent to your phone.</string>
+    <string name="verification_code_sent">A Verification code was sent to you</string>
     <string name="please_make_sure">Please make sure your mobile number is active</string>
     <string name="registration_title">START A NEW SUPERGROUP</string>
-    <string name="verify_phone_number_msg">Please enter the phone number you would like to use. We will send a verification code to that number.</string>
+    <string name="verify_phone_number_msg">Please enter your mobile number</string>
     <string name="self_verify_phone_number_msg">Unable to verify this time, please try after sometime.</string>
     <string name="lbl_please_try_later">Sorry, could not create the group due to a technical error. Please try after sometime.</string>
     <string name="error_network_connection">No network connection. Please check your network/Wi-Fi settings.</string>
@@ -476,6 +476,7 @@
     <string name="select_group_type">Select Public or Private</string>
     <string name="select_group_type_in_creation">Select Open or Closed</string>
     <string name="welcome_to_superchat">Welcome to Superchat</string>
+    <string name="join_a_hub">Join A Hub</string>
     <string name="join_a_group">JOIN A GROUP</string>
     <string name="or">OR</string>
     <string name="continue_txt">Continue</string>

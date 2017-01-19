@@ -19,6 +19,7 @@ import com.superchat.R;
 import com.superchat.utils.Constants;
 import com.superchat.utils.FileDownloadResponseHandler;
 import com.superchat.utils.FileUploaderDownloader;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.utils.ZipManager;
 
 import org.json.JSONArray;
@@ -47,6 +48,9 @@ public class ChatBackupRestoreScreen extends Activity implements OnClickListener
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.restore_backup);
+
+		UtilSetFont.setFontMainScreen(this);
+
 		Bundle bundle = getIntent().getExtras();
 		if(bundle != null){
 			backedUpFileID = bundle.getString(Constants.BACKUP_FILEID);

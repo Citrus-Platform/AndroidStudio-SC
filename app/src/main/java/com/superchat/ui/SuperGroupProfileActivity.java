@@ -51,6 +51,7 @@ import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
 import com.superchat.utils.ProfilePicUploader;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.RoundedImageView;
 
 import org.apache.http.HttpEntity;
@@ -139,6 +140,8 @@ private static final String TAG = "SuperGroupProfileActivity";
 		super.onCreate(bundle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.supergoup_profile);
+
+		UtilSetFont.setFontMainScreen(this);
 
 		aboutLabelView = (TextView)findViewById(R.id.id_about_label);
 		superGroupDisplayName = (TextView)findViewById(R.id.id_sg_display_name);
@@ -268,6 +271,7 @@ private static final String TAG = "SuperGroupProfileActivity";
 		try{
 			// TODO Auto-generated method stub
 			isEditModeOn = true;
+
 			editProfile = new Dialog(this,android.R.style.Theme_Black_NoTitleBar);
 			editProfile.setCanceledOnTouchOutside(false);
 			editProfile.setContentView(R.layout.supergroup_profile_edit);//id_sg_type

@@ -10,6 +10,7 @@ import com.superchat.utils.ColorGenerator;
 import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -171,8 +172,12 @@ public class BulkInvitationAdapter extends ArrayAdapter<BulkInvitationAdapter.Ap
 		{
 			viewholder = (ViewHolder)row.getTag();
 		}
-		
-		
+
+
+
+		// Setting Font - By Munish Thakur
+		UtilSetFont.setFontMainScreen(row);
+
 		AppContact map = (AppContact)getItem(position);
 		viewholder.userNumber = map.getNumber();
 		viewholder.displayName = map.getName();

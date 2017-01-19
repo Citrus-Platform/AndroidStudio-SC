@@ -135,4 +135,11 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
+    <style name="Dark.Overlay" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:background">?attr/colorPrimary</item>
+    </style>
+
+    <style name="Dark.Overlay.LightPopup" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:background">@color/md_grey_200</item>
+    </style>
 </resources>

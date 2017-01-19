@@ -72,6 +72,7 @@ import com.superchat.utils.Log;
 import com.superchat.utils.ProfilePicDownloader;
 import com.superchat.utils.ProfilePicUploader;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.MyriadSemiboldTextView;
 import com.superchat.widgets.RoundedImageView;
 
@@ -95,6 +96,9 @@ public class ContactViewScreen extends FragmentActivity implements OnClickListen
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.contact_view_screen);
+
+		UtilSetFont.setFontMainScreen(this);
+
 		LinearLayout mainLayout = (LinearLayout)findViewById(R.id.id_contact_details_rlayout);
 		displayNameView = (TextView)findViewById(R.id.id_display_name_field);
 		saveContactView = (TextView)findViewById(R.id.id_save_contact);

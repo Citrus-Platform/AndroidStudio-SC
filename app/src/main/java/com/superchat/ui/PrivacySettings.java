@@ -36,6 +36,7 @@ import com.superchat.model.ErrorModel;
 import com.superchat.model.PrivacyStatusModel;
 import com.superchat.utils.Constants;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -101,6 +102,9 @@ public class PrivacySettings extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.privacy_settings);
+
+        UtilSetFont.setFontMainScreen(this);
+
         pref = SharedPrefManager.getInstance();
 
         tvContactCount = (TextView) findViewById(R.id.tvContactCount);

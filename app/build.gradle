@@ -9,6 +9,13 @@ buildscript {
 }
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'android-apt'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
+apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     dexOptions {
@@ -87,4 +94,10 @@ dependencies {
 
     // Fonts
     compile 'me.anwarshahriar:calligrapher:1.0'
+    // Glide - Image Loading Library
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    // jakewharton butterknief library
+    compile 'com.jakewharton:butterknife:8.1.0'
+    apt 'com.jakewharton:butterknife-compiler:8.1.0'
+    compile 'jp.wasabeef:glide-transformations:2.0.1'
 }

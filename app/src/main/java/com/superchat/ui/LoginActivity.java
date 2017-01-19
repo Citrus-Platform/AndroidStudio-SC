@@ -2,6 +2,7 @@ package com.superchat.ui;
 
 import com.sinch.android.rtc.SinchError;
 import com.superchat.R;
+import com.superchat.utils.UtilSetFont;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -33,6 +34,8 @@ public class LoginActivity extends HomeScreen implements SinchService.StartFaile
                 loginClicked();
             }
         });
+
+        UtilSetFont.setFontMainScreen(this);
     }
 
     @Override

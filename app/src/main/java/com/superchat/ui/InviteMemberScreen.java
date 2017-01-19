@@ -28,6 +28,7 @@ import com.superchat.model.ErrorModel;
 import com.superchat.utils.Constants;
 import com.superchat.utils.Countries;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.MyriadRegularTextView;
 
 import android.app.Dialog;
@@ -291,6 +292,8 @@ countryNameView.setOnClickListener(new OnClickListener() {
 //		Tracker t = ((SuperChatApplication) getApplicationContext()).getTracker(TrackerName.APP_TRACKER);
 //        t.setScreenName("Login Screen");
 //        t.send(new HitBuilders.AppViewBuilder().build());
+
+		UtilSetFont.setFontMainScreen(this);
 	}
 
 //	public void onBackPressed(){

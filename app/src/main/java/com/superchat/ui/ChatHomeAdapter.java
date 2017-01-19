@@ -1,4 +1,4 @@
-package com.superchat.widgets;
+package com.superchat.ui;
 
 import android.app.Dialog;
 import android.content.ContentValues;
@@ -42,17 +42,13 @@ import com.superchat.data.beans.PhotoToLoad;
 import com.superchat.data.db.DBWrapper;
 import com.superchat.data.db.DatabaseConstants;
 import com.superchat.task.ImageLoaderWorker;
-import com.superchat.ui.ChatListScreen;
-import com.superchat.ui.CreateSharedIDActivity;
-import com.superchat.ui.GroupProfileScreen;
-import com.superchat.ui.HomeScreen;
-import com.superchat.ui.ProfileScreen;
-import com.superchat.ui.TextDrawable;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.ColorGenerator;
 import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
+import com.superchat.widgets.RoundedImageView;
 
 import java.io.File;
 import java.io.IOException;
@@ -800,6 +796,9 @@ public void loadDialog(){
 		myParent = viewgroup;
 		userMe = iChatPref.getUserName();
 		View view = LayoutInflater.from(context).inflate(layout, null);
+
+		UtilSetFont.setFontMainScreen(view);
+
 		ViewHolder viewholder = new ViewHolder();
 		viewholder.lastMessage = (TextView) view.findViewById(R.id.id_last_message);
 		viewholder.muteIcon = (ImageView) view.findViewById(R.id.id_mute_icon);

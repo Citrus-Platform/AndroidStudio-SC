@@ -42,6 +42,7 @@ import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.RoundedImageView;
 
 import java.io.File;
@@ -165,6 +166,8 @@ public class IncomingCallScreenVideoActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.incoming_video);
+
+        UtilSetFont.setFontMainScreen(this);
 
         keyguardLock =((KeyguardManager) getSystemService(Activity.KEYGUARD_SERVICE)).newKeyguardLock(KEYGUARD_SERVICE);
         powerManager = ((PowerManager) getSystemService(Context.POWER_SERVICE));

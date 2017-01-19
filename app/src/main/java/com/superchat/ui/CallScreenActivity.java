@@ -35,6 +35,7 @@ import com.superchat.SuperChatApplication;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.retrofit.response.model.ConferenceInfoResponse;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.utils.UtilTemp;
 
 import java.io.File;
@@ -185,6 +186,9 @@ public class CallScreenActivity extends Activity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.callscreen);
+
+        UtilSetFont.setFontMainScreen(this);
+
 
 //		KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE); 
 //		final KeyguardManager.KeyguardLock kl = km .newKeyguardLock("MyKeyguardLock"); 

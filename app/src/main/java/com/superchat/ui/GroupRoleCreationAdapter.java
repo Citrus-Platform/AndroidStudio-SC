@@ -37,6 +37,7 @@ import com.superchat.utils.ColorGenerator;
 import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.RoundedImageView;
 
 import org.apache.http.HttpEntity;
@@ -243,6 +244,9 @@ public class GroupRoleCreationAdapter  extends ArrayAdapter<GroupRoleCreationAda
 		{
 			viewholder = (ViewHolder)row.getTag();
 		}
+
+		UtilSetFont.setFontMainScreen(row);
+		
 //		ViewHolder viewholder = (ViewHolder)view.getTag();
 		UserInfo map = (UserInfo)getItem(position);
 		viewholder.userNames = map.getUserName();//cursor.getString(cursor.getColumnIndex(DatabaseConstants.USER_NAME_FIELD));

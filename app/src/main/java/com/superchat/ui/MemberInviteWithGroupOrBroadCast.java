@@ -40,6 +40,7 @@ import com.superchat.utils.GroupCreateTaskOnServer;
 import com.superchat.utils.Log;
 import com.superchat.utils.MyBase64;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.MyriadSemiboldTextView;
 
 import android.app.Activity;
@@ -187,6 +188,9 @@ public class MemberInviteWithGroupOrBroadCast extends Activity implements OnClic
 		super.onCreate(bundle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.member_invite_in_grupnbrad);
+
+		UtilSetFont.setFontMainScreen(this);
+
 		prefManager = SharedPrefManager.getInstance();
 		calander = Calendar.getInstance(TimeZone.getDefault());
 		currentCalender = Calendar.getInstance(TimeZone.getDefault());

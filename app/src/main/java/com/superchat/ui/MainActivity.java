@@ -51,6 +51,7 @@ import com.superchat.utils.Constants;
 import com.superchat.utils.Countries;
 import com.superchat.utils.ProfilePicUploader;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.MyriadRegularTextView;
 import com.superchat.widgets.MyriadSemiboldTextView;
 
@@ -982,9 +983,11 @@ public class MainActivity extends FragmentActivity implements
                             countryNameView.setText(countryObj.getStationName());
                         if (countryFlagView != null) {
                             if (cc == null)
-                                countryFlagView.setVisibility(View.INVISIBLE);
+                                countryFlagView.setVisibility(View.GONE);
                             else {
-                                countryFlagView.setVisibility(View.VISIBLE);
+
+                                // Commented By - Munish
+                                //countryFlagView.setVisibility(View.VISIBLE);
                                 //CountryChooserScreen.chooserImage = cc.toUpperCase();
                                 if (Build.VERSION.SDK_INT >= 16)
                                     countryFlagView.setBackground(getDrawableFromAsset(cc.toUpperCase() + ".png"));
@@ -1019,10 +1022,11 @@ public class MainActivity extends FragmentActivity implements
                     countryNameView.setText(""+CountryChooserScreen.chooserCountry);
                 if (countryFlagView != null) {
                     if (CountryChooserScreen.chooserImage == null && countryCode == null) {
-                        //countryFlagView.setVisibility(View.INVISIBLE);
+                        //countryFlagView.setVisibility(View.GONE);
                     }
                     else {
-                        countryFlagView.setVisibility(View.VISIBLE);
+                        // Commented By - Munish
+                        //countryFlagView.setVisibility(View.VISIBLE);
                         if (CountryChooserScreen.chooserImage != null) {
                             if (Build.VERSION.SDK_INT >= 16)
                                 countryFlagView.setBackground(getDrawableFromAsset(CountryChooserScreen.chooserImage + ".png"));
@@ -1055,6 +1059,8 @@ public class MainActivity extends FragmentActivity implements
 //		Tracker t = ((SuperChatApplication) getApplicationContext()).getTracker(TrackerName.APP_TRACKER);
 //        t.setScreenName("Login Screen");
 //        t.send(new HitBuilders.AppViewBuilder().build());
+        
+        UtilSetFont.setFontMainScreen(this);
     }
 
     final Handler passwordHandler = new Handler() {
@@ -1133,9 +1139,10 @@ public class MainActivity extends FragmentActivity implements
                         countryNameView.setText(country);
                     if (countryFlagView != null) {
                         if (countryCode == null)
-                            countryFlagView.setVisibility(View.INVISIBLE);
+                            countryFlagView.setVisibility(View.GONE);
                         else {
-                            countryFlagView.setVisibility(View.VISIBLE);
+                            // Commented By - Munish
+                            //countryFlagView.setVisibility(View.VISIBLE);
                             CountryChooserScreen.chooserImage = countryCode.toUpperCase();
                             CountryChooserScreen.chooserCountry = country;
                             if (Build.VERSION.SDK_INT >= 16)
@@ -1385,9 +1392,9 @@ public class MainActivity extends FragmentActivity implements
                         // TODO Auto-generated method stub
                         if (privacyCheckbox.isChecked()) {
                             ((Button) findViewById(R.id.id_next_btn)).setVisibility(View.VISIBLE);
-                            ((Button) findViewById(R.id.next_btn)).setVisibility(View.VISIBLE);
+                            //((Button) findViewById(R.id.next_btn)).setVisibility(View.VISIBLE);
                         } else
-                            ((Button) findViewById(R.id.next_btn)).setVisibility(View.INVISIBLE);
+                            //((Button) findViewById(R.id.next_btn)).setVisibility(View.INVISIBLE);
                         ((Button) findViewById(R.id.id_next_btn)).setVisibility(View.GONE);
                     }
                 });
@@ -1734,6 +1741,7 @@ public class MainActivity extends FragmentActivity implements
             HttpPost httpPost = new HttpPost(Constants.SERVER_URL + "/tiger/rest/user/register");
 //	         httpPost.setEntity(new UrlEncodedFormEntity(JSONstring));
             httpPost = SuperChatApplication.addHeaderInfo(httpPost, false);
+
             HttpResponse response = null;
 
             try {
@@ -2293,9 +2301,10 @@ public class MainActivity extends FragmentActivity implements
                         countryNameView.setText(countryObj.getStationName());
                     if (countryFlagView != null) {
                         if (result == null)
-                            countryFlagView.setVisibility(View.INVISIBLE);
+                            countryFlagView.setVisibility(View.GONE);
                         else {
-                            countryFlagView.setVisibility(View.VISIBLE);
+                            // Commented By - Munish
+                            //countryFlagView.setVisibility(View.VISIBLE);
                             CountryChooserScreen.chooserImage = result.toUpperCase();
                             CountryChooserScreen.chooserCountry = countryObj.getStationName();
                             if (Build.VERSION.SDK_INT >= 16)

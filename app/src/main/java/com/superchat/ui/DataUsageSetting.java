@@ -18,6 +18,7 @@ import com.superchat.model.SuperGroupDownloadDataSettings_Common;
 import com.superchat.model.SuperGroupDownloadDataSettings_Mobile;
 import com.superchat.model.SuperGroupDownloadDataSettings_WIFI;
 import com.superchat.model.SuperGroupDownloadDataSettings_connector;
+import com.superchat.utils.UtilSetFont;
 
 import static com.superchat.R.id.id_back;
 import static com.superchat.ui.DataUsageSetting.PopupDialog.MOBILE;
@@ -60,6 +61,8 @@ public class DataUsageSetting extends Activity implements View.OnClickListener {
         super.onCreate(bundle);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.data_usage_activity);
+
+        UtilSetFont.setFontMainScreen(this);
 
         superGroupDownloadSettingsHandler = new SuperGroupDownloadSettingsHandler(context);
         settingDownloadData = superGroupDownloadSettingsHandler.getSGInfo();

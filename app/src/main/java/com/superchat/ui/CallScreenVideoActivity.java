@@ -40,6 +40,7 @@ import com.sinch.android.rtc.video.VideoScalingType;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.utils.UtilTemp;
 import com.superchat.utils.Utilities;
 
@@ -204,6 +205,9 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.callscreen_video);
+
+        UtilSetFont.setFontMainScreen(this);
+
 
         iChatPref = SharedPrefManager.getInstance();
 

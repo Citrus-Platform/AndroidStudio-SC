@@ -56,6 +56,7 @@ import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.RoundedImageView;
 
 import org.apache.http.HttpEntity;
@@ -152,6 +153,9 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
     public View onCreateView(LayoutInflater layoutinflater,
                              ViewGroup viewgroup, Bundle bundle) {
         View view = layoutinflater.inflate(R.layout.public_group_layout, null);
+
+        UtilSetFont.setFontMainScreen(view);
+
         searchBoxView = (EditText) view.findViewById(R.id.id_search_user);
         myChannelTabLayout = (LinearLayout) view.findViewById(R.id.id_my_channel);
         allChannelTabLayout = (LinearLayout) view.findViewById(R.id.id_all_channels);

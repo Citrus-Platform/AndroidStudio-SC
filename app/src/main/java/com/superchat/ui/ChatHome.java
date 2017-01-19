@@ -19,7 +19,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.ListFragment;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -33,7 +32,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chat.sdk.ChatCountListener;
@@ -49,7 +47,7 @@ import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
-import com.superchat.widgets.ChatHomeAdapter;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.RoundedImageView;
 
 import java.io.File;
@@ -240,6 +238,9 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
                              ViewGroup viewgroup, Bundle bundle) {
 
         View view = layoutinflater.inflate(R.layout.chat_home, null);
+
+        UtilSetFont.setFontMainScreen(view);
+
         noneMessageView = (LinearLayout) view.findViewById(R.id.center_layout);
         searchBoxView = (EditText) view.findViewById(R.id.id_search_field);
         clearSearch = (ImageView) view.findViewById(R.id.id_back_arrow);
@@ -299,6 +300,8 @@ public class ChatHome extends CustomFragmentHomeTabs implements ChatCountListene
             }
 
         });
+
+        UtilSetFont.setFontMainScreen(getActivity());
 
         return view;
     }

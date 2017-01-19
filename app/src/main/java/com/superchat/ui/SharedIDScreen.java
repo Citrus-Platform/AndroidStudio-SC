@@ -38,6 +38,7 @@ import com.superchat.model.LoginResponseModel;
 import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 
 import java.io.File;
 import java.io.IOException;
@@ -96,6 +97,9 @@ public class SharedIDScreen extends Activity implements OnClickListener{//, OnMe
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.shared_id_screen);
+
+		UtilSetFont.setFontMainScreen(this);
+
 //		View view = layoutinflater.inflate(R.layout.shared_id_screen, null);
 //		searchBoxView = (EditText) view.findViewById(R.id.id_search_user);
 //		myChannelTabLayout = (LinearLayout) view.findViewById(R.id.id_my_channel);

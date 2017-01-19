@@ -10,6 +10,7 @@ import com.superchat.R;
 import com.superchat.utils.ColorGenerator;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 
 import android.content.Context;
 import android.content.Intent;
@@ -145,8 +146,10 @@ public class CountryChooserAdapter extends ArrayAdapter<CountryChooserAdapter.Co
 		{
 			viewholder = (ViewHolder)row.getTag();
 		}
-		
-		
+
+		UtilSetFont.setFontMainScreen(row);
+
+
 		CountryItem map = (CountryItem)getItem(position);
 		viewholder.userNumber = map.getNumber();
 		viewholder.displayName = map.getName();

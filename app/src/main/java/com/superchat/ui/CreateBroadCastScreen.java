@@ -61,6 +61,7 @@ import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.ProfilePicUploader;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.MyriadSemiboldTextView;
 
 public class CreateBroadCastScreen extends Activity implements OnClickListener {
@@ -102,6 +103,9 @@ public class CreateBroadCastScreen extends Activity implements OnClickListener {
 		super.onCreate(bundle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.create_broadcast_screen);
+
+		UtilSetFont.setFontMainScreen(this);
+
 		groupNameView =(EditText)findViewById(R.id.id_group_name);
 		groupDiscriptionView=(EditText)findViewById(R.id.id_status_message);
 		groupIconView = (ImageView) findViewById(R.id.id_group_icon);

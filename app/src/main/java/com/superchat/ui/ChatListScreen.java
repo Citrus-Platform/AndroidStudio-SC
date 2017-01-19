@@ -150,6 +150,7 @@ import com.superchat.utils.ProfilePicDownloader;
 import com.superchat.utils.ProfilePicUploader;
 import com.superchat.utils.RTMediaPlayer;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.utils.VoiceMedia;
 import com.superchat.utils.VoiceMediaHandler;
 import com.superchat.widgets.RoundedImageView;
@@ -1075,6 +1076,10 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         super.onCreate(bundle);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.chat_list_screen);
+
+        // Setting Font - By Munish Thakur
+        UtilSetFont.setFontMainScreen(this);
+
         mPlayer = MediaPlayer.create(this, R.raw.off);
         isFreshLaunch = true;
         initVoiceRecorderWheelDialog();

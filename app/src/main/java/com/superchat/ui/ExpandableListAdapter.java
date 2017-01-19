@@ -25,6 +25,7 @@ import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.RoundedImageView;
 
 import java.io.File;
@@ -68,6 +69,9 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 ListChildViewHolder child = new ListChildViewHolder(view);
                 return child;
         }
+
+        UtilSetFont.setFontMainScreen(view);
+
         return null;
     }
 
@@ -280,6 +284,8 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             llHeaderExpandable = (LinearLayout) itemView.findViewById(R.id.llHeaderExpandable);
             header_title = (TextView) itemView.findViewById(R.id.header_title);
             btn_expand_toggle = (ImageView) itemView.findViewById(R.id.btn_expand_toggle);
+
+            UtilSetFont.setFontMainScreen(itemView);
         }
     }
 
@@ -306,7 +312,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 //            countContainer = (RelativeLayout) itemView.findViewById(R.id.countContainer);
             container = (RelativeLayout) itemView.findViewById(R.id.container);
 
-            SuperChatApplication.getInstance().settingFont(SuperChatApplication.FONT_TYPE.LATO_BOLD, itemView);
+            UtilSetFont.setFontMainScreen(itemView);
         }
     }
 

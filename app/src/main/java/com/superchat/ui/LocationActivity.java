@@ -22,6 +22,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.superchat.R;
+import com.superchat.utils.UtilSetFont;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,6 +44,9 @@ public class LocationActivity extends FragmentActivity implements LocationListen
             finish();
         }
         setContentView(R.layout.location_screen);
+
+        UtilSetFont.setFontMainScreen(this);
+        
         SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.googleMap);
 //        googleMap = supportMapFragment.getMap();
 //        googleMap.setMyLocationEnabled(true);

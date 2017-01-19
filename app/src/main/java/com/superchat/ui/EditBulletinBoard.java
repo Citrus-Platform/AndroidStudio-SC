@@ -45,6 +45,7 @@ import com.superchat.utils.CompressImage;
 import com.superchat.utils.Constants;
 import com.superchat.utils.ProfilePicDownloader;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.RoundedImageView;
 
 import org.apache.http.HttpEntity;
@@ -107,6 +108,8 @@ import java.io.UnsupportedEncodingException;
         super.onCreate(bundle);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.edit_bulletin_screen);
+
+        UtilSetFont.setFontMainScreen(this);
 
         oldImageFileId = null;
         iPrefManager = SharedPrefManager.getInstance().getInstance();

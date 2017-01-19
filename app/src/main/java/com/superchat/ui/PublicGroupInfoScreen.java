@@ -32,6 +32,7 @@ import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.ProfilePicDownloader;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.RoundedImageView;
 
 import android.app.Activity;
@@ -88,6 +89,9 @@ public class PublicGroupInfoScreen extends Activity implements OnClickListener{
 		super.onCreate(bundle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.public_group_info_screen);
+
+		UtilSetFont.setFontMainScreen(this);
+
 		membersCountView = (TextView)findViewById(R.id.id_member_counts);
 		channelOwnerView = (TextView)findViewById(R.id.id_channel_owner);
 		channelDescriptionView = (TextView)findViewById(R.id.id_channel_description);

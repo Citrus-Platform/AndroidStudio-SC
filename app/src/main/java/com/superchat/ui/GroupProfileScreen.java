@@ -82,6 +82,7 @@ import com.superchat.utils.Log;
 import com.superchat.utils.ProfilePicDownloader;
 import com.superchat.utils.RTMediaPlayer;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.utils.VoiceMediaHandler;
 import com.superchat.widgets.MyriadSemiboldTextView;
 import com.superchat.widgets.RoundedImageView;
@@ -268,6 +269,8 @@ public class GroupProfileScreen extends Activity implements OnClickListener, Pro
 		super.onCreate(bundle);
 		//requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.group_info_screen);
+
+		UtilSetFont.setFontMainScreen(this);
 
 		iChatPref = SharedPrefManager.getInstance();
 

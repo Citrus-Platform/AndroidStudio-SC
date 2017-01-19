@@ -2,6 +2,7 @@ package com.superchat.ui;
 
 import com.superchat.R;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -42,6 +43,9 @@ public class TermAndConditionScreen extends FragmentActivity {
 //		}
 		
 		setContentView(R.layout.terms_and_conditions);
+
+		UtilSetFont.setFontMainScreen(this);
+
 		TextView titleView = (TextView)findViewById(R.id.id_title);
 		Bundle bundle = getIntent().getExtras();
 		if(bundle!=null && bundle.getString("TITLE")!=null)

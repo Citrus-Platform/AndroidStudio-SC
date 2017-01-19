@@ -46,6 +46,7 @@ import com.superchat.utils.GroupCreateTaskOnServer;
 import com.superchat.utils.Log;
 import com.superchat.utils.MyBase64;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.MyriadSemiboldTextView;
 
 import android.app.Activity;
@@ -200,6 +201,9 @@ public class GroupStausInfoScreen extends Activity implements OnClickListener{
 		super.onCreate(bundle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.group_status_screen);
+
+		UtilSetFont.setFontMainScreen(this);
+
 		calander = Calendar.getInstance(TimeZone.getDefault());
 		currentCalender = Calendar.getInstance(TimeZone.getDefault());
 		calander.setTimeInMillis(System.currentTimeMillis());

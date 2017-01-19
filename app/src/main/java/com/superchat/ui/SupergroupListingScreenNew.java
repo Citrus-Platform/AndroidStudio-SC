@@ -73,6 +73,7 @@ import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
 import com.superchat.utils.ProfilePicUploader;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.utils.Utilities;
 import com.superchat.widgets.RoundedImageView;
 
@@ -280,6 +281,8 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
             });
         }
         getSGList(SharedPrefManager.getInstance().getUserPhone());
+
+        UtilSetFont.setFontMainScreen(this);
     }
 
     class EditChangeListener implements OnEditorActionListener {

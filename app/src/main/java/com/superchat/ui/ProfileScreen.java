@@ -77,6 +77,7 @@ import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.ProfilePicUploader;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.utils.Utilities;
 import com.superchat.widgets.RoundedImageView;
 
@@ -494,6 +495,8 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
             if(!sgCreationAfterLogin)
                 getServerUserProfile(userName);
         }
+        
+        UtilSetFont.setFontMainScreen(this);
     }
 
     private boolean isRWA() {

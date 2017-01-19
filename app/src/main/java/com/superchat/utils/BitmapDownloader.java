@@ -20,8 +20,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.superchat.SuperChatApplication;
-import com.superchat.widgets.ChatHomeAdapter;
-import com.superchat.widgets.ContactsAdapter;
+import com.superchat.ui.ChatHomeAdapter;
+import com.superchat.ui.ContactsAdapter;
 import com.superchat.widgets.RoundedImageView;
 
 import java.io.BufferedInputStream;

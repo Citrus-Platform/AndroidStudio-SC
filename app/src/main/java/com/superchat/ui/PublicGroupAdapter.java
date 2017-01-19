@@ -32,6 +32,7 @@ import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.ProfilePicDownloader;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.MyriadRegularTextView;
 import com.superchat.widgets.RoundedImageView;
 
@@ -183,6 +184,9 @@ public class PublicGroupAdapter  extends ArrayAdapter<LoginResponseModel.GroupDe
 		{
 			viewholder = (ViewHolder)row.getTag();
 		}
+
+		UtilSetFont.setFontMainScreen(row);
+
 //		ViewHolder viewholder = (ViewHolder)view.getTag();
 		viewholder.map = (LoginResponseModel.GroupDetail)getItem(position);
 		if(viewholder.map!=null){

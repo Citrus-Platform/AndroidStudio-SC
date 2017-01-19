@@ -2,7 +2,7 @@
 
 
 
-package com.superchat.widgets;
+package com.superchat.ui;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -62,6 +62,8 @@ import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.ColorGenerator;
 import com.superchat.utils.Constants;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
+import com.superchat.widgets.RoundedImageView;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -521,6 +523,9 @@ public class ContactsAdapter extends SimpleCursorAdapter
 	{
 		myParent = viewgroup;
 		View view = LayoutInflater.from(context).inflate(layout, null);
+
+		UtilSetFont.setFontMainScreen(view);
+
 		ViewHolder viewholder = new ViewHolder();
 
 //		viewholder.iconText = (TextView)view.findViewById(R.id.id_icon_text);

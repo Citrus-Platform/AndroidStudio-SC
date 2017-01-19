@@ -10,6 +10,7 @@ import java.util.ArrayList;
  */
 public class ResponseOpenDomains extends CommonResponse {
     private String domainSearchText;
+    private String nextUrl;
     private ArrayList<SGroupListObject> openDomainList;
 
     public String getDomainSearchText() {
@@ -18,6 +19,14 @@ public class ResponseOpenDomains extends CommonResponse {
 
     public void setDomainSearchText(String domainSearchText) {
         this.domainSearchText = domainSearchText;
+    }
+
+    public String getNextUrl() {
+        return nextUrl;
+    }
+
+    public void setNextUrl(String nextUrl) {
+        this.nextUrl = nextUrl;
     }
 
     public ArrayList<SGroupListObject> getOpenDomainList() {

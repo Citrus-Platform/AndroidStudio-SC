@@ -18,6 +18,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.superchat.R;
 import com.superchat.utils.Constants;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,7 +56,10 @@ EsiaSplashScreen extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.splash_esia);
-		context = this;
+
+        UtilSetFont.setFontMainScreen(this);
+
+        context = this;
 		iPrefManager = SharedPrefManager.getInstance();
 		String mobileNumber = iPrefManager.getUserPhone();
         if(iPrefManager.getBackupSchedule() == -1) {

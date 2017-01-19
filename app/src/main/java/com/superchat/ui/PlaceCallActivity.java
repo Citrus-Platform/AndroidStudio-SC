@@ -2,6 +2,7 @@ package com.superchat.ui;
 
 import com.sinch.android.rtc.calling.Call;
 import com.superchat.R;
+import com.superchat.utils.UtilSetFont;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -62,6 +63,8 @@ public class PlaceCallActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        UtilSetFont.setFontMainScreen(this);
 
         mCallName = (EditText) findViewById(R.id.callName);
         mCallButton = (Button) findViewById(R.id.callButton);

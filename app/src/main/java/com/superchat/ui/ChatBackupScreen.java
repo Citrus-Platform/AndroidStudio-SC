@@ -31,6 +31,7 @@ import com.superchat.utils.Constants;
 import com.superchat.utils.FileDownloadResponseHandler;
 import com.superchat.utils.FileUploaderDownloader;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.utils.ZipManager;
 
 import org.apache.http.HttpEntity;
@@ -86,6 +87,9 @@ public class ChatBackupScreen extends Activity implements OnClickListener, OnChe
 		super.onCreate(bundle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.chat_backup);
+
+		UtilSetFont.setFontMainScreen(this);
+
 //		password = (EditText)findViewById(R.id.id_pass);
 //		confirmPassword = (EditText)findViewById(R.id.id_conf_pass);
 //		submit = (Button)findViewById(R.id.id_submit);

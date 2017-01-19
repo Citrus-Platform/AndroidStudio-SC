@@ -37,6 +37,7 @@ import com.superchat.utils.ColorGenerator;
 import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.MyriadRegularTextView;
 import com.superchat.widgets.RoundedImageView;
 
@@ -175,6 +176,9 @@ public class SharedIDAdapter  extends ArrayAdapter<LoginResponseModel.BroadcastG
 		{
 			viewholder = (ViewHolder)row.getTag();
 		}
+
+		UtilSetFont.setFontMainScreen(row);
+
 //		ViewHolder viewholder = (ViewHolder)view.getTag();
 		viewholder.map = (LoginResponseModel.BroadcastGroupDetail)getItem(position);
 		if(viewholder.map!=null){

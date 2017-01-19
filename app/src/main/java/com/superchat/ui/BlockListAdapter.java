@@ -8,6 +8,7 @@ import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.utils.ColorGenerator;
 import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.RoundedImageView;
 
 import android.app.Activity;
@@ -105,6 +106,10 @@ public class BlockListAdapter  extends ArrayAdapter<BlockListAdapter.UserInfo>{
 		{
 			viewholder = (ViewHolder)row.getTag();
 		}
+
+		// Setting Font - By Munish Thakur
+		UtilSetFont.setFontMainScreen(row);
+
 //		ViewHolder viewholder = (ViewHolder)view.getTag();
 		UserInfo map = (UserInfo)getItem(position);
 		viewholder.map = map;
