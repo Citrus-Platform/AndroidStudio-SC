@@ -46,6 +46,8 @@ public class SinchService extends Service implements interfaceInstances{
     public static final String APP_SECRET = "Gd9DlpvF7ki/CZV/yZAwvg==";
     private static final String ENVIRONMENT = "clientapi.sinch.com";
     public static final String CALL_ID = "CALL_ID";
+    public static final String GROUP_CALL = "GROUP_CALL";
+    public static final String GROUP_CALL_RECEIVED = "GROUP_CALL_RECEIVED";
     static final String TAG = SinchService.class.getSimpleName();
 
     private SinchServiceInterface mSinchServiceInterface = new SinchServiceInterface();
@@ -53,6 +55,7 @@ public class SinchService extends Service implements interfaceInstances{
     private String mUserId;
 
     private Context context;
+    private boolean isGroupCall;
 
     private StartFailedListener mListener;
 
@@ -84,29 +87,31 @@ public class SinchService extends Service implements interfaceInstances{
 	}
     private void start(String userName) {
         Log.d(TAG, "SinchClient start 1");
-        if (mSinchClient == null) {
-            Log.d(TAG, "SinchClient start 2");
-            mUserId = userName;
-            VideoController vc = mSinchServiceInterface.getVideoController();
-            if(vc != null){
-                vc.setResizeBehaviour(VideoScalingType.ASPECT_FILL);
+        try {
+            if (mSinchClient == null) {
+                Log.d(TAG, "SinchClient start 2");
+                mUserId = userName;
+                VideoController vc = mSinchServiceInterface.getVideoController();
+                if (vc != null) {
+                    vc.setResizeBehaviour(VideoScalingType.ASPECT_FILL);
+                }
+                mSinchClient = Sinch.getSinchClientBuilder().context(getApplicationContext()).userId(userName)
+                        .applicationKey(APP_KEY)
+                        .applicationSecret(APP_SECRET)
+                        .environmentHost(ENVIRONMENT).build();
+                Log.d(TAG, "SinchClient start 3");
             }
-            mSinchClient = Sinch.getSinchClientBuilder().context(getApplicationContext()).userId(userName)
-                    .applicationKey(APP_KEY)
-                    .applicationSecret(APP_SECRET)
-                    .environmentHost(ENVIRONMENT).build();
-            Log.d(TAG, "SinchClient start 3");
+
+            mSinchClient.setSupportCalling(true);
+            mSinchClient.setSupportManagedPush(true);
+            mSinchClient.startListeningOnActiveConnection();
+            mSinchClient.addSinchClientListener(new MySinchClientListener());
+            mSinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());
+            mSinchClient.start();
+        }catch(Exception ex){
+            ex.printStackTrace();
         }
-
-        mSinchClient.setSupportCalling(true);
-        mSinchClient.setSupportManagedPush(true);
-        mSinchClient.startListeningOnActiveConnection();
-        mSinchClient.addSinchClientListener(new MySinchClientListener());
-        mSinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());
-        mSinchClient.start();
-
         Log.d(TAG, "SinchClient start 4");
-
     }
 
     private void stop() {
@@ -162,7 +167,8 @@ public class SinchService extends Service implements interfaceInstances{
 //                    System.out.println("callGroup :: onIncomingCall - "+call.getCallId());
 //                }
 //            });
-            Call call = callClient.callConference(groupID, header);
+            Call call = callClient.callConference(groupID);
+//            Call call = callClient.callConference(groupID, header);
 //            call.addCallListener(new CallListener() {
 //                @Override
 //                public void onCallProgressing(Call call) {
@@ -185,6 +191,10 @@ public class SinchService extends Service implements interfaceInstances{
 //                }
 //            });
             return call;
+        }
+
+        public void joinConference(String confID){
+
         }
 
 

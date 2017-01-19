@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chat.sdk.db.ChatDBWrapper;
@@ -32,11 +33,11 @@ import com.sinch.android.rtc.calling.CallEndCause;
 import com.sinch.android.rtc.calling.CallListener;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
+import com.superchat.model.MarkSGActive;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.retrofit.response.model.ConferenceInfoResponse;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.utils.UtilSetFont;
-import com.superchat.utils.UtilTemp;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,12 +48,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import retrofit2.Response;
-import retrofit2.http.HEAD;
 
 import static com.superchat.R.id.sg_name;
 import static com.superchat.interfaces.interfaceInstances.objApi;
 
-public class CallScreenActivity extends Activity implements OnClickListener {
+public class CallScreenActivity extends Activity implements OnClickListener{
 
     static final String TAG = CallScreenActivity.class.getSimpleName();
     private AudioPlayer mAudioPlayer;
@@ -60,13 +60,15 @@ public class CallScreenActivity extends Activity implements OnClickListener {
     private UpdateCallDurationTask mDurationTask;
 
     private String mCallId;
+    private boolean isReceived;
+    private boolean isGroupCall;
     private long mCallStart = 0;
 
     private TextView mCallDuration;
     private TextView mCallState;
     private TextView mCallerName;
     private TextView sgName;
-    private Button btnSendLog;
+    private LinearLayout groupLayout;
     SharedPrefManager iChatPref;
     ChatDBWrapper chatDBWrapper;
     ImageView muteButton;
@@ -88,13 +90,13 @@ public class CallScreenActivity extends Activity implements OnClickListener {
                     Map<String, String> header = call.getHeaders();
                     String domainDisplayName = null;
                     String domainName = null;
-                    if (header != null && !header.get("fromUserName").equals(iChatPref.getUserName())) {
+                    if(header != null && header.size() > 0 && header.get("fromUserName") != null && !header.get("fromUserName").equals(iChatPref.getUserName())) {
                         domainDisplayName = header.get("domainDisplayName");
                         domainName = header.get("domainName");
                         String myName = header.get("displayName");
-                        if (myName != null) {
+                        if(myName != null){
                             setProfilePic(header.get("fromUserName"));
-                        } else {
+                        }else {
                             myName = iChatPref.getUserServerName(header.get("fromUserName"));
 
                             if (myName != null && myName.equals(header.get("userName")))
@@ -107,29 +109,36 @@ public class CallScreenActivity extends Activity implements OnClickListener {
                         }
                         mCallerName.setText(myName);
                         mCallState.setText(call.getState().toString());
-                    } else {
+                    }else {
                         String myName = null;
-                        if (header != null && header.get("fromUserName").equals(iChatPref.getUserName())) {
+                        if(header != null && header.size() > 0 && header.get("fromUserName").equals(iChatPref.getUserName())) {
                             myName = iChatPref.getUserServerName(header.get("userName"));
                             setProfilePic(header.get("userName"));
-                        } else {
-                            myName = iChatPref.getUserServerName(call.getRemoteUserId());
-                            if (myName != null && myName.equals(call.getRemoteUserId()))
+                        }else {
+                            if(iChatPref.isGroupChat(call.getRemoteUserId()) || isGroupCall) {
+                                String group = call.getRemoteUserId();
+                                myName = iChatPref.getGroupDisplayName(call.getRemoteUserId());
+                                groupLayout.setVisibility(View.VISIBLE);
+                                setProfilePic(iChatPref.getUserFileId(group));
+                            }else{
                                 myName = iChatPref.getUserServerName(call.getRemoteUserId());
-                            if (myName != null && myName.equals(call.getRemoteUserId()))
-                                myName = "New User";
-                            if (myName != null && myName.contains("_"))
-                                myName = "+" + myName.substring(0, myName.indexOf("_"));
-                            setProfilePic(call.getRemoteUserId());
+                                if (myName != null && myName.equals(call.getRemoteUserId()))
+                                    myName = iChatPref.getUserServerName(call.getRemoteUserId());
+                                if (myName != null && myName.equals(call.getRemoteUserId()))
+                                    myName = "New User";
+                                if (myName != null && myName.contains("_"))
+                                    myName = "+" + myName.substring(0, myName.indexOf("_"));
+                                setProfilePic(call.getRemoteUserId());
+                            }
                         }
                         mCallerName.setText(myName);
                         mCallState.setText(call.getState().toString());
                     }
 
-                    Log.e("Calling : ", "domainDisplayName : " + domainDisplayName + "\ndomainName : " + domainName);
-                    if (domainDisplayName != null) {
+                    Log.e("Calling : ", "domainDisplayName : "+ domainDisplayName + "\ndomainName : "+domainName);
+                    if(domainDisplayName != null){
                         sgName.setText(domainDisplayName);
-                    } else if (domainName != null) {
+                    } else if(domainName != null){
                         sgName.setText(domainName);
                     } else {
                         if (SharedPrefManager.getInstance().getCurrentSGDisplayName() != null && SharedPrefManager.getInstance().getCurrentSGDisplayName().trim().length() > 0)
@@ -137,6 +146,9 @@ public class CallScreenActivity extends Activity implements OnClickListener {
                         else
                             sgName.setText(SharedPrefManager.getInstance().getUserDomain());
                     }
+
+                    if(mSinchServiceInterface != null && isReceived && (iChatPref.isGroupChat(call.getRemoteUserId()) || isGroupCall))
+                        mSinchServiceInterface.callGroup(call.getRemoteUserId(), null);
 /*
 
 					 if(SharedPrefManager.getInstance().getCurrentSGDisplayName() != null && SharedPrefManager.getInstance().getCurrentSGDisplayName().trim().length() > 0)
@@ -189,12 +201,11 @@ public class CallScreenActivity extends Activity implements OnClickListener {
 
         UtilSetFont.setFontMainScreen(this);
 
+//		KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+//		final KeyguardManager.KeyguardLock kl = km .newKeyguardLock("MyKeyguardLock");
+//		kl.disableKeyguard();
 
-//		KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE); 
-//		final KeyguardManager.KeyguardLock kl = km .newKeyguardLock("MyKeyguardLock"); 
-//		kl.disableKeyguard(); 
-
-//		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE); 
+//		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 //		WakeLock wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK
 //		                                 | PowerManager.ACQUIRE_CAUSES_WAKEUP
 //		                                 | PowerManager.ON_AFTER_RELEASE, "MyWakeLock");
@@ -205,18 +216,17 @@ public class CallScreenActivity extends Activity implements OnClickListener {
         mAudioPlayer = new AudioPlayer(this);
         mCallDuration = (TextView) findViewById(R.id.callDuration);
         mCallerName = (TextView) findViewById(R.id.remoteUser);
+        groupLayout = (LinearLayout) findViewById(R.id.id_group_call);
         sgName = (TextView) findViewById(sg_name);
         mCallState = (TextView) findViewById(R.id.callState);
         Button endCallButton = (Button) findViewById(R.id.hangupButton);
-        btnSendLog = (Button) findViewById(R.id.btnSendLog);
         isMute = false;
         isSpeaker = false;
-        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        muteButton = (ImageView) findViewById(R.id.mute_button);
-        speakerButton = (ImageView) findViewById(R.id.speaker_button);
+        audioManager=(AudioManager)getSystemService(AUDIO_SERVICE);
+        muteButton = (ImageView)findViewById(R.id.mute_button);
+        speakerButton = (ImageView)findViewById(R.id.speaker_button);
         muteButton.setOnClickListener(this);
         speakerButton.setOnClickListener(this);
-        btnSendLog.setOnClickListener(this);
         endCallButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -225,6 +235,8 @@ public class CallScreenActivity extends Activity implements OnClickListener {
         });
         mCallStart = System.currentTimeMillis();
         mCallId = getIntent().getStringExtra(SinchService.CALL_ID);
+        isGroupCall = getIntent().getBooleanExtra(SinchService.GROUP_CALL, false);
+        isReceived = getIntent().getBooleanExtra(SinchService.GROUP_CALL_RECEIVED, false);
     }
 
     @Override
@@ -247,32 +259,33 @@ public class CallScreenActivity extends Activity implements OnClickListener {
         mTimer = new Timer();
         mDurationTask = new UpdateCallDurationTask();
         mTimer.schedule(mDurationTask, 0, 500);
-        bindService(new Intent(this, SinchService.class), mCallConnection, Context.BIND_AUTO_CREATE);
+        bindService(new Intent(this, SinchService.class), mCallConnection,Context.BIND_AUTO_CREATE);
     }
-
     @Override
     public void onBackPressed() {
         // User should exit activity by ending call, not by going back.
     }
 
     private void endCall() {
-        if (mAudioPlayer != null)
+        if(mAudioPlayer!=null)
             mAudioPlayer.stopProgressTone();
-        if (mSinchServiceInterface != null) {
+        if(mSinchServiceInterface!=null){
             Call call = mSinchServiceInterface.getCall(mCallId);
             if (call != null) {
                 call.hangup();
             }
+            if(isGroupCall) {
+                mSinchServiceInterface.stopClient();
+                mSinchServiceInterface.startClient(iChatPref.getUserName());
+            }
         }
-        if (!HomeScreen.isLaunched) {
-            Intent intent = new Intent(this, HomeScreen.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//			 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-        }
+//		if(!HomeScreen.isLaunched){
+//			Intent intent = new Intent(this, HomeScreen.class);
+//			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//			startActivity(intent);
+//		}
         finish();
     }
-
     //boolean isFirstActivity(){
 //	ActivityManager mngr = (ActivityManager) getSystemService( ACTIVITY_SERVICE );
 //
@@ -307,7 +320,7 @@ public class CallScreenActivity extends Activity implements OnClickListener {
             Log.d(TAG, "Call ended. Reason: " + cause.toString());
             mAudioPlayer.stopProgressTone();
             setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
-            if (audioManager != null) {
+            if(audioManager != null){
                 audioManager.setMode(AudioManager.USE_DEFAULT_STREAM_TYPE);
                 //audioManager.setSpeakerphoneOn(false);
             }
@@ -322,7 +335,7 @@ public class CallScreenActivity extends Activity implements OnClickListener {
             mAudioPlayer.stopProgressTone();
             mCallState.setText(call.getState().toString());
             setVolumeControlStream(AudioManager.MODE_IN_CALL);
-            if (audioManager != null) {
+            if(audioManager != null){
                 audioManager.setMode(AudioManager.MODE_IN_CALL);
                 //audioManager.setSpeakerphoneOn(true);
             }
@@ -341,16 +354,15 @@ public class CallScreenActivity extends Activity implements OnClickListener {
             // Send a push through your push provider here, e.g. GCM
         }
     }
-
-    public void onClick(View view) {
-        try {
-            switch (view.getId()) {
+    public void onClick(View view){
+        try{
+            switch(view.getId()){
                 case R.id.mute_button:
-                    if (audioController != null) {
-                        if (!isMute) {
+                    if(audioController!=null){
+                        if(!isMute){
                             audioController.mute();
                             muteButton.setImageResource(R.drawable.mute_selected);
-                        } else {
+                        }else{
                             audioController.unmute();
                             muteButton.setImageResource(R.drawable.mute);
                         }
@@ -358,12 +370,12 @@ public class CallScreenActivity extends Activity implements OnClickListener {
                     }
                     break;
                 case R.id.speaker_button:
-                    if (audioController != null) {
-                        if (isSpeaker) {
+                    if(audioController!=null){
+                        if(isSpeaker){
                             audioController.disableSpeaker();
                             speakerButton.setImageResource(R.drawable.speaker);
                             //audioManager.setSpeakerphoneOn(false);
-                        } else {
+                        }else{
                             audioController.enableSpeaker();
                             speakerButton.setImageResource(R.drawable.speaker_selected);
                             //audioManager.setSpeakerphoneOn(true);
@@ -371,22 +383,19 @@ public class CallScreenActivity extends Activity implements OnClickListener {
                         isSpeaker = !isSpeaker;
                     }
                     break;
-                case R.id.btnSendLog: {
-                    UtilTemp.sendLogs(this, audioManager);
-                    break;
-                }
             }
-        } catch (Exception e) {
+        }catch(Exception e){
             e.printStackTrace();
         }
     }
 
 
-    private String getImagePath(String groupPicId) {
-        if (groupPicId == null)
+    private String getImagePath(String groupPicId)
+    {
+        if(groupPicId == null)
             groupPicId = SharedPrefManager.getInstance().getUserFileId(SharedPrefManager.getInstance().getUserName()); // 1_1_7_G_I_I3_e1zihzwn02
-        if (groupPicId != null) {
-            String profilePicUrl = groupPicId + ".jpg";//AppConstants.media_get_url+
+        if(groupPicId!=null){
+            String profilePicUrl = groupPicId+".jpg";//AppConstants.media_get_url+
             File file = Environment.getExternalStorageDirectory();
 //			if(groupPicId != null && groupPicId.length() > 0 && groupPicId.lastIndexOf('/')!=-1)
 //				profilePicUrl += groupPicId.substring(groupPicId.lastIndexOf('/'));
@@ -396,63 +405,67 @@ public class CallScreenActivity extends Activity implements OnClickListener {
         return null;
     }
 
-    private boolean setProfilePic(String userName) {
+    private boolean setProfilePic(String userName){
         String groupPicId = SharedPrefManager.getInstance().getUserFileId(userName);
 
         String img_path = null;
         Bitmap bitmap = null;
-        if (groupPicId != null) {
+        if(groupPicId != null) {
             img_path = getImagePath(groupPicId);
             bitmap = SuperChatApplication.getBitmapFromMemCache(groupPicId);
         }
         ImageView picView = (ImageView) findViewById(R.id.id_profile_pic);
-        if (SharedPrefManager.getInstance().getUserGender(userName).equalsIgnoreCase("female"))
-            picView.setImageResource(R.drawable.female_default);
-        else
-            picView.setImageResource(R.drawable.male_default);
+        if(isGroupCall){
+            picView.setImageResource(R.drawable.group_call_def);
+        }else {
+            if (SharedPrefManager.getInstance().getUserGender(userName).equalsIgnoreCase("female"))
+                picView.setImageResource(R.drawable.female_default);
+            else
+                picView.setImageResource(R.drawable.male_default);
+        }
         if (bitmap != null) {
             picView.setImageBitmap(bitmap);
-            String profilePicUrl = groupPicId + ".jpg";//AppConstants.media_get_url+
+            String profilePicUrl = groupPicId+".jpg";//AppConstants.media_get_url+
             File file = Environment.getExternalStorageDirectory();
-            String filename = file.getPath() + File.separator + "SuperChat/" + profilePicUrl;
+            String filename = file.getPath()+ File.separator + "SuperChat/"+profilePicUrl;
             picView.setTag(filename);
             return true;
-        } else if (img_path != null) {
+        }else if(img_path != null){
             File file1 = new File(img_path);
 //			Log.d(TAG, "PicAvailibilty: "+ Uri.parse(filename)+" , "+filename+" , "+file1.exists());
-            if (file1.exists()) {
+            if(file1.exists()){
                 picView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 //				((ImageView) findViewById(R.id.id_profile_pic)).setImageURI(Uri.parse(img_path));
-                setThumb((ImageView) picView, img_path, groupPicId);
+                setThumb((ImageView) picView,img_path,groupPicId);
                 return true;
             }
-        } else {
+        }else{
 
         }
-        if (groupPicId != null && groupPicId.equals("clear"))
+        if(groupPicId!=null && groupPicId.equals("clear"))
             return true;
         return false;
     }
 
-    private void setThumb(ImageView imageViewl, String path, String groupPicId) {
+    private void setThumb(ImageView imageViewl,String path, String groupPicId){
         BitmapFactory.Options bfo = new BitmapFactory.Options();
         bfo.inSampleSize = 2;
         Bitmap bm = null;
-        try {
+        try{
             bm = BitmapFactory.decodeFile(path, bfo);
             bm = ThumbnailUtils.extractThumbnail(bm, 200, 200);
             bm = rotateImage(path, bm);
             bm = Bitmap.createScaledBitmap(bm, 200, 200, true);
-        } catch (Exception ex) {
+        }catch(Exception ex){
 
         }
-        if (bm != null) {
+        if(bm!=null){
             imageViewl.setImageBitmap(bm);
-            SuperChatApplication.addBitmapToMemoryCache(groupPicId, bm);
-        } else {
-            try {
+            SuperChatApplication.addBitmapToMemoryCache(groupPicId,bm);
+        } else{
+            try{
                 imageViewl.setImageURI(Uri.parse(path));
-            } catch (Exception e) {
+            }catch(Exception e){
 
             }
         }
@@ -463,16 +476,21 @@ public class CallScreenActivity extends Activity implements OnClickListener {
         try {
             ExifInterface exifJpeg = new ExifInterface(path);
             orientation = exifJpeg.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+////			orientation = Integer.parseInt(exifJpeg.getAttribute(ExifInterface.TAG_ORIENTATION));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (orientation != ExifInterface.ORIENTATION_NORMAL) {
+        if (orientation != ExifInterface.ORIENTATION_NORMAL)
+        {
             int width = bm.getWidth();
             int height = bm.getHeight();
             Matrix matrix = new Matrix();
-            if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
+            if (orientation == ExifInterface.ORIENTATION_ROTATE_90)
+            {
                 matrix.postRotate(90);
-            } else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
+            }
+            else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
                 matrix.postRotate(180);
             } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
                 matrix.postRotate(270);
@@ -481,35 +499,35 @@ public class CallScreenActivity extends Activity implements OnClickListener {
         }
 
         return bm;
-	}
-//----------------------------------------------------------------
-	private void getConfereneceInfo(final String id) {
-		try {
-			retrofit2.Call call = objApi.getApi(this).getConferenceInfo(id);
-			call.enqueue(new RetrofitRetrofitCallback<ConferenceInfoResponse>(this) {
-				@Override
-				protected void onResponseVoidzResponse(retrofit2.Call call, Response response) {
+    }
+    //----------------------------------------------------------------
+    private void getConfereneceInfo(final String id) {
+        try {
+            retrofit2.Call call = objApi.getApi(this).getConferenceInfo(id);
+            call.enqueue(new RetrofitRetrofitCallback<ConferenceInfoResponse>(this) {
+                @Override
+                protected void onResponseVoidzResponse(retrofit2.Call call, Response response) {
 
-				}
+                }
 
-				@Override
-				protected void onResponseVoidzObject(retrofit2.Call call, ConferenceInfoResponse response) {
-					System.out.println("Retrofit : onResponseVoidzObject 2 - " + response.toString());
+                @Override
+                protected void onResponseVoidzObject(retrofit2.Call call, ConferenceInfoResponse response) {
+                    System.out.println("Retrofit : onResponseVoidzObject 2 - " + response.toString());
 
-				}
+                }
 
-				@Override
-				protected void common() {
+                @Override
+                protected void common() {
 
-				}
+                }
 
-				@Override
-				public void onFailure(retrofit2.Call call, Throwable t) {
-					super.onFailure(call, t);
-				}
-			});
-		} catch (Exception e) {
+                @Override
+                public void onFailure(retrofit2.Call call, Throwable t) {
+                    super.onFailure(call, t);
+                }
+            });
+        } catch (Exception e) {
 
-		}
-	}
+        }
+    }
 }

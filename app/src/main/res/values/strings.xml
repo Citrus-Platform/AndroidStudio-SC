@@ -675,6 +675,8 @@
     <string name="other_apps">OTHER APPS</string>
     <string name="contacts">CONTACTS</string>
 
+    <string name="start_gp_call">Start group call?</string>
+
 
     <!-- Munish Thakur -->
     <!--menu_icon-->

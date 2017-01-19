@@ -4066,7 +4066,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 drawerFragment.fragmentClose();
                 progressDialog = ProgressDialog.show(HomeScreen.this, "", "Checking your account, please wait...", true);
                 activateSG(sg_name, "false");
-                //				showDeactivatedDialog("")
             }
         } else {
             drawerFragment.fragmentClose();

@@ -26,6 +26,7 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -78,6 +79,7 @@ public class IncomingCallScreenActivity extends Activity {
 						call.addCallListener(new SinchCallListener());
 						TextView remoteUser = (TextView) findViewById(R.id.remoteUser);
 						TextView sg_name = (TextView) findViewById(R.id.sg_name);
+						LinearLayout groupLayout = (LinearLayout) findViewById(R.id.id_group_call);
 						Map<String, String> header = call.getHeaders();
 						String domainDisplayName = null;
 						String domainName = null;
@@ -104,6 +106,9 @@ public class IncomingCallScreenActivity extends Activity {
 								setProfilePic(header.get("fromUserName"), null);
 						}else{
 							String myName = iChatPref.getUserServerName(call.getRemoteUserId());
+							if(iChatPref.isGroupChat(call.getRemoteUserId())){
+								groupLayout.setVisibility(View.VISIBLE);
+							}
 							if (myName != null && myName.equalsIgnoreCase(call.getRemoteUserId()))
 								myName = chatDBWrapper.getUsersDisplayName(call.getRemoteUserId());
 							if (myName != null && myName.equals(call.getRemoteUserId())) {
@@ -219,10 +224,14 @@ public class IncomingCallScreenActivity extends Activity {
 		String img_path = getImagePath(groupPicId);
 		android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(groupPicId);
 		ImageView picView = (ImageView) findViewById(R.id.id_profile_pic);
-		if(SharedPrefManager.getInstance().getUserGender(userName).equalsIgnoreCase("female"))
-			picView.setImageResource(R.drawable.female_default);
-		else
-			picView.setImageResource(R.drawable.male_default);
+		if(iChatPref.isGroupChat(userName)){
+			picView.setImageResource(R.drawable.group_call_def);
+		}else {
+			if (SharedPrefManager.getInstance().getUserGender(userName).equalsIgnoreCase("female"))
+				picView.setImageResource(R.drawable.female_default);
+			else
+				picView.setImageResource(R.drawable.male_default);
+		}
 		if (bitmap != null) {
 			picView.setImageBitmap(bitmap);
 			String profilePicUrl = groupPicId+".jpg";//AppConstants.media_get_url+
@@ -327,6 +336,8 @@ public class IncomingCallScreenActivity extends Activity {
             HomeScreen.isLaunched = false;
             Intent intent = new Intent(this, CallScreenActivity.class);
             intent.putExtra(SinchService.CALL_ID, mCallId);
+            intent.putExtra(SinchService.GROUP_CALL, true);
+            intent.putExtra(SinchService.GROUP_CALL_RECEIVED, true);
             startActivity(intent);
             finish();
         } else {
