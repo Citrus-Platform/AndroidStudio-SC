@@ -11,7 +11,7 @@
     <string name="superchat_welcome">Welcome to</string>
     <string name="verification_code_sent">A Verification code was sent to you</string>
     <string name="please_make_sure">Please make sure your mobile number is active</string>
-    <string name="registration_title">START A NEW SUPERGROUP</string>
+    <string name="registration_title">START A NEW HUB</string>
     <string name="verify_phone_number_msg">Please enter your mobile number</string>
     <string name="self_verify_phone_number_msg">Unable to verify this time, please try after sometime.</string>
     <string name="lbl_please_try_later">Sorry, could not create the group due to a technical error. Please try after sometime.</string>
@@ -23,7 +23,7 @@
     <string name="check_net_connection">Please check network connection!</string>
     <string name="country_mobile_validation">Please select your country and enter mobile number.</string>
     <string name="country_validation">Please select your country.</string>
-    <string name="domain_validation">Please enter the name of your SuperGroup.</string>
+    <string name="domain_validation">Please enter the name of your Hub.</string>
     <string name="please_enter_name">Please enter a profile name between 3 and 50 characters containing only alphabet.</string>
     <string name="please_enter_name_alpha">Please enter a profile name between 3 and 50 characters containing only alphabet.</string>
     <string name="please_enter_valid_name">Please enter a profile name between 3 and 50 characters containing only alphabet.</string>
@@ -92,8 +92,8 @@
     <string name="dob">Birthday</string>
     <string name="plz_select_dob">Please enter your birthday</string>
     <string name="gender">Gender</string>
-    <string name="who_is_this_supergroup">Who is this SuperGroup for?</string>
-     <string name="please_select_who_this_for">Please select who this SuperGroup is for:</string>
+    <string name="who_is_this_supergroup">Who is this Hub for?</string>
+     <string name="please_select_who_this_for">Please select who this Hub is for:</string>
     <string name="registered_number">Registered number</string>
     <string name="registered_email">Registered email</string>
     <string name="identity_type">Identity type</string>
@@ -122,11 +122,11 @@
     <string name="new_broadcast">New Broadcast</string>
     <string name="enter_description">Type description(*)</string>
     <string name="description">Description</string>
-    <string name="new_description">Max 500 characters</string>
+    <string name="new_description">Group description\n(Up to 500 characters - optional)</string>
     <string name="new_description_optional">Max 500 characters</string>
     <string name="create_closed_group_subtitle">Closed - Members cannot join without an invitation from an admin</string>
-    <string name="create_open_group_subtitle">All members of your SuperGroup will be able to search for and join this group.</string>
-    <string name="create_group_bottomtitle">You can have both private or public groups within your SuperGroup.</string>
+    <string name="create_open_group_subtitle">All members of your Hub will be able to search for and join this group.</string>
+    <string name="create_group_bottomtitle">You can have both private or public groups within your Hub.</string>
     <string name="create_group">Create Group</string>
     <string name="create">Create</string>
     <string name="back">Back</string>
@@ -139,6 +139,7 @@
     <string name="create_broadcast">Create Broadcast</string>
     <string name="edit_broadcast">Edit Broadcast</string>
     <string name="broadcast">Broadcast</string>
+    <string name="broadcast_text">Change your Group to Broadcast Mode</string>
     <string name="broadcast_message">Broadcast Message</string>
     <string name="done">Done</string>
     <string name="done_caps">DONE</string>
@@ -219,8 +220,8 @@
     <string name="your_phone_number">Phone number</string>
     <string name="mobile_number">Mobile number(*)</string>
     <string name="number">Mobile Number</string>
-    <string name="enter_domain">SuperGroup Name(*)</string>
-    <string name="domain">SuperGroup(*)</string>
+    <string name="enter_domain">Hub Name(*)</string>
+    <string name="domain">Hub(*)</string>
     <string name="country_prompt">Choose a country</string>
     <string name="select_country">Select Country</string>
     <string name="all_media">All Media</string>
@@ -254,7 +255,7 @@
     <string name="invite_friends">Invite Friends</string>
     <string name="settings">Settings</string>
     <string name="advanced_sg_settings">Advanced settings</string>
-    <string name="advanced_supergroup_settings">Advanced SuperGroup settings</string>
+    <string name="advanced_supergroup_settings">Advanced Hub settings</string>
     <string name="select_recipient">Select Recipients</string>
     <string name="delete">Delete</string>
     <string name="read">read</string>
@@ -311,7 +312,7 @@
     <string name="admin_name">Enter your full name(*)</string>
     <string name="enter_org_name">Organization Name</string>
     <string name="register_as_user">Join</string>
-    <string name="register_as_admin">Register SuperGroup/Admin</string>
+    <string name="register_as_admin">Register Hub/Admin</string>
     <string name="join_as_admin">Join as Admin</string>
     <string name="terms_heading">SuperChat\nVer.1.2\nLicensed to Citrus Platform Solutions Pvt. Ltd.\n</string>
     <string name="broadcast_list_name">Broadcast list name(*)</string>
@@ -337,8 +338,8 @@
     <string name="work_address">Work Location</string>
     <string name="save_contact">Save Contact</string>
     <string name="save">Save</string>
-    <string name="domain_validation_alert">Please enter valid SuperGroup name between 2 to 50 characters. Special characters and space not allowed.</string>
-    <string name="domain_display_name_validation_alert">Please enter valid SuperGroup display name between 2 to 50 characters. SuperGroup must start with a letter.</string>
+    <string name="domain_validation_alert">Please enter valid Hub name between 2 to 50 characters. Special characters and space not allowed.</string>
+    <string name="domain_display_name_validation_alert">Please enter valid Hub display name between 2 to 50 characters. Hub must start with a letter.</string>
     <string name="password_reason">(This password will be used to login on the web console.)</string>
     <string name="create_poll">Create Poll</string>
     <string name="option_1">1) </string>
@@ -450,9 +451,9 @@
     </string-array>
     <string name="feedback">Feedback</string>
     <string name="send_feedback">Send Feedback</string>
-    <string name="supergroup_profile">SuperGroup Profile</string>
-    <string name="about_supergroup">About SuperGroup name</string>
-    <string name="user_domain">SuperGroup</string>
+    <string name="supergroup_profile">Hub Profile</string>
+    <string name="about_supergroup">About Hub name</string>
+    <string name="user_domain">Hub</string>
     <string name="check_update">Check for app updates</string>
     <string name="manage_members">Manage Members</string>
     <string name="select_admin_owner">Select Admins</string>
@@ -470,33 +471,34 @@
     <string name="open_supergroup">Public – Anyone can join</string>
     <string name="closed_supergroup">Private – Only people you invite can join</string>
 
-    <string name="open_group">Open</string>
-    <string name="close_group_creation_option">Closed</string>
+    <string name="open_group">Public Group</string>
+    <string name="close_group_creation_option">Private Group</string>
 
     <string name="select_group_type">Select Public or Private</string>
-    <string name="select_group_type_in_creation">Select Open or Closed</string>
+    <string name="select_group_type_in_creation">Please select your group</string>
     <string name="welcome_to_superchat">Welcome to Superchat</string>
     <string name="join_a_hub">Join A Hub</string>
+    <string name="create_a_hub">Create A Hub</string>
     <string name="join_a_group">JOIN A GROUP</string>
     <string name="or">OR</string>
     <string name="continue_txt">Continue</string>
     <string name="start_su_group1">START</string>
     <string name="join_a_su_group1">JOIN</string>
-    <string name="start_su_group">NEW SUPERGROUP</string>
-    <string name="join_a_su_group">A SUPERGROUP</string>
-    <string name="join_a_su_group2">JOIN \nA SUPERGROUP</string>
+    <string name="start_su_group">NEW HUB</string>
+    <string name="join_a_su_group">A HUB</string>
+    <string name="join_a_su_group2">JOIN \nA HUB</string>
     <string name="join_aol">Join ART OF LIVING</string>
     <string name="get_started">Let’s get started.</string>
-    <string name="circle_hint">Enter SuperGroup name</string>
-    <string name="welcome_additionla_text">Join a SuperGroup</string>
+    <string name="circle_hint">Enter Hub name</string>
+    <string name="welcome_additionla_text">Join a Hub</string>
     <string name="welcome_connecting_text">For groups within your group.\nConnecting teams, organizations, social groups of all sizes.</string>
-    <string name="welcome_supergroups_text">Welcome to SuperChat’s SuperGroups</string>
+    <string name="welcome_supergroups_text">Welcome to SuperChat’s Hub</string>
  <string name="terms_and_condtions">You agree to our <a href="link">Privacy Policy</a> and <a href="link">Terms.</a></string>
 
  <string name="makeAsSuperAdmin">Make as Super Admin</string>
     <string name="terms_condition">Terms &amp; conditions</string>
-    <string name="domain_reg2">Now, tell us about your SuperGroup</string>
-    <string name="domain_selection_label">Select a name for your SuperGroup</string>
+    <string name="domain_reg2">Now, tell us about your Hub</string>
+    <string name="domain_selection_label">Select a name for your Hub</string>
     <string name="domain_desired_name">Enter desired name</string>
     <string name="anyone_can_join">(Anyone can join)</string>
     <string name="invitee_can_join">(Only people you invite can join)</string>
@@ -518,45 +520,48 @@
     <string name="invite_language">$username has invited you to join \'$groupname\' on SuperChat. Here is your invite: http://www.superchat3c.com</string>
     <string name="copy_invite_link">"Copy invite link"</string>
     <string name="text_copied">"Text copied"</string>
-    <string name="join_sg">"Join Supergroup"</string>
+    <string name="join_sg">"Join Hub"</string>
     <string name="superchat_title">"Superchat"</string>
-    <string name="select_superchat_to_join">"Please select a SuperGroup to join"</string>
-    <string name="select_superchat_to_join_new">"Please enter a SuperGroup to join"</string>
+    <string name="select_superchat_to_join">"Please select a Hub to join"</string>
+    <string name="select_superchat_to_join_new">"Please enter a Hub to join"</string>
     <string name="invite_waiting">"Your invite is waiting"</string>
     <string name="welcome">"Welcome"</string>
-    <string name="enter_alternate_sg">"Or enter another SuperGroup’s name"</string>
-    <string name="enter_alternate_sg_new">"Enter SuperGroup’s name"</string>
-    <string name="creation_tell_us">"Tell us about your SuperGroup"</string>
-    <string name="creation_name_sg">"Name your SuperGroup*"</string>
+    <string name="enter_alternate_sg">"Or enter another Hub’s name"</string>
+    <string name="enter_alternate_sg_new">"Enter Hub’s name"</string>
+    <string name="creation_tell_us">"Tell us about your Hub"</string>
+    <string name="creation_name_sg">"Name your Hub*"</string>
     <string name="creation_name_title">"Display Name"</string>
-    <string name="creation_name_sg_address">"SuperGroup's real address"</string>
+    <string name="creation_name_sg_address">"Hub's real address"</string>
     <string name="creation_email_sg">"Please enter your email address"</string>
-    <string name="creation_email_note">"Your email address will be used for special announcements for SuperGroup owners."</string>
-    <string name="sg_creation_not">"This is the supergroup's address that you and team will use internally to signin to Superchat."</string>
+    <string name="creation_email_note">"Your email address will be used for special announcements for Hub owners."</string>
+    <string name="sg_creation_not">"This is the hub's address that you and team will use internally to signin to Superchat."</string>
     <string name="creation_url_sg">"Website if any"</string>
     <string name="creation_orgname_sg">"What is the name of your organization, team or company?"</string>
-    <string name="creation_photo_sg">"Please add a picture or logo for your SuperGroup"</string>
+    <string name="creation_photo_sg">"Please add a picture or logo for your Hub"</string>
     <string name="bulleting_welcome1">"Welcome to "</string>
     <string name="bulleting_welcome2">" bulletin board "</string>
-    <string name="group_title">"Group name"</string>
+    <string name="group_title">Please provide agroup name and optional group icon/photo</string>
     <string name="group_description">"Group description"</string>
-    <string name="enter_sg_name_to_continue">"Please enter a SuperGroup name to continue."</string>
+    <string name="enter_sg_name_to_continue">"Please enter a Hub name to continue."</string>
     <string name="one_poll_alert">"There is already a poll active for this group. Please try again later."</string>
-    <string name="first_time_gp_creation_alert">"Please create a few groups for your members to join. \nYou can create both open and closed groups within your SuperGroup."</string>
-    <string name="sg_already_owned_alert">"Looks like you already own a SuperGroup. We do not currently support owning more than one SuperGroup. Please select the SuperGroup you own or have joined to continue."</string>
-    <string name="welcome_to">"Welcome to SuperGroup"</string>
-    <string name="supergroup_name">"SuperGroup Name"</string>
+    <string name="first_time_gp_creation_alert">"Please create a few groups for your members to join. \nYou can create both open and closed groups within your Hub."</string>
+    <string name="sg_already_owned_alert">"Looks like you already own a Hub. We do not currently support owning more than one Hub. Please select the Hub you own or have joined to continue."</string>
+    <string name="welcome_to">"Welcome to Hub"</string>
+    <string name="supergroup_name">"Hub Name"</string>
     <string name="sg_vited_by">"Invited By"</string>
     <string name="sg_org_name">"Organization Name"</string>
-    <string name="closed_sg">"Closed SuperGroup"</string>
-    <string name="open_sg">"Open SuperGroup"</string>
+    <!--<string name="closed_sg">"Closed Hub"</string>
+    <string name="open_sg">"Open Hub"</string>
+-->
+    <string name="private_text">Private</string>
+    <string name="public_text">Public</string>
+    <string name="private_hub">Private Hub</string>
+    <string name="public_hub">Public Hub</string>
 
-    <string name="private_hub">Private</string>
-    <string name="public_hub">Public</string>
     <string name="shared_id">"Common official ID"</string>
     <string name="re_invite_confirmation">"Do you want to re-invite "</string>
-    <string name="reactivate_alert">"Your account has been deactivated on this phone, please reactivate your account or contact your SuperGroup Admin."</string>
-    <string name="account_deactivated">"Your account has been deactivated, please contact your SuperGroup Admin."</string>
+    <string name="reactivate_alert">"Your account has been deactivated on this phone, please reactivate your account or contact your Hub Admin."</string>
+    <string name="account_deactivated">"Your account has been deactivated, please contact your Hub Admin."</string>
     <string name="support_txt">"If you are having problems with the app or signing up, please contact us.\nIf you are a large organization, team or group contact us and we will help with set up."
 	</string>
     <string name="shared_is_popup">"What is this? \n\nIf you want more than one users to manage messages sent to a single entity like ‘Customer service’ or ‘Accounts’, use a Common official ID.\n\nNOTE: The Common official ID gets added to all members’ contact list.\n\nCreate a Common official ID?"
@@ -692,6 +697,6 @@
     <string name="got_it">Got It</string>
     <string name="invite_manually">You can invite a person by manually entering number</string>
 
-    <string name="create_new_sg_text">Please complete your profile to create new SuperGroup</string>
+    <string name="create_new_sg_text">Please complete your profile to create new Hub</string>
     <string name="invite_sms">This SMS will go from your mobile phone and will be charged per your operator\'s plan.</string>
 </resources>

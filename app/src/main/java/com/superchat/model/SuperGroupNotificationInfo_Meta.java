@@ -44,7 +44,7 @@ public class SuperGroupNotificationInfo_Meta implements Serializable {
 
     @Override
     public String toString() {
-        return "SuperGroupNotificationInfo_Meta{" +
+        return "HubNotificationInfo_Meta{" +
                 "notificationsCount=" + notificationsCount +
                 '}';
     }

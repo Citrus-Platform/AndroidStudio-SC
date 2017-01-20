@@ -86,7 +86,7 @@ import java.io.UnsupportedEncodingException;
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     private TextDrawable.IBuilder mDrawableBuilder;
 
-    private static final String TAG = "SuperGroupProfileActivity";
+    private static final String TAG = "HubProfileActivity";
     private ChatService messageService;
 
     private ServiceConnection mMessageConnection = new ServiceConnection() {

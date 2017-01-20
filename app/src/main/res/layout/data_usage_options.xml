@@ -21,14 +21,14 @@
                 android:layout_height="wrap_content"
                 android:padding="15dp"
                 android:text="When using mobile data"
-                android:textColor="@color/blue"
+                android:textColor="@color/colorPrimary"
                 android:textSize="22sp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_below="@+id/headerLabel"
-                android:background="@color/blue" />
+                android:background="@color/colorPrimary" />
         </RelativeLayout>
 
         <LinearLayout
@@ -142,7 +142,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="1px"
                 android:layout_weight="1"
-                android:background="@color/white"
+                android:background="@color/colorPrimary"
                 android:gravity="center"
                 android:padding="10dp">
 
@@ -150,9 +150,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="1px"
-                    android:background="@color/white"
                     android:text="Cancel"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="14sp" />
             </RelativeLayout>
 
@@ -162,16 +161,15 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="1px"
                 android:layout_weight="1"
-                android:background="@color/white"
+                android:background="@color/colorPrimary"
                 android:gravity="center"
                 android:padding="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/white"
                     android:text="Ok"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="14sp" />
             </RelativeLayout>
         </LinearLayout>

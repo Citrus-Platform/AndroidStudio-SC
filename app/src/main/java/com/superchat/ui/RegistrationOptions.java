@@ -68,7 +68,7 @@ public class RegistrationOptions extends FragmentActivity implements OnClickList
 
         FragmentManager fm = getSupportFragmentManager();
         navi = (GalleryNavigator) findViewById(R.id.count);
-        navi.setSize(2);
+        navi.setSize(3);
         navi.setPosition(0);
         navi.setLoadedSize(0);
         navi.invalidate();

@@ -111,6 +111,16 @@
                 android:background="@drawable/channel_photo"
                 android:gravity="center">
 
+                <ImageView
+                    android:id="@+id/id_group_icon"
+                    android:layout_width="fill_parent"
+                    android:layout_height="220dp"
+                    android:layout_below="@+id/channel_detail_progress"
+                    android:layout_toEndOf="@+id/channel_detail_progress"
+                    android:layout_toRightOf="@+id/channel_detail_progress"
+                    android:gravity="center"
+                    android:scaleType="centerCrop" />
+
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -215,15 +225,6 @@
                     android:layout_centerInParent="true"
                     android:visibility="gone" />
 
-                <ImageView
-                    android:id="@+id/id_group_icon"
-                    android:layout_width="fill_parent"
-                    android:layout_height="220dp"
-                    android:layout_below="@+id/channel_detail_progress"
-                    android:layout_toEndOf="@+id/channel_detail_progress"
-                    android:layout_toRightOf="@+id/channel_detail_progress"
-                    android:gravity="center"
-                    android:scaleType="centerCrop" />
             </RelativeLayout>
 
             <LinearLayout

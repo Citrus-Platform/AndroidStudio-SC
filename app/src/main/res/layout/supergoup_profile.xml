@@ -3,7 +3,7 @@
     android:id="@+id/id_profile_screen"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/img_about_hub"
+    android:background="@drawable/img_about_hub_profile"
     android:orientation="vertical">
 
     <RelativeLayout

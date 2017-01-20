@@ -115,7 +115,6 @@ public class PrivacySettings extends Activity implements OnClickListener {
         switchCallSetting = (Switch) findViewById(R.id.switchCallSetting);
         switchChatSettings = (Switch) findViewById(R.id.switchChatSettings);
 
-        llBlockContacts.setOnClickListener(this);
         llSwitchChatSettings.setOnClickListener(this);
         llSwitchCallSettings.setOnClickListener(this);
 
@@ -155,8 +154,12 @@ public class PrivacySettings extends Activity implements OnClickListener {
         });
 
         Set<String> blockSet = pref.getBlockList();
-        String size = (blockSet != null ? blockSet.size() + " Contacts" : "No Contact");
+        int blockSetSize = (blockSet != null ? blockSet.size() : 0);
+        String size = (blockSetSize > 0 ? blockSetSize + " Contacts" : "No Contact");
         tvContactCount.setText(size);
+        if(blockSetSize > 0){
+            llBlockContacts.setOnClickListener(this);
+        }
     }
 
     public void onResume() {

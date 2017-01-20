@@ -32,7 +32,7 @@ public class SuperGroupNotificationInfo implements Serializable {
 
     @Override
     public String toString() {
-        return "SuperGroupNotificationInfo{" +
+        return "HubNotificationInfo{" +
                 "groupName='" + groupName + '\'' +
                 ", metaInfo=" + metaInfo.toString() +
                 '}';

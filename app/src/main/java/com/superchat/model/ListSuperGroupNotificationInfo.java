@@ -21,8 +21,8 @@ public class ListSuperGroupNotificationInfo implements Serializable {
 
     @Override
     public String toString() {
-        return "ListSuperGroupNotificationInfo{" +
-                "hmSuperGroupsInfo=" + hmSuperGroupsInfo.toString() +
+        return "ListHubNotificationInfo{" +
+                "hmHubInfo=" + hmSuperGroupsInfo.toString() +
                 '}';
     }
 }

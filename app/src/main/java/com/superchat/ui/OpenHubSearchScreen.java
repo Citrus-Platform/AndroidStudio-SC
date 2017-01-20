@@ -27,6 +27,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -75,6 +76,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -92,6 +94,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 import static android.R.attr.category;
+import static android.R.attr.data;
 import static com.superchat.interfaces.interfaceInstances.objApi;
 import static com.superchat.interfaces.interfaceInstances.objExceptione;
 import static com.superchat.interfaces.interfaceInstances.objGlobal;
@@ -99,12 +102,13 @@ import static com.superchat.interfaces.interfaceInstances.objToast;
 
 public class OpenHubSearchScreen extends AppCompatActivity implements OnClickListener, SearchView.OnQueryTextListener, OpenGroupAdapterConnector {
 
-    public static void start(Context context) {
+    public static void start(Activity context) {
         Bundle bundle = new Bundle();
 
         Intent starter = new Intent(context, OpenHubSearchScreen.class);
         starter.putExtras(bundle);
-        context.startActivity(starter);
+        context.startActivityForResult(starter, FragmentDrawer.CODE_INVITE);
+        //context.startActivity(starter);
     }
 
     Activity activity = this;
@@ -327,6 +331,17 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
         bteldialog.show();
     }
 
+    private String getDisplayName(final String domainDisplayName, final String domainName) {
+        String HeadingToDisplay = "";
+        if (domainDisplayName != null) {
+            HeadingToDisplay = domainDisplayName;
+        } else if (domainName != null) {
+            HeadingToDisplay = domainName;
+        }
+
+        return HeadingToDisplay;
+    }
+
     Dialog welcomeDialog = null;
 
     public void showWelcomeScreen(SGroupListObject sGroupListObject) {
@@ -344,6 +359,7 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
         String domainDisplayName = sGroupListObject.getDomainDisplayName();
         String description = sGroupListObject.getDescription();
 
+        superGroupName = domainName;
 
         final String supergroup_name = domainName;
         final String sg_display_name = domainDisplayName;
@@ -367,7 +383,7 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
         picChooserDialog.findViewById(R.id.id_camera).setOnClickListener(this);
         picChooserDialog.findViewById(R.id.id_gallery).setOnClickListener(this);
 //		((TextView)welcomeDialog.findViewById(R.id.id_domain_name)).setText(supergroup_name);
-        ((TextView) welcomeDialog.findViewById(R.id.id_domain_name)).setText(sg_display_name);
+        ((TextView) welcomeDialog.findViewById(R.id.id_domain_name)).setText(getDisplayName(sg_display_name, domainName));
         if (type == 1)
             ((TextView) welcomeDialog.findViewById(R.id.id_inviters_name)).setText("" + inviter_name);
         else if (type == 2) {
@@ -395,10 +411,7 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 inviteSGFileID = file_id;
-                if (type != 2 && type != 3)
-                    showNameDialog(sg_display_name);
-                else
-                    registerUserOnServer(supergroup_name, sg_display_name, v);
+                registerUserOnServer(supergroup_name, sg_display_name, v);
             }
         });
         ((TextView) welcomeDialog.findViewById(R.id.id_back)).setOnClickListener(new OnClickListener() {
@@ -437,12 +450,24 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
         welcomeDialog.show();
     }
 
+    /**
+     * react to the user tapping the back/up icon in the action bar
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // this takes the user 'back', as if they pressed the left-facing triangle icon on the main android toolbar.
+                // if this doesn't work as desired, another possibility is to call `finish()` here.
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     public void onClick(View view) {
         switch (view.getId()) {
-            case android.R.id.home: {
-                finish();
-                break;
-            }
             case R.id.row_layout:
                 LinearLayout ll = (LinearLayout) view.findViewById(R.id.row_layout);
                 RadioButton radio = (RadioButton) view.findViewById(R.id.id_sg_radio_button);
@@ -1004,6 +1029,14 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
 
 //                    saveDataAndMove();
 
+                    Bundle bundle = new Bundle();
+                    bundle.putString("SG_MOBILE", "" + inviteMobileNumber);
+                    bundle.putString("SG_NAME", "" + inviteSGName);
+                    bundle.putString("SG_DISPLAY_NAME", "" + inviteSGDisplayName);
+                    bundle.putString("SG_FILE_ID", "" + inviteSGFileID);
+                    bundle.putString("SG_USER_NAME", "" + inviteUserName);
+                    //bundle.putString("SG_USER_ID", inviteUserID);
+                    bundle.putString("SG_USER_PASSWORD", "" + inviteUserPassword);
 
                     Intent data = new Intent();
                     data.putExtra("SG_MOBILE", "" + inviteMobileNumber);
@@ -1013,6 +1046,9 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
                     data.putExtra("SG_USER_NAME", "" + inviteUserName);
                     data.putExtra("SG_USER_ID", inviteUserID);
                     data.putExtra("SG_USER_PASSWORD", "" + inviteUserPassword);
+                    data.putExtra("INTENT_CODE", FragmentDrawer.CODE_OPEN_SUPERGROUP);
+
+                    //EventBus.getDefault().post(data);
                     setResult(RESULT_OK, data);
                     finish();
 
@@ -1024,16 +1060,6 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
                     });
 
                 }
-//			runOnUiThread(new Runnable() {
-//				Splas
-//				@Override
-//				public void run() {
-//					if (dialog != null) {
-//						dialog.dismiss();
-//						dialog = null;
-//					}
-//				}
-//			});
                 super.onSuccess(arg0, arg1);
             }
 

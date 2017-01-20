@@ -1768,7 +1768,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
         @Override
         protected void onPreExecute() {
             if (domainReg && isProfileDataValidated)
-                dialog = ProgressDialog.show(ProfileScreen.this, "", "Please wait while we create your Supergroup..",
+                dialog = ProgressDialog.show(ProfileScreen.this, "", "Please wait while we create your Hub..",
                         true);
             else
                 dialog = ProgressDialog.show(ProfileScreen.this, "", "Loading. Please wait...", true);

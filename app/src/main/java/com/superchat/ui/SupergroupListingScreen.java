@@ -105,7 +105,7 @@ import java.util.List;
 import java.util.Set;
 
 public class SupergroupListingScreen extends Activity implements OnClickListener, OnItemClickListener {
-	private static final String TAG = "SupergroupListingScreen";
+	private static final String TAG = "HubListingScreen";
 	HashMap<String, AppContact> allContacts = new HashMap<String, AppContact>();
 	ArrayList<AppContact> dataList;
 	ListView listView;
@@ -237,163 +237,8 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				superGroupName = domaine_name.getText().toString();
-				boolean contains = false;
-				if (ownerDomainNameSet != null && ownerDomainNameSet.contains(superGroupName))
-					contains = true;
-				else if (invitedDomainNameSet != null && invitedDomainNameSet.contains(superGroupName))
-					contains = true;
-				else if (joinedDomainNameSet != null && joinedDomainNameSet.contains(superGroupName))
-					contains = true;
-				if (!contains)
-					newUser = true;
-
-				JSONObject json;
-				String sg_display_name;
-				String sg_name;
-				String inviter = null;
-				String file_id = null;
-				String org_name = null;
-				String domainType = null;
-				boolean sg_found = false;
-				if (superGroupName != null && superGroupName.trim().length() > 0) {
-					if (invitedDomainNameSet != null) {
-						for (String data : invitedDomainNameSet) {
-							try {
-								json = new JSONObject(data);
-								if (json != null && json.has("domainName")) {
-									sg_name = json.getString("domainName");
-									if (sg_name.equalsIgnoreCase(superGroupName)) {
-										if (json != null && json.has("adminName"))
-											inviter = json.getString("adminName");
-										else
-											inviter = null;
-										if (json != null && json.has("displayName"))
-											sg_display_name = json.getString("displayName");
-										else
-											sg_display_name = sg_name;
-										if (json != null && json.has("logoFileId"))
-											file_id = json.getString("logoFileId");
-										else
-											file_id = null;
-										if (json != null && json.has("orgName"))
-											org_name = json.getString("orgName");
-										else
-											org_name = null;
-										if (json != null && json.has("domainType"))
-											domainType = json.getString("domainType");
-										else
-											domainType = null;
-										sg_found = true;
-										showWelcomeScreen(superGroupName, sg_display_name, inviter, org_name, file_id, 1, domainType);
-										break;
-									}
-								}
-							} catch (JSONException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					}
-					if (ownerDomainNameSet != null) {
-						sg_name = null;
-						inviter = null;
-						file_id = null;
-						org_name = null;
-						domainType = null;
-						for (String data : ownerDomainNameSet) {
-							try {
-								json = new JSONObject(data);
-								if (json != null && json.has("domainName")) {
-									sg_name = json.getString("domainName");
-									if (sg_name.equalsIgnoreCase(superGroupName)) {
-										if (json != null && json.has("adminName"))
-											inviter = json.getString("adminName");
-										else
-											inviter = null;
-										if (json != null && json.has("displayName"))
-											sg_display_name = json.getString("displayName");
-										else
-											sg_display_name = sg_name;
-										if (json != null && json.has("logoFileId"))
-											file_id = json.getString("logoFileId");
-										else
-											file_id = null;
-										if (json != null && json.has("orgName"))
-											org_name = json.getString("orgName");
-										else
-											org_name = null;
-										if (json != null && json.has("domainType"))
-											domainType = json.getString("domainType");
-										else
-											domainType = null;
-										sg_found = true;
-										showWelcomeScreen(superGroupName, sg_display_name, inviter, org_name, file_id, 2, domainType);
-										break;
-									}
-								}
-							} catch (JSONException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					}
-					if (joinedDomainNameSet != null) {
-						sg_name = null;
-						inviter = null;
-						file_id = null;
-						org_name = null;
-						domainType = null;
-						for (String data : joinedDomainNameSet) {
-							try {
-								json = new JSONObject(data);
-								if (json != null && json.has("domainName")) {
-									sg_name = json.getString("domainName");
-									if (sg_name.equalsIgnoreCase(superGroupName)) {
-										if (json != null && json.has("adminName"))
-											inviter = json.getString("adminName");
-										else
-											inviter = null;
-										if (json != null && json.has("displayName"))
-											sg_display_name = json.getString("displayName");
-										else
-											sg_display_name = sg_name;
-										if (json != null && json.has("logoFileId"))
-											file_id = json.getString("logoFileId");
-										else
-											file_id = null;
-										if (json != null && json.has("orgName"))
-											org_name = json.getString("orgName");
-										else
-											org_name = null;
-										if (json != null && json.has("domainType"))
-											domainType = json.getString("domainType");
-										else
-											domainType = null;
-										sg_found = true;
-										showWelcomeScreen(superGroupName, sg_display_name, inviter, org_name, file_id, 3, domainType);
-										break;
-									}
-								}
-							} catch (JSONException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					}
-					if (!sg_found) {
-//						showWelcomeScreen(superGroupName, inviter, org_name, file_id, 0);
-						new GetSuperGroupProfile(superGroupName).execute();
-					}
-				} else {
-					if (domaine_name.getText().toString().trim().length() < 3) {
-						Toast.makeText(SupergroupListingScreen.this, getString(R.string.enter_sg_name_to_continue), Toast.LENGTH_SHORT).show();
-						return;
-					}
-					String text = domaine_name.getText().toString();
-					registerUserOnServer(text, selectedSGDisplayName, view);
-				}
+				//joinNewGroupByExactName(view, domaine_name);
+				joinNewGroupBySearch();
 			}
 		});
 		createSG.setOnClickListener(new OnClickListener() {
@@ -417,13 +262,13 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 			expandableListDetail = new HashMap<String, List<String>>();
 			int list_size = ownerDomainNameSet != null ? ownerDomainNameSet.size() : 0;
 			if (list_size > 0)
-				expandableListDetail.put("Owned SuperGroups" + "(" + ownerDomainNameSet.size() + ")", ownerDomainNameSet);
+				expandableListDetail.put("Owned Hub" + " (" + ownerDomainNameSet.size() + ")", ownerDomainNameSet);
 			list_size = invitedDomainNameSet != null ? invitedDomainNameSet.size() : 0;
 			if (list_size > 0)
-				expandableListDetail.put("Invited SuperGroups" + "(" + invitedDomainNameSet.size() + ")", invitedDomainNameSet);
+				expandableListDetail.put("Invited Hub" + " (" + invitedDomainNameSet.size() + ")", invitedDomainNameSet);
 			list_size = joinedDomainNameSet != null ? joinedDomainNameSet.size() : 0;
 			if (list_size > 0)
-				expandableListDetail.put("Joined SuperGroups" + "(" + list_size + ")", joinedDomainNameSet);
+				expandableListDetail.put("Joined Hub" + " (" + list_size + ")", joinedDomainNameSet);
 			expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
 			expandableListAdapter = new ExpandableListAdapter(this, expandableListTitle, expandableListDetail);
 			expandableListView.setAdapter(expandableListAdapter);
@@ -432,11 +277,11 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 				@Override
 				public void onGroupExpand(int groupPosition) {
 					String title_name = expandableListTitle.get(groupPosition);
-					if (title_name.startsWith("Invited SuperGroups")) {
+					if (title_name.startsWith("Invited Hub")) {
 						expandableListAdapter.setExpandedType(ExpandableListAdapter.INVITED_SUPERGROUPS);
-					} else if (title_name.startsWith("Owned SuperGroups")) {
+					} else if (title_name.startsWith("Owned Hub")) {
 						expandableListAdapter.setExpandedType(ExpandableListAdapter.OWNED_SUPERGROUPS);
-					} else if (title_name.startsWith("Joined SuperGroups")) {
+					} else if (title_name.startsWith("Joined Hub")) {
 						expandableListAdapter.setExpandedType(ExpandableListAdapter.JOINED_SUPERGROUPS);
 					}
 				}
@@ -501,10 +346,10 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 						e.printStackTrace();
 					}
 //		                registerUserOnServer(superGroupName, v);
-					if (title_name.startsWith("Invited SuperGroups")) {
+					if (title_name.startsWith("Invited Hub")) {
 						newUser = true;
 						showWelcomeScreen(sg_name, sg_display_name, inviter, org_name, file_id, 1, domainType);
-					} else if (title_name.startsWith("Owned SuperGroups")) {
+					} else if (title_name.startsWith("Owned Hub")) {
 						newUser = false;
 						showWelcomeScreen(sg_name, sg_display_name, inviter, org_name, file_id, 2, domainType);
 					}
@@ -520,6 +365,171 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 		UtilSetFont.setFontMainScreen(this);
 	}
 
+	private void joinNewGroupBySearch() {
+		OpenHubSearchScreen.start(this);
+	}
+
+	private void joinNewGroupByExactName(final View view, final EditText domaine_name){
+		{
+			// TODO Auto-generated method stub
+			superGroupName = domaine_name.getText().toString();
+			boolean contains = false;
+			if (ownerDomainNameSet != null && ownerDomainNameSet.contains(superGroupName))
+				contains = true;
+			else if (invitedDomainNameSet != null && invitedDomainNameSet.contains(superGroupName))
+				contains = true;
+			else if (joinedDomainNameSet != null && joinedDomainNameSet.contains(superGroupName))
+				contains = true;
+			if (!contains)
+				newUser = true;
+
+			JSONObject json;
+			String sg_display_name;
+			String sg_name;
+			String inviter = null;
+			String file_id = null;
+			String org_name = null;
+			String domainType = null;
+			boolean sg_found = false;
+			if (superGroupName != null && superGroupName.trim().length() > 0) {
+				if (invitedDomainNameSet != null) {
+					for (String data : invitedDomainNameSet) {
+						try {
+							json = new JSONObject(data);
+							if (json != null && json.has("domainName")) {
+								sg_name = json.getString("domainName");
+								if (sg_name.equalsIgnoreCase(superGroupName)) {
+									if (json != null && json.has("adminName"))
+										inviter = json.getString("adminName");
+									else
+										inviter = null;
+									if (json != null && json.has("displayName"))
+										sg_display_name = json.getString("displayName");
+									else
+										sg_display_name = sg_name;
+									if (json != null && json.has("logoFileId"))
+										file_id = json.getString("logoFileId");
+									else
+										file_id = null;
+									if (json != null && json.has("orgName"))
+										org_name = json.getString("orgName");
+									else
+										org_name = null;
+									if (json != null && json.has("domainType"))
+										domainType = json.getString("domainType");
+									else
+										domainType = null;
+									sg_found = true;
+									showWelcomeScreen(superGroupName, sg_display_name, inviter, org_name, file_id, 1, domainType);
+									break;
+								}
+							}
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+				if (ownerDomainNameSet != null) {
+					sg_name = null;
+					inviter = null;
+					file_id = null;
+					org_name = null;
+					domainType = null;
+					for (String data : ownerDomainNameSet) {
+						try {
+							json = new JSONObject(data);
+							if (json != null && json.has("domainName")) {
+								sg_name = json.getString("domainName");
+								if (sg_name.equalsIgnoreCase(superGroupName)) {
+									if (json != null && json.has("adminName"))
+										inviter = json.getString("adminName");
+									else
+										inviter = null;
+									if (json != null && json.has("displayName"))
+										sg_display_name = json.getString("displayName");
+									else
+										sg_display_name = sg_name;
+									if (json != null && json.has("logoFileId"))
+										file_id = json.getString("logoFileId");
+									else
+										file_id = null;
+									if (json != null && json.has("orgName"))
+										org_name = json.getString("orgName");
+									else
+										org_name = null;
+									if (json != null && json.has("domainType"))
+										domainType = json.getString("domainType");
+									else
+										domainType = null;
+									sg_found = true;
+									showWelcomeScreen(superGroupName, sg_display_name, inviter, org_name, file_id, 2, domainType);
+									break;
+								}
+							}
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+				if (joinedDomainNameSet != null) {
+					sg_name = null;
+					inviter = null;
+					file_id = null;
+					org_name = null;
+					domainType = null;
+					for (String data : joinedDomainNameSet) {
+						try {
+							json = new JSONObject(data);
+							if (json != null && json.has("domainName")) {
+								sg_name = json.getString("domainName");
+								if (sg_name.equalsIgnoreCase(superGroupName)) {
+									if (json != null && json.has("adminName"))
+										inviter = json.getString("adminName");
+									else
+										inviter = null;
+									if (json != null && json.has("displayName"))
+										sg_display_name = json.getString("displayName");
+									else
+										sg_display_name = sg_name;
+									if (json != null && json.has("logoFileId"))
+										file_id = json.getString("logoFileId");
+									else
+										file_id = null;
+									if (json != null && json.has("orgName"))
+										org_name = json.getString("orgName");
+									else
+										org_name = null;
+									if (json != null && json.has("domainType"))
+										domainType = json.getString("domainType");
+									else
+										domainType = null;
+									sg_found = true;
+									showWelcomeScreen(superGroupName, sg_display_name, inviter, org_name, file_id, 3, domainType);
+									break;
+								}
+							}
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+				if (!sg_found) {
+//						showWelcomeScreen(superGroupName, inviter, org_name, file_id, 0);
+					new GetSuperGroupProfile(superGroupName).execute();
+				}
+			} else {
+				if (domaine_name.getText().toString().trim().length() < 3) {
+					Toast.makeText(SupergroupListingScreen.this, getString(R.string.enter_sg_name_to_continue), Toast.LENGTH_SHORT).show();
+					return;
+				}
+				String text = domaine_name.getText().toString();
+				registerUserOnServer(text, selectedSGDisplayName, view);
+			}
+		}
+	}
 	boolean backFromProfile;
 	public void onResume() {
 		super.onResume();
@@ -1807,11 +1817,11 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 			else
 				expandedListTextView.setText(sg_name);
 			if (inviter != null && title_name != null) {
-				if (title_name.startsWith("Invited SuperGroups")) {
+				if (title_name.startsWith("Invited Hub")) {
 					invited_by.setText("Invited by " + inviter);
-				} else if (title_name.startsWith("Owned SuperGroups")) {
+				} else if (title_name.startsWith("Owned Hub")) {
 					invited_by.setText("Owned by you");
-				} else if (title_name.startsWith("Joined SuperGroups")) {
+				} else if (title_name.startsWith("Joined Hub")) {
 					invited_by.setText("Created by " + inviter);
 				}
 			}
@@ -1902,7 +1912,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 		protected String doInBackground(String... urls) {
 			try {
 				String url = Constants.SERVER_URL + "/tiger/rest/admin/domain/profile?domainName=" + URLEncoder.encode(domain_name, "UTF-8");
-				Log.i(TAG, "GetSuperGroupProfile :: doInBackground : URL - " + url);
+				Log.i(TAG, "GetHubProfile :: doInBackground : URL - " + url);
 				HttpGet httppost = new HttpGet(url);
 				HttpClient httpclient = new DefaultHttpClient();
 				HttpResponse response = httpclient.execute(httppost);
@@ -1928,7 +1938,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 				progressDialog = null;
 			}
 			if (data != null) {
-				Log.i(TAG, "GetSuperGroupProfile :: onPostExecute : response data - " + data);
+				Log.i(TAG, "GetHubProfile :: onPostExecute : response data - " + data);
 				if (data.contains("success")) {
 					String sg_display_name = null;
 					String sg_name = null;
@@ -1974,7 +1984,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 						e.printStackTrace();
 					}
 					if (privacy_type != null && privacy_type.equalsIgnoreCase("closed"))
-						showDialog("This SuperGroup only accepts members by invitation");
+						showDialog("This Hub only accepts members by invitation");
 					else
 						showWelcomeScreen(superGroupName, sg_display_name, inviter, org_name, file_id, 0, domainType);
 				} else if (data.contains("error")) {

@@ -88,7 +88,8 @@
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dip">
+                    android:layout_marginBottom="20dip"
+                    android:layout_marginTop="10dp">
 
                     <com.superchat.widgets.MyriadRegularEditText
                         android:id="@+id/m_number_field"
@@ -159,57 +160,6 @@
                     </LinearLayout>
                 </RelativeLayout>
 
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white"
-                    android:gravity="center_horizontal">
-
-                    <com.superchat.widgets.MyriadRegularTextView
-                        android:id="@+id/id_mobile_number"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:gravity="center_horizontal"
-                        android:paddingBottom="10.0dip"
-                        android:paddingTop="10.0dip"
-                        android:text="+6281880000"
-                        android:textColor="@color/text_color_on_dark_grey"
-                        android:textSize="18sp"
-                        android:textStyle="normal" />
-
-                    <com.superchat.widgets.MyriadRegularTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/id_ViewTopHeader"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginLeft="10dip"
-                        android:gravity="center_horizontal"
-                        android:paddingBottom="10.0dip"
-                        android:paddingTop="10.0dip"
-                        android:text=" | "
-                        android:textColor="@color/black"
-                        android:textStyle="normal"
-                        android:visibility="gone" />
-
-                    <com.superchat.widgets.MyriadRegularTextView
-                        android:id="@+id/id_edit_number"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/id_ViewTopHeader"
-                        android:layout_centerHorizontal="true"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginLeft="10dip"
-                        android:gravity="center_horizontal"
-                        android:paddingBottom="10.0dip"
-                        android:paddingTop="10.0dip"
-                        android:text="@string/edit_txt"
-                        android:textColor="@color/color_lite_blue"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:visibility="gone"  />
-                </LinearLayout>
-
                 <com.superchat.widgets.MyriadRegularTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -225,13 +175,91 @@
                     android:visibility="gone" />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:weightSum="5">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:background="@color/md_grey_200">
+
+                    <com.superchat.widgets.MyriadRegularTextView
+                        android:id="@+id/id_mobile_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="normal" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="match_parent"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:orientation="vertical"
+                    android:background="@color/md_grey_200">
+
+                    <com.superchat.widgets.MyriadRegularTextView
+                        android:id="@+id/id_mobile_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="normal" />
+                </LinearLayout>
+
+                <com.superchat.widgets.MyriadRegularTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/id_ViewTopHeader"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="10dip"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="10.0dip"
+                    android:paddingTop="10.0dip"
+                    android:text=" | "
+                    android:textColor="@color/black"
+                    android:textStyle="normal"
+                    android:visibility="gone" />
+
+                <com.superchat.widgets.MyriadRegularTextView
+                    android:id="@+id/id_edit_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/id_ViewTopHeader"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="10dip"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="10.0dip"
+                    android:paddingTop="10.0dip"
+                    android:text="@string/edit_txt"
+                    android:textColor="@color/color_lite_blue"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </LinearLayout>
+
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/timer_clock"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/confirm_button"
@@ -242,24 +270,20 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/round_rect_gray"
                 android:onClick="onConfirmClick"
-                android:text="@string/confirm_txt"
+                android:text="@string/next_txt"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
 
-            <com.superchat.widgets.MyriadRegularTextView
+            <Button
                 android:id="@+id/id_timer_clock"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/id_ViewTopHeader"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="5dp"
-                android:gravity="center_horizontal"
-                android:text="30:00"
+                android:background="@drawable/round_rect_gray"
+                android:text="RESEND CODE (00:00)"
                 android:textColor="@color/white"
-                android:padding="10dp"
-                android:textSize="16sp"
-                android:textStyle="normal"
-                android:background="@drawable/round_rect_gray" />
+                android:textSize="16sp" />
 
 
             <LinearLayout
@@ -296,19 +320,6 @@
                     android:textStyle="normal"
                     android:visibility="gone" />
 
-                <com.superchat.widgets.MyriadRegularTextView
-                    android:id="@+id/id_resend"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center_horizontal"
-                    android:text="@string/resend"
-                    android:textColor="@color/color_lite_blue"
-                    android:textSize="20sp"
-                    android:textStyle="normal"
-                    android:visibility="gone" />
 
                 <com.superchat.widgets.MyriadRegularTextView
                     android:id="@+id/id_or"

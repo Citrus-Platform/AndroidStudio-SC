@@ -302,6 +302,14 @@ public class MainActivity extends FragmentActivity implements
                 }
             });
 
+            TextView id_title = (TextView) findViewById(R.id.id_title);
+            if(id_title != null) {
+                if (registerSG) {
+                    id_title.setText(getResources().getString(R.string.create_a_hub));
+                } else {
+                    id_title.setText(getResources().getString(R.string.join_a_hub));
+                }
+            }
         }
         viewOne = (ScrollView) findViewById(R.id.scroll_view1);
         viewTwo = (ScrollView) findViewById(R.id.scroll_view2);

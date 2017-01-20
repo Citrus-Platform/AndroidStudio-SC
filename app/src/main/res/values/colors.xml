@@ -24,6 +24,7 @@
      
     <color name="home_sub_footer_color">#ffa3a5a8</color>
     <color name="btn_text_color">#ff4f4f4f</color>
+    <color name="text_color_grey_light">@color/md_grey_600</color>
      <color name="sky_blue_color">#ffcde1f5</color>
      <color name="settings_bg_color">#ffededee</color>
      
@@ -110,11 +111,11 @@
     <color name="add_participant_bg_color">#d4e2f8</color>
     <color name="grp_profile_font_color">#424244</color>
     <color name="color_attach_option_bg">#ffededed</color>
-    <color name="color_lite_blue">#00A6E3</color>
+    <color name="color_lite_blue">@color/colorPrimary</color>
     <color name="color_lite_gray">#ffa3a5a8</color>
     <color name="voice_preview_bg_color">#ff9ddee8</color>
     <color name="activity_bg">#e4e5e5</color>
-    <color name="primary">#52bf90</color>
+    <color name="primary">@color/colorPrimary</color>
     
     
     <color name ="nav_sel">#7d7d7d</color>

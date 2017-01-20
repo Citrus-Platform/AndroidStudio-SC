@@ -43,11 +43,15 @@ import com.superchat.model.multiplesg.InviteJoinDataModel;
 import com.superchat.model.multiplesg.InvitedDomainNameSet;
 import com.superchat.model.multiplesg.JoinedDomainNameSet;
 import com.superchat.model.multiplesg.OwnerDomainName;
+import com.superchat.utils.AppUtil;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.RoundedImageView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,6 +61,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+
+import static android.R.attr.handle;
 
 public class FragmentDrawer extends Fragment implements View.OnClickListener, ConnectorDrawer {
 
@@ -293,13 +299,23 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
         displayPictureCurrent.setOnClickListener(this);
         currentSGName.setOnClickListener(this);
 
-        adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity(), this);
+        refreshList();
+
+        adapter = new ExpandableListAdapter(listItems, getActivity(), this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
         return layout;
     }
 
+    List<ExpandableListAdapter.Item> listItems;
+    private void refreshList(){
+        listItems = getSuperGroupList();
+    }
 
+    public void refreshListAndNotify(){
+        refreshList();
+        adapter.notifyDataSetChanged();
+    }
     public void updateView() {
         String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
         currentSGName.setText("" + SharedPrefManager.getInstance().getCurrentSGDisplayName());
@@ -312,8 +328,9 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
     }
 
 
-    private final int CODE_INVITE = 101;
-    private final int CODE_ADD_SUPERGROUP = 102;
+    public static final int CODE_INVITE = 101;
+    public static final int CODE_ADD_SUPERGROUP = 102;
+    public static final int CODE_OPEN_SUPERGROUP = 103;
 
     @Override
     public void onClick(View v) {
@@ -359,55 +376,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case CODE_INVITE: {
-                try {
-                    if (data != null) {
-                        InviteJoinDataModel model = new InviteJoinDataModel();
-                        String SG_NAME = data.getStringExtra("SG_NAME");
-                        model.setInviteMobileNumber(data.getStringExtra("SG_MOBILE"));
-                        model.setInviteSGName(data.getStringExtra("SG_NAME"));
-                        model.setInviteSGDisplayName(data.getStringExtra("SG_DISPLAY_NAME"));
-                        model.setInviteSGFileID(data.getStringExtra("SG_FILE_ID"));
-                        model.setInviteUserName(data.getStringExtra("SG_USER_NAME"));
-                        model.setInviteUserID(data.getLongExtra("SG_USER_ID", -1));
-                        model.setInviteUserPassword(data.getStringExtra("SG_USER_PASSWORD"));
-                        String user = SharedPrefManager.getInstance().getUserPhone();
-                        if (user != null && user.contains("-"))
-                            user = user.replace("-", "");
-
-                        SharedPrefManager.getInstance().saveSGUserID(model.getInviteUserName(), model.getInviteUserID());
-                        SharedPrefManager.getInstance().saveSGPassword(model.getInviteUserName(), model.getInviteUserPassword());
-
-                        int type = DBWrapper.getInstance().getSGUserTypeValue(SG_NAME);
-                        if (type == -1) {//Not Found
-                            JoinedDomainNameSet joined = new JoinedDomainNameSet();
-                            joined.setDomainName(SG_NAME);
-                            joined.setDisplayName(model.getInviteSGDisplayName());
-                            joined.setUnreadCounter(0);
-                            joined.setDomainType("Company");
-                            joined.setDomainMuteInfo(0);
-                            joined.setOrgName("");
-                            joined.setOrgUrl("");
-                            joined.setPrivacyType("Open");
-                            joined.setAdminName(SharedPrefManager.getInstance().getUserName());
-                            joined.setLogoFileId(model.getInviteSGFileID());
-
-                            SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
-                            String dateString = formatter.format(new Date(System.currentTimeMillis()));
-                            joined.setCreatedDate(dateString);
-
-                            if (joined != null)
-                                DBWrapper.getInstance().addNewJoinedSGData(joined);
-
-                            DBWrapper.getInstance().updateSGCredentials(SG_NAME, model.getInviteUserName(), model.getInviteUserPassword(), model.getInviteUserID(), true);
-                        } else {
-                            DBWrapper.getInstance().updateSGCredentials(SG_NAME, model.getInviteUserName(), model.getInviteUserPassword(), model.getInviteUserID(), true);
-                            DBWrapper.getInstance().updateSGTypeValue(SG_NAME, 2);
-                        }
-                        ((HomeScreen) getActivity()).switchSG(user + "_" + SG_NAME, true, model, false);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                handleHub(data);
                 break;
             }
             case CODE_ADD_SUPERGROUP: {
@@ -458,6 +427,58 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
         }
     }
 
+    private void handleHub(Intent data){
+        try {
+            if (data != null) {
+                InviteJoinDataModel model = new InviteJoinDataModel();
+                String SG_NAME = data.getStringExtra("SG_NAME");
+                model.setInviteMobileNumber(data.getStringExtra("SG_MOBILE"));
+                model.setInviteSGName(data.getStringExtra("SG_NAME"));
+                model.setInviteSGDisplayName(data.getStringExtra("SG_DISPLAY_NAME"));
+                model.setInviteSGFileID(data.getStringExtra("SG_FILE_ID"));
+                model.setInviteUserName(data.getStringExtra("SG_USER_NAME"));
+                model.setInviteUserID(data.getLongExtra("SG_USER_ID", -1));
+                model.setInviteUserPassword(data.getStringExtra("SG_USER_PASSWORD"));
+                String user = SharedPrefManager.getInstance().getUserPhone();
+                if (user != null && user.contains("-"))
+                    user = user.replace("-", "");
+
+                SharedPrefManager.getInstance().saveSGUserID(model.getInviteUserName(), model.getInviteUserID());
+                SharedPrefManager.getInstance().saveSGPassword(model.getInviteUserName(), model.getInviteUserPassword());
+
+                int type = DBWrapper.getInstance().getSGUserTypeValue(SG_NAME);
+                if (type == -1) {//Not Found
+                    JoinedDomainNameSet joined = new JoinedDomainNameSet();
+                    joined.setDomainName(SG_NAME);
+                    joined.setDisplayName(model.getInviteSGDisplayName());
+                    joined.setUnreadCounter(0);
+                    joined.setDomainType("Company");
+                    joined.setDomainMuteInfo(0);
+                    joined.setOrgName("");
+                    joined.setOrgUrl("");
+                    joined.setPrivacyType("Open");
+                    joined.setAdminName(SharedPrefManager.getInstance().getUserName());
+                    joined.setLogoFileId(model.getInviteSGFileID());
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+                    String dateString = formatter.format(new Date(System.currentTimeMillis()));
+                    joined.setCreatedDate(dateString);
+
+                    if (joined != null)
+                        DBWrapper.getInstance().addNewJoinedSGData(joined);
+
+                    DBWrapper.getInstance().updateSGCredentials(SG_NAME, model.getInviteUserName(), model.getInviteUserPassword(), model.getInviteUserID(), true);
+                } else {
+                    DBWrapper.getInstance().updateSGCredentials(SG_NAME, model.getInviteUserName(), model.getInviteUserPassword(), model.getInviteUserID(), true);
+                    DBWrapper.getInstance().updateSGTypeValue(SG_NAME, 2);
+                }
+                ((HomeScreen) getActivity()).switchSG(user + "_" + SG_NAME, true, model, false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void eventClickedCreateNewHub() {
         SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
@@ -497,7 +518,18 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
 
     @Override
     public void eventClickedOpenHub() {
-        OpenHubSearchScreen.start(getActivity());
+        SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
+        String number = iPrefManager.getUserPhone();
+
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.MOBILE_NUMBER_TXT, number);
+        bundle.putStringArrayList(SupergroupListingScreenNew.KEY_INVITED_DOMAIN_SET, invitedDomainNameSet);
+        bundle.putBoolean(SupergroupListingScreenNew.KEY_SHOW_OWNED_ALERT, false);
+
+        Intent starter = new Intent(getActivity(), OpenHubSearchScreen.class);
+        starter.putExtras(bundle);
+        startActivityForResult(starter, CODE_INVITE);
+        //OpenHubSearchScreen.start(getActivity());
     }
 
     public static interface ClickListener {
@@ -559,10 +591,11 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
         // Comment this
         {
             adapter.notifyDataSetChanged();
-            /////////////////////////////////////
-            adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity(), this);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-            recyclerView.setAdapter(adapter);
+            {/*
+                adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity(), this);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+                recyclerView.setAdapter(adapter);
+            */}
         }
         /////////////////////////////////////
         boolean muteId = SharedPrefManager.getInstance().isSnoozeExpired(SharedPrefManager.getInstance().getUserDomain());
@@ -796,5 +829,27 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
         });
         if (!bteldialog.isShowing())
             bteldialog.show();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
+    }
+
+    @Subscribe
+    public void getIntentData(Intent data){
+        System.out.print("");
+        handleHub(data);
     }
 }

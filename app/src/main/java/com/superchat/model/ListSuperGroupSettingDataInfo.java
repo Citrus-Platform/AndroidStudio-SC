@@ -21,8 +21,8 @@ public class ListSuperGroupSettingDataInfo implements Serializable {
 
     @Override
     public String toString() {
-        return "ListSuperGroupDownloadDataSettings{" +
-                "hmSuperGroupsInfo=" + hmSuperGroupsInfo.toString() +
+        return "ListHubDownloadDataSettings{" +
+                "hmHubInfo=" + hmSuperGroupsInfo.toString() +
                 '}';
     }
 }

@@ -68,6 +68,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.superchat.R.id.id_back_arrow;
+import static com.superchat.R.id.id_timer_clock;
 
 public class MobileVerificationScreen extends FragmentActivity implements OnClickListener {
     private static final String TAG = "MobileVerificationScreen";
@@ -76,16 +77,16 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
     String countryCode = null;
     String domainName = null;
     TextView mobileNumberView = null;
+    TextView id_mobile_code = null;
     private TextView numEditText01, numEditText02, numEditText03, numEditText04;
     private TextView invalidPinView;
     private TextView notReceivedPinView;
     private TextView callRecieveView;
     private TextView orTextView;
-    private TextView resendView;
     //	private CheckBox privacyCheckbox;
     private MyriadRegularEditText inputEditText;
     private MyriadRegularTextView editTextView;
-    private MyriadRegularTextView timeCounterView;
+    private Button timeCounterView;
     private ImageView id_back_arrow;
     private TextWatcher watcherEditText01;
     private KeyListener iKeyLisener = null;
@@ -125,6 +126,17 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
             reg_type = bundle.get(Constants.REG_TYPE).toString();
         if (reg_type != null && reg_type.equals("ADMIN"))
             regAsAdmin = true;
+
+
+        TextView id_title = (TextView) findViewById(R.id.id_title);
+        if(id_title != null) {
+            if (regAsAdmin) {
+                id_title.setText(getResources().getString(R.string.create_a_hub));
+            } else {
+                id_title.setText(getResources().getString(R.string.join_a_hub));
+            }
+        }
+
         tempVerify = bundle.getBoolean("TEMP_VERIFY");
         iPrefManager = SharedPrefManager.getInstance();
         imManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -133,7 +145,17 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
         domainName = getIntent().getExtras().getString(Constants.DOMAIN_NAME);
         displayName = getIntent().getExtras().getString(Constants.NAME);
         mobileNumberView = (MyriadRegularTextView) findViewById(R.id.id_mobile_number);
-        mobileNumberView.setText("+" + mobileNumber.replace(" ", "-"));
+        id_mobile_code =  (MyriadRegularTextView) findViewById(R.id.id_mobile_code);
+
+        String mobileNumberComplete = "+" + mobileNumber.replace(" ", "-");
+        if(mobileNumberComplete != null && mobileNumberComplete.contains("-")){
+            String countryCode = mobileNumberComplete.substring(0, mobileNumberComplete.indexOf("-"));
+            String mobNumber = mobileNumberComplete.substring(mobileNumberComplete.indexOf("-") + 1);
+
+            id_mobile_code.setText(countryCode);
+            mobileNumberView.setText(mobNumber);
+        }
+
 
 //		privacyCheckbox = (CheckBox) findViewById(R.id.privacy_check);
 //		privacyCheckbox.setMovementMethod(LinkMovementMethod.getInstance());
@@ -141,7 +163,6 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
         invalidPinView = (MyriadRegularTextView) findViewById(R.id.id_invalid_pin);
         isAppDestroy = false;
         notReceivedPinView = (MyriadRegularTextView) findViewById(R.id.id_didnt_receive_pin);
-        resendView = (MyriadRegularTextView) findViewById(R.id.id_resend);
         callRecieveView = (MyriadRegularTextView) findViewById(R.id.id_receive_call);
         orTextView = (MyriadRegularTextView) findViewById(R.id.id_or);
 
@@ -151,10 +172,10 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
         numEditText04 = (MyriadSemiboldTextView) findViewById(R.id.m_number_etxt04);
         inputEditText = (MyriadRegularEditText) findViewById(R.id.m_number_field);
         editTextView = (MyriadRegularTextView) findViewById(R.id.id_edit_number);
-        timeCounterView = (MyriadRegularTextView) findViewById(R.id.id_timer_clock);
+        timeCounterView = (Button) findViewById(R.id.id_timer_clock);
         id_back_arrow = (ImageView) findViewById(R.id.id_back_arrow);
         editTextView.setOnClickListener(this);
-        resendView.setOnClickListener(this);
+        timeCounterView.setOnClickListener(this);
         callRecieveView.setOnClickListener(this);
         id_back_arrow.setOnClickListener(this);
 //		privacyCheckbox.setOnClickListener(new OnClickListener() {
@@ -320,7 +341,6 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
 //		Log.d(TAG, "Clock in Handler: "+WAITING_TIME);
             setTimerText(msgTime);
             if (type == 2) {
-                resendView.setVisibility(View.VISIBLE);
                 notReceivedPinView.setVisibility(View.VISIBLE);
                 orTextView.setVisibility(View.VISIBLE);
                 callRecieveView.setVisibility(View.VISIBLE);
@@ -339,7 +359,6 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
         if (!code.equals("") && code.length() == 4) {
             notReceivedPinView.setVisibility(TextView.GONE);
             callRecieveView.setVisibility(TextView.GONE);
-            resendView.setVisibility(TextView.GONE);
             orTextView.setVisibility(TextView.GONE);
             verifyCode(iPrefManager.getUserId(), inputEditText.getText().toString());
         } else {
@@ -426,7 +445,6 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
                                                     .setVisibility(TextView.VISIBLE);
                                             callRecieveView
                                                     .setVisibility(TextView.VISIBLE);
-                                            resendView.setVisibility(TextView.VISIBLE);
                                             orTextView.setVisibility(TextView.VISIBLE);
                                         }
                                     });
@@ -672,7 +690,6 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
                         && objUserModel.iStatus.equalsIgnoreCase("error") && !isAppDestroy) {
                     notReceivedPinView.setVisibility(TextView.VISIBLE);
                     callRecieveView.setVisibility(TextView.VISIBLE);
-                    resendView.setVisibility(TextView.VISIBLE);
                     orTextView.setVisibility(TextView.VISIBLE);
 //					invalidPinView.setVisibility(TextView.VISIBLE);
                     inputEditText.setText("");
@@ -702,7 +719,6 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
                         public void run() {
                             notReceivedPinView.setVisibility(TextView.VISIBLE);
                             callRecieveView.setVisibility(TextView.VISIBLE);
-                            resendView.setVisibility(TextView.VISIBLE);
                             orTextView.setVisibility(TextView.VISIBLE);
 //							invalidPinView.setVisibility(TextView.VISIBLE);
                             inputEditText.setText("");
@@ -807,7 +823,6 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
                 } else {
                     notReceivedPinView.setVisibility(TextView.VISIBLE);
                     callRecieveView.setVisibility(TextView.VISIBLE);
-                    resendView.setVisibility(TextView.VISIBLE);
                     orTextView.setVisibility(TextView.VISIBLE);
                     if (clockTimer != null)
                         clockTimer.cancel();
@@ -857,7 +872,6 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
                     public void run() {
                         notReceivedPinView.setVisibility(TextView.VISIBLE);
                         callRecieveView.setVisibility(TextView.VISIBLE);
-                        resendView.setVisibility(TextView.VISIBLE);
                         orTextView.setVisibility(TextView.VISIBLE);
                     }
                 });
@@ -931,8 +945,7 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
                 startActivity(intent);
                 finish();
                 break;
-            case R.id.id_resend:
-                resendView.setVisibility(View.GONE);
+            case R.id.id_timer_clock:
                 notReceivedPinView.setVisibility(View.GONE);
                 orTextView.setVisibility(View.GONE);
                 callRecieveView.setVisibility(View.GONE);
@@ -946,7 +959,6 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
                 try {
 
                     isSelfVerify = true;
-                    resendView.setVisibility(View.GONE);
                     notReceivedPinView.setVisibility(View.GONE);
                     orTextView.setVisibility(View.GONE);
                     callRecieveView.setVisibility(View.GONE);
@@ -995,7 +1007,6 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
                             showDialog("Generated code is null");
                     } else {
 
-                        resendView.setVisibility(View.VISIBLE);
                         notReceivedPinView.setVisibility(View.VISIBLE);
                         orTextView.setVisibility(View.VISIBLE);
                         callRecieveView.setVisibility(View.VISIBLE);
@@ -1005,7 +1016,6 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
                 } catch (Exception ex) {
 //				showDialog(getString(R.string.signup_mobile_help));
                     ex.printStackTrace();
-                    resendView.setVisibility(View.VISIBLE);
                     notReceivedPinView.setVisibility(View.VISIBLE);
                     orTextView.setVisibility(View.VISIBLE);
                     callRecieveView.setVisibility(View.VISIBLE);

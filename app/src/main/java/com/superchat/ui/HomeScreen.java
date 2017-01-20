@@ -4070,6 +4070,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         } else {
             drawerFragment.fragmentClose();
         }
+
+        drawerFragment.refreshListAndNotify();
     }
 
     public void showSelectedFragment() {
@@ -4746,7 +4748,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 countOnTab = iPrefManager.getChatCounter(iPrefManager.getUserDomain());
                 break;
             }
-            case 2: {
+            case 1: {
                 int contactsCount = DBWrapper.getInstance().getAllNumbersCount();
                 if ((contactsCount - iPrefManager.getNewContactsCounter(iPrefManager.getUserDomain())) > 0) {
                     countOnTab = contactsCount - iPrefManager.getNewContactsCounter(iPrefManager.getUserDomain());

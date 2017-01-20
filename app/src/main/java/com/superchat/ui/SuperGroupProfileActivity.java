@@ -272,7 +272,7 @@ private static final String TAG = "SuperGroupProfileActivity";
 			// TODO Auto-generated method stub
 			isEditModeOn = true;
 
-			editProfile = new Dialog(this,android.R.style.Theme_Black_NoTitleBar);
+			editProfile = new Dialog(this,android.R.style.Theme_Material_Light_NoActionBar);
 			editProfile.setCanceledOnTouchOutside(false);
 			editProfile.setContentView(R.layout.supergroup_profile_edit);//id_sg_type
 

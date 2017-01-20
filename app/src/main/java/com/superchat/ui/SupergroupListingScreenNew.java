@@ -127,7 +127,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
     Activity activity = this;
     Context context = this;
 
-    private static final String TAG = "SupergroupListingScreen";
+    private static final String TAG = "HubListingScreen";
     HashMap<String, AppContact> allContacts = new HashMap<String, AppContact>();
     ArrayList<AppContact> dataList;
     ListView listView;
@@ -236,7 +236,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
             expandableListDetail = new HashMap<String, ArrayList<InvitedDomainNameSet>>();
             int list_size = invitedDomainNameSet != null ? invitedDomainNameSet.size() : 0;
             if (list_size > 0) {
-                expandableListDetail.put("Invited SuperGroups" + "(" + invitedDomainNameSet.size() + ")", invitedDomainNameSetTemp);
+                expandableListDetail.put("Invited Hub" + " (" + invitedDomainNameSet.size() + ")", invitedDomainNameSetTemp);
             }
             expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
             expandableListAdapter = new ExpandableListAdapter(this, expandableListTitle, expandableListDetail);
@@ -269,10 +269,10 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                     org_name = invited.getOrgName();
 
                     domainType = invited.getDomainType();
-                    if (title_name.startsWith("Invited SuperGroups")) {
+                    if (title_name.startsWith("Invited Hub")) {
                         newUser = true;
                         showWelcomeScreen(sg_name, sg_display_name, inviter, org_name, file_id, 1, domainType);
-                    } else if (title_name.startsWith("Owned SuperGroups"))
+                    } else if (title_name.startsWith("Owned Hub"))
                         showWelcomeScreen(sg_name, sg_display_name, inviter, org_name, file_id, 2, domainType);
                     else
                         showWelcomeScreen(sg_name, sg_display_name, inviter, org_name, file_id, 3, domainType);
@@ -299,14 +299,14 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                 if (superGroupName != null && superGroupName.length() > 0) {
                     OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
                     if (owned != null && superGroupName.equalsIgnoreCase(owned.getDomainName())) {
-                        Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this SuperGroup.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this Hub.", Toast.LENGTH_LONG).show();
                         return false;
                     }
                     ArrayList<JoinedDomainNameSet> joinedDomainNameSet = DBWrapper.getInstance().getListOfJoinedSGs();
                     if (joinedDomainNameSet != null && joinedDomainNameSet.size() > 0) {
                         for (JoinedDomainNameSet joined : joinedDomainNameSet) {
                             if (joined != null && superGroupName.equalsIgnoreCase(joined.getDomainName())) {
-                                Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this SuperGroup.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this Hub.", Toast.LENGTH_LONG).show();
                                 return false;
                             }
                         }
@@ -329,14 +329,14 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
             if (superGroupName != null && superGroupName.length() > 0) {
                 OwnerDomainName owned = DBWrapper.getInstance().getOwnedSG();
                 if (owned != null && superGroupName.equalsIgnoreCase(owned.getDomainName())) {
-                    Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this SuperGroup.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this Hub.", Toast.LENGTH_LONG).show();
                     return;
                 }
                 ArrayList<JoinedDomainNameSet> joinedDomainNameSet = DBWrapper.getInstance().getListOfJoinedSGs();
                 if (joinedDomainNameSet != null && joinedDomainNameSet.size() > 0) {
                     for (JoinedDomainNameSet joined : joinedDomainNameSet) {
                         if (joined != null && superGroupName.equalsIgnoreCase(joined.getDomainName())) {
-                            Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this SuperGroup.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(SupergroupListingScreenNew.this, "Oops! You are already part of this Hub.", Toast.LENGTH_LONG).show();
                             return;
                         }
                     }
@@ -529,11 +529,16 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
         welcomeDialog.show();
     }
 
+    private void joinNewGroupBySearch() {
+        OpenHubSearchScreen.start(this);
+    }
+
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.as_user: {
                 //Toast.makeText(this, "btnAsUserJoin Clicked ", Toast.LENGTH_LONG).show();
-                clickJoinSG();
+                //clickJoinSG();
+                joinNewGroupBySearch();
                 break;
             }
             case R.id.row_layout:
@@ -1499,11 +1504,11 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
             else
                 expandedListTextView.setText(sg_name);
             if (inviter != null && title_name != null) {
-                if (title_name.startsWith("Invited SuperGroups")) {
+                if (title_name.startsWith("Invited Hub")) {
                     invited_by.setText("Invited by " + inviter);
-                } else if (title_name.startsWith("Owned SuperGroups")) {
+                } else if (title_name.startsWith("Owned Hub")) {
                     invited_by.setText("Owned by you");
-                } else if (title_name.startsWith("Joined SuperGroups")) {
+                } else if (title_name.startsWith("Joined Hub")) {
                     invited_by.setText("Created by " + inviter);
                 }
             }
@@ -1594,7 +1599,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
         protected String doInBackground(String... urls) {
             try {
                 String url = Constants.SERVER_URL + "/tiger/rest/admin/domain/profile?domainName=" + URLEncoder.encode(domain_name, "UTF-8");
-                Log.i(TAG, "GetSuperGroupProfile :: doInBackground : URL - " + url);
+                Log.i(TAG, "GetHubProfile :: doInBackground : URL - " + url);
                 HttpGet httppost = new HttpGet(url);
                 HttpClient httpclient = new DefaultHttpClient();
                 HttpResponse response = httpclient.execute(httppost);
@@ -1620,7 +1625,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                 progressDialog = null;
             }
             if (data != null) {
-                Log.i(TAG, "GetSuperGroupProfile :: onPostExecute : response data - " + data);
+                Log.i(TAG, "GetHubProfile :: onPostExecute : response data - " + data);
                 if (data.contains("success")) {
                     String sg_display_name = null;
                     String sg_name = null;
@@ -1666,7 +1671,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                         e.printStackTrace();
                     }
                     if (privacy_type != null && privacy_type.equalsIgnoreCase("closed"))
-                        showDialog("This SuperGroup only accepts members by invitation");
+                        showDialog("This Hub only accepts members by invitation");
                     else
                         showWelcomeScreen(superGroupName, sg_display_name, inviter, org_name, file_id, 0, domainType);
                 } else if (data.contains("error")) {
@@ -1747,7 +1752,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                             expandableListDetail = new HashMap<String, ArrayList<InvitedDomainNameSet>>();
                             int list_size = invitedDomainNameSet != null ? invitedDomainNameSet.size() : 0;
                             if (list_size > 0) {
-                                expandableListDetail.put("Invited SuperGroups" + "(" + invitedDomainNameSet.size() + ")", invitedDomainNameSetTemp);
+                                expandableListDetail.put("Invited Hub" + " (" + invitedDomainNameSet.size() + ")", invitedDomainNameSetTemp);
                             }
                             expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
                             expandableListAdapter = new ExpandableListAdapter(SupergroupListingScreenNew.this, expandableListTitle, expandableListDetail);
@@ -1780,10 +1785,10 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
                                     org_name = invited.getOrgName();
 
                                     domainType = invited.getDomainType();
-                                    if (title_name.startsWith("Invited SuperGroups")) {
+                                    if (title_name.startsWith("Invited Hub")) {
                                         newUser = true;
                                         showWelcomeScreen(sg_name, sg_display_name, inviter, org_name, file_id, 1, domainType);
-                                    } else if (title_name.startsWith("Owned SuperGroups"))
+                                    } else if (title_name.startsWith("Owned Hub"))
                                         showWelcomeScreen(sg_name, sg_display_name, inviter, org_name, file_id, 2, domainType);
                                     else
                                         showWelcomeScreen(sg_name, sg_display_name, inviter, org_name, file_id, 3, domainType);

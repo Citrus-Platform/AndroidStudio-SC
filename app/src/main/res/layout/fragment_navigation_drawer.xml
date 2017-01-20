@@ -57,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="SuperGroup Name"
+                    android:text="Hub Name"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
 

@@ -60,7 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <com.superchat.widgets.MyriadSemiboldEditText
             android:id="@+id/id_sg_name_field"
