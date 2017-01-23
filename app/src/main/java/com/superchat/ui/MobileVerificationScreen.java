@@ -640,38 +640,33 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
                             e.printStackTrace();
                         }
                         if (regAsAdmin) {
-							/*//Check if he has already owned a Supergroup then prompt him
-							boolean isMultipleSuperGroupSupported = true;
-							if(ownerDomainNameSet != null && ownerDomainNameSet.size() > 0 && (!isMultipleSuperGroupSupported)){
-								regAsAdmin = false;
-								Intent intent = new Intent(MobileVerificationScreen.this, SupergroupListingScreen.class);
-								bundle.putString(Constants.MOBILE_NUMBER_TXT, mobileNumber);
-								if(ownerDomainNameSet != null && ownerDomainNameSet.size() > 0)
-									bundle.putStringArrayList("OWNERDOMAINNAMESET", ownerDomainNameSet);
-								if(invitedDomainNameSet != null && invitedDomainNameSet.size() > 0)
-									bundle.putStringArrayList("INVITEDDOMAINSET", invitedDomainNameSet);
-								if(joinedDomainNameSet != null && joinedDomainNameSet.size() > 0)
-									bundle.putStringArrayList("JOINEDDOMAINSET", joinedDomainNameSet);
-								bundle.putBoolean("SHOW_OWNED_ALERT", true);
-								intent.putExtras(bundle);
-								startActivity(intent);
-								finish();
-							}else{*/
-                            Intent intent = new Intent(MobileVerificationScreen.this, ProfileScreen.class);
-                            bundle.putBoolean(Constants.REG_TYPE, true);
-                            bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
-                            //SPECIAL DATA FOR BACK
-                            bundle.putBoolean("PROFILE_FIRST", true);
+                            Intent intent = new Intent(MobileVerificationScreen.this, MainActivity.class);
                             if (mobileNumber.indexOf('-') != -1)
                                 intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber.substring(mobileNumber.indexOf('-') + 1));
                             else
                                 intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber);
                             intent.putExtra(Constants.REG_TYPE, "ADMIN");
                             intent.putExtra("REGISTER_SG", true);
-                            intent.putExtras(bundle);
                             startActivity(intent);
                             finish();
-                            //}
+
+                            //FLOW CHANGE IN UI RELEASE @23RD JAN
+
+//                            Intent intent = new Intent(MobileVerificationScreen.this, ProfileScreen.class);
+//                            bundle.putBoolean(Constants.REG_TYPE, true);
+//                            bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
+//                            //SPECIAL DATA FOR BACK
+//                            bundle.putBoolean("PROFILE_FIRST", true);
+//                            if (mobileNumber.indexOf('-') != -1)
+//                                intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber.substring(mobileNumber.indexOf('-') + 1));
+//                            else
+//                                intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber);
+//                            intent.putExtra(Constants.REG_TYPE, "ADMIN");
+//                            intent.putExtra("REGISTER_SG", true);
+//                            intent.putExtras(bundle);
+//                            startActivity(intent);
+//                            finish();
+
                         } else {
                             Intent intent = new Intent(MobileVerificationScreen.this, SupergroupListingScreen.class);
                             bundle.putString(Constants.MOBILE_NUMBER_TXT, mobileNumber);

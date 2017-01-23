@@ -119,17 +119,17 @@ public class MainActivity extends FragmentActivity implements
     public static final int CODE_COUNTRY_CHOOSER = 333;
     AutoCompleteTextView mobileNumberView = null;
     //	AutoCompleteTextView domainDisplayNameView = null;
-    AutoCompleteTextView domainNameView = null;
+    EditText domainNameView = null;
+    EditText hubAdminName = null;
     ImageView checkAvailability = null;
     long typedtime = 0;
     Button nextButton = null;
     Button topNextButton = null;
     long delayForCheckAvailability = 1000;
-    AutoCompleteTextView adminEmail = null;
-    AutoCompleteTextView adminName = null;
-    AutoCompleteTextView adminPass = null;
-    AutoCompleteTextView adminConfPass = null;
-    AutoCompleteTextView adminOrgName = null;
+    EditText adminEmail = null;
+    EditText adminPass = null;
+    EditText adminConfPass = null;
+    EditText adminOrgName = null;
     AutoCompleteTextView adminOrgURL = null;
     EditText sgDescription = null;
     MyriadRegularTextView countryCodeView = null;
@@ -163,9 +163,10 @@ public class MainActivity extends FragmentActivity implements
     public static final Pattern ORG_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9][a-zA-z0-9 _.@&-]{1,100}$");
     private CheckBox privacyCheckbox;
 
-    View view_domain_displayname_name, view_admin_name, view_mobile_num, view_password, view_conf_password, view_email, view_org_name, view_org_url;
+    View view_domain_displayname_name, view_mobile_num, view_email, view_org_name, view_org_url;
     TextView text_view;
     RelativeLayout groupNameFieldLayout;
+    RelativeLayout profileOptionalLayout;
     TextView domainTypeChooserView;
     TextView orgNameHelpTextView;
     TextView passwordTipTextView;
@@ -200,6 +201,8 @@ public class MainActivity extends FragmentActivity implements
         if (passwordReasonTextView == null)
             passwordReasonTextView = (MyriadRegularTextView) findViewById(R.id.id_password_reason);
 
+        profileOptionalLayout = (RelativeLayout) findViewById(R.id.id_profile_layout);
+
         switch (regScreenNo) {
             case REG_FIRST_SCREEN:
                 groupNameFieldLayout.setVisibility(View.VISIBLE);
@@ -207,13 +210,11 @@ public class MainActivity extends FragmentActivity implements
                 domainNameView.setVisibility(View.VISIBLE);
                 text_view.setVisibility(View.VISIBLE);
 
-                view_admin_name.setVisibility(View.VISIBLE);
                 view_domain_displayname_name.setVisibility(View.GONE);
 
+                adminOrgName.setVisibility(View.GONE);
                 passwordReasonTextView.setVisibility(View.GONE);
                 passwordTipTextView.setVisibility(View.GONE);
-                view_password.setVisibility(View.GONE);
-                view_conf_password.setVisibility(View.GONE);
                 emailHelpTextView.setVisibility(View.GONE);
                 view_email.setVisibility(View.GONE);
                 adminEmail.setVisibility(View.GONE);
@@ -221,24 +222,24 @@ public class MainActivity extends FragmentActivity implements
                 adminConfPass.setVisibility(View.GONE);
 
                 orgNameHelpTextView.setVisibility(View.VISIBLE);
-                adminOrgName.setVisibility(View.VISIBLE);
                 adminOrgURL.setVisibility(View.VISIBLE);
                 view_org_url.setVisibility(View.VISIBLE);
                 view_org_name.setVisibility(View.VISIBLE);
                 break;
             case REG_SECOND_SCREEN:
+                viewOne.setVisibility(View.GONE);
+                viewTwo.setVisibility(View.VISIBLE);
+                currPage = 2;
+
                 groupNameFieldLayout.setVisibility(View.GONE);
                 domainTypeChooserView.setVisibility(View.GONE);
                 domainNameView.setVisibility(View.GONE);
                 text_view.setVisibility(View.GONE);
 
-                view_admin_name.setVisibility(View.GONE);
                 view_domain_displayname_name.setVisibility(View.GONE);
 
                 passwordReasonTextView.setVisibility(View.VISIBLE);
                 passwordTipTextView.setVisibility(View.VISIBLE);
-                view_password.setVisibility(View.VISIBLE);
-                view_conf_password.setVisibility(View.VISIBLE);
                 emailHelpTextView.setVisibility(View.VISIBLE);
                 view_email.setVisibility(View.VISIBLE);
                 adminEmail.setVisibility(View.VISIBLE);
@@ -246,10 +247,30 @@ public class MainActivity extends FragmentActivity implements
                 adminConfPass.setVisibility(View.VISIBLE);
 
                 orgNameHelpTextView.setVisibility(View.GONE);
-                adminOrgName.setVisibility(View.GONE);
+                adminOrgName.setVisibility(View.VISIBLE);
                 adminOrgURL.setVisibility(View.GONE);
                 view_org_url.setVisibility(View.GONE);
                 view_org_name.setVisibility(View.GONE);
+                profileOptionalLayout.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Bundle bundle = new Bundle();
+                        Intent intent = new Intent(MainActivity.this, ProfileScreen.class);
+                        bundle.putBoolean(Constants.REG_TYPE, true);
+                        bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
+                        //SPECIAL DATA FOR BACK
+                        bundle.putBoolean("PROFILE_FIRST", true);
+                        if (mobileNumber.indexOf('-') != -1)
+                            intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber.substring(mobileNumber.indexOf('-') + 1));
+                        else
+                            intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber);
+                        intent.putExtra(Constants.REG_TYPE, "ADMIN");
+                        intent.putExtra("REGISTER_SG", true);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
                 break;
         }
     }
@@ -265,6 +286,7 @@ public class MainActivity extends FragmentActivity implements
         String reg_type = null;
         String circle_name = null;
         String domain_name = null;
+
         if (bundle != null) {
             userComingFromScreen = bundle.getString(Constants.KEY_SCREEN_USER_COMING_FROM);
             if (bundle.get(Constants.REG_TYPE) != null)
@@ -284,7 +306,8 @@ public class MainActivity extends FragmentActivity implements
             registerSG = false;
         }
         if (regAsAdmin) {
-            setContentView(R.layout.supergroup_creation);
+            setContentView(R.layout.create_hub);
+//            setContentView(R.layout.supergroup_creation);
         } else {
             if (bundle != null && bundle.get("DOMAIN_NAME") != null)
                 circle_name = bundle.get("DOMAIN_NAME").toString();
@@ -320,7 +343,8 @@ public class MainActivity extends FragmentActivity implements
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(mobileNumberView, InputMethodManager.SHOW_IMPLICIT);
         countryCodeView = (MyriadRegularTextView) findViewById(R.id.country_code);
-        domainNameView = (AutoCompleteTextView) findViewById(R.id.id_domain_name);
+        domainNameView = (EditText) findViewById(R.id.id_domain_name);
+        hubAdminName = (EditText) findViewById(R.id.id_admin_name);
 //		domainDisplayNameView = (AutoCompleteTextView) findViewById(R.id.id_sg_display_name);
         checkAvailability = (ImageView) findViewById(R.id.id_availability_tick);
         groupIconView = (ImageView) findViewById(R.id.id_group_icon);
@@ -419,19 +443,16 @@ public class MainActivity extends FragmentActivity implements
         });
         if (regAsAdmin) {
             view_domain_displayname_name = (View) findViewById(R.id.view_sg_display_name);
-            view_admin_name = (View) findViewById(R.id.view_admin_name);
             view_mobile_num = (View) findViewById(R.id.view_mobile_num);
-            view_password = (View) findViewById(R.id.view_password);
-            view_conf_password = (View) findViewById(R.id.view_conf_password);
             view_email = (View) findViewById(R.id.view_email);
             view_org_name = (View) findViewById(R.id.view_org_name);
             view_org_url = (View) findViewById(R.id.view_org_url);
             text_view = (TextView) findViewById(R.id.check_avail_alert);
-            adminEmail = (AutoCompleteTextView) findViewById(R.id.id_admin_email);
-            domainNameView = (AutoCompleteTextView) findViewById(R.id.id_domain_name);
-            adminPass = (AutoCompleteTextView) findViewById(R.id.id_admin_password);
-            adminConfPass = (AutoCompleteTextView) findViewById(R.id.id_admin_conf_password);
-            adminOrgName = (AutoCompleteTextView) findViewById(R.id.id_org_name);
+            adminEmail = (EditText) findViewById(R.id.id_admin_email);
+            domainNameView = (EditText) findViewById(R.id.id_domain_name);
+            adminPass = (EditText) findViewById(R.id.id_admin_password);
+            adminConfPass = (EditText) findViewById(R.id.id_admin_conf_password);
+            adminOrgName = (EditText) findViewById(R.id.id_org_name);
             adminOrgURL = (AutoCompleteTextView) findViewById(R.id.id_org_url);
             setRegSreen(REG_FIRST_SCREEN);
             domainTypeChooserView.setOnClickListener(new OnClickListener() {
@@ -475,64 +496,14 @@ public class MainActivity extends FragmentActivity implements
                     imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                 }
             });
-            mobileNumberView.setOnFocusChangeListener(new OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        view_mobile_num.setBackgroundColor(getResources().getColor(R.color.color_lite_blue));
-
-                        view_email.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_domain_displayname_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_admin_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_password.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_conf_password.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_org_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_org_url.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                    }
-                }
-            });
-
-            adminEmail.setOnFocusChangeListener(new OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        view_email.setBackgroundColor(getResources().getColor(R.color.color_lite_blue));
-
-                        view_domain_displayname_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_admin_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_mobile_num.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_password.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_conf_password.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_org_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_org_url.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                    }
-                }
-            });
-//			domainDisplayNameView = (AutoCompleteTextView) findViewById(R.id.id_sg_display_name);
-//			domainDisplayNameView.setOnFocusChangeListener(new OnFocusChangeListener() {          
-//			    public void onFocusChange(View v, boolean hasFocus) {
-//			        if(hasFocus) {
-//			        	view_domain_displayname_name.setBackgroundColor(getResources().getColor(R.color.color_lite_blue));
-//			        	
-//			        	view_admin_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-//			        	view_email.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-//			        	view_mobile_num.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-//			        	view_password.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-//			        	view_conf_password.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-//			        	view_org_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-//			        	view_org_url.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-//			        }
-//			    }
-//			});
 
             domainNameView.setOnFocusChangeListener(new OnFocusChangeListener() {
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (hasFocus) {
-                        view_admin_name.setBackgroundColor(getResources().getColor(R.color.color_lite_blue));
 
                         view_domain_displayname_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
                         view_email.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
                         view_mobile_num.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_password.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_conf_password.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
                         view_org_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
                         view_org_url.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
                     } else if (checkAvailability != null)
@@ -541,83 +512,14 @@ public class MainActivity extends FragmentActivity implements
                 }
             });
 
-            adminPass.setOnFocusChangeListener(new OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        view_password.setBackgroundColor(getResources().getColor(R.color.color_lite_blue));
-
-                        view_domain_displayname_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_admin_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_email.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_mobile_num.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_conf_password.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_org_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_org_url.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                    }
-                }
-            });
-
-            adminConfPass.setOnFocusChangeListener(new OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        view_conf_password.setBackgroundColor(getResources().getColor(R.color.color_lite_blue));
-
-                        view_domain_displayname_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_admin_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_password.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_email.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_mobile_num.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_org_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_org_url.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                    }
-                }
-            });
-
-            adminOrgName.setOnFocusChangeListener(new OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        view_org_name.setBackgroundColor(getResources().getColor(R.color.color_lite_blue));
-
-                        view_conf_password.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_domain_displayname_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_admin_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_password.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_email.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_mobile_num.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_org_url.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                    }
-                }
-            });
-
-            adminOrgURL.setOnFocusChangeListener(new OnFocusChangeListener() {
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        view_org_url.setBackgroundColor(getResources().getColor(R.color.color_lite_blue));
-
-                        view_org_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_conf_password.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_domain_displayname_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_admin_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_password.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_email.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                        view_mobile_num.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-                    }
-                }
-            });
-
             domainNameView.requestFocus();
 
-//			view_domain_displayname_name.setBackgroundColor(getResources().getColor(R.color.color_lite_blue));
-
-            view_admin_name.setBackgroundColor(getResources().getColor(R.color.color_lite_blue));
-            view_conf_password.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
-            view_password.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
             view_email.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
             view_mobile_num.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
             view_org_name.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
 
             imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(adminName, InputMethodManager.SHOW_IMPLICIT);
+            imm.showSoftInput(hubAdminName, InputMethodManager.SHOW_IMPLICIT);
             adminOrgName.setOnEditorActionListener(new OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -631,40 +533,7 @@ public class MainActivity extends FragmentActivity implements
                     return false;
                 }
             });
-//			if(domainDisplayNameView != null)
-//				domainDisplayNameView.addTextChangedListener(new TextWatcher() {
-//					
-//					@Override
-//					public void onTextChanged(CharSequence s, int start, int before, int count) {
-//						// TODO Auto-generated method stub
-//						
-//					}
-//					
-//					@Override
-//					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//						// TODO Auto-generated method stub
-////						domainNameBefore = s.toString();
-//					}
-//					
-//					@Override
-//					public void afterTextChanged(Editable s) {
-//						// TODO Auto-generated method stub
-////						if(validateInputForRegistration(false)){
-////							if(nextButton != null)
-////								nextButton.setVisibility(View.VISIBLE);
-////							else
-////								nextButton.setVisibility(View.GONE);
-////						}
-//						//Check here for available supergroup name
-//						String address = domainDisplayNameView.getText().toString();
-//						if(address.contains(" "))
-//							address = address.replace(" ", "");
-//						if(checkName(address))
-//							domainNameView.setText(address);
-//						else
-//							domainNameView.setText(domainNameBefore);
-//					}
-//				});
+
             if (domainName != null) {
                 domainNameView.addTextChangedListener(new TextWatcher() {
 
@@ -694,108 +563,6 @@ public class MainActivity extends FragmentActivity implements
                     }
                 });
             }
-            if (adminName != null)
-                adminName.addTextChangedListener(new TextWatcher() {
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        // TODO Auto-generated method stub
-
-                    }
-
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                        // TODO Auto-generated method stub
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                        // TODO Auto-generated method stub
-//						if(validateInputForRegistration(false)){
-//							if(nextButton != null)
-//								nextButton.setVisibility(View.VISIBLE);
-//							else
-//								nextButton.setVisibility(View.GONE);
-//						}
-                    }
-                });
-
-//			mobileNumberView.addTextChangedListener(new TextWatcher() {
-//				
-//				@Override
-//				public void onTextChanged(CharSequence s, int start, int before, int count) {
-//					// TODO Auto-generated method stub
-//					
-//				}
-//				
-//				@Override
-//				public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//					// TODO Auto-generated method stub
-//					
-//				}
-//				
-//				@Override
-//				public void afterTextChanged(Editable s) {
-//					// TODO Auto-generated method stub
-//					if(tempVerify){
-//						if(validateForNumberVerify(true)){
-//							nextButton.setVisibility(View.VISIBLE);
-//							topNextButton.setVisibility(View.VISIBLE);
-//						}
-//						else{
-//							topNextButton.setVisibility(View.GONE);
-//							nextButton.setVisibility(View.GONE);
-//						}
-//					}
-//				}
-//			});
-            adminPass.addTextChangedListener(new TextWatcher() {
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    // TODO Auto-generated method stub
-
-                }
-
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    // TODO Auto-generated method stub
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    // TODO Auto-generated method stub
-//					if(validateInputForRegistration(false))
-//						nextButton.setVisibility(View.VISIBLE);
-//					else
-//						nextButton.setVisibility(View.GONE);
-                }
-            });
-            adminConfPass.addTextChangedListener(new TextWatcher() {
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    // TODO Auto-generated method stub
-
-                }
-
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    // TODO Auto-generated method stub
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    // TODO Auto-generated method stub
-//					if(validateInputForRegistration(false))
-//						nextButton.setVisibility(View.VISIBLE);
-//					else
-//						nextButton.setVisibility(View.GONE);
-                }
-            });
 
             canCallPaswordMatching = true;
             adminPass.addTextChangedListener(new TextWatcher() {
@@ -826,52 +593,7 @@ public class MainActivity extends FragmentActivity implements
                 }
 
             });
-            adminEmail.addTextChangedListener(new TextWatcher() {
 
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    // TODO Auto-generated method stub
-
-                }
-
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    // TODO Auto-generated method stub
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    // TODO Auto-generated method stub
-//					if(validateInputForRegistration(false))
-//						nextButton.setVisibility(View.VISIBLE);
-//					else
-//						nextButton.setVisibility(View.GONE);
-                }
-            });
-            adminOrgName.addTextChangedListener(new TextWatcher() {
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    // TODO Auto-generated method stub
-
-                }
-
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    // TODO Auto-generated method stub
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    // TODO Auto-generated method stub
-//					if(validateInputForRegistration(false))
-//						nextButton.setVisibility(View.VISIBLE);
-//					else
-//						nextButton.setVisibility(View.GONE);
-                }
-            });
         }
         //Privacy Check
         privacyCheckbox = (CheckBox) findViewById(R.id.privacy_check);
@@ -917,8 +639,8 @@ public class MainActivity extends FragmentActivity implements
         sharedPrefManager.saveRecentDomains("p5domain");
         str = sharedPrefManager.getRecentDomains().split(",");
         historyDomainAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, str);
-        if (domainNameView != null)
-            domainNameView.setAdapter(historyDomainAdapter);
+//        if (domainNameView != null)
+//            domainNameView.setAdapter(historyDomainAdapter);
 //		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 //
 //			@Override
@@ -1299,10 +1021,6 @@ public class MainActivity extends FragmentActivity implements
 
 
         if (validateInputForRegistration(true)) {
-            if (regScreenNo == REG_FIRST_SCREEN) {
-                setRegSreen(REG_SECOND_SCREEN);
-                return;
-            }
             sharedPrefManager.saveUserOrgName("");
             sharedPrefManager.saveDisplayName("");
             String input = mobileNumberView.getText().toString();
@@ -1312,9 +1030,9 @@ public class MainActivity extends FragmentActivity implements
 
             if (domainNameView != null) {
                 input = domainNameView.getText().toString();
-                if (input != null && !sharedPrefManager.getRecentDomains().contains(input))
-                    historyDomainAdapter.add(input);
-                sharedPrefManager.saveRecentDomains(input);
+//                if (input != null && !sharedPrefManager.getRecentDomains().contains(input))
+//                    historyDomainAdapter.add(input);
+//                sharedPrefManager.saveRecentDomains(input);
             }
 
             formatedNumber = countryCodeView.getText().toString().replace("+", "") + "-" + mobileNumberView.getText();
@@ -1340,24 +1058,29 @@ public class MainActivity extends FragmentActivity implements
                 registrationForm.countryCode = countryCodeView.getText().toString().replace("+", "");
                 countryCode = registrationForm.countryCode;
                 sharedPrefManager.saveUserPhone(formatedNumber);
-                registrationForm.setAdminEmail(adminEmail.getText().toString());
-//				registrationForm.setAdminName(adminName.getText().toString());
-                if (disp_name != null)
-                    registrationForm.setAdminName(disp_name);
-                else
-                    registrationForm.setAdminName("User");
-                registrationForm.setAdminName(disp_name);
-                registrationForm.setAdminPassword(adminPass.getText().toString().trim());
-                registrationForm.setAdminOrgName(adminOrgName.getText().toString());
+//                if (disp_name != null)
+//                    registrationForm.setAdminName(disp_name);
+//                else
+//                    registrationForm.setAdminName("User");
+//                registrationForm.setAdminName(disp_name);
                 registrationForm.setDomainName(domainNameView.getText().toString());
-                registrationForm.setAdminOrgURL(adminOrgURL.getText().toString());
-                registrationForm.setDomainName(domainNameView.getText().toString());
-//				registrationForm.setDisplayName(domainDisplayNameView.getText().toString());
+
+                String privacy_type = "closed";
+                int selectedId = 0;
+                radioGroup = (RadioGroup) findViewById(R.id.radio_group);
+                selectedId = radioGroup.getCheckedRadioButtonId();
+                radioGroupType = (RadioButton) findViewById(selectedId);
+                if (R.id.radio_open == radioGroupType.getId())
+                    privacy_type = "open";
+                else if (R.id.radio_closed == radioGroupType.getId())
+                    privacy_type = "closed";
+                if (sharedPrefManager.getDomainType().equals("rwa"))
+                    privacy_type = "closed";
+                registrationForm.setPrivacyType(privacy_type);
+
                 viewOne.setVisibility(View.GONE);
                 viewTwo.setVisibility(View.VISIBLE);
                 currPage = 2;
-                if (radioGroup == null)
-                    radioGroup = (RadioGroup) findViewById(R.id.radio_group);
 
                 if (sharedPrefManager.getDomainType().equals("rwa")) {
                     RadioButton b = (RadioButton) radioGroup.findViewById(R.id.radio_closed);
@@ -1371,6 +1094,8 @@ public class MainActivity extends FragmentActivity implements
                         radioGroup.getChildAt(i).setEnabled(true);
                     }
                 }
+                registrationForm.setDomainType(sharedPrefManager.getDomainType());
+                registrationForm.setDescription(sgDescription.getText().toString().trim());
 //				domainNameView = (AutoCompleteTextView) findViewById(R.id.id_domain_name);
 //				domainNameView.requestFocus();
 //				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -1389,6 +1114,10 @@ public class MainActivity extends FragmentActivity implements
 //			            return false;
 //			        }
 //			    });
+                if (regScreenNo == REG_FIRST_SCREEN) {
+                    setRegSreen(REG_SECOND_SCREEN);
+                    return;
+                }
             } else {
                 //Privacy link
                 if (privacyCheckbox == null)
@@ -1407,37 +1136,19 @@ public class MainActivity extends FragmentActivity implements
                     }
                 });
 
-                //Select Domain, get selected radio button from radioGroup
-                String privacy_type = "closed";
-                int selectedId = 0;
-//				domainNameView = (AutoCompleteTextView) findViewById(R.id.id_domain_name);
-//				domainNameView.setOnTouchListener(new View.OnTouchListener() {
-//				        @Override
-//				        public boolean onTouch(View v, MotionEvent event) {
-//				            ScrollView scrollView = (ScrollView)findViewById(R.id.scroll_view2);
-//				            scrollView.smoothScrollTo(0, domainNameView.getBottom());
-//				            return true;
-//				        }
-//				    });
-                radioGroup = (RadioGroup) findViewById(R.id.radio_group);
-                selectedId = radioGroup.getCheckedRadioButtonId();
-                radioGroupType = (RadioButton) findViewById(selectedId);
-                if (R.id.radio_open == radioGroupType.getId())
-                    privacy_type = "open";
-                else if (R.id.radio_closed == radioGroupType.getId())
-                    privacy_type = "closed";
+                registrationForm.setAdminEmail(adminEmail.getText().toString());
+                registrationForm.setAdminName(hubAdminName.getText().toString());
+                registrationForm.setAdminPassword(adminPass.getText().toString().trim());
+                registrationForm.setAdminOrgName(adminOrgName.getText().toString());
+                registrationForm.setAdminOrgURL(adminOrgURL.getText().toString());
+                registrationForm.setDomainName(domainNameView.getText().toString());
 
-                if (sharedPrefManager.getDomainType().equals("rwa"))
-                    privacy_type = "closed";
-
-//				registrationForm.setDomainName(domainNameView.getText().toString());
-                registrationForm.setPrivacyType(privacy_type);
-                registrationForm.setDomainType(sharedPrefManager.getDomainType());
-                registrationForm.setDescription(sgDescription.getText().toString().trim());
-                if (Build.VERSION.SDK_INT >= 11)
-                    new SignupTaskForAdmin(registrationForm, view).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                else
-                    new SignupTaskForAdmin(registrationForm, view).execute();
+                if(registrationForm != null) {
+                    if (Build.VERSION.SDK_INT >= 11)
+                        new SignupTaskForAdmin(registrationForm, view).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    else
+                        new SignupTaskForAdmin(registrationForm, view).execute();
+                }
             }
         }
     }
@@ -1495,14 +1206,14 @@ public class MainActivity extends FragmentActivity implements
                         json = new JSONObject(data);
                         if (json.has("message") && img_view != null) {
                             text_view.setVisibility(View.VISIBLE);
-                            img_view.setVisibility(View.VISIBLE);
+//                            img_view.setVisibility(View.VISIBLE);
                             String msg = json.getString("message");
                             if (msg != null && msg.contains("is available")) {
-                                img_view.setImageResource(R.drawable.check);
+//                                img_view.setImageResource(R.drawable.check);
                                 text_view.setTextColor(getResources().getColor(R.color.green_dark_text_color));
                                 text_view.setText(json.getString("message"));
                             } else {
-                                img_view.setImageResource(R.drawable.exit);
+//                                img_view.setImageResource(R.drawable.exit);
                                 text_view.setTextColor(getResources().getColor(R.color.red));
                                 text_view.setText(json.getString("message"));
                             }
@@ -1518,7 +1229,7 @@ public class MainActivity extends FragmentActivity implements
                         if (errorModel.citrusErrors != null && !errorModel.citrusErrors.isEmpty()) {
                             ErrorModel.CitrusError citrusError = errorModel.citrusErrors.get(0);
                             if (img_view != null) {
-                                img_view.setImageResource(R.drawable.exit);
+//                                img_view.setImageResource(R.drawable.exit);
                                 text_view.setTextColor(getResources().getColor(R.color.red));
                                 text_view.setText(citrusError.message);
 //								text_view.setTextColor(Color.RED);
@@ -1526,7 +1237,7 @@ public class MainActivity extends FragmentActivity implements
                             }
                         } else if (errorModel.message != null) {
                             if (img_view != null) {
-                                img_view.setImageResource(R.drawable.exit);
+//                                img_view.setImageResource(R.drawable.exit);
                                 text_view.setTextColor(getResources().getColor(R.color.red));
                                 text_view.setText(errorModel.message);
 //								text_view.setTextColor(Color.RED);
@@ -1535,7 +1246,7 @@ public class MainActivity extends FragmentActivity implements
                         }
                     } else {
                         if (img_view != null) {
-                            img_view.setImageResource(R.drawable.exit);
+//                            img_view.setImageResource(R.drawable.exit);
 //							text_view.setTextColor(Color.RED);
 //							text_view.setText("Please try again later.");
                         }
@@ -1623,11 +1334,23 @@ public class MainActivity extends FragmentActivity implements
         switch (regScreenNo) {
             case REG_FIRST_SCREEN:
                 if (currPage == 1 && regAsAdmin && domainNameView != null) {
-                    domainNameView.setText(domainNameView.getText().toString().trim());
+//                    domainNameView.setText(domainNameView.getText().toString().trim());
                     if (!checkUserDomainName(domainNameView.getText().toString())) {
                         if (show_alert)
                             showDialog(getString(R.string.domain_validation_alert));
                         return false;
+                    }
+                    if (!checkName(hubAdminName.getText().toString())) {
+                        if (show_alert)
+                            showDialog(getString(R.string.please_enter_name));
+                        return false;
+                    }
+                    if (radioGroup != null) {
+                        if (radioGroup.getCheckedRadioButtonId() == -1) {
+                            if (show_alert)
+                                showDialog(getString(R.string.supergroup_validation));
+                            return false;
+                        }
                     }
                 }
                 break;
@@ -1667,23 +1390,16 @@ public class MainActivity extends FragmentActivity implements
                 break;
         }
 
-        if (currPage == 2 && radioGroup != null) {
-            if (radioGroup.getCheckedRadioButtonId() == -1) {
-                if (show_alert)
-                    showDialog(getString(R.string.supergroup_validation));
-                return false;
-            }
-        }
-        if (!regAsAdmin && countryCodeView.getText().toString().equals("")) {
-            if (show_alert)
-                showDialog(getString(R.string.country_validation));
-            return false;
-        }
-        if (!regAsAdmin && !checkMobileNumber(mobileNumberView.getText().toString())) {
-            if (show_alert)
-                showDialog(getString(R.string.mobile_validation_length));
-            return false;
-        }
+//        if (!regAsAdmin && countryCodeView.getText().toString().equals("")) {
+//            if (show_alert)
+//                showDialog(getString(R.string.country_validation));
+//            return false;
+//        }
+//        if (!regAsAdmin && !checkMobileNumber(mobileNumberView.getText().toString())) {
+//            if (show_alert)
+//                showDialog(getString(R.string.mobile_validation_length));
+//            return false;
+//        }
 
 //			if(adminName.getText().toString().trim().length() == 0){
 //				if(show_alert)
@@ -1941,6 +1657,7 @@ public class MainActivity extends FragmentActivity implements
             String url = Constants.SERVER_URL + "/tiger/rest/admin/register";
             HttpPost httpPost = new HttpPost(url);
             Log.i(TAG, "SignupTaskForAdmin :: doInBackground:  url:" + url);
+            Log.i(TAG, "SignupTaskForAdmin :: doInBackground:  JSONstring Request :" + JSONstring);
             httpPost = SuperChatApplication.addHeaderInfo(httpPost, false);
             HttpResponse response = null;
             try {
@@ -1985,10 +1702,8 @@ public class MainActivity extends FragmentActivity implements
                                     iPrefManager.saveUserDomain(domainNameView.getText().toString());
                                     iPrefManager.saveCurrentSGDisplayName(domainNameView.getText().toString());
                                     iPrefManager.saveUserEmail(adminEmail.getText().toString());
-                                    if (regAsAdmin && disp_name != null)
-                                        iPrefManager.saveDisplayName(disp_name);
-                                    else
-                                        iPrefManager.saveDisplayName("User");
+                                    iPrefManager.saveDisplayName(hubAdminName.getText().toString());
+
                                     iPrefManager.saveUserOrgName(adminOrgName.getText().toString());
                                     iPrefManager.saveAuthStatus(regObj.iStatus);
                                     iPrefManager.saveDeviceToken(regObj.token);
@@ -2416,23 +2131,17 @@ public class MainActivity extends FragmentActivity implements
                     sharedPrefManager.saveUserPassword(objUserModel.password);
                     Bundle bundle = new Bundle();
                     if (regAsAdmin) {
-//							 Intent intent = new Intent(MainActivity.this, ProfileScreen.class);
-//							 bundle.putBoolean(Constants.REG_TYPE, true);
-//							 bundle.putString(Constants.CHAT_NAME, "");
-//							 bundle.putString(Constants.CHAT_USER_NAME, objUserModel.username);
-//							 bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
-//							 intent.putExtras(bundle);
-//							 startActivity(intent);
                         sharedPrefManager.setFirstTime(true);
+                        Intent intent = new Intent(MainActivity.this, BulkInvitationScreen.class);
+                        intent.putExtra(Constants.REG_TYPE, true);
+//                        if(sgCreationAfterLogin) {
+//                            intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, sgCreationAfterLogin);
+//                            //Update Values in DB
+//                            DBWrapper.getInstance().updateSGCredentials(iSharedPrefManager.getUserDomain(), iSharedPrefManager.getUserName(), iSharedPrefManager.getUserPassword(), iSharedPrefManager.getUserId(), true);
+//                        }
+                        startActivity(intent);
                         finish();
-
-                        if (Constants.VAL_SCREEN_USER_COMING_FROM_NEW_USER_AFTER_LOGIN.trim().equalsIgnoreCase(userComingFromScreen)) {
-                            // Code to switch to Super Group
-                        }
                     } else {
-//							bundle.putBoolean(Constants.REG_TYPE, false);
-//							bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
-
                         Intent intent = new Intent(MainActivity.this, SupergroupListingScreen.class);
                         bundle.putString(Constants.MOBILE_NUMBER_TXT, mobileNumber);
                         intent.putExtras(bundle);
