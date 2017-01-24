@@ -2108,6 +2108,7 @@ public class MainActivity extends FragmentActivity implements
     }
 
     //------------------------------------------------------------------------------------
+    ProgressDialog dialog = null;
     private void verifyUserSG(long id) {
         String codeVerifyUrl = null;
         String version = "";
@@ -2129,7 +2130,6 @@ public class MainActivity extends FragmentActivity implements
         AsyncHttpClient client = new AsyncHttpClient();
         client = SuperChatApplication.addHeaderInfo(client, false);
         client.get(codeVerifyUrl, null, new AsyncHttpResponseHandler() {
-            ProgressDialog dialog = null;
 
             @Override
             public void onStart() {
@@ -2186,16 +2186,18 @@ public class MainActivity extends FragmentActivity implements
                     });
 
                 }
-                runOnUiThread(new Runnable() {
+                if(!profileDataInHubCreation) {
+                    runOnUiThread(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        if (dialog != null) {
-                            dialog.dismiss();
-                            dialog = null;
+                        @Override
+                        public void run() {
+                            if (dialog != null) {
+                                dialog.dismiss();
+                                dialog = null;
+                            }
                         }
-                    }
-                });
+                    });
+                }
                 super.onSuccess(arg0, arg1);
             }
 
@@ -2298,6 +2300,10 @@ public class MainActivity extends FragmentActivity implements
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
             System.out.println("response :: " + response);
+            if (dialog != null) {
+                dialog.dismiss();
+                dialog = null;
+            }
             if (response != null && response.contains("error")) {
                 Gson gson = new GsonBuilder().create();
                 ErrorModel errorModel = gson.fromJson(response, ErrorModel.class);
