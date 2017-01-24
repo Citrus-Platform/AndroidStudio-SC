@@ -43,6 +43,8 @@ import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
 import com.superchat.model.AdminRegistrationForm;
 import com.superchat.model.ErrorModel;
+import com.superchat.model.ProfileUpdateModel;
+import com.superchat.model.ProfileUpdateModelForAdmin;
 import com.superchat.model.RegMatchCodeModel;
 import com.superchat.model.multiplesg.Registration;
 import com.superchat.utils.AppUtil;
@@ -71,6 +73,8 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -111,12 +115,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
 
+import retrofit2.Call;
+
 import static com.chatsdk.org.jivesoftware.smackx.pubsub.FormType.result;
 
 public class MainActivity extends FragmentActivity implements
         OnItemSelectedListener, OnClickListener {
     private String TAG = "MainActivity";
     public static final int CODE_COUNTRY_CHOOSER = 333;
+    public static final int HUB_CREATION_PROFILE = 444;
     AutoCompleteTextView mobileNumberView = null;
     //	AutoCompleteTextView domainDisplayNameView = null;
     EditText domainNameView = null;
@@ -265,10 +272,11 @@ public class MainActivity extends FragmentActivity implements
                         else
                             intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber);
                         intent.putExtra(Constants.REG_TYPE, "ADMIN");
+                        intent.putExtra(Constants.HUB_CREATION_PROFILE_NAME, hubAdminName.getText().toString());
                         intent.putExtra("REGISTER_SG", true);
                         intent.putExtras(bundle);
-                        startActivity(intent);
-                        finish();
+//                        startActivity(intent);
+                        startActivityForResult(intent, HUB_CREATION_PROFILE);
                     }
                 });
                 break;
@@ -843,11 +851,26 @@ public class MainActivity extends FragmentActivity implements
             box.setBackgroundColor(getResources().getColor(R.color.color_lite_gray));
     }
 
+    boolean profileDataInHubCreation;
+    String profile_display_name = null;
+    String profile_dob = null;
+    String profile_photo_id = null;
+    String profile_gender = null;
+    String profile_location = null;
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
+                case HUB_CREATION_PROFILE:
+                    //Save Data for the profile, This will be saved once HUB is created successfully.
+                    profileDataInHubCreation = data.getBooleanExtra(Constants.HUB_CREATION_PROFILE, false);
+                    profile_display_name = data.getStringExtra(Constants.HUB_CREATION_PROFILE_NAME);
+                    profile_dob = data.getStringExtra(Constants.HUB_CREATION_PROFILE_DOB);
+                    profile_photo_id = data.getStringExtra(Constants.HUB_CREATION_PROFILE_PHOTO);
+                    profile_gender = data.getStringExtra(Constants.HUB_CREATION_PROFILE_GENDER);
+                    profile_location = data.getStringExtra(Constants.HUB_CREATION_PROFILE_LOCATION);
+                    break;
                 case CODE_COUNTRY_CHOOSER:
                     Bundle dBundle = data.getExtras();
                     String code = "+91";
@@ -988,24 +1011,26 @@ public class MainActivity extends FragmentActivity implements
 
     public void onBackPressed() {
         if (regAsAdmin) {
-
-
-            if (currPage == 2) {
-                viewTwo.setVisibility(View.GONE);
-                viewOne.setVisibility(View.VISIBLE);
-                currPage = 1;
-                if (regScreenNo != REG_SECOND_SCREEN) {
-                    setRegSreen(REG_SECOND_SCREEN);
-                }
-            } else if (currPage == 1) {
-//				Intent intent = new Intent(this, RegistrationOptions.class);
-//				startActivity(intent);
-//				finish();
-                if (regScreenNo == REG_SECOND_SCREEN) {
-                    setRegSreen(REG_FIRST_SCREEN);
-                    return;
-                }
+            switch (currPage){
+                case 1:
+                    viewOne.setVisibility(View.GONE);
+                    viewTwo.setVisibility(View.VISIBLE);
+//                    if (regScreenNo == REG_SECOND_SCREEN) {
+//                        setRegSreen(REG_FIRST_SCREEN);
+//                        return;
+//                    }
+                    currPage = 2;
+                    break;
+                case 2:
+                    viewTwo.setVisibility(View.GONE);
+                    viewOne.setVisibility(View.VISIBLE);
+                    currPage = 1;
+//                    if (regScreenNo != REG_SECOND_SCREEN) {
+//                        setRegSreen(REG_SECOND_SCREEN);
+//                    }
+                    break;
             }
+            setRegSreen((byte)currPage);
         } else {
             Intent intent = new Intent(this, RegistrationOptions.class);
             startActivity(intent);
@@ -2132,15 +2157,20 @@ public class MainActivity extends FragmentActivity implements
                     Bundle bundle = new Bundle();
                     if (regAsAdmin) {
                         sharedPrefManager.setFirstTime(true);
-                        Intent intent = new Intent(MainActivity.this, BulkInvitationScreen.class);
-                        intent.putExtra(Constants.REG_TYPE, true);
+                        if(profileDataInHubCreation){
+                            //Hit Profile Update request
+                            new UpdateProfileTaskOnServer().execute();
+                        }else {
+                            Intent intent = new Intent(MainActivity.this, BulkInvitationScreen.class);
+                            intent.putExtra(Constants.REG_TYPE, true);
+                            startActivity(intent);
+                            finish();
+                        }
 //                        if(sgCreationAfterLogin) {
 //                            intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, sgCreationAfterLogin);
 //                            //Update Values in DB
 //                            DBWrapper.getInstance().updateSGCredentials(iSharedPrefManager.getUserDomain(), iSharedPrefManager.getUserName(), iSharedPrefManager.getUserPassword(), iSharedPrefManager.getUserId(), true);
 //                        }
-                        startActivity(intent);
-                        finish();
                     } else {
                         Intent intent = new Intent(MainActivity.this, SupergroupListingScreen.class);
                         bundle.putString(Constants.MOBILE_NUMBER_TXT, mobileNumber);
@@ -2186,5 +2216,104 @@ public class MainActivity extends FragmentActivity implements
                 super.onFailure(arg0, arg1);
             }
         });
+    }
+    //------------------------------------------
+    private class UpdateProfileTaskOnServer extends AsyncTask<String, String, String> {
+        ProgressDialog dialog = null;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            final SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
+            ProfileUpdateModel model = new ProfileUpdateModel();
+            model.setUserId(String.valueOf(iPrefManager.getUserId()));
+            DefaultHttpClient client1 = new DefaultHttpClient();
+            String JSONstring = null;
+            HttpPost httpPost = null;
+
+            model.setUserName(iPrefManager.getUserName());
+            if (profile_display_name != null && !profile_display_name.equals("")) {
+                model.setName(profile_display_name);
+            }
+            if (profile_dob != null && profile_dob.length() > 0)
+                model.setDOB(profile_dob);
+            if(profile_photo_id != null && profile_photo_id.length() > 0)
+                model.setImageFileId(profile_photo_id);
+            if(profile_gender != null && profile_gender.length() > 0)
+                model.setGender(profile_gender);
+            if(profile_location != null && profile_location.length() > 0)
+                model.setAddress(profile_location);
+
+            JSONstring = new Gson().toJson(model);
+            com.superchat.utils.Log.i(TAG, "updateProfileTaskOnServer request:" + JSONstring);
+            httpPost = new HttpPost(Constants.SERVER_URL + "/tiger/rest/user/profile/update?userId=" + model.getUserId());
+            httpPost = SuperChatApplication.addHeaderInfo(httpPost, true);
+            try {
+                httpPost.setEntity(new StringEntity(JSONstring));
+            } catch (UnsupportedEncodingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            HttpResponse response = null;
+            try {
+                try {
+                    response = client1.execute(httpPost);
+                    final int statusCode = response.getStatusLine().getStatusCode();
+                    if (statusCode == HttpStatus.SC_OK) {
+                        HttpEntity entity = response.getEntity();
+                        String result = EntityUtils.toString(entity);
+                        com.superchat.utils.Log.i(TAG, "updateProfileTaskOnServer response: " + result);
+                        Gson gson = new GsonBuilder().create();
+                        final RegMatchCodeModel objResponseModel = gson.fromJson(result, RegMatchCodeModel.class);
+                        if (objResponseModel != null && objResponseModel.iStatus != null) {
+                            if (objResponseModel.iStatus.equalsIgnoreCase("success")) {
+                                iPrefManager.saveUserStatusMessage(iPrefManager.getUserName(), model.getCurrentStatus());
+                                iPrefManager.saveUserFileId(iPrefManager.getUserName(), model.imageFileId);
+                                iPrefManager.setProfileAdded(iPrefManager.getUserName(), true);
+                                }
+                            } else {
+                                return result;
+                            }
+                        }
+                } catch (ClientProtocolException e) {
+                    com.superchat.utils.Log.d(TAG, "updateProfileTaskOnServer during HttpPost execution ClientProtocolException:"
+                            + e.toString());
+                } catch (IOException e) {
+                    com.superchat.utils.Log.d(TAG, "updateProfileTaskOnServer during HttpPost execution ClientProtocolException:"
+                            + e.toString());
+                }
+
+            } catch (Exception e) {
+                com.superchat.utils.Log.d(TAG, "updateProfileTaskOnServer during HttpPost execution Exception:" + e.toString());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+            System.out.println("response :: " + response);
+            if (response != null && response.contains("error")) {
+                Gson gson = new GsonBuilder().create();
+                ErrorModel errorModel = gson.fromJson(response, ErrorModel.class);
+                if (errorModel != null) {
+                    if (dialog != null) {
+                        dialog.dismiss();
+                        dialog = null;
+                    }
+                }
+            } else {//Success case
+                SharedPrefManager.getInstance().setProfileAdded(SharedPrefManager.getInstance().getUserName(), true);
+                Intent intent = new Intent(MainActivity.this, BulkInvitationScreen.class);
+                intent.putExtra(Constants.REG_TYPE, true);
+                startActivity(intent);
+                finish();
+            }
+        }
     }
 }

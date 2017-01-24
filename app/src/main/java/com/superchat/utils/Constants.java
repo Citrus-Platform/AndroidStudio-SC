@@ -24,6 +24,14 @@ public class Constants {
     public static final String VAL_SCREEN_USER_COMING_FROM_NEW_USER_AFTER_LOGIN = "newUserAfterLogin";
     public static final String VAL_SCREEN_USER_COMING_FROM_NEW_USER_BEFORE_LOGIN = "newUserBeforeLogin";
 
+
+    public static final String HUB_CREATION_PROFILE = "HUB_CREATION_PROFILE";
+    public static final String HUB_CREATION_PROFILE_NAME = "PROFILE_NAME";
+    public static final String HUB_CREATION_PROFILE_PHOTO = "PROFILE_PHOTO";
+    public static final String HUB_CREATION_PROFILE_DOB = "PROFILE_DOB";
+    public static final String HUB_CREATION_PROFILE_LOCATION = "PROFILE_LOCATION";
+    public static final String HUB_CREATION_PROFILE_GENDER = "PROFILE_GENDER";
+
     // Extras
     public static final String SG_CREATE_RESET = "sg_create_reset";
 

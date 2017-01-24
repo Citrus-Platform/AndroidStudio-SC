@@ -262,6 +262,8 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
             displayName = bundle.getString(Constants.CHAT_NAME, displayName);
             manage_by_admin = bundle.getBoolean("MANAGE_MEMBER_BY_ADMIN");
             reg_flow = bundle.getBoolean("PROFILE_EDIT_REG_FLOW");
+            if(reg_flow)
+                displayName = bundle.getString(Constants.HUB_CREATION_PROFILE_NAME);
             backToPrevUI = bundle.getBoolean("PROFILE_EDIT_BACK_TO_PREV");
             domainReg = bundle.getBoolean(Constants.REG_TYPE);
             isViewOnlyDisplayName = bundle.getBoolean("VIEW_ONLY");
@@ -419,6 +421,8 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
         view_display_name = (View) findViewById(R.id.view_display_name);
         currentLocationLayout = (LinearLayout) findViewById(R.id.id_current_location_layout);
         displayNameView.requestFocus();
+        if(displayName != null)
+            displayNameView.setText(displayName);
         designationView = (EditText) findViewById(R.id.id_designation_field);
         rwaAddressViewLabel = (TextView) findViewById(R.id.id_rwa_address_label);
         rwaAddressView = (EditText) findViewById(R.id.id_rwa_address_field);
@@ -1506,31 +1510,61 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                 if (purposeType == VIEWWING_AS_SELF_IN_REG) {
                     if (isProfileValidForReg(true)) {
                         if (domainReg && mobForReg != null) {
-                            // goto SG registration without finishing UI
-//                            Bundle bundle = new Bundle();
-//                            bundle.putString(Constants.KEY_SCREEN_USER_COMING_FROM, Constants.VAL_SCREEN_USER_COMING_FROM_NEW_USER_AFTER_LOGIN);
-
-                            Intent intent = new Intent(ProfileScreen.this, MainActivity.class);
-//                            intent.putExtras(bundle);
-
-                            if(sgCreationAfterLogin)
+                            if(!sgCreationAfterLogin) {
+                                Intent intent = new Intent();
+                                intent.putExtra(Constants.HUB_CREATION_PROFILE, true);
+                                intent.putExtra(Constants.HUB_CREATION_PROFILE_NAME, displayNameView.getText().toString().trim());
+                                if (dateView != null) {
+                                    String dob = convertDOBInFormat(dateView.getText().toString().trim(), false);
+                                    if (dob == null || dob.equals("dd/mm/yyyy")) {
+                                        dob = "";
+                                    }
+                                    if (!dob.equals("") && !dob.equals("Please enter your birthday"))
+                                    intent.putExtra(Constants.HUB_CREATION_PROFILE_DOB, dob);
+                                }
+                                String fileId = SharedPrefManager.getInstance().getUserFileId(SharedPrefManager.getInstance().getUserName());
+                                if (fileId == null && userSelectedFileID != null)
+                                    fileId = userSelectedFileID;
+                                if (fileId != null && !fileId.equals("")) {
+                                    if (fileId.contains("."))
+                                        intent.putExtra(Constants.HUB_CREATION_PROFILE_PHOTO, fileId.substring(0, fileId.indexOf(".")));
+                                    else
+                                        intent.putExtra(Constants.HUB_CREATION_PROFILE_PHOTO, fileId);
+                                }
+                                if (gender != null && !gender.equals("") && !gender.equals("Select Gender")) {
+                                    if (gender.equalsIgnoreCase("Do not want to disclose"))
+                                        gender = "donotdisclose";
+                                    intent.putExtra(Constants.HUB_CREATION_PROFILE_GENDER, gender);
+                                }
+                                if (currentLocationView != null) {
+                                    String currentLocation = currentLocationView.getText().toString().trim();
+                                    if (currentLocation == null) {
+                                        currentLocation = "";
+                                    }
+                                    if (!currentLocation.equals(""))
+                                        intent.putExtra(Constants.HUB_CREATION_PROFILE_LOCATION, currentLocation);
+                                }
+                                setResult(Activity.RESULT_OK, intent);
+                                finish();
+                            }else {
+                                Intent intent = new Intent(ProfileScreen.this, MainActivity.class);
                                 intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, true);
-                            if (mobForReg.indexOf('-') != -1)
-                                intent.putExtra(Constants.MOBILE_NUMBER_TXT,
-                                        mobForReg.substring(mobForReg.indexOf('-') + 1));
-                            else
-                                intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobForReg);
-                            intent.putExtra(Constants.REG_TYPE, "ADMIN");
-                            intent.putExtra("REGISTER_SG", true);
-                            if (displayNameView != null)
-                                intent.putExtra(Constants.NAME, displayNameView.getText().toString().trim());
-                            mobForReg = null;
-                            isProfileDataValidated = true;
-                            if(isPictureSelected) {
-                                userSelectedFileID = SharedPrefManager.getInstance()
-                                        .getUserFileId(SharedPrefManager.getInstance().getUserName());
+                                if (mobForReg.indexOf('-') != -1)
+                                    intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobForReg.substring(mobForReg.indexOf('-') + 1));
+                                else
+                                    intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobForReg);
+                                intent.putExtra(Constants.REG_TYPE, "ADMIN");
+                                intent.putExtra("REGISTER_SG", true);
+                                if (displayNameView != null)
+                                    intent.putExtra(Constants.NAME, displayNameView.getText().toString().trim());
+                                mobForReg = null;
+                                isProfileDataValidated = true;
+                                if (isPictureSelected) {
+                                    userSelectedFileID = SharedPrefManager.getInstance()
+                                            .getUserFileId(SharedPrefManager.getInstance().getUserName());
+                                }
+                                startActivity(intent);
                             }
-                            startActivity(intent);
                         } else
                             new UpdateProfileTaskOnServer().execute();
                     }
@@ -1852,7 +1886,6 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-
                     break;
                 case EDIT_MEMBER_BY_SG_OWNER:
 
