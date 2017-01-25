@@ -142,4 +142,23 @@
     <style name="Dark.Overlay.LightPopup" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:background">@color/md_grey_200</item>
     </style>
+
+    <style name="group_detail_text_button">
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="group_detail_text_button.RED">
+        <item name="android:textColor">@color/md_red_600</item>
+    </style>
+    <style name="group_detail_text_button.GREY">
+        <item name="android:textColor">@color/text_color_grey_light</item>
+    </style>
+
+    <style name="group_detail_text_button.THEME">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
 </resources>

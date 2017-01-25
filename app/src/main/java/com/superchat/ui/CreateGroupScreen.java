@@ -99,6 +99,11 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
     private MyriadSemiboldTextView title;
     private RadioGroup radioGroup;
     private RadioButton radioGroupType;
+
+    private ImageView ivGroupTypeOpen;
+    private ImageView ivGroupTypeClosed;
+    private LinearLayout checkBoxesGroupTypes;
+
     private ServiceConnection mMessageConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder binder) {
             messageService = ((ChatService.MyBinder) binder).getService();
@@ -129,6 +134,10 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
         nextButton = (TextView) findViewById(R.id.id_next);
         title = (MyriadSemiboldTextView) findViewById(R.id.id_group_info_title);
         cancelButton = (TextView) findViewById(R.id.id_cancel);
+        ivGroupTypeOpen = (ImageView) findViewById(R.id.ivGroupTypeOpen);
+        ivGroupTypeClosed = (ImageView) findViewById(R.id.ivGroupTypeClosed);
+        checkBoxesGroupTypes = (LinearLayout) findViewById(R.id.checkBoxesGroupTypes);
+
         switchBroadcast = (Switch) findViewById(R.id.switchBroadcast);
         switchBroadcast.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -222,10 +231,14 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
                 if (groupUUID != null && groupUUID.trim().length() > 0 && SharedPrefManager.getInstance().isGroupChat(groupUUID)) {
                     title.setText(getString(R.string.edit_group_title));
                     radioGroup.setVisibility(View.GONE);
-                    if (SharedPrefManager.getInstance().isPublicGroup(groupUUID))
+                    checkBoxesGroupTypes.setVisibility(View.GONE);
+                    if (SharedPrefManager.getInstance().isPublicGroup(groupUUID)) {
                         open_close.setText(getString(R.string.open_gp));
-                    else
+                        ivGroupTypeOpen.setVisibility(View.VISIBLE);
+                    } else {
                         open_close.setText(getString(R.string.close_gp));
+                        ivGroupTypeClosed.setVisibility(View.VISIBLE);
+                    }
                 }
                 else {
                     title.setText(getString(R.string.create_group));

@@ -192,7 +192,11 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
             call = objApi.getApi(this).getOpenHubsMore(nextUrl);
         } else {
             openDomainListToShow.clear();
-            call = objApi.getApi(this).getOpenHubs("" + searchText);
+
+            SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
+            String number = iPrefManager.getUserPhone();
+
+            call = objApi.getApi(this).getOpenHubs("" + searchText, number);
         }
         call.enqueue(new RetrofitRetrofitCallback<ResponseOpenDomains>(this) {
 
@@ -411,7 +415,8 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 inviteSGFileID = file_id;
-                registerUserOnServer(supergroup_name, sg_display_name, v);
+                showNameDialog(sg_display_name);
+                //registerUserOnServer(supergroup_name, sg_display_name, v);
             }
         });
         ((TextView) welcomeDialog.findViewById(R.id.id_back)).setOnClickListener(new OnClickListener() {

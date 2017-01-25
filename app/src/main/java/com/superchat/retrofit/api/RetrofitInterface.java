@@ -73,7 +73,8 @@ public interface RetrofitInterface {
     Call<ConferenceInfoResponse> getConferenceInfo(@Query("") String myConference);
 
     @GET(PREFIX_URL + "admin/opendomains")
-    Call<ResponseOpenDomains> getOpenHubs(@Query("domainName") String domainName);
+    Call<ResponseOpenDomains> getOpenHubs(@Query("domainName") String domainName,
+                                          @Query("mobileNumber") String mobileNumber);
 
     @GET
     Call<ResponseOpenDomains> getOpenHubsMore(@Url String url);

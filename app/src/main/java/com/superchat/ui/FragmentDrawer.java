@@ -241,7 +241,6 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
 
         if (invitedList != null && invitedList.size() > 0) {
             for (int i = 0; i < invitedList.size(); i++) {
-
                 invitedDomainNameSet.add(invitedList.get(i).getDomainName());
             }
         }
@@ -304,6 +303,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
         adapter = new ExpandableListAdapter(listItems, getActivity(), this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
+
+        adapter.openAllHeaders();
         return layout;
     }
 
@@ -326,7 +327,6 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
 
         super.onResume();
     }
-
 
     public static final int CODE_INVITE = 101;
     public static final int CODE_ADD_SUPERGROUP = 102;

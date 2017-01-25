@@ -62,7 +62,6 @@
             
            android:layout_marginRight="10dip"
            android:layout_marginTop="2dip"
-            android:button="@drawable/custom_check_box"
             android:visibility="visible" />
    <CheckBox
             android:id="@+id/id_owner_choose"
@@ -71,7 +70,6 @@
             android:layout_toLeftOf="@id/contact_sel_box"
               android:layout_marginTop="2dip"
            android:layout_marginRight="30dip"
-            android:button="@drawable/custom_check_box"
             android:visibility="gone" />
     <ImageView
         android:id="@+id/ivOverFlowMenuMembers"

@@ -543,7 +543,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
         drawerFragment.setDrawerListener(this);
 
-
         loadFragments();
         iPrefManager = SharedPrefManager.getInstance();
 
@@ -554,7 +553,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //		if(SharedPrefManager.getInstance().getDisplayName() != null)
 //			Crashlytics.setUserName(SharedPrefManager.getInstance().getDisplayName());
 //		if(SharedPrefManager.getInstance().getUserEmail() != null)
-//			Crashlytics.setUserEmail(SharedPrefManager.getInstance().getUserEmail());
+//		HomeScreen	Crashlytics.setUserEmail(SharedPrefManager.getInstance().getUserEmail());
 //		//Set Mobile Model
 //		if(ClientProperty.CLIENT_PARAMS != null)
 //			Crashlytics.setString("mob_prop", "UN##"+SettingData.sSelf.getUserName()+"::"+ClientProperty.CLIENT_PARAMS);
@@ -4715,7 +4714,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             tvTab.setTextColor(ContextCompat.getColor(this, R.color.textColorPagerSelected));
         }
     }
-
 
     private void setUnSelectTabStyle(TextView tvTab) {
         tvTab.setTypeface(tvTab.getTypeface(), Typeface.NORMAL);

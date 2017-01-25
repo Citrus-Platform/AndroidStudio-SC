@@ -155,7 +155,7 @@
                 android:layout_height="60dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/join_button"
+                android:background="@drawable/icon_join_open_hub"
                 android:textColor="@color/white"
                 android:textColorHighlight="@color/header_color"
                 android:textSize="14sp"

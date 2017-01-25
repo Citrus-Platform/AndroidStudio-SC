@@ -220,8 +220,12 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
     }
 
     public void eventBackOnToolbar(){
-        clearHideSearch();
-        ((HomeScreen) getActivity()).clearFunction();
+        try {
+            clearHideSearch();
+            ((HomeScreen) getActivity()).clearFunction();
+        } catch(Exception e){
+
+        }
     }
 
     public void clearHideSearch() {

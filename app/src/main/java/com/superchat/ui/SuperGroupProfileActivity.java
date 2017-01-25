@@ -93,7 +93,6 @@ public class SuperGroupProfileActivity extends Activity implements OnClickListen
 	ImageView superGroupPicEdit;
 	Dialog picChooserDialog;
 	String fileID;
-	TextView aboutLabelView;
 	boolean isEditModeOn;
 	
 	//Edit Mode
@@ -143,7 +142,6 @@ private static final String TAG = "SuperGroupProfileActivity";
 
 		UtilSetFont.setFontMainScreen(this);
 
-		aboutLabelView = (TextView)findViewById(R.id.id_about_label);
 		superGroupDisplayName = (TextView)findViewById(R.id.id_sg_display_name);
 		superGroupName = (TextView)findViewById(R.id.id_sg_name);
 		sgType = (TextView)findViewById(R.id.id_sg_type);
@@ -240,17 +238,11 @@ private static final String TAG = "SuperGroupProfileActivity";
 		}
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		isEditModeOn = false;
-//		if(sg_real_name != null)
-//			superGroupName.setText(sg_real_name);
-		if(superGroupName != null)
-			superGroupName.setText(sg_display_name);
 		if(org_desc != null && !org_desc.equals("")){
-			aboutLabelView.setVisibility(View.VISIBLE);
 			sgDescriptionLayout.setVisibility(View.VISIBLE);
 			sgDescription.setText(org_desc);
 		}else{
 			org_desc = null;
-			aboutLabelView.setVisibility(View.GONE);
 			sgDescriptionLayout.setVisibility(View.GONE);
 		}
 		final String file_id = SharedPrefManager.getInstance().getSGFileId(SharedPrefManager.getInstance().getUserDomain());
@@ -413,7 +405,6 @@ private static final String TAG = "SuperGroupProfileActivity";
 		protected String doInBackground(String... urls) {
 		    try {
 		    	String url = Constants.SERVER_URL + "/tiger/rest/admin/domain/profile?domainName="+URLEncoder.encode(domain_name, "UTF-8");
-		    	Log.i(TAG, "GetSuperGroupProfile :: doInBackground : URL - "+url);
 		        HttpGet httppost = new HttpGet(url);
 		        HttpClient httpclient = new DefaultHttpClient();
 		        HttpResponse response = httpclient.execute(httppost);
@@ -438,7 +429,6 @@ private static final String TAG = "SuperGroupProfileActivity";
 				progressDialog = null;
 			}
 			if(data != null){
-				Log.i(TAG, "GetSuperGroupProfile :: onPostExecute : response data - "+data);
 				 if(data.contains("success")){
 					 	
 		                String inviter = null;
@@ -450,7 +440,6 @@ private static final String TAG = "SuperGroupProfileActivity";
 							if(json != null && json.has("displayName")){
 								sg_display_name = json.getString("displayName");
 								superGroupDisplayName.setText(sg_display_name);
-//								superGroupName.setText("Permanent Name : "+sg_display_name);
 							}
 							else
 								sg_display_name = null;
@@ -458,7 +447,7 @@ private static final String TAG = "SuperGroupProfileActivity";
 		    				if(json != null && json.has("domainName")){
 								sg_real_name = json.getString("domainName");
 //		    					superGroupDisplayName.setText(sg_real_name);
-		    					superGroupName.setText("Permanent Name : "+sg_real_name);
+		    					superGroupName.setText(""+sg_real_name);
 		    				}
 		    				else
 								sg_real_name = null;
@@ -470,18 +459,15 @@ private static final String TAG = "SuperGroupProfileActivity";
 		    				if(json != null && json.has("description")){
 		    					org_desc = json.getString("description");
 		    					if(org_desc != null && !org_desc.equals("")){
-		    					aboutLabelView.setVisibility(View.VISIBLE);
 		    					sgDescriptionLayout.setVisibility(View.VISIBLE);
 		    					sgDescription.setText(org_desc);
 		    					}else{
 		    						org_desc = null;
-			    					aboutLabelView.setVisibility(View.GONE);
 			    					sgDescriptionLayout.setVisibility(View.GONE);
 		    					}
 		    				}
 		    				else{
 		    					org_desc = null;
-		    					aboutLabelView.setVisibility(View.GONE);
 		    					sgDescriptionLayout.setVisibility(View.GONE);
 		    				}
 		    				if(json != null && json.has("orgUrl"))

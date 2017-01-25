@@ -127,33 +127,16 @@
                             android:textColor="@color/black"
                             android:textSize="18sp"/>
 
-                        <LinearLayout
-                            android:id="@+id/id_sg_description_layout"
+                        <com.superchat.widgets.MyriadRegularTextView
+                            android:id="@+id/id_sg_name"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:visibility="visible">
+                            android:layout_gravity="left"
+                            android:maxLines="1"
+                            android:text=""
+                            android:textColor="@color/darkest_gray"
+                            android:textSize="16sp"/>
 
-                            <com.superchat.widgets.MyriadRegularTextView
-                                android:id="@+id/id_about_label"
-                                android:layout_width="fill_parent"
-                                android:layout_height="0dp"
-                                android:gravity="center"
-                                android:singleLine="true"
-                                android:text=""
-                                android:textColor="@color/darkest_gray"
-                                android:textSize="18sp"
-                                android:textStyle="normal" />
-                            <TextView
-                                android:id="@+id/id_sg_description"
-                                android:layout_width="fill_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="5dp"
-                                android:text=""
-                                android:textColor="@color/textColorListText"
-                                android:textSize="13sp"
-                                android:textStyle="normal" />
-                        </LinearLayout>
 
                     </LinearLayout>
                 </LinearLayout>
@@ -266,6 +249,39 @@
 
                         </LinearLayout>
 
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/divider" />
+
+                        <LinearLayout
+                            android:id="@+id/id_sg_description_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/hub_profile_Description_text"
+                                android:textSize="16sp"
+                                android:textColor="@color/black"/>
+
+                            <com.superchat.widgets.MyriadRegularTextView
+                                android:id="@+id/id_sg_description"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:maxLines="1"
+                                android:text=""
+                                android:textColor="@color/darkest_gray"
+                                android:textSize="16sp"
+                                android:textStyle="normal"
+                                android:visibility="visible" />
+
+                        </LinearLayout>
+
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -303,32 +319,6 @@
                             android:background="@color/divider" />
                     </LinearLayout>
                 </android.support.v7.widget.CardView>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dip"
-                android:layout_marginRight="20dip"
-                android:layout_marginTop="5dp"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="5dip">
-
-                <com.superchat.widgets.MyriadRegularTextView
-                    android:id="@+id/id_sg_name"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:singleLine="true"
-                    android:text="Permanent Name : "
-                    android:textColor="@color/darkest_gray"
-                    android:textSize="20sp"
-                    android:textStyle="normal"
-                    android:visibility="gone" />
-
             </LinearLayout>
 
             <LinearLayout

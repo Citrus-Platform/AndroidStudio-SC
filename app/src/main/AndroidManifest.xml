@@ -306,6 +306,9 @@
         <activity
             android:name="com.superchat.ui.OpenHubSearchScreen"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.superchat.ui.GroupMediaInfoScreen"
+            android:screenOrientation="portrait" />
 
         <service android:name="com.chat.sdk.ChatService">
             <intent-filter>

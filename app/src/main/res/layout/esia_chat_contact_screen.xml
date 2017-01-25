@@ -187,7 +187,6 @@
         android:layout_below="@id/id_search_layout"
         android:layout_marginTop="5dip"
         android:layout_toRightOf="@id/id_all_selected"
-        android:button="@drawable/custom_check_box"
         android:padding="10dip"
         android:visibility="gone" />
 

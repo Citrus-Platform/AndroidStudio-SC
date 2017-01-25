@@ -229,6 +229,7 @@
     <string name="hub_profile_type_text">Hub Type</string>
     <string name="hub_profile_owner_text">Owner</string>
     <string name="hub_profile_Members_text">Members</string>
+    <string name="hub_profile_Description_text">Description</string>
     <string name="hub_profile_created_text">Created On</string>
     <string name="about_asia_chat_lbl">About SuperChat</string>
     <string name="current_version_lbl">Current Version</string>
@@ -540,7 +541,7 @@
     <string name="creation_photo_sg">"Please add a picture or logo for your Hub"</string>
     <string name="bulleting_welcome1">"Welcome to "</string>
     <string name="bulleting_welcome2">" bulletin board "</string>
-    <string name="group_title">Please provide agroup name and optional group icon/photo</string>
+    <string name="group_title">Please provide a group name and optional group icon/photo</string>
     <string name="group_description">"Group description"</string>
     <string name="enter_sg_name_to_continue">"Please enter a Hub name to continue."</string>
     <string name="one_poll_alert">"There is already a poll active for this group. Please try again later."</string>

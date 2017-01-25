@@ -31,7 +31,10 @@ import com.superchat.widgets.RoundedImageView;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by citrus on 9/20/2016.
@@ -48,6 +51,10 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         this.data = data;
         this.context = context;
         this.connectorDrawer = connectorDrawer;
+
+        if(hmHeaderInfo != null){
+            hmHeaderInfo.clear();
+        }
     }
 
     @Override
@@ -75,11 +82,63 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         return null;
     }
 
+    public void expandHubs(final ListHeaderViewHolder itemController, final Item item) {
+        int pos = data.indexOf(itemController.refferalItem);
+        int index = pos + 1;
+        for (Item i : item.invisibleChildren) {
+            data.add(index, i);
+            index++;
+        }
+        notifyItemRangeInserted(pos + 1, index - pos - 1);
+        itemController.btn_expand_toggle.setImageResource(R.drawable.arrow_up);
+        item.invisibleChildren = null;
+    }
+
+    public void hideHubs(final ListHeaderViewHolder itemController, final Item item) {
+        item.invisibleChildren = new ArrayList<Item>();
+        int count = 0;
+        int pos = data.indexOf(itemController.refferalItem);
+        while (data.size() > pos + 1 && data.get(pos + 1).type == CHILD) {
+            item.invisibleChildren.add(data.remove(pos + 1));
+            count++;
+        }
+        notifyItemRangeRemoved(pos + 1, count);
+        itemController.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
+    }
+
+    @Override
+    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+    }
+
+    private HashMap<Integer, ListHeaderViewHolder> hmHeaderInfo = new HashMap<>();
+    private void addHeaderToHashMap(ListHeaderViewHolder holder, final int position){
+        hmHeaderInfo.put(position, holder);
+    }
+
+    public void openAllHeaders(){
+        try {
+            Set set = hmHeaderInfo.keySet();
+            Iterator itr = set.iterator();
+            while (itr.hasNext()) {
+                int key = (int) itr.next();
+                ListHeaderViewHolder holder = hmHeaderInfo.get(key);
+
+                Item item = data.get(key);
+
+                expandHubs(holder, item);
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final Item item = data.get(position);
         switch (item.type) {
             case HEADER:
                 final ListHeaderViewHolder itemController = (ListHeaderViewHolder) holder;
+
                 itemController.refferalItem = item;
                 itemController.header_title.setText(item.text);
                 itemController.btn_expand_toggle.setImageResource(R.drawable.right_arrow);
@@ -91,12 +150,16 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 } else if (item.text.equalsIgnoreCase(FragmentDrawer.HEADER_CREATE_NEW_HUB)) {
 
                 } else {
+                    addHeaderToHashMap(itemController, position);
+
                     if (item.invisibleChildren == null) {
                         itemController.btn_expand_toggle.setImageResource(R.drawable.arrow_up);
                     } else {
                         itemController.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
                     }
+                    //expandHubs(itemController, item);
                 }
+
                 itemController.llHeaderExpandable.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -114,25 +177,9 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                             }
                         } else {
                             if (item.invisibleChildren == null) {
-                                item.invisibleChildren = new ArrayList<Item>();
-                                int count = 0;
-                                int pos = data.indexOf(itemController.refferalItem);
-                                while (data.size() > pos + 1 && data.get(pos + 1).type == CHILD) {
-                                    item.invisibleChildren.add(data.remove(pos + 1));
-                                    count++;
-                                }
-                                notifyItemRangeRemoved(pos + 1, count);
-                                itemController.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
+                                hideHubs(itemController, item);
                             } else {
-                                int pos = data.indexOf(itemController.refferalItem);
-                                int index = pos + 1;
-                                for (Item i : item.invisibleChildren) {
-                                    data.add(index, i);
-                                    index++;
-                                }
-                                notifyItemRangeInserted(pos + 1, index - pos - 1);
-                                itemController.btn_expand_toggle.setImageResource(R.drawable.arrow_up);
-                                item.invisibleChildren = null;
+                                expandHubs(itemController, item);
                             }
                         }
                     }
