@@ -274,6 +274,8 @@ public class MainActivity extends FragmentActivity implements
                         intent.putExtra(Constants.REG_TYPE, "ADMIN");
                         intent.putExtra(Constants.HUB_CREATION_PROFILE_NAME, hubAdminName.getText().toString());
                         intent.putExtra("REGISTER_SG", true);
+                        if(sgCreationAfterLogin)
+                            intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, true);
                         intent.putExtras(bundle);
 //                        startActivity(intent);
                         startActivityForResult(intent, HUB_CREATION_PROFILE);
@@ -284,6 +286,7 @@ public class MainActivity extends FragmentActivity implements
     }
 
     String userComingFromScreen;
+    boolean sgCreationAfterLogin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -314,6 +317,7 @@ public class MainActivity extends FragmentActivity implements
             registerSG = false;
         }
         if (regAsAdmin) {
+            sgCreationAfterLogin = bundle.getBoolean(Constants.SG_CREATE_AFTER_LOGIN);
             setContentView(R.layout.create_hub);
 //            setContentView(R.layout.supergroup_creation);
         } else {
@@ -2315,9 +2319,13 @@ public class MainActivity extends FragmentActivity implements
                 }
             } else {//Success case
                 SharedPrefManager.getInstance().setProfileAdded(SharedPrefManager.getInstance().getUserName(), true);
-                Intent intent = new Intent(MainActivity.this, BulkInvitationScreen.class);
-                intent.putExtra(Constants.REG_TYPE, true);
-                startActivity(intent);
+                if(sgCreationAfterLogin){
+                    setResult(Activity.RESULT_OK);
+                }else {
+                    Intent intent = new Intent(MainActivity.this, BulkInvitationScreen.class);
+                    intent.putExtra(Constants.REG_TYPE, true);
+                    startActivity(intent);
+                }
                 finish();
             }
         }

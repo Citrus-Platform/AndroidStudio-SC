@@ -148,7 +148,7 @@
                         android:onClick="showPopup"
                         android:paddingBottom="15dp"
                         android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
+                        android:paddingRight="20dp"
                         android:paddingTop="15dp"
                         android:src="@drawable/dots" />
                 </LinearLayout>

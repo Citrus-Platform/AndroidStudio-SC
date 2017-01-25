@@ -1510,7 +1510,8 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                 if (purposeType == VIEWWING_AS_SELF_IN_REG) {
                     if (isProfileValidForReg(true)) {
                         if (domainReg && mobForReg != null) {
-                            if(!sgCreationAfterLogin) {
+//                            if(!sgCreationAfterLogin)
+                            {
                                 Intent intent = new Intent();
                                 intent.putExtra(Constants.HUB_CREATION_PROFILE, true);
                                 intent.putExtra(Constants.HUB_CREATION_PROFILE_NAME, displayNameView.getText().toString().trim());
@@ -1546,25 +1547,26 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                                 }
                                 setResult(Activity.RESULT_OK, intent);
                                 finish();
-                            }else {
-                                Intent intent = new Intent(ProfileScreen.this, MainActivity.class);
-                                intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, true);
-                                if (mobForReg.indexOf('-') != -1)
-                                    intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobForReg.substring(mobForReg.indexOf('-') + 1));
-                                else
-                                    intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobForReg);
-                                intent.putExtra(Constants.REG_TYPE, "ADMIN");
-                                intent.putExtra("REGISTER_SG", true);
-                                if (displayNameView != null)
-                                    intent.putExtra(Constants.NAME, displayNameView.getText().toString().trim());
-                                mobForReg = null;
-                                isProfileDataValidated = true;
-                                if (isPictureSelected) {
-                                    userSelectedFileID = SharedPrefManager.getInstance()
-                                            .getUserFileId(SharedPrefManager.getInstance().getUserName());
-                                }
-                                startActivity(intent);
                             }
+//                            else {
+//                                Intent intent = new Intent(ProfileScreen.this, MainActivity.class);
+//                                intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, true);
+//                                if (mobForReg.indexOf('-') != -1)
+//                                    intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobForReg.substring(mobForReg.indexOf('-') + 1));
+//                                else
+//                                    intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobForReg);
+//                                intent.putExtra(Constants.REG_TYPE, "ADMIN");
+//                                intent.putExtra("REGISTER_SG", true);
+//                                if (displayNameView != null)
+//                                    intent.putExtra(Constants.NAME, displayNameView.getText().toString().trim());
+//                                mobForReg = null;
+//                                isProfileDataValidated = true;
+//                                if (isPictureSelected) {
+//                                    userSelectedFileID = SharedPrefManager.getInstance()
+//                                            .getUserFileId(SharedPrefManager.getInstance().getUserName());
+//                                }
+//                                startActivity(intent);
+//                            }
                         } else
                             new UpdateProfileTaskOnServer().execute();
                     }

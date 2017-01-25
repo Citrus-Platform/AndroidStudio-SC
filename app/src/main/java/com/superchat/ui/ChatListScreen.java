@@ -1365,10 +1365,12 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
             callOption.setVisibility(View.GONE);
             call_option_video.setVisibility(View.GONE);
         }
-        if (iChatPref.isGroupChat(userName))
-            userIcon.setImageResource(R.drawable.group_white_icon);
+        if (iChatPref.isGroupChat(userName)) {
+            callOption.setImageResource(R.drawable.groupcall_icon_new);
+            userIcon.setImageResource(R.drawable.chat_person);
+        }
         else if (isBulletinBroadcast)
-            userIcon.setImageResource(R.drawable.broadcast_white_icon);
+            userIcon.setImageResource(R.drawable.broadcast_small);
         else {
 //            if (SharedPrefManager.getInstance().getUserGender(userName).equalsIgnoreCase("female"))
 //                userIcon.setImageResource(R.drawable.female_default);
@@ -2909,11 +2911,11 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         } else if (iChatPref.isBroadCast(userName)) {
             view_default.setVisibility(View.GONE);
             view.setVisibility(View.VISIBLE);
-            view.setImageResource(R.drawable.broadcast_white_icon);
+            view.setImageResource(R.drawable.broadcast_small);
         } else if (iChatPref.isGroupChat(userName)) {
             view_default.setVisibility(View.GONE);
             view.setVisibility(View.VISIBLE);
-            view.setImageResource(R.drawable.group_white_icon);
+            view.setImageResource(R.drawable.chat_person);
         } else if (type == 1) {
             view_default.setVisibility(View.GONE);
             view.setVisibility(View.VISIBLE);

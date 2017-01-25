@@ -28,8 +28,8 @@
 
             <ImageView
                 android:id="@+id/id_attach_pic"
-                android:layout_width="@dimen/chat_attach_menu_width"
-                android:layout_height="@dimen/chat_attach_menu_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/icon_gallery" />
@@ -60,8 +60,8 @@
 
             <ImageView
                 android:id="@+id/id_camera"
-                android:layout_width="@dimen/chat_attach_menu_width"
-                android:layout_height="@dimen/chat_attach_menu_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="0dip"
@@ -93,8 +93,8 @@
 
             <ImageView
                 android:id="@+id/create_doodle"
-                android:layout_width="@dimen/chat_attach_menu_width"
-                android:layout_height="@dimen/chat_attach_menu_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="0dip"
@@ -156,8 +156,8 @@
 
             <ImageView
                 android:id="@+id/id_audio_record"
-                android:layout_width="@dimen/chat_attach_menu_width"
-                android:layout_height="@dimen/chat_attach_menu_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="0dip"
@@ -207,8 +207,8 @@
 
             <ImageView
                 android:id="@+id/share_location"
-                android:layout_width="@dimen/chat_attach_menu_width"
-                android:layout_height="@dimen/chat_attach_menu_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="0dip"
@@ -239,8 +239,8 @@
 
             <ImageView
                 android:id="@+id/id_attach_file"
-                android:layout_width="@dimen/chat_attach_menu_width"
-                android:layout_height="@dimen/chat_attach_menu_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="0dip"
@@ -271,8 +271,8 @@
 
             <ImageView
                 android:id="@+id/share_contact"
-                android:layout_width="@dimen/chat_attach_menu_width"
-                android:layout_height="@dimen/chat_attach_menu_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="0dip"
@@ -302,8 +302,8 @@
 
             <ImageView
                 android:id="@+id/id_create_poll"
-                android:layout_width="@dimen/chat_attach_menu_width"
-                android:layout_height="@dimen/chat_attach_menu_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="0dip"

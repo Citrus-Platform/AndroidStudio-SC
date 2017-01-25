@@ -174,7 +174,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     setProfilePic(itemControllerChild.displayPicture, fileId);
                 } else {
 //                    setProfilePic(itemControllerChild.displayPicture, null);//logo_small
-                    itemControllerChild.displayPicture.setImageResource(R.drawable.logo_small);
+                    itemControllerChild.displayPicture.setImageResource(R.drawable.small_hub_icon);
                 }
                 //count of child//////////////
                 boolean muteId = SharedPrefManager.getInstance().isSnoozeExpired(item.actualName);
@@ -351,7 +351,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private boolean setProfilePic(ImageView picView, String groupPicId) {
 //		System.out.println("groupPicId : "+groupPicId);
         String img_path = getThumbPath(groupPicId);
-        picView.setImageResource(R.drawable.about_icon);
+        picView.setImageResource(R.drawable.small_hub_icon);
         if (groupPicId == null || (groupPicId != null && groupPicId.equals("")) || groupPicId.equals("clear") || groupPicId.contains("logofileid"))
             return false;
         if (img_path != null) {
