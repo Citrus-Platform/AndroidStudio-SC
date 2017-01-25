@@ -415,7 +415,6 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
                     if ((ownerDomainNameSet != null && ownerDomainNameSet.size() > 0)) {
                         DBWrapper.getInstance().updateOwnedSGDataArray(ownerDomainNameSet);
                     }
-
                     DBWrapper.getInstance().updateSGCredentials(SG_NAME, pref.getUserName(), pref.getUserPassword(), pref.getUserId(), true);
                     ((HomeScreen) getActivity()).switchSG(user + "_" + SG_NAME, false, null, true);
                 } catch (Exception e) {
@@ -483,21 +482,28 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
     public void eventClickedCreateNewHub() {
         SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
         String mobileNumber = iPrefManager.getUserPhone();
-//                Bundle bundle = new Bundle();
-        Intent intent = new Intent(getActivity(), ProfileScreen.class);
-        intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, true);
-        intent.putExtra(Constants.SG_CREATE_RESET, true);
-        intent.putExtra("MANAGE_MEMBER_BY_ADMIN", true);
-        intent.putExtra("PROFILE_EDIT_REG_FLOW", true);
-        intent.putExtra(Constants.REG_TYPE, true);
-        //SPECIAL DATA FOR BACK
-        intent.putExtra("PROFILE_FIRST", true);
+
+//        Intent intent = new Intent(getActivity(), ProfileScreen.class);
+//        intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, true);
+//        intent.putExtra(Constants.SG_CREATE_RESET, true);
+//        intent.putExtra("MANAGE_MEMBER_BY_ADMIN", true);
+//        intent.putExtra("PROFILE_EDIT_REG_FLOW", true);
+//        intent.putExtra(Constants.REG_TYPE, true);
+//        intent.putExtra("PROFILE_FIRST", true);
+//        if (mobileNumber.indexOf('-') != -1)
+//            intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber.substring(mobileNumber.indexOf('-') + 1));
+//        else
+//            intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber);
+//        startActivityForResult(intent, CODE_ADD_SUPERGROUP);
+
+        Intent intent = new Intent(getActivity(), MainActivity.class);
         if (mobileNumber.indexOf('-') != -1)
             intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber.substring(mobileNumber.indexOf('-') + 1));
         else
             intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber);
-//                intent.putExtra(Constants.REG_TYPE, "ADMIN");
-//                intent.putExtra("REGISTER_SG", true);
+        intent.putExtra(Constants.REG_TYPE, "ADMIN");
+        intent.putExtra("REGISTER_SG", true);
+        intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, true);
         startActivityForResult(intent, CODE_ADD_SUPERGROUP);
     }
 

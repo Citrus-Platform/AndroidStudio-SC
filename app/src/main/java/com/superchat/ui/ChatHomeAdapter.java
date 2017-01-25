@@ -79,6 +79,7 @@ public class ChatHomeAdapter extends SimpleCursorAdapter implements OnClickListe
 		public ImageView muteIcon;
 		public TextView id_last_msg_sender;
 		public TextView lastMessageTime;
+		public ImageView messageTypeIcon;
 		private CheckBox iCheckBox;
 		public TextView unseenMessages;
 		public TextView moreTab;
@@ -506,28 +507,32 @@ public void loadDialog(){
         	 viewholder.unseenMessages.setVisibility(TextView.VISIBLE);
 	         viewholder.unseenMessages.setText(usersMessagesCount);
          }else{
-        	 viewholder.unseenMessages.setVisibility(TextView.GONE);
+        	 viewholder.unseenMessages.setVisibility(TextView.INVISIBLE);
          }
-         if(iChatPref.isGroupChat(fromName)){
+		if(iChatPref.isBroadCast(fromName)){
+			viewholder.messageTypeIcon.setImageResource(R.drawable.broadcast_small_icon);
+			String tmpName = SharedPrefManager.getInstance().getBroadCastDisplayName(toUserName);
+			if(tmpName.contains("##$^##"))
+				viewholder.chatPerson.setText(tmpName.substring(0, tmpName.indexOf("##$^##")));
+			else
+				viewholder.chatPerson.setText(tmpName);
+		}else if(iChatPref.isGroupChat(fromName)){
+			 viewholder.messageTypeIcon.setImageResource(R.drawable.group_small_icon);
         	 String tmpName = SharedPrefManager.getInstance().getGroupDisplayName(fromName);
         	 if(tmpName.contains("##$^##"))
          		viewholder.chatPerson.setText(tmpName.substring(0, tmpName.indexOf("##$^##")));
          	else
          		viewholder.chatPerson.setText(tmpName);
-         }else if(viewholder.isBroadCast){
-        	 String tmpName = SharedPrefManager.getInstance().getBroadCastDisplayName(toUserName);
-        	 if(tmpName.contains("##$^##"))
-         		viewholder.chatPerson.setText(tmpName.substring(0, tmpName.indexOf("##$^##")));
-         	else
-         		viewholder.chatPerson.setText(tmpName);
-     	}else if(isSharedID){
+         }else if(isSharedID){
+			 viewholder.messageTypeIcon.setImageResource(R.drawable.official_id_small);
      		if(viewholder.nameText != null && viewholder.nameText.contains("<") && viewholder.nameText.contains(">")){
      			viewholder.nameText = viewholder.nameText.substring(0, groupMsgSenderName.indexOf('<'));
      			viewholder.chatPerson.setText(viewholder.nameText);
-       	 }else
-     		viewholder.chatPerson.setText(viewholder.nameText);
+			 }else
+				viewholder.chatPerson.setText(viewholder.nameText);
      	}else if (name!=null)
         {
+//			viewholder.messageTypeIcon.setVisibility(View.GONE);
         	String tmpName = name.trim();
         	if(tmpName.equals(fromName)|| tmpName.equals(toUserName)){
         		if(tmpName.contains("_"))
@@ -806,6 +811,7 @@ public void loadDialog(){
 		viewholder.id_last_msg_sender = (TextView) view.findViewById(R.id.id_last_msg_sender);
 		viewholder.chatPerson = (TextView) view.findViewById(R.id.id_chat_person);
 		viewholder.lastMessageTime = (TextView) view.findViewById(R.id.id_message_time);
+		viewholder.messageTypeIcon = (ImageView) view.findViewById(R.id.id_type_message);
 		viewholder.unseenMessages = (TextView) view.findViewById(R.id.id_unseen_count);
 		viewholder.moreTab = (TextView) view.findViewById(R.id.id_more_tab);
 		viewholder.deleteTab = (TextView) view.findViewById(R.id.id_delete_tab);

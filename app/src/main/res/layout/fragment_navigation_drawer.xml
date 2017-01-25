@@ -41,7 +41,7 @@
                 android:layout_below="@+id/notificationLayout"
                 android:layout_centerVertical="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/logo_small"
+                android:src="@drawable/hub_default"
                 android:visibility="visible" />
 
             <LinearLayout

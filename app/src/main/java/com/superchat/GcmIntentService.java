@@ -139,12 +139,18 @@ public class GcmIntentService extends IntentService {
 						if (senderUserName == null && groupName == null) {
 							if (HomeScreen.isforeGround) {
 								if(message != null) {
-									EventBus.getDefault().post(message);
+									if(screen != null && screen.equals("invite"))
+										EventBus.getDefault().post("[INVITE] : "+message);
+									else
+										EventBus.getDefault().post(message);
 								}
 							} else {
 								if(message != null) {
-									EventBus.getDefault().post(message);
-									showSystemMessage(message);
+									if(screen != null && screen.equals("invite"))
+										EventBus.getDefault().post("[INVITE] : "+message);
+									else
+										EventBus.getDefault().post(message);
+									showSystemMessage(message, screen);
 									GcmBroadcastReceiver.completeWakefulIntent(intent);
 								}
 							}
@@ -500,7 +506,7 @@ public class GcmIntentService extends IntentService {
 //		startService(new Intent(SuperChatApplication.context, ChatService.class));
 	}
 	//============================================================================================================
-	public void showSystemMessage(String msg) {
+	public void showSystemMessage(String msg, String screen) {
 		SharedPrefManager sharedPref = SharedPrefManager.getInstance();
 		CharSequence tickerText = msg;
 		String user = "SuperChat";
@@ -530,6 +536,7 @@ public class GcmIntentService extends IntentService {
 		notificationIntent.putExtra("FROM_NOTIFICATION", true);
 		notificationIntent.putExtra("SYSTEM_MESSAGE", true);
 		notificationIntent.putExtra("SYSTEM_MESSAGE_TEXT", msg);
+		notificationIntent.putExtra("SCREEN_NAME", screen);
 		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
 		notificationIntent.setAction(Long.toString(System.currentTimeMillis()));
 		PendingIntent contentIntent = PendingIntent.getActivity(

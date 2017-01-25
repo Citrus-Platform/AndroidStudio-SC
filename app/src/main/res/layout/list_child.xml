@@ -18,7 +18,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="3dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/logo_small"
+        android:src="@drawable/small_hub_icon"
         android:visibility="visible" />
 
 

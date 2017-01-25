@@ -693,8 +693,15 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 startService(new Intent(SuperChatApplication.context, SinchService.class));
                 //Check for backUp and upload.
                 checkForBackUpAndUploadBackup();
-                if (systemMessageText != null && systemMessageText.length() > 0)
-                    showDialogWithPositive(systemMessageText);
+                if (systemMessageText != null && systemMessageText.length() > 0) {
+                    if (systemMessageText != null && systemMessageText.startsWith("[INVITE] : ")) {
+                        String msg = systemMessageText.substring(systemMessageText.indexOf("[INVITE] : ") + "[INVITE] : ".length());
+                        showDialogWithPositive(msg, true);
+                    }else if(switchUserScreenName != null && switchUserScreenName.endsWith("invite"))
+                        showDialogWithPositive(systemMessageText, true);
+                    else
+                         showDialogWithPositive(systemMessageText, false);
+                }
                 systemMessage = false;
             } else {
                 if (switchUserScreenName != null && switchUserScreenName.equalsIgnoreCase("bulletin"))
@@ -1955,14 +1962,31 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 
     Dialog systemMessageDialog;
 
-    public void showDialogWithPositive(String s) {
+    public void showDialogWithPositive(String s, final boolean invite) {
         if (systemMessageDialog != null)
             systemMessageDialog.dismiss();
         systemMessageDialog = new Dialog(this);
         systemMessageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         systemMessageDialog.setCanceledOnTouchOutside(false);
-        systemMessageDialog.setContentView(R.layout.custom_dialog);
+        if(invite) {
+            systemMessageDialog.setContentView(R.layout.custom_dialog_invite);
+        }
+        else
+            systemMessageDialog.setContentView(R.layout.custom_dialog);
         ((TextView) systemMessageDialog.findViewById(R.id.id_dialog_message)).setText(s);
+        if(invite){
+            ((TextView) systemMessageDialog.findViewById(R.id.id_cancel)).setOnTouchListener(new OnTouchListener() {
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    systemMessageDialog.cancel();
+                    systemMessageText = null;
+                    systemMessage = false;
+                    frompush = false;
+                    return false;
+                }
+            });
+        }
         ((TextView) systemMessageDialog.findViewById(R.id.id_ok)).setOnTouchListener(new OnTouchListener() {
 
             @Override
@@ -1971,6 +1995,11 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 systemMessageText = null;
                 systemMessage = false;
                 frompush = false;
+                if(invite){
+                    //Open Invite Screen
+                    if(drawerFragment != null)
+                        drawerFragment.eventClickedInvitaion();
+                }
                 return false;
             }
         });
@@ -2137,7 +2166,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 switchUserDisplayName = switchUserDisplayName.substring(switchUserDisplayName.indexOf(']') + 1).trim();
             if (frompush) {
                 if (systemMessage && systemMessageText != null && systemMessageText.length() > 0) {
-                    showDialogWithPositive(systemMessageText);
+                    if (systemMessageText != null && systemMessageText.startsWith("[INVITE] : ")) {
+                        String msg = systemMessageText.substring(systemMessageText.indexOf("[INVITE] : ") + "[INVITE] : ".length());
+                        showDialogWithPositive(msg, true);
+                    }else if(switchUserScreenName != null && switchUserScreenName.endsWith("invite"))
+                        showDialogWithPositive(systemMessageText, true);
+                    else
+                        showDialogWithPositive(systemMessageText, false);
                     systemMessage = false;
                 } else {
                     if (switchUserScreenName != null && switchUserScreenName.equalsIgnoreCase("bulletin"))
@@ -4427,8 +4462,11 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             if (id_sg_name_label != null) {
                 id_sg_name_label.setText(SharedPrefManager.getInstance().getCurrentSGDisplayName());
             }
+        }else if (message != null && message.startsWith("[INVITE] : ")) {
+            String msg = message.substring(message.indexOf("[INVITE] : ") + "[INVITE] : ".length());
+            showDialogWithPositive(msg, true);
         } else {
-            showDialogWithPositive(message);
+            showDialogWithPositive(message, false);
         }
     }
 

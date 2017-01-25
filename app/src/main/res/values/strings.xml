@@ -12,6 +12,7 @@
     <string name="verification_code_sent">A Verification code was sent to you</string>
     <string name="please_make_sure">Please make sure your mobile number is active</string>
     <string name="registration_title">START A NEW HUB</string>
+    <string name="create_hub_profile_optional">Complete profile (optional fields)</string>
     <string name="verify_phone_number_msg">Please enter your mobile number</string>
     <string name="self_verify_phone_number_msg">Unable to verify this time, please try after sometime.</string>
     <string name="lbl_please_try_later">Sorry, could not create the group due to a technical error. Please try after sometime.</string>
@@ -33,7 +34,7 @@
     <string name="please_enter_conf_pass_length">Please enter at least 6 characters for confirm password.</string>
     <string name="please_enter_pass_mismatch">Passwords do not match!</string>
     <string name="password_mismatch_on_toast">Your passwords do not match! \n Please try again.</string>
-     <string name="password_tips">Your password must be 6 characters long.</string>
+     <string name="password_tips">Must be 6 characters long</string>
     <string name="please_write_status">Please write some text for status update.</string>
     <string name="no_image_delete">No image to delete.</string>
     <string name="please_enter_email">Please enter a valid email address.</string>
@@ -122,7 +123,7 @@
     <string name="new_broadcast">New Broadcast</string>
     <string name="enter_description">Type description(*)</string>
     <string name="description">Description</string>
-    <string name="new_description">Group description\n(Up to 500 characters - optional)</string>
+    <string name="new_description">Hub description\n(Up to 500 characters - optional)</string>
     <string name="new_description_optional">Max 500 characters</string>
     <string name="create_closed_group_subtitle">Closed - Members cannot join without an invitation from an admin</string>
     <string name="create_open_group_subtitle">All members of your Hub will be able to search for and join this group.</string>
@@ -192,6 +193,7 @@
     <string name="enter_channel_name">Please enter a group name.</string>
     <string name="group_name_shouldnt_null">Please enter group name.</string>
     <string name="cancel">Cancel</string>
+    <string name="view">View</string>
     <string name="cancel_large">CANCEL</string>
     <string name="edit_txt">Edit</string>
     <string name="display_name">Display Name</string>
@@ -311,7 +313,7 @@
     <string name="employee_name">Employee Name</string>
     <string name="enter_name">Your Name</string>
     <string name="admin_name">Enter your full name(*)</string>
-    <string name="enter_org_name">Organization Name</string>
+    <string name="enter_org_name">Organization, company or team if any</string>
     <string name="register_as_user">Join</string>
     <string name="register_as_admin">Register Hub/Admin</string>
     <string name="join_as_admin">Join as Admin</string>
@@ -341,7 +343,7 @@
     <string name="save">Save</string>
     <string name="domain_validation_alert">Please enter valid Hub name between 2 to 50 characters. Special characters and space not allowed.</string>
     <string name="domain_display_name_validation_alert">Please enter valid Hub display name between 2 to 50 characters. Hub must start with a letter.</string>
-    <string name="password_reason">(This password will be used to login on the web console.)</string>
+    <string name="password_reason">This password will be used for web console login</string>
     <string name="create_poll">Create Poll</string>
     <string name="option_1">1) </string>
     <string name="option_2">2) </string>
@@ -469,17 +471,19 @@
     <string name="connecting_txt">Connecting..</string>
     <string name="select_gender">Select Gender</string>
 
-    <string name="open_supergroup">Public – Anyone can join</string>
-    <string name="closed_supergroup">Private – Only people you invite can join</string>
+    <string name="open_supergroup">Public Hub</string>
+    <string name="closed_supergroup">Private Hub</string>
 
     <string name="open_group">Public Group</string>
     <string name="close_group_creation_option">Private Group</string>
 
-    <string name="select_group_type">Select Public or Private</string>
+    <string name="image_optional">Hub icon/photo (optional)</string>
+    <string name="select_group_type">Please select your Hub</string>
     <string name="select_group_type_in_creation">Please select your group</string>
     <string name="welcome_to_superchat">Welcome to Superchat</string>
     <string name="join_a_hub">Join A Hub</string>
     <string name="create_a_hub">Create A Hub</string>
+    <string name="create_hub">Create Hub</string>
     <string name="join_a_group">JOIN A GROUP</string>
     <string name="or">OR</string>
     <string name="continue_txt">Continue</string>
@@ -530,11 +534,11 @@
     <string name="enter_alternate_sg">"Or enter another Hub’s name"</string>
     <string name="enter_alternate_sg_new">"Enter Hub’s name"</string>
     <string name="creation_tell_us">"Tell us about your Hub"</string>
-    <string name="creation_name_sg">"Name your Hub*"</string>
+    <string name="creation_name_sg">"Hub Name"</string>
     <string name="creation_name_title">"Display Name"</string>
     <string name="creation_name_sg_address">"Hub's real address"</string>
     <string name="creation_email_sg">"Please enter your email address"</string>
-    <string name="creation_email_note">"Your email address will be used for special announcements for Hub owners."</string>
+    <string name="creation_email_note">"Will be used for special announcements"</string>
     <string name="sg_creation_not">"This is the hub's address that you and team will use internally to signin to Superchat."</string>
     <string name="creation_url_sg">"Website if any"</string>
     <string name="creation_orgname_sg">"What is the name of your organization, team or company?"</string>
@@ -681,7 +685,7 @@
     <string name="other_apps">OTHER APPS</string>
     <string name="contacts">CONTACTS</string>
 
-    <string name="start_gp_call">Start group call?</string>
+    <string name="start_gp_call">Would you like to start a conference call?</string>
 
 
     <!-- Munish Thakur -->

@@ -15,7 +15,7 @@
         android:layout_centerVertical="true"
         android:scaleType="fitXY"
         android:layout_marginLeft="10.0dip"
-        android:src="@drawable/announce" />
+        android:src="@drawable/bulletin_icon" />
     <com.superchat.widgets.RoundedImageView
         android:id="@+id/contact_icon_default"
         android:layout_width="55dp"
