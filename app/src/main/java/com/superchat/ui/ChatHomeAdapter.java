@@ -509,21 +509,21 @@ public void loadDialog(){
          }else{
         	 viewholder.unseenMessages.setVisibility(TextView.INVISIBLE);
          }
-         if(iChatPref.isGroupChat(fromName)){
+		if(iChatPref.isBroadCast(fromName)){
+			viewholder.messageTypeIcon.setImageResource(R.drawable.broadcast_small_icon);
+			String tmpName = SharedPrefManager.getInstance().getBroadCastDisplayName(toUserName);
+			if(tmpName.contains("##$^##"))
+				viewholder.chatPerson.setText(tmpName.substring(0, tmpName.indexOf("##$^##")));
+			else
+				viewholder.chatPerson.setText(tmpName);
+		}else if(iChatPref.isGroupChat(fromName)){
 			 viewholder.messageTypeIcon.setImageResource(R.drawable.group_small_icon);
         	 String tmpName = SharedPrefManager.getInstance().getGroupDisplayName(fromName);
         	 if(tmpName.contains("##$^##"))
          		viewholder.chatPerson.setText(tmpName.substring(0, tmpName.indexOf("##$^##")));
          	else
          		viewholder.chatPerson.setText(tmpName);
-         }else if(viewholder.isBroadCast){
-			 viewholder.messageTypeIcon.setImageResource(R.drawable.broadcast_small_icon);
-        	 String tmpName = SharedPrefManager.getInstance().getBroadCastDisplayName(toUserName);
-        	 if(tmpName.contains("##$^##"))
-         		viewholder.chatPerson.setText(tmpName.substring(0, tmpName.indexOf("##$^##")));
-         	else
-         		viewholder.chatPerson.setText(tmpName);
-     	}else if(isSharedID){
+         }else if(isSharedID){
 			 viewholder.messageTypeIcon.setImageResource(R.drawable.official_id_small);
      		if(viewholder.nameText != null && viewholder.nameText.contains("<") && viewholder.nameText.contains(">")){
      			viewholder.nameText = viewholder.nameText.substring(0, groupMsgSenderName.indexOf('<'));
