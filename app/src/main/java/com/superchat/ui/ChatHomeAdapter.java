@@ -507,7 +507,7 @@ public void loadDialog(){
         	 viewholder.unseenMessages.setVisibility(TextView.VISIBLE);
 	         viewholder.unseenMessages.setText(usersMessagesCount);
          }else{
-        	 viewholder.unseenMessages.setVisibility(TextView.GONE);
+        	 viewholder.unseenMessages.setVisibility(TextView.INVISIBLE);
          }
          if(iChatPref.isGroupChat(fromName)){
 			 viewholder.messageTypeIcon.setImageResource(R.drawable.group_small_icon);
