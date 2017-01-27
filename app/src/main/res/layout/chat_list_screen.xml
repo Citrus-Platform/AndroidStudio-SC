@@ -514,7 +514,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/home_fragments_actionbar_shadow"
+                    android:layout_height="0dp"
                     android:background="@drawable/shadow" />
             </LinearLayout>
         </io.codetail.widget.RevealFrameLayout>

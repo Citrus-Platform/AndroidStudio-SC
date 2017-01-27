@@ -63,6 +63,7 @@ import java.util.Date;
 import java.util.List;
 
 import static android.R.attr.handle;
+import static com.superchat.ui.OpenHubSearchScreen.KEY_IS_COMING_FROM_LOGIN_FLOW;
 
 public class FragmentDrawer extends Fragment implements View.OnClickListener, ConnectorDrawer {
 
@@ -531,6 +532,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
         bundle.putString(Constants.MOBILE_NUMBER_TXT, number);
         bundle.putStringArrayList(SupergroupListingScreenNew.KEY_INVITED_DOMAIN_SET, invitedDomainNameSet);
         bundle.putBoolean(SupergroupListingScreenNew.KEY_SHOW_OWNED_ALERT, false);
+        bundle.putBoolean(KEY_IS_COMING_FROM_LOGIN_FLOW, false);
 
         Intent starter = new Intent(getActivity(), OpenHubSearchScreen.class);
         starter.putExtras(bundle);
@@ -626,6 +628,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
         setProfilePic(displayPictureCurrent);
     }
 
+    private boolean isFirstTimeDrawerOpen = true;
     public void setUp(int fragmentId, DrawerLayout drawerLayout, final Toolbar toolbar) {
         containerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
@@ -633,6 +636,10 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                if(isFirstTimeDrawerOpen) {
+                    adapter.openAllHeaders();
+                    isFirstTimeDrawerOpen = false;
+                }
                 initialize();
 
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);

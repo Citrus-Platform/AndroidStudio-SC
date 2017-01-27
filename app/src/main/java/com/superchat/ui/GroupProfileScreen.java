@@ -400,8 +400,6 @@ public class GroupProfileScreen extends Activity implements OnClickListener, Pro
 //				title.setText(getString(R.string.broadcast_info));
                 title.setText(displayName);
                 backTitle.setText(getString(R.string.broadcast_chat));
-                emailChatView.setVisibility(View.GONE);
-                clearGroupChatView.setVisibility(View.GONE);
                 ownerLayout.setVisibility(View.GONE);
                 adminLayout.setVisibility(View.GONE);
                 deleteBroadcastList.setVisibility(View.GONE);
@@ -498,15 +496,14 @@ public class GroupProfileScreen extends Activity implements OnClickListener, Pro
             editGroupView.setVisibility(View.GONE);
         }
         getServerGroupProfile(groupUUID);
-//		if(!isBroadCast){
-        setAllMedia();
-        setAllDocs();
-//		 }
+        handleMediaView();
+        //setAllMedia();
+        //setAllDocs();
     }
 
     @OnClick(R.id.rlGroupMediaInfoMedia)
     public void eventMediaClicked(){
-        GroupMediaInfoScreen.start(this);
+        GroupMediaInfoScreen.start(this, groupUUID);
     }
 
     public void showPopup(View v) {
@@ -2831,6 +2828,20 @@ public class GroupProfileScreen extends Activity implements OnClickListener, Pro
 
     };
 
+    private void handleMediaView() {
+        ArrayList<ContentValues> allMedia = ChatDBWrapper.getInstance().getAllPersonMedia(groupUUID);
+        ArrayList<ContentValues> allDocs = ChatDBWrapper.getInstance().getAllPersonDocs(groupUUID);
+
+        int totalSize = 0;
+        if (allMedia != null && allMedia.size() > 0) {
+            totalSize = totalSize + allMedia.size();
+        }
+        if (allDocs != null && allDocs.size() > 0) {
+            totalSize = totalSize + allDocs.size();
+        }
+        mediaCountView.setText("" + totalSize);
+    }
+
     private void setAllDocs() {
         ArrayList<ContentValues> allDocs = ChatDBWrapper.getInstance().getAllPersonDocs(groupUUID);
         docsCountView.setText("" + allDocs.size());
@@ -2841,7 +2852,17 @@ public class GroupProfileScreen extends Activity implements OnClickListener, Pro
 
     private void setAllMedia() {
         ArrayList<ContentValues> allMedia = ChatDBWrapper.getInstance().getAllPersonMedia(groupUUID);
-        mediaCountView.setText("" + allMedia.size());
+        ArrayList<ContentValues> allDocs = ChatDBWrapper.getInstance().getAllPersonDocs(groupUUID);
+
+        int totalSize = 0;
+        if(allMedia != null && allMedia.size() > 0){
+            totalSize = totalSize + allMedia.size();
+        }
+        if(allDocs != null && allDocs.size() > 0){
+            totalSize = totalSize + allDocs.size();
+        }
+        mediaCountView.setText("" + totalSize);
+/*
         for (ContentValues values : allMedia) {
             if (values.getAsInteger(ChatDBConstants.MESSAGE_TYPE_FIELD) == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal())
                 addVideoView(mediaScrollLayout, values.getAsString(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD), values.getAsString(ChatDBConstants.MESSAGE_THUMB_FIELD));
@@ -2849,7 +2870,7 @@ public class GroupProfileScreen extends Activity implements OnClickListener, Pro
                 addAudioView(mediaScrollLayout, values.getAsString(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD));
             else
                 addImageView(mediaScrollLayout, values.getAsString(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD));
-        }
+        }*/
     }
 
     private void addVideoView(LinearLayout mainLayout, String path, String thumb) {

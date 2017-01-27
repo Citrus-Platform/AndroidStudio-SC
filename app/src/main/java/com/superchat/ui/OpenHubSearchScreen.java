@@ -48,11 +48,13 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
+import com.superchat.model.DomainSetObject;
 import com.superchat.model.ErrorModel;
 import com.superchat.model.RegMatchCodeModel;
 import com.superchat.model.RegistrationForm;
 import com.superchat.model.RegistrationFormResponse;
 import com.superchat.model.SGroupListObject;
+import com.superchat.model.multiplesg.JoinedDomainNameSet;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.retrofit.response.model.ResponseOpenDomains;
 import com.superchat.ui.Adapters.connectors.OpenGroupAdapterConnector;
@@ -86,7 +88,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -95,6 +99,7 @@ import retrofit2.Response;
 
 import static android.R.attr.category;
 import static android.R.attr.data;
+import static android.provider.Contacts.SettingsColumns.KEY;
 import static com.superchat.interfaces.interfaceInstances.objApi;
 import static com.superchat.interfaces.interfaceInstances.objExceptione;
 import static com.superchat.interfaces.interfaceInstances.objGlobal;
@@ -102,8 +107,11 @@ import static com.superchat.interfaces.interfaceInstances.objToast;
 
 public class OpenHubSearchScreen extends AppCompatActivity implements OnClickListener, SearchView.OnQueryTextListener, OpenGroupAdapterConnector {
 
-    public static void start(Activity context) {
+    public static final String KEY_IS_COMING_FROM_LOGIN_FLOW = "isComingFromLoginFlow";
+
+    public static void start(Activity context, final boolean isComingFromLoginFlow) {
         Bundle bundle = new Bundle();
+        bundle.putBoolean(KEY_IS_COMING_FROM_LOGIN_FLOW, isComingFromLoginFlow);
 
         Intent starter = new Intent(context, OpenHubSearchScreen.class);
         starter.putExtras(bundle);
@@ -145,8 +153,17 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
         init();
     }
 
+    Bundle bundle;
+    boolean isComingFromLoginFlow = false;
+
     private void init() {
         ButterKnife.bind(this);
+
+        bundle = getIntent().getExtras();
+        if (bundle != null) {
+            isComingFromLoginFlow = bundle.getBoolean(KEY_IS_COMING_FROM_LOGIN_FLOW);
+        }
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Open Hubs");
@@ -706,6 +723,19 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
             new SignupTaskOnServer(registrationForm, view).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         else
             new SignupTaskOnServer(registrationForm, view).execute();
+
+        if (isComingFromLoginFlow) {
+            if (Build.VERSION.SDK_INT >= 11)
+                new SignupTaskOnServer(registrationForm, view).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            else
+                new SignupTaskOnServer(registrationForm, view).execute();
+
+        } else {
+            if (Build.VERSION.SDK_INT >= 11)
+                new ActivatedomainTaskOnServer(registrationForm, view, super_group).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            else
+                new ActivatedomainTaskOnServer(registrationForm, view, super_group).execute();
+        }
     }
 
     public void onBackClick(View view) {
@@ -882,6 +912,194 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
         }
     }
 
+    //---------------------------------------
+    public class ActivatedomainTaskOnServer extends AsyncTask<String, String, String> {
+        RegistrationForm registrationForm;
+        ProgressDialog progressDialog = null;
+        String active_sg_name = null;
+        View view1;
+
+        public ActivatedomainTaskOnServer(RegistrationForm registrationForm, final View view1, String active_sg_name) {
+            this.registrationForm = registrationForm;
+            this.view1 = view1;
+            this.active_sg_name = active_sg_name;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = ProgressDialog.show(OpenHubSearchScreen.this, "", "Loading. Please wait...", true);
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            // TODO Auto-generated method stub
+            String JSONstring = new Gson().toJson(registrationForm);
+            DefaultHttpClient client1 = new DefaultHttpClient();
+
+            Log.e(TAG, "ActivatedomainTaskOnServer :: request:" + JSONstring);
+            String url = Constants.SERVER_URL + "/tiger/rest/user/activatedomain";
+            Log.e(TAG, "ActivatedomainTaskOnServer :: url:" + url);
+            HttpPost httpPost = new HttpPost(url);
+//	         httpPost.setEntity(new UrlEncodedFormEntity(JSONstring));
+            httpPost = SuperChatApplication.addHeaderInfo(httpPost, false);
+            HttpResponse response = null;
+
+            try {
+                httpPost.setEntity(new StringEntity(JSONstring));
+                try {
+                    response = client1.execute(httpPost);
+                    final int statusCode = response.getStatusLine().getStatusCode();
+                    if (statusCode == HttpStatus.SC_OK) { //new1
+                        HttpEntity entity = response.getEntity();
+//						    System.out.println("SERVER RESPONSE STRING: " + entity.getContent());
+                        BufferedReader rd = new BufferedReader(new InputStreamReader(entity.getContent()));
+                        String line = "";
+                        String str = "";
+                        while ((line = rd.readLine()) != null) {
+                            str += line;
+                        }
+                        if (str != null && !str.equals("")) {
+                            Log.e(TAG, "ActivatedomainTaskOnServer ::  response:" + str);
+                            str = str.trim();
+                            Gson gson = new GsonBuilder().create();
+                            if (str == null || str.contains("error")) {
+                                return str;
+                            }
+                            RegistrationFormResponse regObjRes = gson.fromJson(str, RegistrationFormResponse.class);
+                            DomainSetObject regObj = new DomainSetObject();
+                            //RegistrationForm regObj = new RegistrationForm();
+                            long current_user_id = 0;
+
+                            ArrayList<DomainSetObject> activateDomainDataSet = new ArrayList<DomainSetObject>();
+                            DomainSetObject domainSetObject = new DomainSetObject();
+                            if (regObjRes != null) {
+                                SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
+                                HomeScreen.multipleSGDAta = regObjRes;
+                                for (int i = 0; i < regObjRes.getActivateDomainDataSet().size(); i++) {
+                                    if (registrationForm.getDomainName().equalsIgnoreCase(regObjRes.getActivateDomainDataSet().get(i).getDomainName())) {
+                                        regObj = regObjRes.getActivateDomainDataSet().get(i);
+                                        if (regObj.isActivateSuccess()) {
+//											System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
+                                            iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
+                                            iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
+                                            iPrefManager.saveUserDomain(regObj.getDomainName());
+                                            //This is added specifically for the Invite part.
+                                            iPrefManager.saveUserPassword(regObj.getPassword());
+                                            if (selectedSGDisplayName != null)
+                                                iPrefManager.saveCurrentSGDisplayName(selectedSGDisplayName);
+                                            iPrefManager.saveUserId(regObj.getUserId());
+//										iPrefManager.setAppMode("VirginMode");
+//										iPrefManager.saveUserLogedOut(false);
+                                            iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
+                                            current_user_id = regObj.getUserId();
+                                            try {
+                                                System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
+                                                DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
+                                            } catch (Exception ex) {
+                                                ex.printStackTrace();
+                                            }
+                                        } else {
+                                            try {
+                                                System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
+                                                DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
+                                            } catch (Exception ex) {
+                                                ex.printStackTrace();
+                                            }
+                                            if (welcomeDialog != null)
+                                                welcomeDialog.dismiss();
+//											Toast.makeText(SupergroupListingScreen.this, getString(R.string.account_deactivated), Toast.LENGTH_SHORT).show();
+                                        }
+                                    } else {
+                                        try {
+                                            regObj = regObjRes.getActivateDomainDataSet().get(i);
+                                            System.out.println("Domain-> " + regObj.getDomainName() + ", Pass-> " + regObj.getPassword() + ", userName-> " + regObj.getUsername() + ", userID-> " + regObj.getUserId());
+                                            iPrefManager.saveSGPassword(regObj.getUsername(), regObj.getPassword());
+                                            iPrefManager.saveSGUserID(regObj.getUsername(), regObj.getUserId());
+                                            DBWrapper.getInstance().updateSGCredentials(regObj.getDomainName(), regObj.getUsername(), regObj.getPassword(), regObj.getUserId(), regObj.isActivateSuccess());
+                                        } catch (Exception ex) {
+                                            ex.printStackTrace();
+                                        }
+                                    }
+                                }
+                                /*if(backFromProfile){
+                                    Intent intent = new Intent(SupergroupListingScreen.this, HomeScreen.class);
+                                    iPrefManager.setProfileAdded(iPrefManager.getUserName(), true);
+                                    startActivity(intent);
+                                    finish();
+                                }else*/
+                                {
+                                    if (current_user_id == 0)
+                                        current_user_id = registrationForm.getiUserId();
+                                    //Check f selected SG is activated.
+                                    if (DBWrapper.getInstance().isSGActive(registrationForm.getDomainName()))
+                                        verifyUserSG(current_user_id);
+                                    else {
+                                        //Show Group deactivated dialog.
+                                        return "deactivated";
+//										showDialog(getResources().getString(R.string.deactivated_alert));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (ClientProtocolException e) {
+                    Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());
+                } catch (IOException e) {
+                    Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());
+                }
+
+            } catch (UnsupportedEncodingException e1) {
+                Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution UnsupportedEncodingException:" + e1.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution Exception:" + e.toString());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String str) {
+            try {
+                if (progressDialog != null) {
+                    progressDialog.dismiss();
+                    progressDialog = null;
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            if (str != null && str.contains("error")) {
+                Gson gson = new GsonBuilder().create();
+                ErrorModel errorModel = gson.fromJson(str, ErrorModel.class);
+                if (errorModel != null) {
+                    if (errorModel.citrusErrors != null
+                            && !errorModel.citrusErrors.isEmpty()) {
+                        ErrorModel.CitrusError citrusError = errorModel.citrusErrors.get(0);
+                        if (citrusError != null && citrusError.code.equals("20019")) {
+                            SharedPrefManager iPrefManager = SharedPrefManager.getInstance();
+                            iPrefManager.saveUserDomain(superGroupName);
+                            iPrefManager.saveCurrentSGDisplayName(selectedSGDisplayName);
+                            iPrefManager.saveUserId(errorModel.userId);
+                            //below code should be only, in case of brand new user - "First time SC user"
+                            iPrefManager.setAppMode("SecondMode");
+                            iPrefManager.saveUserLogedOut(false);
+                            iPrefManager.setMobileRegistered(iPrefManager.getUserPhone(), true);
+                            //Do not show this dialog, Simply verify and get in
+//							verifyUserSG(errorModel.userId);
+                            showAlertDialog(citrusError.message, errorModel.userId);
+                        } else
+                            showDialog(citrusError.message);
+                    } else if (errorModel.message != null)
+                        showDialog(errorModel.message);
+                } else
+                    showDialog("Please try again later.");
+            } else if (str != null && str.contains("deactivated")) {
+                showDialog(getResources().getString(R.string.account_deactivated));
+            }
+            super.onPostExecute(str);
+        }
+    }
+
     //--------------------------------------------------------------------------------------------------------
     public void showDialog(String s) {
         try {
@@ -1013,9 +1231,13 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (dialog != null) {
-                            dialog.dismiss();
-                            dialog = null;
+                        try {
+                            if (dialog != null) {
+                                dialog.dismiss();
+                                dialog = null;
+                            }
+                        } catch(Exception e){
+
                         }
                     }
                 });
@@ -1023,40 +1245,86 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
                         && objUserModel.iStatus.equalsIgnoreCase("success")) {
                     SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance();
 
+                    if (isComingFromLoginFlow) {
+                        sharedPrefManager.saveUserVarified(true);
+                        sharedPrefManager.setMobileVerified(sharedPrefManager.getUserPhone(), true);
+                        sharedPrefManager.saveUserName(objUserModel.username);
+                        sharedPrefManager.saveUserPassword(objUserModel.password);
+                        sharedPrefManager.setOTPVerified(false);
+                        //Save SG data
+                        sharedPrefManager.saveSGPassword(objUserModel.username, objUserModel.password);
+                        sharedPrefManager.saveSGUserID(objUserModel.username, sharedPrefManager.getUserId());
+
+                        JoinedDomainNameSet joined = new JoinedDomainNameSet();
+                        joined.setDomainName(sharedPrefManager.getUserDomain());
+                        joined.setDisplayName(sharedPrefManager.getCurrentSGDisplayName());
+                        joined.setUnreadCounter(0);
+                        joined.setDomainType("Company");
+                        joined.setDomainMuteInfo(0);
+                        joined.setOrgName("");
+                        joined.setOrgUrl("");
+                        joined.setPrivacyType("Open");
+                        joined.setAdminName(sharedPrefManager.getUserName());
+                        joined.setLogoFileId(sharedPrefManager.getSGFileId(sharedPrefManager.getUserDomain()));
+                        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+                        String dateString = formatter.format(new Date(System.currentTimeMillis()));
+                        joined.setCreatedDate(dateString);
+                        ArrayList<JoinedDomainNameSet> joinedSG = new ArrayList<>();
+                        joinedSG.add(joined);
+                        if (joined != null)
+                            DBWrapper.getInstance().updateJoinedSGData(joinedSG);
+                        DBWrapper.getInstance().updateSGCredentials(sharedPrefManager.getUserDomain(), sharedPrefManager.getUserName(), sharedPrefManager.getUserPassword(), sharedPrefManager.getUserId(), true);
+
+                        {
+
+                            Intent intent = new Intent(OpenHubSearchScreen.this, ProfileScreen.class);
+                            Bundle bundle = new Bundle();
+                            sharedPrefManager.setFirstTime(true);
+                            sharedPrefManager.setAppMode("VirginMode");
+                            bundle.putString(Constants.CHAT_USER_NAME, objUserModel.username);
+                            bundle.putString(Constants.CHAT_NAME, "");
+                            bundle.putBoolean(Constants.REG_TYPE, false);
+                            bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
+                            intent.putExtras(bundle);
+                            startActivity(intent);
+                            finish();
+                        }
+                    } else {
 //                    sharedPrefManager.saveUserVarified(true);
 //                    sharedPrefManager.setMobileVerified(sharedPrefManager.getUserPhone(), true);
 //                    sharedPrefManager.saveUserName(objUserModel.username);
 //                    sharedPrefManager.saveUserPassword(objUserModel.password);
 //                    sharedPrefManager.setOTPVerified(true);
 
-                    inviteUserName = objUserModel.username;
-                    inviteUserPassword = objUserModel.password;
+                        inviteUserName = objUserModel.username;
+                        inviteUserPassword = objUserModel.password;
 
 //                    saveDataAndMove();
 
-                    Bundle bundle = new Bundle();
-                    bundle.putString("SG_MOBILE", "" + inviteMobileNumber);
-                    bundle.putString("SG_NAME", "" + inviteSGName);
-                    bundle.putString("SG_DISPLAY_NAME", "" + inviteSGDisplayName);
-                    bundle.putString("SG_FILE_ID", "" + inviteSGFileID);
-                    bundle.putString("SG_USER_NAME", "" + inviteUserName);
-                    //bundle.putString("SG_USER_ID", inviteUserID);
-                    bundle.putString("SG_USER_PASSWORD", "" + inviteUserPassword);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("SG_MOBILE", "" + inviteMobileNumber);
+                        bundle.putString("SG_NAME", "" + inviteSGName);
+                        bundle.putString("SG_DISPLAY_NAME", "" + inviteSGDisplayName);
+                        bundle.putString("SG_FILE_ID", "" + inviteSGFileID);
+                        bundle.putString("SG_USER_NAME", "" + inviteUserName);
+                        //bundle.putString("SG_USER_ID", inviteUserID);
+                        bundle.putString("SG_USER_PASSWORD", "" + inviteUserPassword);
 
-                    Intent data = new Intent();
-                    data.putExtra("SG_MOBILE", "" + inviteMobileNumber);
-                    data.putExtra("SG_NAME", "" + inviteSGName);
-                    data.putExtra("SG_DISPLAY_NAME", "" + inviteSGDisplayName);
-                    data.putExtra("SG_FILE_ID", "" + inviteSGFileID);
-                    data.putExtra("SG_USER_NAME", "" + inviteUserName);
-                    data.putExtra("SG_USER_ID", inviteUserID);
-                    data.putExtra("SG_USER_PASSWORD", "" + inviteUserPassword);
-                    data.putExtra("INTENT_CODE", FragmentDrawer.CODE_OPEN_SUPERGROUP);
+                        Intent data = new Intent();
+                        data.putExtra("SG_MOBILE", "" + inviteMobileNumber);
+                        data.putExtra("SG_NAME", "" + inviteSGName);
+                        data.putExtra("SG_DISPLAY_NAME", "" + inviteSGDisplayName);
+                        data.putExtra("SG_FILE_ID", "" + inviteSGFileID);
+                        data.putExtra("SG_USER_NAME", "" + inviteUserName);
+                        data.putExtra("SG_USER_ID", inviteUserID);
+                        data.putExtra("SG_USER_PASSWORD", "" + inviteUserPassword);
+                        data.putExtra("INTENT_CODE", FragmentDrawer.CODE_OPEN_SUPERGROUP);
+                        data.putExtra(KEY_IS_COMING_FROM_LOGIN_FLOW, isComingFromLoginFlow);
 
-                    //EventBus.getDefault().post(data);
-                    setResult(RESULT_OK, data);
-                    finish();
-
+                        //EventBus.getDefault().post(data);
+                        setResult(RESULT_OK, data);
+                        finish();
+                    }
                 } else {
                     runOnUiThread(new Runnable() {
                         public void run() {

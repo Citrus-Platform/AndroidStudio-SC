@@ -90,7 +90,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             index++;
         }
         notifyItemRangeInserted(pos + 1, index - pos - 1);
-        itemController.btn_expand_toggle.setImageResource(R.drawable.arrow_up);
+        itemController.btn_expand_toggle.setImageResource(R.drawable.ic_nav_up_arrow);
         item.invisibleChildren = null;
     }
 
@@ -103,7 +103,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             count++;
         }
         notifyItemRangeRemoved(pos + 1, count);
-        itemController.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
+        itemController.btn_expand_toggle.setImageResource(R.drawable.ic_nav_down_arrow);
     }
 
     @Override
@@ -141,7 +141,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                 itemController.refferalItem = item;
                 itemController.header_title.setText(item.text);
-                itemController.btn_expand_toggle.setImageResource(R.drawable.right_arrow);
+                itemController.btn_expand_toggle.setImageResource(R.drawable.ic_nav_right_arrow);
 
                 if (item.text.equalsIgnoreCase(FragmentDrawer.HEADER_OPEN_HUB)) {
 
@@ -153,9 +153,9 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     addHeaderToHashMap(itemController, position);
 
                     if (item.invisibleChildren == null) {
-                        itemController.btn_expand_toggle.setImageResource(R.drawable.arrow_up);
+                        itemController.btn_expand_toggle.setImageResource(R.drawable.ic_nav_up_arrow);
                     } else {
-                        itemController.btn_expand_toggle.setImageResource(R.drawable.arrow_down);
+                        itemController.btn_expand_toggle.setImageResource(R.drawable.ic_nav_down_arrow);
                     }
                     //expandHubs(itemController, item);
                 }

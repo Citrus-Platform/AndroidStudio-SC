@@ -154,6 +154,7 @@
     <string name="view_all_docs">View All Documents</string>
     <string name="docs">Documents</string>
     <string name="media">Media</string>
+    <string name="media_and_doc">Media &amp; Document</string>
     <string name="group_notification">Group Notification</string>
     <string name="mute_group_chat">Mute Group Chat</string>
     <string name="owner">Owner</string>

@@ -4,14 +4,14 @@
     android:id="@+id/rlTabMainLayout"
     android:layout_width="match_parent"
     android:layout_height="@dimen/viewpager_height"
-    android:background="@color/colorPrimary"
     android:gravity="center">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="2dp"
-        android:paddingRight="2dp">
+        android:paddingRight="2dp"
+        android:background="?attr/colorPrimary">
 
         <RelativeLayout
             android:id="@+id/llTabBody"
@@ -19,11 +19,13 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:orientation="horizontal"
-            android:layout_centerInParent="true">
+            android:layout_centerInParent="true"
+            android:background="?attr/colorPrimary">
 
             <FrameLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary">
 
                 <TextView
                     android:id="@+id/tvTabText"

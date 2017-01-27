@@ -85,6 +85,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -366,7 +367,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 	}
 
 	private void joinNewGroupBySearch() {
-		OpenHubSearchScreen.start(this);
+		OpenHubSearchScreen.start(this, true);
 	}
 
 	private void joinNewGroupByExactName(final View view, final EditText domaine_name){
@@ -2006,5 +2007,13 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 				showDialog("Please try again later.");
 		}
 	}
+
+
+	@Subscribe
+	public void getIntentData(Intent data){
+		System.out.print("");
+		//handleHub(data);
+	}
+
 }
 

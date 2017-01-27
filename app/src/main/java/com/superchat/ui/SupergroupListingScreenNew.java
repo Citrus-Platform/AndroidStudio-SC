@@ -530,7 +530,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
     }
 
     private void joinNewGroupBySearch() {
-        OpenHubSearchScreen.start(this);
+        OpenHubSearchScreen.start(this, true);
     }
 
     public void onClick(View view) {

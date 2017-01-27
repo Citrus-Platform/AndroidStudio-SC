@@ -24,7 +24,7 @@
 
                 <RelativeLayout
                     android:id="@+id/id_header_view"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:background="@color/header_footer_color">
 
@@ -34,7 +34,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:layout_marginTop="20dip"
+                        android:layout_marginTop="20dp"
                         android:text="@string/group_info" />
 
                     <RelativeLayout
@@ -48,8 +48,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
-                            android:layout_marginLeft="5dip"
-                            android:padding="5dip"
+                            android:layout_marginLeft="5dp"
+                            android:padding="5dp"
                             android:src="@drawable/back_arrow_green" />
 
                         <com.superchat.widgets.MyriadSemiboldTextView
@@ -70,10 +70,10 @@
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:layout_gravity="center_vertical"
-                            android:layout_marginBottom="40dip"
-                            android:layout_marginRight="5dip"
-                            android:layout_marginTop="40dip"
-                            android:padding="5dip"
+                            android:layout_marginBottom="40dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_marginTop="40dp"
+                            android:padding="5dp"
                             android:src="@drawable/leave_btn"
                             android:visibility="gone" />
 
@@ -99,14 +99,14 @@
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/id_group_info_screen"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical">
 
             <RelativeLayout
                 android:id="@+id/id_group_image_full"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:background="@drawable/channel_photo"
                 android:gravity="center"
@@ -114,7 +114,7 @@
 
                 <ImageView
                     android:id="@+id/id_group_icon"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="220dp"
                     android:layout_below="@+id/channel_detail_progress"
                     android:layout_toEndOf="@+id/channel_detail_progress"
@@ -123,7 +123,7 @@
                     android:scaleType="centerCrop" />
 
                 <LinearLayout
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_above="@+id/ll_back"
                     android:gravity="right"
@@ -164,7 +164,7 @@
 
                     <LinearLayout
                         android:id="@+id/layout_post_btn"
-                        android:layout_width="fill_parent"
+                        android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:layout_weight="0.20"
                         android:gravity="left|center_vertical"
@@ -195,7 +195,7 @@
 
                     <LinearLayout
                         android:id="@+id/layout_follow_btn"
-                        android:layout_width="fill_parent"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="0.80"
                         android:gravity="right"
@@ -229,13 +229,13 @@
             </RelativeLayout>
 
             <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/linear_layout_main"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/id_group_image_full"
                     android:background="@color/group_profile_not_bg_color"
@@ -333,7 +333,7 @@
 
                     <LinearLayout
                         android:id="@+id/linearlayout_status"
-                        android:layout_width="fill_parent"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/linear_layout_main"
                         android:layout_marginBottom="5dp"
@@ -355,7 +355,7 @@
 
                         <TextView
                             android:id="@+id/id_status_message"
-                            android:layout_width="fill_parent"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
                             android:gravity="left"
@@ -414,47 +414,92 @@
                     android:layout_marginTop="10dp"
                     app:cardElevation="6dp">
 
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
 
                         <RelativeLayout
                             android:id="@+id/rlGroupMediaInfoMedia"
-                            android:layout_width="fill_parent"
+                            android:layout_width="match_parent"
                             android:layout_height="50dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="5dip"
-                                android:layout_marginLeft="10dip"
-                                android:layout_marginRight="10dip"
-                                android:layout_marginTop="5dip"
+                                android:layout_centerVertical="true"
+                                android:padding="10dp"
+                                android:text="@string/media_and_doc" />
+
+                            <LinearLayout
+                                android:id="@+id/ll_count_and_nav"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_alignParentRight="true"
+                                android:padding="10dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/id_media_count"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0" />
+
+                                <ImageView
+                                    android:layout_width="12dp"
+                                    android:layout_height="12dp"
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_right_arraow_new"/>
+                            </LinearLayout>
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginTop="5dp"
                                 android:text="@string/media" />
 
                             <TextView
-                                android:id="@+id/id_media_count"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
-                                android:layout_marginBottom="5dip"
-                                android:layout_marginLeft="10dip"
-                                android:layout_marginRight="10dip"
-                                android:layout_marginTop="5dip"
+                                android:layout_marginBottom="5dp"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginTop="5dp"
                                 android:text="0" />
                         </RelativeLayout>
 
                         <HorizontalScrollView
-                            android:layout_width="fill_parent"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dip"
-                            android:layout_marginLeft="10dip"
-                            android:layout_marginRight="10dip"
-                            android:layout_marginTop="5dip"
-                            android:paddingBottom="5dip"
-                            android:paddingTop="5dip"
-                            android:visibility="visible">
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginTop="5dp"
+                            android:paddingBottom="5dp"
+                            android:paddingTop="5dp"
+                            android:visibility="gone">
 
                             <LinearLayout
                                 android:id="@+id/id_media_scroll_view"
@@ -464,8 +509,8 @@
                         </HorizontalScrollView>
 
                         <View
-                            android:layout_width="fill_parent"
-                            android:layout_height="1dip"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:background="@color/divider_medium"
@@ -473,16 +518,16 @@
 
                         <RelativeLayout
                             android:id="@+id/rlGroupMediaInfoDoc"
-                            android:layout_width="fill_parent"
+                            android:layout_width="match_parent"
                             android:layout_height="50dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="5dip"
-                                android:layout_marginLeft="10dip"
-                                android:layout_marginRight="10dip"
-                                android:layout_marginTop="5dip"
+                                android:layout_marginBottom="5dp"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginTop="5dp"
                                 android:text="@string/docs" />
 
                             <TextView
@@ -490,23 +535,23 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
-                                android:layout_marginBottom="5dip"
-                                android:layout_marginLeft="10dip"
-                                android:layout_marginRight="10dip"
-                                android:layout_marginTop="5dip"
+                                android:layout_marginBottom="5dp"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginTop="5dp"
                                 android:text="0" />
                         </RelativeLayout>
 
                         <HorizontalScrollView
-                            android:layout_width="fill_parent"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dip"
-                            android:layout_marginLeft="10dip"
-                            android:layout_marginRight="10dip"
-                            android:layout_marginTop="5dip"
-                            android:paddingBottom="5dip"
-                            android:paddingTop="5dip"
-                            android:visibility="visible">
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginTop="5dp"
+                            android:paddingBottom="5dp"
+                            android:paddingTop="5dp"
+                            android:visibility="gone">
 
                             <LinearLayout
                                 android:id="@+id/id_docs_scroll_view"
@@ -521,18 +566,18 @@
 
 
                 <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="1dip"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
                     android:background="@color/divider_medium" />
 
                 <com.superchat.widgets.MyriadSemiboldTextView
                     android:id="@+id/id_view_all_media"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="1dip"
+                    android:layout_marginBottom="1dp"
                     android:background="@drawable/round_rect"
                     android:gravity="center_vertical"
-                    android:padding="5dip"
+                    android:padding="5dp"
                     android:text="@string/view_all_media"
                     android:textColor="@color/text_color_on_dark_grey"
                     android:textSize="19sp"
@@ -540,12 +585,12 @@
 
                 <com.superchat.widgets.MyriadSemiboldTextView
                     android:id="@+id/id_group_notification"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="1dip"
+                    android:layout_marginBottom="1dp"
                     android:background="@drawable/round_rect"
                     android:gravity="center_vertical"
-                    android:padding="5dip"
+                    android:padding="5dp"
                     android:text="@string/group_notification"
                     android:textColor="@color/text_color_on_dark_grey"
                     android:textSize="19sp"
@@ -553,12 +598,12 @@
 
                 <com.superchat.widgets.MyriadSemiboldTextView
                     android:id="@+id/id_mute_group_chat"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dip"
+                    android:layout_marginBottom="15dp"
                     android:background="@drawable/round_rect"
                     android:gravity="center_vertical"
-                    android:padding="5dip"
+                    android:padding="5dp"
                     android:text="@string/mute_group_chat"
                     android:textColor="@color/text_color_on_dark_grey"
                     android:textSize="19sp"
@@ -574,13 +619,13 @@
 
                     <LinearLayout
                         android:id="@+id/id_group_members"
-                        android:layout_width="fill_parent"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
                         <RelativeLayout
                             android:id="@+id/id_owner_layout"
-                            android:layout_width="fill_parent"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/round_rect"
                             android:visibility="gone">
@@ -589,9 +634,9 @@
                                 android:id="@+id/id_owner"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="2dip"
+                                android:layout_marginBottom="2dp"
                                 android:gravity="center_vertical"
-                                android:padding="5dip"
+                                android:padding="5dp"
                                 android:text=""
                                 android:textColor="@color/text_color_on_dark_grey"
                                 android:textSize="19sp" />
@@ -601,9 +646,9 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
-                                android:layout_marginBottom="2dip"
+                                android:layout_marginBottom="2dp"
                                 android:gravity="center_vertical"
-                                android:padding="5dip"
+                                android:padding="5dp"
                                 android:text="@string/owner"
                                 android:textColor="@color/text_color_on_dark_grey"
                                 android:textSize="19sp" />
@@ -611,7 +656,7 @@
 
                         <LinearLayout
                             android:id="@+id/id_participants_lbl_layout"
-                            android:layout_width="fill_parent"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="5dp"
                             android:orientation="horizontal">
@@ -620,7 +665,7 @@
                                 android:id="@+id/id_participants_lbl"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="5dip"
+                                android:layout_marginLeft="5dp"
                                 android:gravity="center_vertical"
                                 android:padding="5dp"
                                 android:text="@string/participants"
@@ -630,9 +675,9 @@
 
                             <TextView
                                 android:id="@+id/id_participants_count"
-                                android:layout_width="fill_parent"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginRight="5dip"
+                                android:layout_marginRight="5dp"
                                 android:gravity="right"
                                 android:padding="5dp"
                                 android:text=""
@@ -644,7 +689,7 @@
 
                         <LinearLayout
                             android:id="@+id/id_add_participants"
-                            android:layout_width="fill_parent"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="5dp"
                             android:gravity="left"
@@ -652,7 +697,7 @@
 
                             <TextView
                                 android:id="@+id/id_add_participants_txt"
-                                android:layout_width="fill_parent"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/id_participants_lbl_layout"
                                 android:drawableLeft="@drawable/plus_add"
@@ -666,8 +711,8 @@
                                 android:textSize="16dp" />
 
                             <View
-                                android:layout_width="fill_parent"
-                                android:layout_height="1dip"
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
                                 android:layout_marginLeft="5dp"
                                 android:layout_marginRight="5dp"
                                 android:background="@color/divider_medium" />
@@ -675,7 +720,7 @@
 
                         <RelativeLayout
                             android:id="@+id/id_admin_layout"
-                            android:layout_width="fill_parent"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/round_rect">
 
@@ -683,9 +728,9 @@
                                 android:id="@+id/id_admin"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="2dip"
+                                android:layout_marginBottom="2dp"
                                 android:gravity="center_vertical"
-                                android:padding="5dip"
+                                android:padding="5dp"
                                 android:text=""
                                 android:textColor="@color/text_color_on_dark_grey"
                                 android:textSize="19sp" />
@@ -695,9 +740,9 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
-                                android:layout_marginBottom="2dip"
+                                android:layout_marginBottom="2dp"
                                 android:gravity="center_vertical"
-                                android:padding="5dip"
+                                android:padding="5dp"
                                 android:text="@string/admin"
                                 android:textColor="@color/text_color_on_dark_grey"
                                 android:textSize="19sp" />
@@ -706,17 +751,17 @@
                 </android.support.v7.widget.CardView>
 
                 <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="1dip"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
                     android:background="@color/divider_medium" />
 
                 <com.superchat.widgets.MyriadSemiboldTextView
                     android:id="@+id/id_add_member"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/round_rect"
                     android:gravity="center_vertical"
-                    android:padding="5dip"
+                    android:padding="5dp"
                     android:text="@string/add_more_participants"
                     android:textColor="@color/white"
                     android:textSize="19sp"
@@ -727,12 +772,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="10dp"
+                    android:visibility="gone"
                     app:cardBackgroundColor="@android:color/transparent"
-                    app:cardElevation="0dp"
-                    android:visibility="gone">
+                    app:cardElevation="0dp">
 
                     <LinearLayout
-                        android:layout_width="fill_parent"
+                        android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:orientation="horizontal">
 
@@ -749,7 +794,7 @@
 
                 <LinearLayout
                     android:id="@+id/linear_layout_action_main"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="@dimen/material_margin"
@@ -758,11 +803,11 @@
                     <com.superchat.widgets.MyriadSemiboldTextView
                         android:id="@+id/id_active_poll_view"
                         style="@style/group_detail_text_button.THEME"
-                        android:text="@string/active_polls"/>
+                        android:text="@string/active_polls" />
 
                     <View
-                        android:layout_width="fill_parent"
-                        android:layout_height="1dip"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
                         android:background="@color/divider_medium" />
 
                     <com.superchat.widgets.MyriadSemiboldTextView
@@ -771,18 +816,8 @@
                         android:text="@string/email_group_chat" />
 
                     <View
-                        android:layout_width="fill_parent"
-                        android:layout_height="1dip"
-                        android:background="@color/divider_medium" />
-
-                    <com.superchat.widgets.MyriadSemiboldTextView
-                        android:id="@+id/id_delete_group"
-                        style="@style/group_detail_text_button.RED"
-                        android:text="@string/delete_group" />
-
-                    <View
-                        android:layout_width="fill_parent"
-                        android:layout_height="1dip"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
                         android:background="@color/divider_medium" />
 
                     <com.superchat.widgets.MyriadSemiboldTextView
@@ -791,27 +826,37 @@
                         android:text="@string/clear_group_chat" />
 
                     <View
-                        android:layout_width="fill_parent"
-                        android:layout_height="1dip"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/divider_medium" />
+
+                    <com.superchat.widgets.MyriadSemiboldTextView
+                        android:id="@+id/id_delete_group"
+                        style="@style/group_detail_text_button.RED"
+                        android:text="@string/delete_group" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
                         android:background="@color/divider_medium" />
 
                     <com.superchat.widgets.MyriadSemiboldTextView
                         android:id="@+id/id_leave_group_chat"
                         style="@style/group_detail_text_button.RED"
                         android:text="@string/leave_group_chat"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
 
                     <View
-                        android:layout_width="fill_parent"
-                        android:layout_height="1dip"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
                         android:background="@color/divider_medium" />
 
                     <com.superchat.widgets.MyriadSemiboldTextView
                         android:id="@+id/id_leave_btn"
                         style="@style/group_detail_text_button.RED"
+                        android:layout_width="match_parent"
                         android:text="@string/leave_group"
-                        android:layout_width="fill_parent"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
 
                     <com.superchat.widgets.MyriadSemiboldTextView
                         android:id="@+id/id_delete_broadcast_list"
@@ -823,15 +868,15 @@
             </android.support.v7.widget.CardView>
 
             <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dip"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
                 android:background="@color/divider_medium" />
 
 
             <ProgressBar
                 android:id="@+id/id_loading"
-                android:layout_width="50dip"
-                android:layout_height="50dip"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_centerInParent="true"
                 android:visibility="gone" />
         </LinearLayout>

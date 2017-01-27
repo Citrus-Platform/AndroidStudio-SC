@@ -4738,6 +4738,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                     setUnSelectTabStyle(tvTabText);
                     llTabIndicator.setVisibility(View.GONE);
                 }
+
+                tab.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -99,6 +99,7 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static android.provider.Contacts.SettingsColumns.KEY;
 import static com.superchat.R.id.id_sg_name_label;
 import static com.superchat.R.id.swipeRefreshLayout;
 import static com.superchat.interfaces.interfaceInstances.objApi;
@@ -110,8 +111,11 @@ import static com.superchat.ui.HomeScreen.isContactRefreshed;
 
 public class GroupMediaInfoScreen extends AppCompatActivity implements OnClickListener, SmartTabLayout.TabProvider {
 
-    public static void start(Activity context) {
+    private static final String KEY_groupUUID = "groupUUID";
+
+    public static void start(Activity context, final String groupUUID) {
         Bundle bundle = new Bundle();
+        bundle.putString(KEY_groupUUID, groupUUID);
 
         Intent starter = new Intent(context, GroupMediaInfoScreen.class);
         starter.putExtras(bundle);
@@ -139,11 +143,18 @@ public class GroupMediaInfoScreen extends AppCompatActivity implements OnClickLi
         init();
     }
 
+    Bundle bundle;
+    String groupUUID;
     private void init() {
         ButterKnife.bind(this);
+        bundle = getIntent().getExtras();
+        if(bundle != null){
+            groupUUID = bundle.getString(KEY_groupUUID);
+        }
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Open Hubs");
+        getSupportActionBar().setTitle("Media");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -153,7 +164,7 @@ public class GroupMediaInfoScreen extends AppCompatActivity implements OnClickLi
     private void populateData(){
         viewPagerTab.setCustomTabView(this);
 
-        mAdapter = new MediaPagerAdapter(getSupportFragmentManager(), getApplicationContext());
+        mAdapter = new MediaPagerAdapter(getSupportFragmentManager(), getApplicationContext(), groupUUID);
         mViewPager.setPagingEnabled(true);
         mViewPager.setAdapter(mAdapter);
 
@@ -180,6 +191,23 @@ public class GroupMediaInfoScreen extends AppCompatActivity implements OnClickLi
         }
     };
 
+
+    /**
+     * react to the user tapping the back/up icon in the action bar
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // this takes the user 'back', as if they pressed the left-facing triangle icon on the main android toolbar.
+                // if this doesn't work as desired, another possibility is to call `finish()` here.
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     @Override
     public void onClick(View view) {
 
@@ -188,11 +216,13 @@ public class GroupMediaInfoScreen extends AppCompatActivity implements OnClickLi
     class MediaPagerAdapter extends FragmentPagerAdapter {
         private Context mContext;
         FragmentManager fm;
+        private String groupUUID;
 
-        public MediaPagerAdapter(FragmentManager fm, Context context) {
+        public MediaPagerAdapter(FragmentManager fm, Context context, String groupUUID) {
             super(fm);
             this.fm = fm;
             this.mContext = context;
+            this.groupUUID = groupUUID;
         }
 
         @Override
@@ -209,9 +239,9 @@ public class GroupMediaInfoScreen extends AppCompatActivity implements OnClickLi
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return GroupMediaFragment.getInstance(mContext);
+                    return GroupMediaFragment.getInstance(mContext, groupUUID);
                 case 1:
-                    return GroupMediaFragment.getInstance(mContext);
+                    return GroupDocFragment.getInstance(mContext, groupUUID);
                 default:
                     return new TempFragment();
             }

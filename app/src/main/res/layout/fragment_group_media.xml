@@ -1,18 +1,20 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/id_chat_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/screen_background_color"
-    android:orientation="vertical">
+    android:background="@color/screen_background_color">
 
     <TextView
+        android:id="@+id/tvEmptyMessage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="This is Dummy text"
-        android:layout_margin="10dp"/>
+        android:layout_height="match_parent"
+        android:text="No Media to display"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:visibility="gone"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvGroupMedia"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-</LinearLayout>
+</RelativeLayout>
