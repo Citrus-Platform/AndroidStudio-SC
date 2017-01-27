@@ -297,6 +297,8 @@ public class GroupMediaInfoScreen extends AppCompatActivity implements OnClickLi
                     setUnSelectTabStyle(tvTabText);
                     llTabIndicator.setVisibility(View.GONE);
                 }
+                
+                tab.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -37,25 +37,27 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <com.ogaclejapan.smarttablayout.SmartTabLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                <com.ogaclejapan.smarttablayout.SmartTabLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
                     xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/viewPagerTab"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/viewpager_height"
-                    android:background="@color/colorPrimary"
-                    android:paddingLeft="10dp"
-                    app:stl_defaultTabBackground="@color/colorPrimary"
+                    android:background="?attr/colorPrimary"
+                    app:stl_defaultTabBackground="?attr/colorPrimary"
                     app:stl_distributeEvenly="true"
-                    app:stl_indicatorAlwaysInCenter="false"
-                    app:stl_indicatorColor="@color/colorPrimary"
-                    app:stl_indicatorCornerRadius="0dp"
-                    app:stl_indicatorInFront="false"
+                    app:stl_indicatorColor="?attr/colorPrimary"
                     app:stl_indicatorThickness="0dp"
-                    app:stl_indicatorWithoutPadding="false"
-                    app:stl_overlineColor="#4D000000"
+                    app:stl_indicatorWidth="0dp"
+                    app:stl_indicatorCornerRadius="0dp"
+                    app:stl_overlineColor="?attr/colorPrimary"
                     app:stl_overlineThickness="0dp"
-                    app:stl_underlineColor="@color/colorPrimary"
+                    app:stl_underlineColor="?attr/colorPrimary"
                     app:stl_underlineThickness="0dp"
+                    app:stl_dividerColor="?attr/colorPrimary"
+                    app:stl_dividerThickness="0dp"
+                    app:stl_defaultTabTextAllCaps="true"
+                    app:stl_defaultTabTextColor="?attr/colorPrimary"
                     app:tabMode="scrollable" />
 
                 <com.superchat.ui.CustomViewPager

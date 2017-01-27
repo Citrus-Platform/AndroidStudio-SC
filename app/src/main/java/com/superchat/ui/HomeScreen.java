@@ -571,9 +571,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         if (getIntent().getExtras() != null) {
             firstTimeAdmin = getIntent().getExtras().getBoolean("ADMIN_FIRST_TIME");
         }
-        mViewPager.setOffscreenPageLimit(5);
+        mViewPager.setOffscreenPageLimit(4);
         mViewPager.setAdapter(mAdapter);
-        mViewPager.setOffscreenPageLimit(5);
+        mViewPager.setOffscreenPageLimit(4);
 
         viewPagerTab.setViewPager(mViewPager);
 
@@ -2727,14 +2727,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             switch (position) {
                 case 0:
                     return chatFragment;
-                case 2:
-                    return publicGroupFragment;//new PublicGroupScreen();
                 case 1:
                     if (contactsFragment != null) {
                         return contactsFragment;
                     }
                     return (contactsFragment = new ContactsScreen());
 
+                case 2:
+                    return publicGroupFragment;//new PublicGroupScreen();
                 case 3:
                     return bulletinFragment;
                 default:
