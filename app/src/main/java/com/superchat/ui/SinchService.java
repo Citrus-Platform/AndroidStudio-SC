@@ -320,7 +320,7 @@ public class SinchService extends Service implements interfaceInstances{
 
         @Override
         public void onIncomingCall(CallClient callClient, Call call) {
-            Log.d(TAG, "Incoming call");
+            Log.i(TAG, "Incoming call");
 //            PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
 //    		WakeLock wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK,
 //    		        "com.superchat.onCall");

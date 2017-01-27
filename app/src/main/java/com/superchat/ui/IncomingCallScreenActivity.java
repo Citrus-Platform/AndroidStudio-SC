@@ -101,26 +101,20 @@ public class IncomingCallScreenActivity extends Activity {
 //								myName = "+" + myName.substring(0, myName.indexOf("_"));
 							remoteUser.setText(myName);
 							if(header.get("picid") != null)
-								setProfilePic(header.get("fromUserName"), header.get("picid"));
+								setProfilePic(header.get("fromUserName"), header.get("picid"), false);
 							else
-								setProfilePic(header.get("fromUserName"), null);
+								setProfilePic(header.get("fromUserName"), null, false);
 						}else{
 							String myName = iChatPref.getUserServerName(call.getRemoteUserId());
-							if(iChatPref.isGroupChat(call.getRemoteUserId())){
-								groupLayout.setVisibility(View.VISIBLE);
-							}
+							groupLayout.setVisibility(View.VISIBLE);
 							if (myName != null && myName.equalsIgnoreCase(call.getRemoteUserId()))
 								myName = chatDBWrapper.getUsersDisplayName(call.getRemoteUserId());
+
 							if (myName != null && myName.equals(call.getRemoteUserId())) {
-								myName = SharedPrefManager.getInstance().getUserServerName(myName);
+								myName = getString(R.string.conference_call);
 							}
-							if (myName != null && myName.equals(call.getRemoteUserId())) {
-								myName = "New User";
-							}
-							if (myName != null && myName.contains("_"))
-								myName = "+" + myName.substring(0, myName.indexOf("_"));
 							remoteUser.setText(myName);
-							setProfilePic(call.getRemoteUserId(), null);
+							setProfilePic(call.getRemoteUserId(), null, true);
 						}
 
 						Log.e("Calling : ", "domainDisplayName : "+ domainDisplayName + "\ndomainName : "+domainName);
@@ -215,7 +209,7 @@ public class IncomingCallScreenActivity extends Activity {
 		}
 		return null;
 	}
-    private boolean setProfilePic(String userName, String pic_id){
+    private boolean setProfilePic(String userName, String pic_id, boolean isConference){
 		String groupPicId = null;
 		if(pic_id != null)
 			groupPicId = pic_id;
@@ -224,7 +218,7 @@ public class IncomingCallScreenActivity extends Activity {
 		String img_path = getImagePath(groupPicId);
 		android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(groupPicId);
 		ImageView picView = (ImageView) findViewById(R.id.id_profile_pic);
-		if(iChatPref.isGroupChat(userName)){
+		if(iChatPref.isGroupChat(userName) || isConference){
 			picView.setImageResource(R.drawable.group_call_def);
 		}else {
 			if (SharedPrefManager.getInstance().getUserGender(userName).equalsIgnoreCase("female"))
