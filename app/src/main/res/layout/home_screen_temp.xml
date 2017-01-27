@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/id_home_screen"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -48,82 +48,57 @@
 
         </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/main_frame"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_below="@+id/container_toolbar">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+            <FrameLayout
+                android:id="@+id/main_frame"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
 
-                <com.ogaclejapan.smarttablayout.SmartTabLayout
-                    android:id="@+id/viewPagerTab"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/viewpager_height"
-                    android:background="?attr/colorPrimary"
-                    app:stl_indicatorAlwaysInCenter="false"
-                    app:stl_indicatorWithoutPadding="false"
-                    app:stl_indicatorInFront="false"
-                    app:stl_indicatorColor="@color/white"
-                    app:stl_indicatorThickness="4dp"
-                    app:stl_indicatorCornerRadius="0dp"
-                    app:stl_overlineColor="#4D000000"
-                    app:stl_overlineThickness="0dp"
-                    app:stl_underlineColor="#4D000000"
-                    app:stl_underlineThickness="0dp"
-                    app:stl_dividerColor="#4D000000"
-                    app:stl_dividerThickness="0dp"
-                    app:stl_defaultTabBackground="?attr/colorPrimary"
-                    app:stl_defaultTabTextAllCaps="true"
-                    app:stl_defaultTabTextColor="#FC000000"
-                    app:stl_defaultTabTextSize="12sp"
-                    app:stl_defaultTabTextHorizontalPadding="16dp"
-                    app:stl_defaultTabTextMinWidth="0dp"
-                    app:stl_distributeEvenly="true"
-                    app:stl_clickable="true"
-                    app:stl_titleOffset="24dp"
-                    app:stl_drawDecorationAfterTab="false"
-                    />
-                <!--
-                <com.ogaclejapan.smarttablayout.SmartTabLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/viewPagerTab"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/viewpager_height"
-                    android:background="?attr/colorPrimary"
-                    app:stl_indicatorAlwaysInCenter="false"
-                    app:stl_indicatorWithoutPadding="false"
-                    app:stl_indicatorInFront="false"
-                    app:stl_defaultTabBackground="?attr/colorPrimary"
-                    app:stl_distributeEvenly="true"
-                    app:stl_indicatorColor="?attr/colorPrimary"
-                    app:stl_indicatorThickness="0.5dp"
-                    app:stl_indicatorCornerRadius="0.5dp"
-                    app:stl_overlineColor="?attr/colorPrimary"
-                    app:stl_overlineThickness="0.5dp"
-                    app:stl_underlineColor="?attr/colorPrimary"
-                    app:stl_underlineThickness="0.5dp"
-                    app:stl_dividerColor="?attr/colorPrimary"
-                    app:stl_dividerThickness="0.5dp"
-                    app:stl_defaultTabTextAllCaps="true"
-                    app:stl_defaultTabTextColor="?attr/colorPrimary"
-                    app:tabMode="scrollable" />
--->
-                <com.superchat.ui.CustomViewPager
-                    android:id="@+id/view_pager"
-                    android:layout_width="match_parent"
-                    android:layout_height="fill_parent"
-                    android:background="?attr/colorPrimary"
-                    android:layout_centerHorizontal="true"/>
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:background="?attr/colorPrimary">
 
-            </LinearLayout>
-        </FrameLayout>
+                    <com.ogaclejapan.smarttablayout.SmartTabLayout
+                        xmlns:android="http://schemas.android.com/apk/res/android"
+                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/viewPagerTab"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/viewpager_height"
+                        android:background="?attr/colorPrimary"
+                        app:stl_defaultTabBackground="?attr/colorPrimary"
+                        app:stl_distributeEvenly="true"
+                        app:stl_indicatorColor="?attr/colorPrimary"
+                        app:stl_indicatorThickness="0dp"
+                        app:stl_indicatorWidth="0dp"
+                        app:stl_indicatorCornerRadius="0dp"
+                        app:stl_overlineColor="?attr/colorPrimary"
+                        app:stl_overlineThickness="0dp"
+                        app:stl_underlineColor="?attr/colorPrimary"
+                        app:stl_underlineThickness="0dp"
+                        app:stl_dividerColor="?attr/colorPrimary"
+                        app:stl_dividerThickness="0dp"
+                        app:stl_defaultTabTextAllCaps="true"
+                        app:stl_defaultTabTextColor="?attr/colorPrimary"
+                        app:tabMode="scrollable" />
 
-    </RelativeLayout>
+                    <com.superchat.ui.CustomViewPager
+                        android:id="@+id/view_pager"
+                        android:layout_width="match_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_centerHorizontal="true"></com.superchat.ui.CustomViewPager>
+
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+
+    </LinearLayout>
 
     <fragment
         android:id="@+id/fragment_navigation_drawer"
