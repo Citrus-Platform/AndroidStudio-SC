@@ -2,15 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/llDoc"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/ivDoc"
@@ -23,6 +22,9 @@
             android:id="@+id/tvDoc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Doc" />
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:text="Doc"
+            android:textSize="15dp"/>
     </LinearLayout>
 </LinearLayout>

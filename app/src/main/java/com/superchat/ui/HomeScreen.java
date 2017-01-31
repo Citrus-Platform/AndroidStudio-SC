@@ -657,7 +657,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //				bulletinMenuLayout.setSelected(false);
 //			}else
             {
-                mViewPager.setCurrentItem(1);
+                mViewPager.setCurrentItem(2);
 
             }
         } else {
@@ -1381,10 +1381,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                             && iPrefManager.getAppMode() != null && iPrefManager.getAppMode().equals("VirginMode"))) {
 //						if(isContactSync || firstTimeAdmin){
                         if (isContactSync) {
-                            mViewPager.setCurrentItem(2);
+                            mViewPager.setCurrentItem(1);
 //							firstTimeAdmin = false;
                         } else
-                            mViewPager.setCurrentItem(1);
+                            mViewPager.setCurrentItem(2);
                         //Update information to Other domain members for the update.
                         //Create JSON here for group update info.
                         String number = sharedPrefManager.getUserPhone();
@@ -1408,9 +1408,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                     } else {
                         if (!dataAlreadyLoadedForSG) {
                             if (isContactSync)
-                                mViewPager.setCurrentItem(2);
-                            else if (firstTimeAdmin)
                                 mViewPager.setCurrentItem(1);
+                            else if (firstTimeAdmin)
+                                mViewPager.setCurrentItem(2);
                             else
                                 mViewPager.setCurrentItem(0);
                         }
@@ -1483,10 +1483,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 }
                 if (!dataAlreadyLoadedForSG && selectedTab >= 0) {
                     if (firstTimeAdmin || new_user) {
-                        mViewPager.setCurrentItem(1);
-                        selectedTab = 1;
+                        mViewPager.setCurrentItem(2);
+                        selectedTab = 2;
                     } else {
-                        if (selectedTab == 1) {
+                        if (selectedTab == 2) {
                             publicGroupFragment.setSgSwitch(true);
                             if (PublicGroupScreen.isAllChannelTab)
                                 publicGroupFragment.showAllContacts(1);
@@ -2129,8 +2129,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     }
 
     public void onStartChatClick(View view) {
-        if (mViewPager.getCurrentItem() != 1) {
-            mViewPager.setCurrentItem(1);
+        if (mViewPager.getCurrentItem() != 2) {
+            mViewPager.setCurrentItem(2);
         }
     }
 
@@ -2602,9 +2602,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     }
 
     public void onComposeClick(View view) {
-        if (mViewPager.getCurrentItem() != 2) {
+        if (mViewPager.getCurrentItem() != 1) {
             contactsFragment.setPorfileListener();
-            mViewPager.setCurrentItem(2);
+            mViewPager.setCurrentItem(1);
         }
     }
 
@@ -4116,10 +4116,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 if (selectedTab >= 0) {
                     mViewPager.setAdapter(mAdapter);
                     if (firstTimeAdmin) {
-                        mViewPager.setCurrentItem(1);
-                        selectedTab = 1;
+                        mViewPager.setCurrentItem(2);
+                        selectedTab = 2;
                     } else {
-                        if (selectedTab == 1) {
+                        if (selectedTab == 2) {
                             if (isSwitchSG) {
                                 publicGroupFragment.setSgSwitch(true);
                             }
@@ -4507,16 +4507,13 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         MenuItem compose_icon = menu.findItem(R.id.compose_icon);
         MenuItem sync_id = menu.findItem(R.id.sync_id);
         MenuItem id_create_group_icon = menu.findItem(R.id.id_create_group_icon);
-        MenuItem id_create_group_text = menu.findItem(R.id.id_create_group_text);
         MenuItem create_broadcast_list = menu.findItem(R.id.create_broadcast_list);
         MenuItem invite_member = menu.findItem(R.id.invite_member);
-        MenuItem action_settings = menu.findItem(R.id.action_settings);
 
         switch (flagFrag) {
             case 0: {
                 sync_id.setVisible(false);
                 id_create_group_icon.setVisible(false);
-                id_create_group_text.setVisible(false);
                 create_broadcast_list.setVisible(false);
                 invite_member.setVisible(false);
                 break;
@@ -4531,7 +4528,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             case 1: {
                 compose_icon.setVisible(false);
                 id_create_group_icon.setVisible(false);
-                id_create_group_text.setVisible(false);
 
                 SharedPrefManager sharedPrefManager = SharedPrefManager.getInstance();
                 if (sharedPrefManager != null && !(sharedPrefManager.isDomainAdmin(iPrefManager.getUserDomain())
@@ -4546,7 +4542,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 compose_icon.setVisible(false);
                 sync_id.setVisible(false);
                 id_create_group_icon.setVisible(false);
-                id_create_group_text.setVisible(false);
                 create_broadcast_list.setVisible(false);
                 invite_member.setVisible(false);
                 break;
@@ -4589,7 +4584,6 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 startActivity(intent);
                 break;
             }
-            case R.id.id_create_group_text:
             case R.id.id_create_group_icon: {
                 Intent intent = new Intent(SuperChatApplication.context, CreateGroupScreen.class);
                 intent.putExtra(Constants.CHANNEL_CREATION, true);

@@ -17,6 +17,8 @@ public class DocViewHolders extends RecyclerView.ViewHolder {
 
     Activity currActivity;
 
+    @BindView(R.id.llDoc)
+    public LinearLayout llDoc;
     @BindView(R.id.ivDoc)
     public ImageView ivDoc;
     @BindView(R.id.tvDoc)

@@ -153,6 +153,8 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
         LinearLayout subTitleCloseGroupView = (LinearLayout) findViewById(R.id.id_create_closed_group_subtitle);
         LinearLayout group_type = (LinearLayout) findViewById(R.id.id_group_type);
         TextView open_close = (TextView) findViewById(R.id.id_open_close_txt);
+        TextView tvCreateGroupSelectionText = (TextView) findViewById(R.id.tvCreateGroupSelectionText);
+        LinearLayout llEditGroupTypeInfo = (LinearLayout) findViewById(R.id.llEditGroupTypeInfo);
 
         ImageView xmppStatusView = (ImageView) findViewById(R.id.id_xmpp_status);
         cameraImageView = (ImageView) findViewById(R.id.id_group_camera_icon);
@@ -230,6 +232,10 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
                     groupNameView.setText(groupName);
                 if (groupUUID != null && groupUUID.trim().length() > 0 && SharedPrefManager.getInstance().isGroupChat(groupUUID)) {
                     title.setText(getString(R.string.edit_group_title));
+
+                    tvCreateGroupSelectionText.setVisibility(View.GONE);
+                    llEditGroupTypeInfo.setVisibility(View.VISIBLE);
+
                     radioGroup.setVisibility(View.GONE);
                     checkBoxesGroupTypes.setVisibility(View.GONE);
                     if (SharedPrefManager.getInstance().isPublicGroup(groupUUID)) {

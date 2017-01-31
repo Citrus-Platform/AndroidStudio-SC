@@ -475,8 +475,8 @@
     <string name="open_supergroup">Public Hub</string>
     <string name="closed_supergroup">Private Hub</string>
 
-    <string name="open_group">Public Group</string>
-    <string name="close_group_creation_option">Private Group</string>
+    <string name="open_group">Open Group</string>
+    <string name="close_group_creation_option">Close Group</string>
 
     <string name="image_optional">Hub icon/photo (optional)</string>
     <string name="select_group_type">Please select your Hub</string>

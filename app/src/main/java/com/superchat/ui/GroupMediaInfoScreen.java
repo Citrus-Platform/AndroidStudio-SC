@@ -112,10 +112,12 @@ import static com.superchat.ui.HomeScreen.isContactRefreshed;
 public class GroupMediaInfoScreen extends AppCompatActivity implements OnClickListener, SmartTabLayout.TabProvider {
 
     private static final String KEY_groupUUID = "groupUUID";
+    private static final String KEY_displayName = "displayName";
 
-    public static void start(Activity context, final String groupUUID) {
+    public static void start(Activity context, final String groupUUID, final String displayName) {
         Bundle bundle = new Bundle();
         bundle.putString(KEY_groupUUID, groupUUID);
+        bundle.putString(KEY_displayName, displayName);
 
         Intent starter = new Intent(context, GroupMediaInfoScreen.class);
         starter.putExtras(bundle);
@@ -145,16 +147,18 @@ public class GroupMediaInfoScreen extends AppCompatActivity implements OnClickLi
 
     Bundle bundle;
     String groupUUID;
+    String displayName;
     private void init() {
         ButterKnife.bind(this);
         bundle = getIntent().getExtras();
         if(bundle != null){
             groupUUID = bundle.getString(KEY_groupUUID);
+            displayName = bundle.getString(KEY_displayName);
         }
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Media");
+        getSupportActionBar().setTitle(displayName != null && displayName.length() > 0 ? displayName : "Media");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 

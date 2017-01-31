@@ -31,7 +31,8 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="10.0dip"
-        android:layout_toRightOf="@id/contact_icon"
+        android:layout_toRightOf="@+id/contact_icon"
+        android:layout_toLeftOf="@+id/llMetaData"
         android:orientation="vertical" >
 
         <com.superchat.widgets.MyriadRegularTextView
@@ -40,6 +41,7 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:text="Superchat"
+            android:ellipsize="end"
             android:textColor="@color/chat_name_color"
             android:textSize="18.0sp"
             android:textStyle="bold" />
@@ -99,6 +101,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/llMetaData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -114,7 +117,7 @@
             android:ellipsize="end"
             android:lines="1"
             android:maxLines="1"
-            android:text="02:15 PM"
+            android:text="Thu,0612 p.m."
             android:textColor="@color/color_lite_blue"
             android:textSize="12sp"
             android:visibility="visible" />
@@ -122,7 +125,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal" >
+            android:layout_gravity="center_horizontal|right" >
 
             <ImageView
                 android:id="@+id/id_mute_icon"

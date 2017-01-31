@@ -503,7 +503,7 @@ public class GroupProfileScreen extends Activity implements OnClickListener, Pro
 
     @OnClick(R.id.rlGroupMediaInfoMedia)
     public void eventMediaClicked(){
-        GroupMediaInfoScreen.start(this, groupUUID);
+        GroupMediaInfoScreen.start(this, groupUUID, displayName);
     }
 
     public void showPopup(View v) {

@@ -172,29 +172,67 @@
                 android:visibility="visible">
 
                 <LinearLayout
+                    android:id="@+id/llEditGroupTypeInfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:background="@color/md_grey_100"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:background="@color/black" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <ImageView
+                            android:id="@+id/ivGroupTypeOpen"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:src="@drawable/ic_open_group"
+                            android:visibility="gone" />
+
+                        <ImageView
+                            android:id="@+id/ivGroupTypeClosed"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:src="@drawable/ic_close_group"
+                            android:visibility="gone" />
+
+                        <com.superchat.widgets.MyriadRegularTextView
+                            android:id="@+id/id_open_close_txt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/select_group_type_in_creation"
+                            android:textColor="@color/text_color_grey_light"
+                            android:textSize="15sp"
+                            android:textStyle="normal" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:background="@color/black" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:gravity="center"
-                    android:padding="5dp"
-                    android:layout_gravity="center">
-
-                    <ImageView
-                        android:id="@+id/ivGroupTypeOpen"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:src="@drawable/ic_open_group"
-                        android:visibility="gone"/>
-
-                    <ImageView
-                        android:id="@+id/ivGroupTypeClosed"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:src="@drawable/ic_close_group"
-                        android:visibility="gone"/>
+                    android:orientation="horizontal"
+                    android:padding="5dp">
 
                     <com.superchat.widgets.MyriadRegularTextView
-                        android:id="@+id/id_open_close_txt"
+                        android:id="@+id/tvCreateGroupSelectionText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"

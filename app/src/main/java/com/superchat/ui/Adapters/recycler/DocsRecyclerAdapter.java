@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -143,10 +144,11 @@ public class DocsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             final ContentValues category = getItem(position);
             if (category != null) {
                 String path = category.getAsString(ChatDBConstants.MESSAGE_MEDIA_LOCAL_PATH_FIELD);
-                String thumb = category.getAsString(ChatDBConstants.MESSAGE_THUMB_FIELD);
+                String TAG = category.getAsString(ChatDBConstants.MEDIA_CAPTION_TAG);
+                Log.e(TAG, "Media TAG : "+TAG);
                 int fileType = category.getAsInteger(ChatDBConstants.MESSAGE_TYPE_FIELD);
 
-                mVHolder.ivDoc.setOnClickListener(new onDocClickListener(path));
+                mVHolder.llDoc.setOnClickListener(new onDocClickListener(path));
 
                 if (fileType == Message.XMPPMessageType.atMeXmppMessageTypeDoc.ordinal())
                     mVHolder.ivDoc.setImageResource(R.drawable.docs);
@@ -158,7 +160,7 @@ public class DocsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     mVHolder.ivDoc.setImageResource(R.drawable.xls);
 
                 int index = path.lastIndexOf("/");
-                mVHolder.tvDoc.setText(path.substring(index + 1, index + 9));
+                mVHolder.tvDoc.setText(TAG != null && TAG.trim().length() > 0 ? TAG : path.substring(index + 1, index + 9));
             }
         } catch(Exception e){
 

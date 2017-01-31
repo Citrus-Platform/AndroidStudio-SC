@@ -165,7 +165,7 @@ public class MainActivity extends FragmentActivity implements
     public static final Pattern MOBILE_NUMBER_PATTERN_WITH_CC = Pattern.compile("^\\d{1,5}[-]\\d{6,12}$");
     public static final Pattern MOBILE_NUMBER_PATTERN = Pattern.compile("^\\d{7,15}$");
     public static final Pattern USERNAME_PATTERN = Pattern.compile("^[A-Za-z][A-Za-z0-9_]{0,29}$");
-    public static final Pattern NAME_PATTERN = Pattern.compile("^\\s*([A-Za-z]{3,})(\\s*([A-Za-z ]+?))?\\s*$");
+    public static final Pattern NAME_PATTERN = Pattern.compile("^\\s*([A-Za-z]{1,})(\\s*([A-Za-z ]+?))?\\s*$");
     public static final Pattern DOMAIN_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9][a-zA-z0-9_.]{1,50}$");
     public static final Pattern ORG_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9][a-zA-z0-9 _.@&-]{1,100}$");
     private CheckBox privacyCheckbox;

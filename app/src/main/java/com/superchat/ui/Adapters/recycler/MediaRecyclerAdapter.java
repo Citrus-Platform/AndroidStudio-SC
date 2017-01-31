@@ -30,6 +30,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static com.superchat.R.id.imageView;
+
 public class MediaRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     final int TYPE_EMPTY = 0;
@@ -137,22 +139,24 @@ public class MediaRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                 mVHolder.ivPlayButton.setVisibility(View.VISIBLE);
 
                 try{
-                    android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(path);
+                    setVideoPicForCache(mVHolder.ivMedia, path);
+                   /* android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(path);
                     if (bitmap != null) {
                         mVHolder.ivMedia.setImageBitmap(bitmap);
                     } else {
                         Bitmap tmpBitMap = createVideoThumbFromByteArray(thumb);
                         mVHolder.ivMedia.setImageBitmap(tmpBitMap);
                         SuperChatApplication.addBitmapToMemoryCache(path, tmpBitMap);
-                    }
+                    }*/
                 } catch(Exception e){
 
                 }
                 mVHolder.rlMedia.setOnClickListener(new onVideoClickListener(path));
             }
             else if (category.getAsInteger(ChatDBConstants.MESSAGE_TYPE_FIELD) == Message.XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()) {
-                mVHolder.ivMedia.setImageResource(R.drawable.addplay);
-                mVHolder.ivMedia.setBackgroundResource(R.color.orange);
+
+                setVideoPicForCache(mVHolder.ivMedia, path);
+                mVHolder.ivPlayButton.setVisibility(View.GONE);
                 mVHolder.rlMedia.setOnClickListener(new onAudioClickListener(path));
             }
             else {
@@ -160,6 +164,22 @@ public class MediaRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                 mVHolder.rlMedia.setOnClickListener(new onImageClickListener(path));
             }
 
+        }
+    }
+
+    private void setVideoPicForCache(ImageView view, String cacheIdPath) {
+        android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(cacheIdPath);
+        if (bitmap != null) {
+            view.setImageBitmap(bitmap);
+        } else {
+            File file1 = new File(cacheIdPath);
+            //			Log.d(TAG, "PicAvailibilty: "+ Uri.parse(filename)+" , "+filename+" , "+file1.exists());
+            if (file1 != null && file1.exists()) {
+//				view.setImageURI(Uri.parse(filename));
+                setThumbForCache(view, cacheIdPath);
+            } else {
+
+            }
         }
     }
 

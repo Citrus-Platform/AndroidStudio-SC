@@ -171,7 +171,7 @@
                             android:layout_width="90dip"
                             android:layout_height="90dip"
                             android:layout_alignParentLeft="true"
-                            android:background="@drawable/icongroupimage"
+                            android:background="@drawable/ic_default_camera"
                             android:visibility="visible" />
 
                         <ImageView
@@ -299,69 +299,70 @@
                     android:textStyle="normal" />
 
                 <LinearLayout
-                    android:layout_width="fill_parent"
+                    android:id="@+id/checkBoxesGroupTypes"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:background="@drawable/round_rect_profile_bg"
-                    android:layout_marginTop="5dp">
+                    android:background="@color/md_grey_100"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:background="@color/black" />
 
                     <RadioGroup
                         android:id="@+id/radio_group"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:weightSum="2">
 
                         <RadioButton
                             android:id="@+id/radio_open"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:checked="false"
-                            android:drawableLeft="@drawable/iconopengroup_small"
-                            android:drawablePadding="5dp"
-                            android:text="@string/open_supergroup"
-                            android:textColor="@color/darkest_gray"
-                            android:textSize="14sp" />
+                            android:layout_weight="1"
+                            android:checked="true"
+                            android:drawableLeft="@drawable/ic_open_group"
+                            android:drawablePadding="0dp"
+                            android:padding="-5dp"
+                            android:paddingBottom="10dp"
+                            android:paddingLeft="5dp"
+                            android:paddingTop="10dp"
+                            android:text="@string/open_group"
+                            android:textColor="@color/btn_text_color"
+                            android:textSize="15sp" />
 
-                        <com.superchat.widgets.MyriadRegularTextView
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:layout_gravity="center"
-                            android:layout_marginLeft="10dip"
-                            android:gravity="center"
-                            android:visibility="gone"
-                            android:text="@string/anyone_can_join"
-                            android:textColor="@color/text_color_grayblack"
-                            android:textSize="13sp"
-                            android:textStyle="normal" />
+
+                        <View
+                            android:layout_width="0.5dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/black" />
 
                         <RadioButton
                             android:id="@+id/radio_closed"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:layout_weight="1"
                             android:checked="false"
-                            android:drawableLeft="@drawable/lock"
-                            android:drawablePadding="5dp"
-                            android:text="@string/closed_supergroup"
-                            android:textColor="@color/darkest_gray"
-                            android:textSize="14sp" />
-
-                        <com.superchat.widgets.MyriadRegularTextView
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:layout_gravity="center"
-                            android:layout_marginLeft="10dip"
-                            android:gravity="center"
-                            android:visibility="gone"
-                            android:text="@string/invitee_can_join"
-                            android:textColor="@color/text_color_grayblack"
-                            android:textSize="13sp"
-                            android:textStyle="normal" />
+                            android:drawableLeft="@drawable/ic_close_group"
+                            android:drawablePadding="0dp"
+                            android:padding="-5dp"
+                            android:paddingBottom="10dp"
+                            android:paddingRight="5dp"
+                            android:paddingTop="10dp"
+                            android:text="@string/close_group_creation_option"
+                            android:textColor="@color/btn_text_color"
+                            android:textSize="15sp" />
                     </RadioGroup>
-                </LinearLayout>
 
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:background="@color/black" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/id_domain_type"
@@ -398,7 +399,7 @@
                     android:layout_height="100dp"
                     android:layout_marginBottom="10dip"
                     android:layout_marginTop="10dip"
-                    android:background="@drawable/round_rect_profile_bg"
+                    android:background="@color/md_grey_100"
                     android:hint="@string/new_description"
                     android:inputType="textMultiLine|textCapSentences"
                     android:maxLength="500"
