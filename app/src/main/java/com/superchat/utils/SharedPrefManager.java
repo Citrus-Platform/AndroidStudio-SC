@@ -13,8 +13,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static android.R.attr.value;
-
 public class SharedPrefManager {
 
     private SharedPreferences pref;
@@ -1368,8 +1366,10 @@ public class SharedPrefManager {
     }
 
     public void saveCurrentSGDisplayName(String domain) {
-        editor.putString(USER_DOMAIN_DISPLAY_NAME, domain);
-        editor.commit();
+        if(domain != null && domain.length() > 0) {
+            editor.putString(USER_DOMAIN_DISPLAY_NAME, domain);
+            editor.commit();
+        }
     }
 
     public String getCurrentSGDisplayName() {
@@ -1466,9 +1466,11 @@ public class SharedPrefManager {
     }
 
     public void saveSGPassword(String sg, String pass) {
-        sg = sg.toLowerCase();
-        editor.putString(SG_PASSWORD + sg, pass);
-        editor.commit();
+        if(sg != null) {
+            sg = sg.toLowerCase();
+            editor.putString(SG_PASSWORD + sg, pass);
+            editor.commit();
+        }
     }
 
     public long getSGUserID(String sg) {
@@ -1482,9 +1484,11 @@ public class SharedPrefManager {
     }
 
     public void saveSGUserID(String sg, long userid) {
-        sg = sg.toLowerCase();
-        editor.putLong(SG_USER_ID + sg, userid);
-        editor.commit();
+        if(sg != null) {
+            sg = sg.toLowerCase();
+            editor.putLong(SG_USER_ID + sg, userid);
+            editor.commit();
+        }
     }
 
     public void saveSharedIDDisplayName(String room, String displayName) {

@@ -56,8 +56,6 @@ import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
-import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -147,7 +145,6 @@ import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -158,9 +155,6 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 import static com.superchat.R.drawable.i;
-import static com.superchat.R.id.count;
-import static com.superchat.R.id.id_sg_name_label;
-import static com.superchat.R.id.llTabIndicator;
 
 //import com.viewpagerindicator.TabPageIndicator;
 //import com.viewpagerindicator.TitlePageIndicator;
@@ -610,6 +604,10 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                     case 2:
                         publicGroupFragment.refreshList();
                         publicGroupFragment.restScreen();
+                        if(groupsData != null && groupsData.size() > 0) {
+                            PublicGroupScreen.isAllChannelTab = false;
+//                            publicGroupFragment.showAllContacts(0);
+                        }
                         break;
                     case 3:
                         break;
@@ -646,6 +644,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
             }
         };
         mViewPager.addOnPageChangeListener(mPageChangeListener);
+
+        iPrefManager.saveMyExistence(true);
+        startService(new Intent(SuperChatApplication.context, ChatService.class));
 
         if (iPrefManager.isFirstTime()
                 && iPrefManager.getAppMode() != null && iPrefManager.getAppMode().equals("VirginMode")) {
@@ -1154,7 +1155,9 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
 //                                if (directoryGroupSet != null) {
 //                                    System.out.println("HomeScreen :: SignInTaskOnServer : Writing Groups..");
 //                                }
+                                groupsData.clear();
                                 for (GroupDetail groupDetail : loginObj.directoryGroupSet) {
+                                    groupsData.add(groupDetail);
 //										Log.d(TAG, "counter check  Login response : "+groupDetail.type+""+groupDetail.displayName+" , "+groupDetail.numberOfMembers);
 //										writeLogsToFile(groupDetail.groupName+" - "+groupDetail.displayName);
                                     boolean isFirstChat = ChatDBWrapper.getInstance(SuperChatApplication.context).isFirstChat(groupDetail.groupName);
@@ -1416,16 +1419,12 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                         }
                     }
 
-//					if(!isContactSync && !iPrefManager.isGroupsLoaded()){
-//					if(!isContactSync && !DBWrapper.getInstance().isSGGroupsBroadcastLoaded(iPrefManager.getUserDomain()))
-                    if (!dataAlreadyLoadedForSG) {
-                        if (Build.VERSION.SDK_INT >= 11)
-                            new OpenGroupTaskOnServer(!iPrefManager.isFirstTime()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                        else
-                            new OpenGroupTaskOnServer(!iPrefManager.isFirstTime()).execute();
-                    }
-//					if(!iPrefManager.isContactSynched()){
-//					if(!DBWrapper.getInstance().isSGContactsLoaded(iPrefManager.getUserDomain())){
+//                    if (!dataAlreadyLoadedForSG) {
+//                        if (Build.VERSION.SDK_INT >= 11)
+//                            new OpenGroupTaskOnServer(!iPrefManager.isFirstTime()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//                        else
+//                            new OpenGroupTaskOnServer(!iPrefManager.isFirstTime()).execute();
+//                    }
                     if (!dataAlreadyLoadedForSG && !sharedPrefManager.isContactSynched(sharedPrefManager.getUserDomain())) {
                         if (sharedPrefManager.isOpenDomain()) {
                             if (Build.VERSION.SDK_INT >= 11)
@@ -1531,6 +1530,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 new_user = false;
                 invitedUserFromInside = false;
             }
+            if(groupsData != null && groupsData.size() > 0)
+                PublicGroupScreen.isAllChannelTab = false;
             isSwitchingSG = false;
             if (!dataAlreadyLoadedForSG)
                 syncProcessStart(false);

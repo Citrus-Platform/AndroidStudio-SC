@@ -26,7 +26,6 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -72,15 +71,9 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.greenrobot.eventbus.EventBus;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -97,9 +90,6 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Response;
 
-import static android.R.attr.category;
-import static android.R.attr.data;
-import static android.provider.Contacts.SettingsColumns.KEY;
 import static com.superchat.interfaces.interfaceInstances.objApi;
 import static com.superchat.interfaces.interfaceInstances.objExceptione;
 import static com.superchat.interfaces.interfaceInstances.objGlobal;
@@ -331,6 +321,19 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK)
+            switch (requestCode) {
+                case 222:
+                    backFromProfile = true;
+                    DBWrapper.getInstance().updateSGTypeValue(superGroupName, 2);
+                    registerUserOnServer(superGroupName, selectedSGDisplayName, null);
+                    break;
+            }
+    }
+
     public void onResume() {
         super.onResume();
     }
@@ -364,6 +367,7 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
     }
 
     Dialog welcomeDialog = null;
+    String domainDisplayName = null;
 
     public void showWelcomeScreen(SGroupListObject sGroupListObject) {
 
@@ -377,10 +381,12 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
         String createdDate = sGroupListObject.getCreatedDate();
         String domainCount = sGroupListObject.getDomainCount();
         String domainNotify = sGroupListObject.getDomainNotify();
-        String domainDisplayName = sGroupListObject.getDomainDisplayName();
+        domainDisplayName = sGroupListObject.getDomainDisplayName();
         String description = sGroupListObject.getDescription();
 
         superGroupName = domainName;
+        if(domainDisplayName ==  null)
+            domainDisplayName = superGroupName;
 
         final String supergroup_name = domainName;
         final String sg_display_name = domainDisplayName;
@@ -712,30 +718,45 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
         }
         selectedSGDisplayName = sg_display_name;
         String clientVersion = "Android_" + version;
-        RegistrationForm registrationForm = new RegistrationForm(mobileNumber, null, imei, null, clientVersion, null, "false");
+        RegistrationForm registrationForm = null;
+        if(backFromProfile)
+            registrationForm = new RegistrationForm(mobileNumber, null, imei, null, clientVersion, null, "true");
+        else
+            registrationForm = new RegistrationForm(mobileNumber, null, imei, null, clientVersion, null, "false");
         registrationForm.setToken(imei);
         registrationForm.countryCode = countryCode;
         if (super_group != null && super_group.trim().length() > 0)
             registrationForm.setDomainName(super_group);
 //        SharedPrefManager.getInstance().saveUserPhone(mobileNumber);
         inviteMobileNumber = mobileNumber;
-        if (Build.VERSION.SDK_INT >= 11)
-            new SignupTaskOnServer(registrationForm, view).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        else
-            new SignupTaskOnServer(registrationForm, view).execute();
+        registrationForm.setiUserId(SharedPrefManager.getInstance().getUserId());
 
-        if (isComingFromLoginFlow) {
+        if(!backFromProfile) {
             if (Build.VERSION.SDK_INT >= 11)
                 new SignupTaskOnServer(registrationForm, view).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             else
                 new SignupTaskOnServer(registrationForm, view).execute();
+        }
 
-        } else {
+        if(!isComingFromLoginFlow || backFromProfile) {
             if (Build.VERSION.SDK_INT >= 11)
                 new ActivatedomainTaskOnServer(registrationForm, view, super_group).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             else
                 new ActivatedomainTaskOnServer(registrationForm, view, super_group).execute();
         }
+
+//        if (isComingFromLoginFlow) {
+//            if (Build.VERSION.SDK_INT >= 11)
+//                new SignupTaskOnServer(registrationForm, view).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//            else
+//                new SignupTaskOnServer(registrationForm, view).execute();
+//
+//        } else {
+//            if (Build.VERSION.SDK_INT >= 11)
+//                new ActivatedomainTaskOnServer(registrationForm, view, super_group).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//            else
+//                new ActivatedomainTaskOnServer(registrationForm, view, super_group).execute();
+//        }
     }
 
     public void onBackClick(View view) {
@@ -913,6 +934,7 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
     }
 
     //---------------------------------------
+    boolean backFromProfile = false;
     public class ActivatedomainTaskOnServer extends AsyncTask<String, String, String> {
         RegistrationForm registrationForm;
         ProgressDialog progressDialog = null;
@@ -1022,16 +1044,17 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
                                         }
                                     }
                                 }
-                                /*if(backFromProfile){
-                                    Intent intent = new Intent(SupergroupListingScreen.this, HomeScreen.class);
+                                if(backFromProfile){
+                                    if (domainDisplayName != null)
+                                        iPrefManager.saveCurrentSGDisplayName(domainDisplayName);
+                                    Intent intent = new Intent(OpenHubSearchScreen.this, HomeScreen.class);
                                     iPrefManager.setProfileAdded(iPrefManager.getUserName(), true);
                                     startActivity(intent);
                                     finish();
-                                }else*/
-                                {
+                                }else{
                                     if (current_user_id == 0)
                                         current_user_id = registrationForm.getiUserId();
-                                    //Check f selected SG is activated.
+                                    //Check if selected SG is activated.
                                     if (DBWrapper.getInstance().isSGActive(registrationForm.getDomainName()))
                                         verifyUserSG(current_user_id);
                                     else {
@@ -1275,20 +1298,17 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
                             DBWrapper.getInstance().updateJoinedSGData(joinedSG);
                         DBWrapper.getInstance().updateSGCredentials(sharedPrefManager.getUserDomain(), sharedPrefManager.getUserName(), sharedPrefManager.getUserPassword(), sharedPrefManager.getUserId(), true);
 
-                        {
-
-                            Intent intent = new Intent(OpenHubSearchScreen.this, ProfileScreen.class);
-                            Bundle bundle = new Bundle();
-                            sharedPrefManager.setFirstTime(true);
-                            sharedPrefManager.setAppMode("VirginMode");
-                            bundle.putString(Constants.CHAT_USER_NAME, objUserModel.username);
-                            bundle.putString(Constants.CHAT_NAME, "");
-                            bundle.putBoolean(Constants.REG_TYPE, false);
-                            bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
-                            intent.putExtras(bundle);
-                            startActivity(intent);
-                            finish();
-                        }
+                        Intent intent = new Intent(OpenHubSearchScreen.this, ProfileScreen.class);
+                        Bundle bundle = new Bundle();
+                        sharedPrefManager.setFirstTime(true);
+                        sharedPrefManager.setAppMode("VirginMode");
+                        bundle.putString(Constants.CHAT_USER_NAME, objUserModel.username);
+                        bundle.putString(Constants.CHAT_NAME, "");
+                        bundle.putBoolean(Constants.REG_TYPE, false);
+                        bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
+                        bundle.putBoolean("PROFILE_EDIT_BACK_TO_PREV", true);
+                        intent.putExtras(bundle);
+                        startActivityForResult(intent, 222);
                     } else {
 //                    sharedPrefManager.saveUserVarified(true);
 //                    sharedPrefManager.setMobileVerified(sharedPrefManager.getUserPhone(), true);

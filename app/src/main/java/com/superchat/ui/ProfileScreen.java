@@ -235,7 +235,6 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
     boolean isProfileDataValidated;
     String displayName;
     boolean isViewOnlyDisplayName;
-    String userComingFromScreen;
     boolean backToPrevUI = false;
     boolean sgCreationAfterLogin = false;
     boolean isSGCreationReset = false;
@@ -257,7 +256,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
         if (bundle != null) {
             isSGCreationReset = bundle.getBoolean(Constants.SG_CREATE_RESET);
             sgCreationAfterLogin = bundle.getBoolean(Constants.SG_CREATE_AFTER_LOGIN);
-            userComingFromScreen = bundle.getString(Constants.KEY_SCREEN_USER_COMING_FROM);
+//            userComingFromScreen = bundle.getString(Constants.KEY_SCREEN_USER_COMING_FROM);
             userName = bundle.getString(Constants.CHAT_USER_NAME, userName);
             displayName = bundle.getString(Constants.CHAT_NAME, displayName);
             manage_by_admin = bundle.getBoolean("MANAGE_MEMBER_BY_ADMIN");

@@ -21,7 +21,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.ListFragment;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -423,47 +422,37 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
         else
             new OpenGroupTaskOnServer(onForeground).execute(searchText);
         fireTimer = 0;
-//		}
     }
 
-    private void manipulateScreenTabsData(boolean isForceHitAllChannels) {
-
+    private void manipulateScreenTabsData(boolean isForceHitAllChannels){
         try {
-            // Temp code to refresh data forcefully
-            //isForceHitAllChannels = true;
-
-            if (!isAllChannelTab) {
-//			myChannelTabLayout.setBackgroundColor(0xffcde1f5);//Color.WHITE);
-//			allChannelTabLayout.setBackgroundColor(Color.GRAY);
-                viewAllChannelLabel.setVisibility(View.GONE);
-                viewMyChannelLabel.setVisibility(View.VISIBLE);
-                allChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
-                myChannelLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
-                if (searchEditText != null)
-                    searchEditText.setText("");
-                resetSearchBox();
-            } else {
-//			myChannelTabLayout.setBackgroundColor(Color.GRAY);
-//			allChannelTabLayout.setBackgroundColor(0xffcde1f5);//Color.WHITE);
+            if (isAllChannelTab) {
                 viewMyChannelLabel.setVisibility(View.GONE);
                 viewAllChannelLabel.setVisibility(View.VISIBLE);
                 myChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
-                allChannelLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
+                allChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
+                resetSearchBox();
+            } else {
+                if(viewAllChannelLabel != null) {
+                    viewAllChannelLabel.setVisibility(View.GONE);
+                    viewMyChannelLabel.setVisibility(View.VISIBLE);
+                    allChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
+                    myChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
+                }
+                if (searchEditText != null)
+                    searchEditText.setText("");
                 resetSearchBox();
             }
-            if (isAllChannelTab)
-                showAllContacts(1);
-            else
-                showAllContacts(0);
-
-            if (isForceHitAllChannels || (sgSwitch && isAllChannelTab)) {
+            if (isAllChannelTab && (isForceHitAllChannels || sgSwitch)) {
                 if (Build.VERSION.SDK_INT >= 11)
                     new OpenGroupTaskOnServer(true).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 else
                     new OpenGroupTaskOnServer(true).execute();
+            }else{
+                showAllContacts(0);
             }
-        } catch (Exception e) {
-
+        } catch(Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -618,20 +607,16 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
             else
                 list.clear();
             try {
-                for (LoginResponseModel.GroupDetail groups : HomeScreen.groupsData) {
-                    if (type == 0 && !groups.memberType.equals("USER")) {
+                if (type == 0){
+                    for (LoginResponseModel.GroupDetail groups : HomeScreen.groupsData) {
+//                        if (type == 0 && !groups.memberType.equals("USER")) {
+//                            list.add(groups);
+//                        } else if (type == 1) {
+//                            if (list != null && !isGroupAddedInList(list, groups.groupName))
+//                                list.add(groups);
+//                        }
                         list.add(groups);
-                    } else if (type == 1) {
-//                    for(LoginResponseModel.GroupDetail detail : list){
-//                        if(detail.groupName.equals(groups.groupName))
-//                            exists = true;
-//                    }
-//                    if(!exists)
-                        if (list != null && !isGroupAddedInList(list, groups.groupName))
-                            list.add(groups);
                     }
-                }
-                if (type == 0)
                     for (String group : SharedPrefManager.getInstance().getGroupNamesArray()) {
                         if (group == null || group.equals(""))
                             continue;
@@ -648,7 +633,21 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                         if (list != null && !isGroupAddedInList(list, groups.groupName))
                             list.add(groups);
                     }
-            } catch (ConcurrentModificationException cex) {
+                    viewAllChannelLabel.setVisibility(View.GONE);
+                    viewMyChannelLabel.setVisibility(View.VISIBLE);
+                    allChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
+                    myChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
+                }else{
+                    for (LoginResponseModel.GroupDetail groups : discoverGroups) {
+                        if (type == 0 && !groups.memberType.equals("USER")) {
+                            list.add(groups);
+                        } else if (type == 1) {
+                            if (list != null && !isGroupAddedInList(list, groups.groupName))
+                                list.add(groups);
+                        }
+                    }
+                }
+            }catch(ConcurrentModificationException cex){
                 cex.printStackTrace();
             }
             Collections.sort(list);
@@ -660,10 +659,9 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                 if (listView != null && adapter != null)
                     listView.setAdapter(adapter);
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-
-//		updateCursor(null, null);
     }
 
     private boolean isGroupAddedInList(ArrayList<LoginResponseModel.GroupDetail> list, String group) {
@@ -743,6 +741,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                 service.sendGroupPresence(tmpGroup.groupName, 0);
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         if (isJoinning) {
             SharedPrefManager.getInstance().saveGroupTypeAsPublic(tmpGroup.groupName, true);
@@ -755,13 +754,17 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
         updateDataLocally(tmpGroup, isJoinning);
         FragmentActivity fragmentactivity = getActivity();
         ArrayList<LoginResponseModel.GroupDetail> list = new ArrayList<LoginResponseModel.GroupDetail>();
-        for (LoginResponseModel.GroupDetail groups : HomeScreen.groupsData) {
 
-//			LoginResponseModel.GroupDetail info = new LoginResponseModel.GroupDetail();
-            if (!isAllChannelTab && !groups.memberType.equals("USER"))
+        if(isAllChannelTab){
+            for (LoginResponseModel.GroupDetail groups : discoverGroups) {
                 list.add(groups);
-            else if (isAllChannelTab) //  && groups.memberType.equals("USER")
+            }
+        }else {
+            for (LoginResponseModel.GroupDetail groups : HomeScreen.groupsData) {
                 list.add(groups);
+//                if (!groups.memberType.equals("USER"))
+//                    list.add(groups);
+            }
         }
         Collections.sort(list);
         try {
@@ -770,10 +773,9 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
             ListView listView = getListView();
             if (onForeground && listView != null && adapter != null)
                 listView.setAdapter(adapter);
-
         } catch (Exception e) {
+            e.printStackTrace();
         }
-//		updateCursor(null, null);
     }
 
     public static void updateDataLocally(String groupName, boolean isJoinning) {
@@ -844,8 +846,8 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
     }
 
     public static void updateDataLocally(LoginResponseModel.GroupDetail tmpGroup, boolean isJoinning) {
-        if (HomeScreen.groupsData.contains(tmpGroup)) {
-            HomeScreen.groupsData.remove(tmpGroup);
+//        if (HomeScreen.groupsData.contains(tmpGroup)) {
+//            HomeScreen.groupsData.remove(tmpGroup);
             if (!isJoinning) {
                 try {
                     if (tmpGroup.numberOfMembers != null && !tmpGroup.numberOfMembers.equals("")) {
@@ -879,9 +881,45 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                 SharedPrefManager.getInstance().saveUserGroupInfo(tmpGroup.groupName, SharedPrefManager.getInstance().getUserName(), SharedPrefManager.PUBLIC_CHANNEL, true);
             }
             HomeScreen.groupsData.add(tmpGroup);
-        }
+//        }
     }
 
+    private void updateCursor(String s, String as[]) {
+//		Log.i(TAG, "Updating cursor");
+////		cursor = DBWrapper.getInstance().query(DatabaseConstants.TABLE_NAME_CONTACT_NAMES, null, s, as,
+////				DatabaseConstants.VOPIUM_FIELD+" DESC, "+DatabaseConstants.CONTACT_NAMES_FIELD +" COLLATE NOCASE");
+//		if(s==null){
+//			s = DatabaseConstants.VOPIUM_FIELD + "!=?";
+//			as = (new String[] { "2" });
+//		}
+//		cursor = DBWrapper.getInstance().query(DatabaseConstants.TABLE_NAME_CONTACT_NUMBERS, null, s, as,
+//				DatabaseConstants.VOPIUM_FIELD+" ASC, "+DatabaseConstants.CONTACT_NAMES_FIELD +" COLLATE NOCASE");
+//		if (cursor != null && adapter != null)
+//		{
+////			adapter.changeCursor(cursor);
+//			adapter.notifyDataSetChanged();
+//		}
+    }
+
+    //	@Override
+//	public void notifyConnectionChange() {
+//		if(onForeground){
+//			((HomeScreen)getActivity()).runOnUiThread(new Runnable() {
+//				
+//				@Override
+//				public void run() {
+//					if(ChatService.xmppConectionStatus){
+//						xmppStatusView.setImageResource(R.drawable.blue_dot);
+//					}else{
+//						xmppStatusView.setImageResource(R.drawable.red_dot);
+//						}
+//				}
+//				});
+//		}
+//		
+//	}
+
+    public static ArrayList<LoginResponseModel.GroupDetail> discoverGroups = new ArrayList<LoginResponseModel.GroupDetail>();
     private class OpenGroupTaskOnServer extends AsyncTask<String, String, String> {
         LoginModel loginForm;
         ProgressDialog progressDialog = null;
@@ -922,6 +960,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
             DefaultHttpClient client1 = new DefaultHttpClient();
 
 //			Log.d("HomeScreen", "serverUpdateCreateGroupInfo request:"+JSONstring);  p5domain
+            System.out.println("FInal URL : "+(Constants.SERVER_URL + "/tiger/rest/group/search?" + searchText + "limit=1000"));
             HttpPost httpPost = new HttpPost(Constants.SERVER_URL + "/tiger/rest/group/search?" + searchText + "limit=1000");
 //	         httpPost.setEntity(new UrlEncodedFormEntity(JSONstring));
             httpPost = SuperChatApplication.addHeaderInfo(httpPost, true);
@@ -943,25 +982,25 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                             str += line;
                         }
                         if (str != null && !str.equals("")) {
-                            System.out.println(TAG + "OpenGroupTaskOnServer :: response : " + str);
+                            System.out.println("OpenGroupTaskOnServer :: response : "+str);
                             Gson gson = new GsonBuilder().create();
                             LoginResponseModel loginObj = gson.fromJson(str, LoginResponseModel.class);
                             if (loginObj != null) {
                                 if (loginObj.directoryGroupSet != null) {
-                                    HomeScreen.groupsData.clear();
+                                    discoverGroups.clear();
                                     for (GroupDetail groupDetail : loginObj.directoryGroupSet) {
                                         if (!groupDetail.memberType.equals("USER"))
                                             SharedPrefManager.getInstance().saveUserGroupInfo(groupDetail.groupName, SharedPrefManager.getInstance().getUserName(), SharedPrefManager.PUBLIC_CHANNEL, true);
                                         SharedPrefManager.getInstance().saveGroupMemberCount(groupDetail.groupName, groupDetail.numberOfMembers);
-                                        HomeScreen.groupsData.add(groupDetail);
+                                        discoverGroups.add(groupDetail);
                                         Log.d(TAG, "counter check Discover response : " + groupDetail.type + "" + groupDetail.displayName + " , " + groupDetail.numberOfMembers);
                                     }
                                     SharedPrefManager.getInstance().saveGroupsForSG(SharedPrefManager.getInstance().getUserDomain(), str);
                                 }
                             }
-
-
                         }
+                    }else{
+                        System.out.println("Error!!: ");
                     }
                 } catch (ClientProtocolException e) {
                     Log.d("HomeScreen", "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());
@@ -1008,10 +1047,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                 } else
                     showDialog("Please try again later.");
             } else {
-                if (isAllChannelTab)
-                    showAllContacts(1);
-                else
-                    showAllContacts(0);
+                showAllContacts(1);
             }
             super.onPostExecute(str);
         }

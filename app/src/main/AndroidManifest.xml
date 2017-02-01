@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.superchat"
     android:installLocation="preferExternal"
-    android:versionCode="999"
-    android:versionName="9.9.9">
+    android:versionCode="116"
+    android:versionName="4.1.6">
 
     <uses-sdk
         android:minSdkVersion="13"

@@ -1,14 +1,6 @@
 package com.superchat.service;
 
 
-import com.chat.sdk.ChatService;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.ui.SinchService;
-import com.superchat.utils.Constants;
-import com.superchat.utils.Log;
-import com.superchat.utils.SharedPrefManager;
-
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.BroadcastReceiver;
@@ -16,6 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+
+import com.chat.sdk.ChatService;
+import com.superchat.SuperChatApplication;
+import com.superchat.ui.SinchService;
+import com.superchat.utils.SharedPrefManager;
 
 
 public class XmppStateReceiver  extends BroadcastReceiver  {
@@ -42,9 +39,10 @@ public class XmppStateReceiver  extends BroadcastReceiver  {
 				if(ChatService.connectionStatusListener!=null)
 					ChatService.connectionStatusListener.notifyConnectionChange();
 
-			 System.out.println("XmppStateReceiver connectivity changed."+isConnectingOrConnected+" , "+isConnectingOrConnected);
-			 System.out.println("isProfileAdded = "+pref.isProfileAdded(pref.getUserDomain()));
-				if(isConnected && pref.isProfileAdded(pref.getUserDomain())){
+			 System.out.println("XmppStateReceiver connectivity changed, isConnectingOrConnected : "+isConnectingOrConnected);
+			 System.out.println("Is User Registered : "+pref.isMyExistence());
+			 System.out.println("isConnected : "+isConnected);
+				if(isConnected && pref.isMyExistence()){
 					    isConnectedCalled = true;
 						context.startService(new Intent(SuperChatApplication.context, ChatService.class));
 						context.startService(new Intent(SuperChatApplication.context, SinchService.class));

@@ -1017,13 +1017,12 @@ public class MainActivity extends FragmentActivity implements
         if (regAsAdmin) {
             switch (currPage){
                 case 1:
-                    viewOne.setVisibility(View.GONE);
-                    viewTwo.setVisibility(View.VISIBLE);
-//                    if (regScreenNo == REG_SECOND_SCREEN) {
-//                        setRegSreen(REG_FIRST_SCREEN);
-//                        return;
-//                    }
-                    currPage = 2;
+//                    viewOne.setVisibility(View.GONE);
+//                    viewTwo.setVisibility(View.VISIBLE);
+//                    currPage = 2;
+                    Intent intent = new Intent(this, RegistrationOptions.class);
+                    startActivity(intent);
+                    finish();
                     break;
                 case 2:
                     viewTwo.setVisibility(View.GONE);
