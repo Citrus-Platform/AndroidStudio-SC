@@ -2419,12 +2419,12 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
                 ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
                 boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
-                if (!isConnected)
-                    Toast.makeText(ProfileScreen.this, getString(R.string.error_network_connection), Toast.LENGTH_SHORT)
-                            .show();
-                else
-                    Toast.makeText(ProfileScreen.this, getString(R.string.network_not_responding), Toast.LENGTH_SHORT)
-                            .show();
+//                if (!isConnected)
+//                    Toast.makeText(ProfileScreen.this, getString(R.string.error_network_connection), Toast.LENGTH_SHORT)
+//                            .show();
+//                else
+//                    Toast.makeText(ProfileScreen.this, getString(R.string.network_not_responding), Toast.LENGTH_SHORT)
+//                            .show();
             }
         }
     }
