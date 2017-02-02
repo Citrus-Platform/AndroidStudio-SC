@@ -1,9 +1,7 @@
 package com.superchat.ui.Adapters.recycler;
 
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -19,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.superchat.R;
 import com.superchat.model.SGroupListObject;
 import com.superchat.ui.Adapters.connectors.OpenGroupAdapterConnector;
@@ -34,8 +31,6 @@ import com.superchat.widgets.RoundedImageView;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 
 public class OpenGroupRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -185,7 +180,7 @@ public class OpenGroupRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     private boolean setProfilePic(ImageView picView, String groupPicId) {
 //		System.out.println("groupPicId : "+groupPicId);
         String img_path = getThumbPath(groupPicId);
-        picView.setImageResource(R.drawable.about_icon);
+        picView.setImageResource(R.drawable.small_hub_icon);
         if (groupPicId == null || (groupPicId != null && groupPicId.equals("")) || groupPicId.equals("clear") || groupPicId.contains("logofileid"))
             return false;
         if (img_path != null) {

@@ -41,7 +41,7 @@
                     android:layout_height="40dip"
                     android:padding="2.0dip"
                     android:src="@drawable/avtar_background"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
 
                 <ImageView
                     android:id="@+id/id_left_default_pic"
@@ -49,7 +49,7 @@
                     android:layout_height="40dip"
                     android:padding="2.0dip"
                     android:src="@drawable/avtar_background"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
             </RelativeLayout>
 
             <include

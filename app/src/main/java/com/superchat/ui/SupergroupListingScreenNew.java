@@ -19,7 +19,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -40,8 +39,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ExpandableListView.OnGroupCollapseListener;
-import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -50,8 +47,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
@@ -640,7 +635,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
     private boolean setProfilePic(ImageView picView, String groupPicId) {
 //		System.out.println("groupPicId : "+groupPicId);
         String img_path = getThumbPath(groupPicId);
-        picView.setImageResource(R.drawable.about_icon);
+        picView.setImageResource(R.drawable.small_hub_icon);
         if (groupPicId == null || (groupPicId != null && groupPicId.equals("")) || groupPicId.equals("clear") || groupPicId.contains("logofileid"))
             return false;
         if (img_path != null) {
@@ -1515,7 +1510,7 @@ public class SupergroupListingScreenNew extends Activity implements OnClickListe
             if (logoFileId != null && !logoFileId.contains("logofileid")) {
                 setProfilePic(groupView, logoFileId);
             } else
-                groupView.setImageResource(R.drawable.about_icon);
+                groupView.setImageResource(R.drawable.small_hub_icon);
             return convertView;
         }
 

@@ -518,41 +518,35 @@ public class ChatService extends Service implements interfaceInstances {
                         String captionTag = message.getMediaTagMessage();
                         String description = null;
                         String fileId = null;
+                        String group_displayName = null;
                         if (captionTag != null) {
                             if (captionTag.contains("&quot;"))
                                 captionTag = captionTag.replace("&quot;", "\"");
 
-
                             try {
                                 GroupChatXmppCaptionData caption = new Gson().fromJson(captionTag, GroupChatXmppCaptionData.class);
-                                if (caption != null) {
-                                    int permissionType = Integer.parseInt(caption.getGroupPermissionType());
-                                    String groupName = caption.getDisplayName();
-                                    String groupMode = "";
-                                    if (permissionType == GroupChatMetaInfo.GroupPermissions.SCGroupPermissionAllowedAdmins.ordinal()){
-                                        groupMode = KEY_GROUP_BROADCAST;
-                                    } else if(permissionType == GroupChatMetaInfo.GroupPermissions.SCGroupPermissionAllowedAll.ordinal()) {
-                                        groupMode = KEY_GROUP_NORMAL;
-                                    } else {
-                                        groupMode = KEY_GROUP_NORMAL;
-                                    }
-
-
-                                    // Save Meta info of group
-                                    {
+                                int permissionType = Integer.parseInt(caption.getGroupPermissionType());
+                                if(permissionType > 0) {
+                                    if (caption != null) {
+                                        String groupName = caption.getDisplayName();
+                                        String groupMode = "";
+                                        if (permissionType == GroupChatMetaInfo.GroupPermissions.SCGroupPermissionAllowedAdmins.ordinal()) {
+                                            groupMode = KEY_GROUP_BROADCAST;
+                                        } else if (permissionType == GroupChatMetaInfo.GroupPermissions.SCGroupPermissionAllowedAll.ordinal()) {
+                                            groupMode = KEY_GROUP_NORMAL;
+                                        } else {
+                                            groupMode = KEY_GROUP_NORMAL;
+                                        }
                                         GroupChatMetaInfo groupChatMetaInfo = new GroupChatMetaInfo();
                                         groupChatMetaInfo.setBroadCastActive(groupMode);
                                         SharedPrefManager.getInstance().setSubGroupMetaData(user, groupChatMetaInfo);
+                                        eventSetGroupBroadcastMode();
                                     }
-
-                                    eventSetGroupBroadcastMode();
+                                    return;
                                 }
-                                return;
                             } catch(Exception e){
-
+                                e.printStackTrace();
                             }
-
-
                             try {
                                 JSONObject jsonobj = new JSONObject(captionTag);
                                 if (jsonobj.has("description") && jsonobj.getString("description").toString().trim().length() > 0) {
@@ -560,6 +554,12 @@ public class ChatService extends Service implements interfaceInstances {
                                 }
                                 if (jsonobj.has("fileId") && jsonobj.getString("fileId").toString().trim().length() > 0) {
                                     fileId = jsonobj.getString("fileId").toString();
+                                }
+                                if (jsonobj.has("displayName") && jsonobj.getString("displayName").toString().trim().length() > 0) {
+                                    group_displayName = jsonobj.getString("displayName").toString();
+                                }
+                                if (jsonobj.has("description") && jsonobj.getString("description").toString().trim().length() > 0) {
+                                    description = jsonobj.getString("description").toString();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -574,7 +574,11 @@ public class ChatService extends Service implements interfaceInstances {
                         if (inviter != null && inviter.contains("#786#"))
                             inviter = inviter.substring(0, inviter.indexOf("#786#"));
 
-                        String newGroupName = message.getBody();
+                        String newGroupName = null;
+                        if(group_displayName != null)
+                            newGroupName = group_displayName;
+                        else
+                            newGroupName = message.getBody();
                         if (senderName.equals(inviter)) {
                             if (inviter.contains("_"))
                                 getUserProfileAsynch(inviter);
