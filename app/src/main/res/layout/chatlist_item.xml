@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
     android:layout_margin="1dip"
     android:gravity="center">
 
@@ -27,13 +27,24 @@
         <RelativeLayout
             android:id="@+id/rlRightChatBlock"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/receiver_sel_box">
+            android:layout_height="wrap_content">
+
+            <include
+                android:id="@+id/left_block_layout"
+                layout="@layout/left_chat_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dip"
+                android:layout_marginTop="1dip"
+                android:layout_toRightOf="@+id/id_left_pic_layout"
+                android:visibility="visible" />
 
             <RelativeLayout
                 android:id="@+id/id_left_pic_layout"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true">
 
                 <com.superchat.widgets.RoundedImageView
                     android:id="@+id/id_left_pic"
@@ -51,16 +62,6 @@
                     android:src="@drawable/avtar_background"
                     android:visibility="gone" />
             </RelativeLayout>
-
-            <include
-                android:id="@+id/left_block_layout"
-                layout="@layout/left_chat_item"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="1dip"
-                android:layout_marginTop="1dip"
-                android:layout_toRightOf="@+id/id_left_pic_layout"
-                android:visibility="visible" />
         </RelativeLayout>
 
         <LinearLayout

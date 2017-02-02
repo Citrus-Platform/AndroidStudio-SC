@@ -2348,6 +2348,11 @@ public class MainActivity extends FragmentActivity implements
 //                }
                 Intent intent = new Intent(MainActivity.this, BulkInvitationScreen.class);
                 intent.putExtra(Constants.REG_TYPE, true);
+                if(sgCreationAfterLogin) {
+                    intent.putExtra(Constants.SG_CREATE_AFTER_LOGIN, sgCreationAfterLogin);
+                    //Update Values in DB
+                    DBWrapper.getInstance().updateSGCredentials(sharedPrefManager.getUserDomain(), sharedPrefManager.getUserName(), sharedPrefManager.getUserPassword(), sharedPrefManager.getUserId(), true);
+                }
                 startActivity(intent);
                 finish();
             }
