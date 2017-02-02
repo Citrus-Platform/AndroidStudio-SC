@@ -3544,6 +3544,14 @@ public class ChatService extends Service implements interfaceInstances {
                 e.printStackTrace();
             }
         }
+        if(is_sent_from_console && message.getMediaFileName() != null){
+            if (message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeDoc
+                    || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypePdf
+                    || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypeXLS
+                    || message.getXMPPMessageType() == XMPPMessageType.atMeXmppMessageTypePPT) {
+                captionTag = message.getMediaFileName().toString();
+            }
+        }
         try {
 
             ContentValues contentvalues = new ContentValues();

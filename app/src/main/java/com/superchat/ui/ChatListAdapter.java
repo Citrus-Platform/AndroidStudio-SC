@@ -40,7 +40,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,7 +54,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.sinch.android.rtc.calling.Call;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.beans.PhotoToLoad;
@@ -113,6 +111,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 
 import ch.boye.httpclientandroidlib.HttpEntity;
 import ch.boye.httpclientandroidlib.HttpResponse;
@@ -123,11 +122,7 @@ import ch.boye.httpclientandroidlib.entity.mime.content.FileBody;
 import ch.boye.httpclientandroidlib.entity.mime.content.StringBody;
 import ch.boye.httpclientandroidlib.impl.client.DefaultHttpClient;
 
-import static com.chatsdk.org.xbill.DNS.Type.A;
-import static com.superchat.R.drawable.ic_emoji_nature_light;
 import static com.superchat.R.id.id_file_loader;
-import static com.superchat.R.id.imageView;
-import static com.superchat.R.id.ivManageDownload;
 
 //import com.superchat.utils.ImageDownloader;
 public class ChatListAdapter extends SimpleCursorAdapter {
@@ -1008,14 +1003,18 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 return;
             }*/
 
-            processing.put(url, "1");
-            BitmapDownloaderTask task = new BitmapDownloaderTask(imageView, pb, callbackParams, msgType);
+            try {
+                processing.put(url, "1");
+                BitmapDownloaderTask task = new BitmapDownloaderTask(imageView, pb, callbackParams, msgType);
 
-            processingDownloader.put(url, task);
-            if (Build.VERSION.SDK_INT >= 11)
-                task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
-            else
-                task.execute(url);
+                processingDownloader.put(url, task);
+                if (Build.VERSION.SDK_INT >= 11)
+                    task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
+                else
+                    task.execute(url);
+            }catch(RejectedExecutionException rex){
+                rex.printStackTrace();
+            }
         }
 
         public void download(final ViewHolder viewHolder, String url, int msgType, ImageView imageView, ProgressBar pb, Object[] callbackParams, DOWNLOAD_TYPE downloadType) {
@@ -2585,14 +2584,12 @@ public class ChatListAdapter extends SimpleCursorAdapter {
                 } else if (viewholder.messageType == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal()) {
                     ((ImageView) viewholder.rightFileLayout.findViewById(R.id.id_file_image)).setVisibility(View.GONE);
                     viewholder.sendImgView.setVisibility(View.GONE);
-
                     Object[] params = new Object[]{this,
                             viewholder.key, cursor,
                             viewholder.voiceLoadingPercent, url};
-
-                    viewholder.download(url, viewholder.messageType, viewholder.playSenderView, viewholder.voiceDownloadingBar, params);
-
+                        viewholder.download(url, viewholder.messageType, viewholder.playSenderView, viewholder.voiceDownloadingBar, params);
                     ((ProgressBar) viewholder.voiceSenderLayout.findViewById(R.id.audio_upload_bar)).setVisibility(View.GONE);
+
 //                    if (viewholder.getProcessingForURL(viewholder.mediaLocalPath) == null) {
 //                        processing.put(viewholder.mediaLocalPath, "0");
 //                        viewholder.uploadMedia(viewholder.mediaLocalPath, viewholder.messageType);//XMPPMessageType.atMeXmppMessageTypeImage);//viewholder.mediaLocalPath, viewholder.key,viewholder.mediaThumb,XMPPMessageType.atMeXmppMessageTypeImage);
