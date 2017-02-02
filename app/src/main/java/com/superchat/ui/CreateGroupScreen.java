@@ -1,44 +1,5 @@
 package com.superchat.ui;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.UUID;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.chat.sdk.ChatService;
-import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
-import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.model.ErrorModel;
-import com.superchat.model.GroupChatMetaInfo;
-import com.superchat.model.GroupChatServerModel;
-import com.superchat.model.GroupChatXmppCaptionData;
-import com.superchat.pref.SharedPreseferencesUtil;
-import com.superchat.utils.AppUtil;
-import com.superchat.utils.CompressImage;
-import com.superchat.utils.Constants;
-import com.superchat.utils.Log;
-import com.superchat.utils.ProfilePicUploader;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.utils.UtilSetFont;
-import com.superchat.widgets.MyriadSemiboldTextView;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -70,9 +31,42 @@ import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
-import static android.R.id.toggle;
+import com.chat.sdk.ChatService;
+import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
+import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.model.ErrorModel;
+import com.superchat.model.GroupChatMetaInfo;
+import com.superchat.model.GroupChatServerModel;
+import com.superchat.model.GroupChatXmppCaptionData;
+import com.superchat.utils.AppUtil;
+import com.superchat.utils.CompressImage;
+import com.superchat.utils.Constants;
+import com.superchat.utils.Log;
+import com.superchat.utils.ProfilePicUploader;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
+import com.superchat.widgets.MyriadSemiboldTextView;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.UUID;
 
 public class CreateGroupScreen extends Activity implements OnClickListener {
     //	ArrayList<String> inviters;
@@ -275,8 +269,8 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
                 }
                 if (groupFileId != null && groupFileId.trim().length() > 0)
                     setProfilePic(groupIconView);
-                else
-                    groupIconView.setImageResource(R.drawable.icongroupimage);
+//                else
+//                    groupIconView.setImageResource(R.drawable.icongroupimage);
             }
         }
     }

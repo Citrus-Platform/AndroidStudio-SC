@@ -536,7 +536,11 @@ public void loadDialog(){
 				viewholder.chatPerson.setText(viewholder.nameText);
      	}else if (name!=null)
         {
-			viewholder.messageTypeIcon.setVisibility(View.GONE);
+			if(iChatPref.isGroupChat(toUserName)){
+				viewholder.messageTypeIcon.setVisibility(View.VISIBLE);
+				viewholder.messageTypeIcon.setImageResource(R.drawable.group_small_icon);
+			}else
+				viewholder.messageTypeIcon.setVisibility(View.GONE);
         	String tmpName = name.trim();
         	if(tmpName.equals(fromName)|| tmpName.equals(toUserName)){
         		if(tmpName.contains("_"))

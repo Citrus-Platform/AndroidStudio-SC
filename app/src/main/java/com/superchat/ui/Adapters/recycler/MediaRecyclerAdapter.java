@@ -139,8 +139,12 @@ public class MediaRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                 mVHolder.ivPlayButton.setVisibility(View.VISIBLE);
 
                 try{
-                    setVideoPicForCache(mVHolder.ivMedia, path);
-                   /* android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(path);
+                    /*Bitmap tmpBitMap = createVideoThumbFromByteArray(thumb);
+                    mVHolder.ivMedia.setImageBitmap(tmpBitMap);*/
+
+                    //setVideoPicForCache(mVHolder.ivMedia, thumb);
+/*
+                    android.graphics.Bitmap bitmap = SuperChatApplication.getBitmapFromMemCache(path);
                     if (bitmap != null) {
                         mVHolder.ivMedia.setImageBitmap(bitmap);
                     } else {

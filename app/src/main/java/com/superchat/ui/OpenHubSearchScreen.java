@@ -719,7 +719,7 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
         selectedSGDisplayName = sg_display_name;
         String clientVersion = "Android_" + version;
         RegistrationForm registrationForm = null;
-        if(backFromProfile)
+        if(backFromProfile && isComingFromLoginFlow)
             registrationForm = new RegistrationForm(mobileNumber, null, imei, null, clientVersion, null, "true");
         else
             registrationForm = new RegistrationForm(mobileNumber, null, imei, null, clientVersion, null, "false");
@@ -731,19 +731,31 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
         inviteMobileNumber = mobileNumber;
         registrationForm.setiUserId(SharedPrefManager.getInstance().getUserId());
 
-        if(!backFromProfile) {
+        if(backFromProfile){
+            if (Build.VERSION.SDK_INT >= 11)
+                new ActivatedomainTaskOnServer(registrationForm, view, super_group).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            else
+                new ActivatedomainTaskOnServer(registrationForm, view, super_group).execute();
+        }else{
             if (Build.VERSION.SDK_INT >= 11)
                 new SignupTaskOnServer(registrationForm, view).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             else
                 new SignupTaskOnServer(registrationForm, view).execute();
         }
 
-        if(!isComingFromLoginFlow || backFromProfile) {
-            if (Build.VERSION.SDK_INT >= 11)
-                new ActivatedomainTaskOnServer(registrationForm, view, super_group).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            else
-                new ActivatedomainTaskOnServer(registrationForm, view, super_group).execute();
-        }
+//        if(!backFromProfile) {
+//            if (Build.VERSION.SDK_INT >= 11)
+//                new SignupTaskOnServer(registrationForm, view).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//            else
+//                new SignupTaskOnServer(registrationForm, view).execute();
+//        }
+//
+//        if(!isComingFromLoginFlow || backFromProfile) {
+//            if (Build.VERSION.SDK_INT >= 11)
+//                new ActivatedomainTaskOnServer(registrationForm, view, super_group).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//            else
+//                new ActivatedomainTaskOnServer(registrationForm, view, super_group).execute();
+//        }
 
 //        if (isComingFromLoginFlow) {
 //            if (Build.VERSION.SDK_INT >= 11)
@@ -1307,20 +1319,13 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
                         bundle.putBoolean(Constants.REG_TYPE, false);
                         bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
                         bundle.putBoolean("PROFILE_EDIT_BACK_TO_PREV", true);
+                        if(displayName != null && displayName.length() > 0)
+                            bundle.putString(Constants.HUB_CREATION_PROFILE_NAME, displayName);
                         intent.putExtras(bundle);
                         startActivityForResult(intent, 222);
                     } else {
-//                    sharedPrefManager.saveUserVarified(true);
-//                    sharedPrefManager.setMobileVerified(sharedPrefManager.getUserPhone(), true);
-//                    sharedPrefManager.saveUserName(objUserModel.username);
-//                    sharedPrefManager.saveUserPassword(objUserModel.password);
-//                    sharedPrefManager.setOTPVerified(true);
-
                         inviteUserName = objUserModel.username;
                         inviteUserPassword = objUserModel.password;
-
-//                    saveDataAndMove();
-
                         Bundle bundle = new Bundle();
                         bundle.putString("SG_MOBILE", "" + inviteMobileNumber);
                         bundle.putString("SG_NAME", "" + inviteSGName);

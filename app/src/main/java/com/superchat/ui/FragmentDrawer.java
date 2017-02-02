@@ -44,7 +44,6 @@ import com.superchat.model.multiplesg.InviteJoinDataModel;
 import com.superchat.model.multiplesg.InvitedDomainNameSet;
 import com.superchat.model.multiplesg.JoinedDomainNameSet;
 import com.superchat.model.multiplesg.OwnerDomainName;
-import com.superchat.utils.AppUtil;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
 import com.superchat.utils.SharedPrefManager;
@@ -63,8 +62,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import static android.R.attr.data;
-import static android.R.attr.handle;
 import static com.superchat.ui.OpenHubSearchScreen.KEY_IS_COMING_FROM_LOGIN_FLOW;
 
 public class FragmentDrawer extends Fragment implements View.OnClickListener, ConnectorDrawer {
@@ -725,7 +722,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
 
 //		System.out.println("groupPicId : "+groupPicId);
         String img_path = getThumbPath(groupPicId);
-        picView.setImageResource(R.drawable.about_icon);
+        picView.setImageResource(R.drawable.small_hub_icon);
 
         if (groupPicId == null || (groupPicId != null && groupPicId.equals("")) || groupPicId.equals("clear") || groupPicId.contains("logofileid")) {
             return false;
