@@ -127,6 +127,8 @@ import butterknife.OnClick;
 import static android.R.attr.data;
 import static com.superchat.R.drawable.popup;
 import static com.superchat.R.id.switchChatSettings;
+import static com.superchat.utils.Constants.KEY_GROUP_BROADCAST;
+import static com.superchat.utils.Constants.KEY_GROUP_NORMAL;
 
 public class GroupProfileScreen extends Activity implements OnClickListener, ProfileUpdateListener, VoiceMediaHandler, OnMenuItemClickListener {
     public final static String TAG = "GroupProfileScreen";
@@ -853,6 +855,26 @@ public class GroupProfileScreen extends Activity implements OnClickListener, Pro
                             }
 
                             if (objUserModel != null) {
+                                try{
+                                    String groupName = objUserModel.groupName;
+                                    String groupModeType = objUserModel.mode;
+                                    String groupMode = "";
+                                    if (groupModeType != null && groupModeType.equalsIgnoreCase("broadcast")){
+                                        groupMode = KEY_GROUP_BROADCAST;
+                                    } else {
+                                        groupMode = KEY_GROUP_NORMAL;
+                                    }
+
+
+                                    // Save Meta info of group
+                                    {
+                                        GroupChatMetaInfo groupChatMetaInfo = new GroupChatMetaInfo();
+                                        groupChatMetaInfo.setBroadCastActive(groupMode);
+                                        SharedPrefManager.getInstance().setSubGroupMetaData(groupUUID, groupChatMetaInfo);
+                                    }
+                                } catch(Exception e){
+
+                                }
                                 if (objUserModel.displayName != null && !objUserModel.displayName.equals("")) {
                                     iChatPref.saveGroupDisplayName(groupUUID, objUserModel.displayName);
                                 }

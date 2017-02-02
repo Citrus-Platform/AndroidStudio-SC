@@ -28,9 +28,12 @@ public class GroupDetailsModel {
 
 	@SerializedName(value = "description")
 	public String description = null;
-	
+
 	@SerializedName(value = "type")
 	public String type = null;
+
+	@SerializedName(value = "mode")
+	public String mode = null;
 
 	@SerializedName(value = "memberUserSet")
 	public List<String> memberUserSet = null;

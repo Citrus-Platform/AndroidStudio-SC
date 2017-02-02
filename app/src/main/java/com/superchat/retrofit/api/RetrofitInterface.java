@@ -36,7 +36,7 @@ public interface RetrofitInterface {
     @POST(PREFIX_URL + "user/makesubadmin/")
     Call<UserAdminResponse> makeAdmin(@Body UserAdminRequest requestObject);
 
-    @POST(PREFIX_URL + "user/removesubadmin /")
+    @POST(PREFIX_URL + "user/removesubadmin/")
     Call<UserAdminResponse> removeAdmin(@Body UserAdminRequest requestObject);
 
     @GET(PREFIX_URL + "user/profile/get")

@@ -96,6 +96,7 @@ public class Constants {
     public static final String CHANNEL_CREATION = "channel_creation";
     public static final String GROUP_NAME = "GROUP_NAME";
     public static final String GROUP_DISCRIPTION = "GROUP_DISCRIPTION";
+    public static final String GROUP_MODE = "GROUP_MODE";
     public static final String GROUP_TYPE = "GROUP_TYPE";
     public static final String GROUP_UUID = "group_uuid";
     public static final String GROUP_FILE_ID = "group_file_id";

@@ -45,6 +45,7 @@ import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
 import com.superchat.model.AdminRegistrationForm;
+import com.superchat.model.DrawerUpdated;
 import com.superchat.model.ErrorModel;
 import com.superchat.utils.AppUtil;
 import com.superchat.utils.BitmapDownloader;
@@ -64,6 +65,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -925,6 +927,14 @@ private static final String TAG = "SuperGroupProfileActivity";
 		}
 		@Override
 		protected void onPostExecute(String str) {
+
+			try{
+				DrawerUpdated data = new DrawerUpdated();
+				data.setDrawerUpdated(true);
+				EventBus.getDefault().post(data);
+			} catch(Exception e){
+
+			}
 			if (progressDialog != null) {
 				progressDialog.dismiss();
 				progressDialog = null;

@@ -1292,6 +1292,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         @Override
         protected void onPostExecute(String str) {
             try {
+                //drawerFragment.refreshListAndNotify();
                 if (progressDialog != null) {
                     progressDialog.dismiss();
                     progressDialog = null;

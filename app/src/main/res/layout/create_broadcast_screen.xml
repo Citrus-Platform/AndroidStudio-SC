@@ -9,7 +9,7 @@
         android:id="@+id/id_header_view"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/home_fragments_actionbar_height"
-        android:background="@color/colorPrimary">
+        android:background="@drawable/round_rect_blue">
 
         <com.superchat.widgets.MyriadSemiboldTextView
             android:id="@+id/id_group_info_title"

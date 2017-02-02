@@ -480,6 +480,7 @@ public class CreateGroupScreen extends Activity implements OnClickListener {
                         intent.putExtra(Constants.GROUP_NAME, groupName);
                         intent.putExtra(Constants.GROUP_TYPE, privacy_type);
                         intent.putExtra(Constants.GROUP_DISCRIPTION, groupDiscription);
+                        intent.putExtra(Constants.GROUP_MODE, mode);
                         if (isBroadcast) {
                             intent.putExtra(Constants.BROADCAST, true);
                         } else

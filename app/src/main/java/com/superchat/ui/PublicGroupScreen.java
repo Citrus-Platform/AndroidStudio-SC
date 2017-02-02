@@ -48,6 +48,7 @@ import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DatabaseConstants;
 import com.superchat.model.ErrorModel;
+import com.superchat.model.GroupChatMetaInfo;
 import com.superchat.model.LoginModel;
 import com.superchat.model.LoginResponseModel;
 import com.superchat.model.LoginResponseModel.GroupDetail;
@@ -751,6 +752,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
             SharedPrefManager.getInstance().saveUserGroupInfo(tmpGroup.groupName, SharedPrefManager.getInstance().getUserName(), SharedPrefManager.PUBLIC_CHANNEL, true);
             SharedPrefManager.getInstance().saveGroupOwnerName(tmpGroup.groupName, tmpGroup.userName);
         }
+
         updateDataLocally(tmpGroup, isJoinning);
         FragmentActivity fragmentactivity = getActivity();
         ArrayList<LoginResponseModel.GroupDetail> list = new ArrayList<LoginResponseModel.GroupDetail>();

@@ -74,6 +74,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 //import com.superchat.widgets.DontPressWithParentLayout;
@@ -751,9 +752,9 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
 
 
     private void AddRemoveSuperAdmin(final String userNames, final String contentType) {
-        try {
-            final ProgressDialog progressDialog = ProgressDialog.show(context, "", "Loading. Please wait...", true);
+        final ProgressDialog progressDialog = ProgressDialog.show(context, "", "Loading. Please wait...", true);
 
+        try {
             UserAdminRequest objUserAdmin = new UserAdminRequest();
             objUserAdmin.setUserName(userNames);
 
@@ -766,6 +767,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
             }
 
             progressDialog.show();
+
             call.enqueue(new RetrofitRetrofitCallback<UserAdminResponse>(context) {
                 @Override
                 protected void onResponseVoidzResponse(Call call, Response response) {
@@ -816,7 +818,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
             });
 
         } catch (Exception e) {
-
+            progressDialog.cancel();
         }
     }
 

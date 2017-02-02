@@ -39,6 +39,7 @@ import android.widget.Toast;
 
 import com.superchat.R;
 import com.superchat.data.db.DBWrapper;
+import com.superchat.model.DrawerUpdated;
 import com.superchat.model.multiplesg.InviteJoinDataModel;
 import com.superchat.model.multiplesg.InvitedDomainNameSet;
 import com.superchat.model.multiplesg.JoinedDomainNameSet;
@@ -62,6 +63,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import static android.R.attr.data;
 import static android.R.attr.handle;
 import static com.superchat.ui.OpenHubSearchScreen.KEY_IS_COMING_FROM_LOGIN_FLOW;
 
@@ -98,6 +100,13 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
         this.drawerListener = listener;
     }
 
+    private String getPluralSingularText(List list, String title){
+        if(list != null && list.size() > 1){
+            title = title + "s";
+        }
+        return title;
+    }
+
     ArrayList<String> invitedDomainNameSet = new ArrayList<String>();
 
     public List<ExpandableListAdapter.Item> getSuperGroupList() {
@@ -124,7 +133,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
                         ownerDomainNameSet.get(i).getDomainType()));
             }
 
-            parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, HEADER_OWNED_HUB, childDataList));
+            parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER,
+                    getPluralSingularText(childDataList, HEADER_OWNED_HUB), childDataList));
         }
 
         ArrayList<JoinedDomainNameSet> ownerDomainNameSetTemp = DBWrapper.getInstance().getListOfOwnerArraySGs();
@@ -172,7 +182,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
             }
 
 
-            parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, HEADER_OWNED_HUB, childDataList));
+            parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER,
+                    getPluralSingularText(childDataList, HEADER_OWNED_HUB), childDataList));
         }
 
         ArrayList<JoinedDomainNameSet> joinedDomainNameSetTemp = DBWrapper.getInstance().getListOfJoinedSGs();
@@ -217,7 +228,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
 //                Log.e("disp" , "is : "+joinedDisplayName);
             }
 
-            parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, HEADER_JOINED_HUB, childDataList));
+            parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER,
+                    getPluralSingularText(childDataList, HEADER_JOINED_HUB), childDataList));
         }
 
         parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, HEADER_OPEN_HUB, null));
@@ -300,15 +312,18 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
         currentSGName.setOnClickListener(this);
 
         refreshList();
+        createAdapter();
 
+        return layout;
+    }
+
+    private void createAdapter(){
         adapter = new ExpandableListAdapter(listItems, getActivity(), this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
 
         adapter.openAllHeaders();
-        return layout;
     }
-
     List<ExpandableListAdapter.Item> listItems;
     private void refreshList(){
         listItems = getSuperGroupList();
@@ -316,7 +331,8 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
 
     public void refreshListAndNotify(){
         refreshList();
-        adapter.notifyDataSetChanged();
+        createAdapter();
+        //adapter.notifyDataSetChanged();
     }
     public void updateView() {
         String file_id = SharedPrefManager.getInstance().getSGFileId("SG_FILE_ID");
@@ -845,6 +861,15 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if(isDrawerToRefreshForcefully){
+            isDrawerToRefreshForcefully = !isDrawerToRefreshForcefully;
+            refreshListAndNotify();
+        }
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         if (!EventBus.getDefault().isRegistered(this)) {
@@ -864,5 +889,13 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
     public void getIntentData(Intent data){
         System.out.print("");
         handleHub(data);
+    }
+
+    boolean isDrawerToRefreshForcefully = false;
+    @Subscribe
+    public void getUpdatedDrawer(DrawerUpdated drawerUpdated){
+        if(drawerUpdated != null){
+            isDrawerToRefreshForcefully = drawerUpdated.isDrawerUpdated();
+        }
     }
 }

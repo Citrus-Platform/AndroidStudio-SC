@@ -107,6 +107,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
     String groupName;
     String groupDiscription;
     String groupType;
+    String groupMode;
     boolean isChannel;
     boolean isLoading = false;
     boolean onForeground = false;
@@ -182,6 +183,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
             previousUsersList.add(SharedPrefManager.getInstance().getUserName());
             groupName = extras.getString(Constants.GROUP_NAME, "");
             groupType = extras.getString(Constants.GROUP_TYPE, "");
+            groupMode = extras.getString(Constants.GROUP_MODE, "");
             isBroadcast = extras.getBoolean(Constants.BROADCAST, false);
             isSharedIDCreate = extras.getBoolean(Constants.SHARED_ID, false);
             isSharedIDUpdate = extras.getBoolean(Constants.SHAREDID_UPDATE, false);
@@ -1414,6 +1416,7 @@ public class EsiaChatContactsScreen extends Activity implements OnClickListener,
                         model.setAdminUserSet(groupAdmins);
                     model.setDomainName(iPrefManager.getUserDomain());
                     model.setDescription(groupDiscription);
+                    model.setMode(groupMode);
                     if (urls != null && urls[0] != null && !urls[0].equals("")) {
                         fileId = urls[0];
                         model.setFileId(urls[0]);
