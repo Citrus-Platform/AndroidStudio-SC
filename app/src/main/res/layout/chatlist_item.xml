@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
     android:layout_margin="1dip"
     android:gravity="center">
 
@@ -27,30 +27,7 @@
         <RelativeLayout
             android:id="@+id/rlRightChatBlock"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/receiver_sel_box">
-
-            <RelativeLayout
-                android:id="@+id/id_left_pic_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <com.superchat.widgets.RoundedImageView
-                    android:id="@+id/id_left_pic"
-                    android:layout_width="40dip"
-                    android:layout_height="40dip"
-                    android:padding="2.0dip"
-                    android:src="@drawable/avtar_background"
-                    android:visibility="visible" />
-
-                <ImageView
-                    android:id="@+id/id_left_default_pic"
-                    android:layout_width="40dip"
-                    android:layout_height="40dip"
-                    android:padding="2.0dip"
-                    android:src="@drawable/avtar_background"
-                    android:visibility="visible" />
-            </RelativeLayout>
+            android:layout_height="wrap_content">
 
             <include
                 android:id="@+id/left_block_layout"
@@ -61,6 +38,30 @@
                 android:layout_marginTop="1dip"
                 android:layout_toRightOf="@+id/id_left_pic_layout"
                 android:visibility="visible" />
+
+            <RelativeLayout
+                android:id="@+id/id_left_pic_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true">
+
+                <com.superchat.widgets.RoundedImageView
+                    android:id="@+id/id_left_pic"
+                    android:layout_width="40dip"
+                    android:layout_height="40dip"
+                    android:padding="2.0dip"
+                    android:src="@drawable/avtar_background"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/id_left_default_pic"
+                    android:layout_width="40dip"
+                    android:layout_height="40dip"
+                    android:padding="2.0dip"
+                    android:src="@drawable/avtar_background"
+                    android:visibility="gone" />
+            </RelativeLayout>
         </RelativeLayout>
 
         <LinearLayout
