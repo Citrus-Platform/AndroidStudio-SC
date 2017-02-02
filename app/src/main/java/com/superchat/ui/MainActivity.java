@@ -2339,13 +2339,16 @@ public class MainActivity extends FragmentActivity implements
                 }
             } else {//Success case
                 SharedPrefManager.getInstance().setProfileAdded(SharedPrefManager.getInstance().getUserName(), true);
-                if(sgCreationAfterLogin){
-                    setResult(Activity.RESULT_OK);
-                }else {
-                    Intent intent = new Intent(MainActivity.this, BulkInvitationScreen.class);
-                    intent.putExtra(Constants.REG_TYPE, true);
-                    startActivity(intent);
-                }
+//                if(sgCreationAfterLogin){
+//                    setResult(Activity.RESULT_OK);
+//                }else {
+//                    Intent intent = new Intent(MainActivity.this, BulkInvitationScreen.class);
+//                    intent.putExtra(Constants.REG_TYPE, true);
+//                    startActivity(intent);
+//                }
+                Intent intent = new Intent(MainActivity.this, BulkInvitationScreen.class);
+                intent.putExtra(Constants.REG_TYPE, true);
+                startActivity(intent);
                 finish();
             }
         }
