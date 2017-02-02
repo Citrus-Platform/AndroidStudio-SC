@@ -2133,8 +2133,8 @@ public class DBWrapper {
                 contentvalues.put(DatabaseConstants.DOMAIN_LOGO_FILE_ID, sg_data.getLogoFileId());
                 contentvalues.put(DatabaseConstants.DOMAIN_MUTE_INFO, Integer.valueOf(0));
                 long row = DBWrapper.getInstance().insertInDB(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues);
-                if (row > 0)
-                    Log.i("DBWrapper", "updateOwnedSGData count " + row);
+//                if (row > 0)
+//                    Log.i("DBWrapper", "updateOwnedSGData count " + row);
             }
         } catch (Exception ex) {
             ex.printStackTrace();

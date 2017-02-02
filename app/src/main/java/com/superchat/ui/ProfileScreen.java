@@ -270,8 +270,8 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
             if (domainReg && bundle.getBoolean("PROFILE_FIRST")) {
                 mobForReg = bundle.getString(Constants.MOBILE_NUMBER_TXT);
             }
-            if(sgCreationAfterLogin)
-                displayName = "";
+//            if(sgCreationAfterLogin)
+//                displayName = "";
         }
 
         if (reg_flow) {
@@ -495,7 +495,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
         }
 
         if (userName != null) {
-            if(!sgCreationAfterLogin)
+            if(!sgCreationAfterLogin && !reg_flow)
                 getServerUserProfile(userName);
         }
         
@@ -1354,7 +1354,7 @@ public class ProfileScreen extends FragmentActivity implements OnClickListener, 
 
     public void onProfileImagePicClick(View view) {
         String fileName = iSharedPrefManager.getUserFileId(userName);
-        if(isSGCreationReset){
+        if(isSGCreationReset || sgCreationAfterLogin){
             fileName = null;
         }
         if (fileName == null || fileName.equals("") || fileName.equals("clear")) {

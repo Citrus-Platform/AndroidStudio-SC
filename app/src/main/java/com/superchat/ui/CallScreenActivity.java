@@ -12,8 +12,6 @@ import android.media.AudioManager;
 import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -33,7 +31,6 @@ import com.sinch.android.rtc.calling.CallEndCause;
 import com.sinch.android.rtc.calling.CallListener;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
-import com.superchat.model.MarkSGActive;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.retrofit.response.model.ConferenceInfoResponse;
 import com.superchat.utils.SharedPrefManager;
@@ -132,7 +129,10 @@ public class CallScreenActivity extends Activity implements OnClickListener{
                             }
                         }
                         mCallerName.setText(myName);
-                        mCallState.setText(call.getState().toString());
+                        if(call.getState() != null && call.getState().toString().equalsIgnoreCase("ended"))
+                            mCallState.setVisibility(View.GONE);
+                        else
+                         mCallState.setText(call.getState().toString());
                     }
 
                     Log.e("Calling : ", "domainDisplayName : "+ domainDisplayName + "\ndomainName : "+domainName);

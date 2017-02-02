@@ -232,6 +232,24 @@ public class MainActivity extends FragmentActivity implements
                 adminOrgURL.setVisibility(View.VISIBLE);
                 view_org_url.setVisibility(View.VISIBLE);
                 view_org_name.setVisibility(View.VISIBLE);
+                if(registrationForm == null) {
+                    formatedNumber = countryCodeView.getText().toString().replace("+", "") + "-" + mobileNumberView.getText();
+                    String imei = SuperChatApplication.getDeviceId();
+                    String imsi = SuperChatApplication.getNetworkOperator();
+                    String version = "";
+                    try {
+                        version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+                        if (version != null && version.contains("."))
+                            version = version.replace(".", "_");
+                        if (version == null)
+                            version = "";
+                    } catch (NameNotFoundException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    String clientVersion = "Android_" + version;
+                    registrationForm = new AdminRegistrationForm(formatedNumber, "normal", imei, imsi, clientVersion);
+                }
                 break;
             case REG_SECOND_SCREEN:
                 viewOne.setVisibility(View.GONE);
@@ -1081,7 +1099,10 @@ public class MainActivity extends FragmentActivity implements
 
             if (currPage == 1) {
                 sgDescription = (EditText) findViewById(R.id.id_status_message);
-                registrationForm = new AdminRegistrationForm(formatedNumber, "normal", imei, imsi, clientVersion);
+                if(registrationForm == null)
+                    registrationForm = new AdminRegistrationForm(formatedNumber, "normal", imei, imsi, clientVersion);
+                else
+                    registrationForm.setMobileNumber(formatedNumber);
                 registrationForm.setToken(imei);
                 registrationForm.countryCode = countryCodeView.getText().toString().replace("+", "");
                 countryCode = registrationForm.countryCode;
