@@ -112,7 +112,7 @@
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:onClick="onProfilePicClick"
-                            android:visibility="gone"
+                            android:visibility="visible"
                             android:src="@drawable/profile_camera" />
                     </LinearLayout>
                     >
