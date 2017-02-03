@@ -77,6 +77,7 @@ import com.superchat.data.db.DBWrapper;
 import com.superchat.data.db.DatabaseConstants;
 import com.superchat.interfaces.interfaceInstances;
 import com.superchat.model.BulletinMessageDataModel;
+import com.superchat.model.DrawerUpdated;
 import com.superchat.model.GroupChatMetaInfo;
 import com.superchat.model.GroupChatXmppCaption;
 import com.superchat.model.GroupChatXmppCaptionData;
@@ -1402,6 +1403,14 @@ public class ChatService extends Service implements interfaceInstances {
                             jsonobj = null;
                         } catch (JSONException e) {
                             e.printStackTrace();
+                        }
+                        try{
+                            DrawerUpdated data = new DrawerUpdated();
+                            data.setDrawerUpdated(true);
+                            data.setDrawerForceRefresh(true);
+                            EventBus.getDefault().post(data);
+                        } catch(Exception e){
+
                         }
                         return;
                     } else if (xMPPMessageType == XMPPMessageType.atMeXmppMessageTypeUpdateBulletin.ordinal()){

@@ -9,6 +9,7 @@ import java.util.List;
 public class DrawerUpdated implements Serializable {
 
 	private boolean isDrawerUpdated = false;
+	private boolean isDrawerForceRefresh = false;
 
 	public boolean isDrawerUpdated() {
 		return isDrawerUpdated;
@@ -16,5 +17,13 @@ public class DrawerUpdated implements Serializable {
 
 	public void setDrawerUpdated(boolean drawerUpdated) {
 		isDrawerUpdated = drawerUpdated;
+	}
+
+	public boolean isDrawerForceRefresh() {
+		return isDrawerForceRefresh;
+	}
+
+	public void setDrawerForceRefresh(boolean drawerForceRefresh) {
+		isDrawerForceRefresh = drawerForceRefresh;
 	}
 }

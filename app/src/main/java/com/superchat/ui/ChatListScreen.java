@@ -7651,12 +7651,15 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
 
         String groupName = userName;
 
+        boolean isGroupAdmin = iChatPref.isAdmin(groupName, iChatPref.getUserName());
+        boolean isGroupOwner = iChatPref.isOwner(groupName, iChatPref.getUserName());
+
         GroupChatMetaInfo groupChatMetaInfo = iChatPref.getSubGroupMetaData(groupName);
         if(!isBulletinBroadcast) {
             if (groupChatMetaInfo != null && groupChatMetaInfo.isBroadCastActive()) {
                 if (iChatPref.isGroupChat(userName)) {
                     boolean isUserGroupAdmin = iChatPref.isUserGroupAdmin(groupName);
-                    if (iChatPref.isDomainAdminORSubAdmin() || isSharedIDAdmin || isUserGroupAdmin) {
+                    if (iChatPref.isDomainAdminORSubAdmin() || isSharedIDAdmin || isUserGroupAdmin || isGroupAdmin || isGroupOwner) {
                         //Toast.makeText(this, "You are NOW admin or Subadmin", Toast.LENGTH_SHORT).show();
                         setUIBroascastMode(false);
                     } else {

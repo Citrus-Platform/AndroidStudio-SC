@@ -123,6 +123,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
                 .endConfig()
                 .round();
 
+        isNotifyingData = false;
     }
 
     public HashMap<String, Boolean> getSelectedItems() {
@@ -169,6 +170,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
         }
     }
 
+    boolean isNotifyingData = false;
     public void bindView(View view, Context context1, Cursor cursor) {
         super.bindView(view, context1, cursor);
         final ViewHolder viewholder = (ViewHolder) view.getTag();
@@ -185,8 +187,12 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
         //viewholder.activationDate = cursor.getString(cursor.getColumnIndex(DatabaseConstants.USER_ACTIVATION_DATE));
         viewholder.displayNameView.setText(viewholder.displayName);
 
-        // Necessary to call because it populates HashMap which contains
-        populateHMIfSuperSubAdmin(viewholder.userNames, viewholder.contentType);
+        if(!isNotifyingData) {
+            // Necessary to call because it populates HashMap which contains
+            populateHMIfSuperSubAdmin(viewholder.userNames, viewholder.contentType);
+        } else {
+            isNotifyingData = false;
+        }
 
         if (screenType == Constants.MEMBER_DELETE) {
             viewholder.iCheckBox.setVisibility(View.GONE);
@@ -803,6 +809,7 @@ public class EsiaChatContactsAdapter extends SimpleCursorAdapter implements inte
                             }
                             objToast.makeToast(context, "Member has been promoted as SuperAdmin", UtilGlobal.MODE_RELEASE);
                         }
+                        isNotifyingData = true;
                         notifyDataSetChanged();
                     } else {
                         String errorMessage = response.getMessage() != null ? response.getMessage() : "Please try later";

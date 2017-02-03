@@ -654,6 +654,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
                     isFirstTimeDrawerOpen = false;
                 }
                 initialize();
+                refreshDrawerAdapter();
 
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(containerView.getWindowToken(), 0);
@@ -857,13 +858,17 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
             bteldialog.show();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    private void refreshDrawerAdapter(){
         if(isDrawerToRefreshForcefully){
             isDrawerToRefreshForcefully = !isDrawerToRefreshForcefully;
             refreshListAndNotify();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshDrawerAdapter();
     }
 
     @Override
