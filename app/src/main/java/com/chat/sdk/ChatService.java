@@ -94,6 +94,7 @@ import com.superchat.ui.RegistrationOptions;
 import com.superchat.ui.SinchService;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
+import com.superchat.utils.FetchGroupDetailUtil;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
 
@@ -526,7 +527,7 @@ public class ChatService extends Service implements interfaceInstances {
                             try {
                                 GroupChatXmppCaptionData caption = new Gson().fromJson(captionTag, GroupChatXmppCaptionData.class);
                                 int permissionType = Integer.parseInt(caption.getGroupPermissionType());
-                                if(permissionType > 0) {
+                                if(permissionType > -1) {
                                     if (caption != null) {
                                         String groupName = caption.getDisplayName();
                                         String groupMode = "";
@@ -1944,12 +1945,15 @@ public class ChatService extends Service implements interfaceInstances {
                                     new BitmapDownloader().execute(groupPicId, BitmapDownloader.THUMB_REQUEST);
                                 prefManager.saveUserFileId(groupUUID, groupPicId);
                             }
+
+                            FetchGroupDetailUtil.getServerGroupProfile(groupUUID, false);
                             if (chatCountListener != null)
                                 chatCountListener.notifyChatRecieve(groupUUID, null);
                             if (chatListener != null)
                                 chatListener.notifyChatRecieve(groupUUID, null);
 //							if (profileUpdateNotifier != null)
 //								profileUpdateNotifier.notifyProfileUpdate(groupUUID, null, groupDisplayName);
+
                         } else {
                             Log.d(TAG, "GroupUUID is null during new group creation.");
                         }
