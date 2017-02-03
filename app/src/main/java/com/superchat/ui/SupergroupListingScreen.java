@@ -64,7 +64,6 @@ import com.superchat.model.RegistrationFormResponse;
 import com.superchat.model.SGroupListObject;
 import com.superchat.model.SlidingMenuData;
 import com.superchat.model.multiplesg.JoinedDomainNameSet;
-import com.superchat.model.multiplesg.OwnerDomainName;
 import com.superchat.ui.BulkInvitationAdapter.AppContact;
 import com.superchat.utils.AppUtil;
 import com.superchat.utils.BitmapDownloader;
@@ -1696,6 +1695,8 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 						bundle.putString(Constants.CHAT_NAME, "");
 						bundle.putBoolean(Constants.REG_TYPE, false);
 						bundle.putBoolean("PROFILE_EDIT_REG_FLOW", true);
+						if(displayName != null && displayName.length() > 0)
+							intent.putExtra(Constants.HUB_CREATION_PROFILE_NAME, displayName);
 						if(invitedDomainSelected){
 							invitedDomainSelected = false;
 							bundle.putBoolean("PROFILE_EDIT_BACK_TO_PREV", true);

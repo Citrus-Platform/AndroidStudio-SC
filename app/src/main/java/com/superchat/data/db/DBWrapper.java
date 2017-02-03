@@ -20,7 +20,9 @@ import com.superchat.utils.Constants;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -2160,8 +2162,45 @@ public class DBWrapper {
 //			System.out.println("DBWrapper :: updateSGCredentials : "+contentvalues.toString());
             int row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
                     new String[]{sg_name});
-            if (row > 0)
+            if (row > 0) {
                 Log.i("DBWrapper", "updateSGCredentials count " + row);
+            }
+            else{
+                //New Hub Joined from Open HUB
+                JoinedDomainNameSet joined = new JoinedDomainNameSet();
+                joined.setDomainName(sg_name);
+                String sg_displayname = SharedPrefManager.getInstance().getCurrentSGDisplayName();
+                if(sg_displayname != null && sg_displayname.length() > 0)
+                    joined.setDisplayName(sg_name);
+                else
+                    joined.setDisplayName(sg_name);
+                joined.setUnreadCounter(0);
+                joined.setDomainType("Company");
+                joined.setDomainMuteInfo(0);
+                joined.setOrgName("");
+                joined.setOrgUrl("");
+                joined.setPrivacyType("Open");
+                joined.setAdminName(sg_username);
+                joined.setLogoFileId(SharedPrefManager.getInstance().getSGFileId(sg_name));
+                SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
+                String dateString = formatter.format(new Date(System.currentTimeMillis()));
+                joined.setCreatedDate(dateString);
+                ArrayList<JoinedDomainNameSet> joinedSG = new ArrayList<>();
+                joinedSG.add(joined);
+                if (joined != null)
+                    updateJoinedSGData(joinedSG);
+
+                contentvalues = new ContentValues();
+                contentvalues.put(DatabaseConstants.DOMAIN_USER_NAME, sg_username);
+                contentvalues.put(DatabaseConstants.DOMAIN_USER_PASSWORD, sg_password);
+                contentvalues.put(DatabaseConstants.DOMAIN_ACTIVATE_STATUS, active);
+                contentvalues.put(DatabaseConstants.DOMAIN_USER_ID, user_id);
+                row = dbHelper.getWritableDatabase().update(DatabaseConstants.TABLE_NAME_MULTIPLE_SG, contentvalues, DatabaseConstants.DOMAIN_NAME + " = ?",
+                        new String[]{sg_name});
+                if (row > 0) {
+                    Log.i("DBWrapper", "updateSGCredentials count after Adding Open Group : " + row);
+                }
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
