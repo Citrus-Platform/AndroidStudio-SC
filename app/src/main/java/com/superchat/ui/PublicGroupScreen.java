@@ -78,6 +78,9 @@ import java.util.ConcurrentModificationException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.superchat.utils.Constants.KEY_GROUP_BROADCAST;
+import static com.superchat.utils.Constants.KEY_GROUP_NORMAL;
+
 //import android.app.ListFragment;
 
 public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClickListener {//, OnMenuItemClickListener{
@@ -751,6 +754,26 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
             SharedPrefManager.getInstance().saveGroupInfo(tmpGroup.groupName, SharedPrefManager.GROUP_ACTIVE_INFO, true);
             SharedPrefManager.getInstance().saveUserGroupInfo(tmpGroup.groupName, SharedPrefManager.getInstance().getUserName(), SharedPrefManager.PUBLIC_CHANNEL, true);
             SharedPrefManager.getInstance().saveGroupOwnerName(tmpGroup.groupName, tmpGroup.userName);
+            try{
+                String groupUUID = tmpGroup.groupName;
+                String groupModeType = tmpGroup.mode;
+                String groupMode = "";
+                if (groupModeType != null && groupModeType.equalsIgnoreCase("broadcast")){
+                    groupMode = KEY_GROUP_BROADCAST;
+                } else {
+                    groupMode = KEY_GROUP_NORMAL;
+                }
+
+
+                // Save Meta info of group
+                {
+                    GroupChatMetaInfo groupChatMetaInfo = new GroupChatMetaInfo();
+                    groupChatMetaInfo.setBroadCastActive(groupMode);
+                    SharedPrefManager.getInstance().setSubGroupMetaData(groupUUID, groupChatMetaInfo);
+                }
+            } catch(Exception e){
+
+            }
         }
 
         updateDataLocally(tmpGroup, isJoinning);
