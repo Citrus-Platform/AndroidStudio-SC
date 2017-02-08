@@ -1,50 +1,14 @@
 package com.superchat.ui;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.superchat.R;
-import com.superchat.SuperChatApplication;
-import com.superchat.data.db.DBWrapper;
-import com.superchat.model.ErrorModel;
-import com.superchat.model.LoginModel;
-import com.superchat.model.LoginResponseModel;
-import com.superchat.ui.PublicGroupAdapter.ChannelLeaveJoinTaskOnServer;
-import com.superchat.utils.Constants;
-import com.superchat.utils.Log;
-import com.superchat.utils.ProfilePicDownloader;
-import com.superchat.utils.SharedPrefManager;
-import com.superchat.utils.UtilSetFont;
-import com.superchat.widgets.RoundedImageView;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -57,7 +21,37 @@ import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.superchat.R;
+import com.superchat.SuperChatApplication;
+import com.superchat.model.ErrorModel;
+import com.superchat.model.LoginModel;
+import com.superchat.utils.Constants;
+import com.superchat.utils.Log;
+import com.superchat.utils.ProfilePicDownloader;
+import com.superchat.utils.SharedPrefManager;
+import com.superchat.utils.UtilSetFont;
+import com.superchat.widgets.RoundedImageView;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 public class PublicGroupInfoScreen extends Activity implements OnClickListener{
 	TextView membersCountView;
@@ -65,7 +59,7 @@ public class PublicGroupInfoScreen extends Activity implements OnClickListener{
 	TextView channelDescriptionView;
 	TextView channelTitleView;
 	TextView backView;
-	ImageView joinLeaveBtnView;
+	TextView joinLeaveBtnView;
 	ImageView publicImageView;
 	public static final String CHANNEL_TITLE = "channel_title";
 	public static final String MEMBERS_COUNT_ID = "members_count_id";
@@ -97,7 +91,7 @@ public class PublicGroupInfoScreen extends Activity implements OnClickListener{
 		channelDescriptionView = (TextView)findViewById(R.id.id_channel_description);
 		channelTitleView = (TextView)findViewById(R.id.header_txt);
 		backView = (TextView)findViewById(R.id.help_back);
-		joinLeaveBtnView = (ImageView)findViewById(R.id.id_join_leave_btn);
+		joinLeaveBtnView = (TextView)findViewById(R.id.id_join_leave_btn);
 		publicImageView = (ImageView)findViewById(R.id.id_public_image);
 		publicImageView.setOnClickListener(this);
 		Bundle extras = getIntent().getExtras();
@@ -112,9 +106,11 @@ public class PublicGroupInfoScreen extends Activity implements OnClickListener{
 			
 		}
 		if(memberType!=null && memberType.equals("USER")){
-			joinLeaveBtnView.setImageResource(R.drawable.join_btn);
+//			joinLeaveBtnView.setImageResource(R.drawable.join_btn);
+			joinLeaveBtnView.setText(R.string.register_as_user);
 		} else if(memberType!=null && !memberType.equals("OWNER")){
-			joinLeaveBtnView.setImageResource(R.drawable.leave_btn);
+//			joinLeaveBtnView.setImageResource(R.drawable.leave_btn);
+			joinLeaveBtnView.setText(R.string.leave_group);
 		}else
 			joinLeaveBtnView.setVisibility(View.GONE);
 		backView.setOnClickListener(this);
@@ -414,7 +410,8 @@ public class PublicGroupInfoScreen extends Activity implements OnClickListener{
 					PublicGroupScreen.updateDataLocally(channelName,isJoinning);
 					if(isJoinning){
 						memberType = "MEMBER";
-						joinLeaveBtnView.setImageResource(R.drawable.leave_btn);
+//						joinLeaveBtnView.setImageResource(R.drawable.leave_btn);
+						joinLeaveBtnView.setText(R.string.register_as_user);
 						int members = 0;
 						try{
 							members = Integer.parseInt(membersCount);
@@ -434,7 +431,8 @@ public class PublicGroupInfoScreen extends Activity implements OnClickListener{
 				            finish();
 					}else{
 						memberType = "USER";
-						joinLeaveBtnView.setImageResource(R.drawable.join_btn);
+//						joinLeaveBtnView.setImageResource(R.drawable.join_btn);
+						joinLeaveBtnView.setText(R.string.leave_group);
 						int members = 0;
 						try{
 							
