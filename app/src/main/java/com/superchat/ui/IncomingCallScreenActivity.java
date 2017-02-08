@@ -27,7 +27,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chat.sdk.db.ChatDBWrapper;
@@ -36,7 +35,6 @@ import com.sinch.android.rtc.PushPair;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallEndCause;
 import com.sinch.android.rtc.calling.CallListener;
-import com.sinch.android.rtc.video.VideoController;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
@@ -330,8 +328,10 @@ public class IncomingCallScreenActivity extends Activity {
             HomeScreen.isLaunched = false;
             Intent intent = new Intent(this, CallScreenActivity.class);
             intent.putExtra(SinchService.CALL_ID, mCallId);
-            intent.putExtra(SinchService.GROUP_CALL, true);
-            intent.putExtra(SinchService.GROUP_CALL_RECEIVED, true);
+			if(iChatPref.isGroupChat(call.getRemoteUserId())) {
+				intent.putExtra(SinchService.GROUP_CALL, true);
+				intent.putExtra(SinchService.GROUP_CALL_RECEIVED, true);
+			}
             startActivity(intent);
             finish();
         } else {

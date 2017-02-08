@@ -102,6 +102,7 @@ public class CallScreenActivity extends Activity implements OnClickListener{
                                 myName = "New User";
                             if (myName != null && myName.contains("_"))
                                 myName = "+" + myName.substring(0, myName.indexOf("_"));
+                            isGroupCall = false;
                             setProfilePic(header.get("userName"));
                         }
                         mCallerName.setText(myName);
