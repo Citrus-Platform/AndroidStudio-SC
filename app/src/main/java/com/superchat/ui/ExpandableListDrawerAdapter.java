@@ -36,10 +36,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import static android.R.attr.key;
+
 /**
  * Created by citrus on 9/20/2016.
  */
-public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ExpandableListDrawerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final int HEADER = 0;
     public static final int CHILD = 1;
 
@@ -47,12 +49,12 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public Context context;
     private ConnectorDrawer connectorDrawer;
 
-    public ExpandableListAdapter(List<Item> data, Context context, ConnectorDrawer connectorDrawer) {
+    public ExpandableListDrawerAdapter(List<Item> data, Context context, ConnectorDrawer connectorDrawer) {
         this.data = data;
         this.context = context;
         this.connectorDrawer = connectorDrawer;
 
-        if(hmHeaderInfo != null){
+        if (hmHeaderInfo != null) {
             hmHeaderInfo.clear();
         }
     }
@@ -112,11 +114,12 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     private HashMap<Integer, ListHeaderViewHolder> hmHeaderInfo = new HashMap<>();
-    private void addHeaderToHashMap(ListHeaderViewHolder holder, final int position){
+
+    private void addHeaderToHashMap(ListHeaderViewHolder holder, final int position) {
         hmHeaderInfo.put(position, holder);
     }
-
-    public void openAllHeaders(){
+/*
+    public void openAllHeaders() {
         try {
             Set set = hmHeaderInfo.keySet();
             Iterator itr = set.iterator();
@@ -128,9 +131,25 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                 expandHubs(holder, item);
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }*/
+
+    public final static int POSITION_OWNED_HUBS = 0;
+    public final static int POSITION_JOINED_HUBS = 1;
+    public static int DRAWER_POSITION = -1;
+    public void openHeader(int position) {
+        try {
+            ListHeaderViewHolder holder = hmHeaderInfo.get(position);
+
+            Item item = data.get(position);
+            expandHubs(holder, item);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        DRAWER_POSITION = -1;
     }
 
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {

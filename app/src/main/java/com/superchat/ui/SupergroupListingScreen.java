@@ -615,10 +615,17 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				if (type != 2 && type != 3)
+				if (type != 2 && type != 3) {
 					showNameDialog(sg_display_name);
-				else
+				}
+				else {
+					if(type == 2){
+						ExpandableListDrawerAdapter.DRAWER_POSITION = ExpandableListDrawerAdapter.POSITION_OWNED_HUBS;
+					} else if(type == 3){
+						ExpandableListDrawerAdapter.DRAWER_POSITION = ExpandableListDrawerAdapter.POSITION_JOINED_HUBS;
+					}
 					registerUserOnServer(supergroup_name, sg_display_name, v);
+				}
 				return;
 			}
 		});
@@ -1581,6 +1588,7 @@ public class SupergroupListingScreen extends Activity implements OnClickListener
 					Toast.makeText(SupergroupListingScreen.this, getString(R.string.check_net_connection), Toast.LENGTH_LONG).show();
 				}else {
 					bteldialog.cancel();
+					ExpandableListDrawerAdapter.DRAWER_POSITION = ExpandableListDrawerAdapter.POSITION_JOINED_HUBS;
 					registerUserOnServer(superGroupName, sg_display_name, v);
 				}
 				return false;

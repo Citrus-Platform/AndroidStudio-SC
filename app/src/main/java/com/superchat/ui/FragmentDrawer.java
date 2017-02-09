@@ -78,7 +78,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
     private RecyclerView recyclerView;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
-    public ExpandableListAdapter adapter;
+    public ExpandableListDrawerAdapter adapter;
     private View containerView;
     private static String[] titles = null;
     private FragmentDrawerListener drawerListener;
@@ -106,11 +106,11 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
 
     ArrayList<String> invitedDomainNameSet = new ArrayList<String>();
 
-    public List<ExpandableListAdapter.Item> getSuperGroupList() {
-        List<ExpandableListAdapter.Item> parentDataList = new ArrayList<>();
+    public List<ExpandableListDrawerAdapter.Item> getSuperGroupList() {
+        List<ExpandableListDrawerAdapter.Item> parentDataList = new ArrayList<>();
         ArrayList<OwnerDomainName> ownerDomainNameSet = DBWrapper.getInstance().getOwnedSGList();
         if (ownerDomainNameSet != null && ownerDomainNameSet.size() > 0) {
-            List<ExpandableListAdapter.Item> childDataList = new ArrayList<>();
+            List<ExpandableListDrawerAdapter.Item> childDataList = new ArrayList<>();
 
             for (int i = 0; i < ownerDomainNameSet.size(); i++) {
                 String ownerDisplayName = "";
@@ -122,7 +122,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
                         ownerDisplayName = ownerDomainNameSet.get(i).getDomainName().trim();
                 }
 
-                childDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
+                childDataList.add(new ExpandableListDrawerAdapter.Item(ExpandableListDrawerAdapter.CHILD,
                         ownerDisplayName,
                         ownerDomainNameSet.get(i).getDomainCount(),
                         ownerDomainNameSet.get(i).getDomainNotify(),
@@ -130,13 +130,13 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
                         ownerDomainNameSet.get(i).getDomainType()));
             }
 
-            parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER,
+            parentDataList.add(new ExpandableListDrawerAdapter.Item(ExpandableListDrawerAdapter.HEADER,
                     getPluralSingularText(childDataList, HEADER_OWNED_HUB), childDataList));
         }
 
         ArrayList<JoinedDomainNameSet> ownerDomainNameSetTemp = DBWrapper.getInstance().getListOfOwnerArraySGs();
         if (ownerDomainNameSetTemp != null && ownerDomainNameSetTemp.size() > 0) {
-            List<ExpandableListAdapter.Item> childDataList = new ArrayList<>();
+            List<ExpandableListDrawerAdapter.Item> childDataList = new ArrayList<>();
 
             Collections.sort(ownerDomainNameSetTemp, new Comparator<JoinedDomainNameSet>() {
                 @Override
@@ -168,7 +168,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
                     joinedDisplayName = ownerDomainNameSetTemp.get(i).getDomainName().trim();
                 }
 
-                childDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
+                childDataList.add(new ExpandableListDrawerAdapter.Item(ExpandableListDrawerAdapter.CHILD,
                         joinedDisplayName,
                         ownerDomainNameSetTemp.get(i).getDomainCount(),
                         ownerDomainNameSetTemp.get(i).getDomainNotify(),
@@ -179,13 +179,13 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
             }
 
 
-            parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER,
+            parentDataList.add(new ExpandableListDrawerAdapter.Item(ExpandableListDrawerAdapter.HEADER,
                     getPluralSingularText(childDataList, HEADER_OWNED_HUB), childDataList));
         }
 
         ArrayList<JoinedDomainNameSet> joinedDomainNameSetTemp = DBWrapper.getInstance().getListOfJoinedSGs();
         if (joinedDomainNameSetTemp != null && joinedDomainNameSetTemp.size() > 0) {
-            List<ExpandableListAdapter.Item> childDataList = new ArrayList<>();
+            List<ExpandableListDrawerAdapter.Item> childDataList = new ArrayList<>();
             Collections.sort(joinedDomainNameSetTemp, new Comparator<JoinedDomainNameSet>() {
                 @Override
                 public int compare(final JoinedDomainNameSet object1, final JoinedDomainNameSet object2) {
@@ -215,7 +215,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
                 } else {
                     joinedDisplayName = joinedDomainNameSetTemp.get(i).getDomainName().trim();
                 }
-                childDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.CHILD,
+                childDataList.add(new ExpandableListDrawerAdapter.Item(ExpandableListDrawerAdapter.CHILD,
                         joinedDisplayName,
                         joinedDomainNameSetTemp.get(i).getDomainCount(),
                         joinedDomainNameSetTemp.get(i).getDomainNotify(),
@@ -225,13 +225,13 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
 //                Log.e("disp" , "is : "+joinedDisplayName);
             }
 
-            parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER,
+            parentDataList.add(new ExpandableListDrawerAdapter.Item(ExpandableListDrawerAdapter.HEADER,
                     getPluralSingularText(childDataList, HEADER_JOINED_HUB), childDataList));
         }
 
-        parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, HEADER_OPEN_HUB, null));
-        parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, HEADER_NEW_INVITATION, null));
-        parentDataList.add(new ExpandableListAdapter.Item(ExpandableListAdapter.HEADER, HEADER_CREATE_NEW_HUB, null));
+        parentDataList.add(new ExpandableListDrawerAdapter.Item(ExpandableListDrawerAdapter.HEADER, HEADER_OPEN_HUB, null));
+        parentDataList.add(new ExpandableListDrawerAdapter.Item(ExpandableListDrawerAdapter.HEADER, HEADER_NEW_INVITATION, null));
+        parentDataList.add(new ExpandableListDrawerAdapter.Item(ExpandableListDrawerAdapter.HEADER, HEADER_CREATE_NEW_HUB, null));
 
         return parentDataList;
     }
@@ -315,13 +315,12 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
     }
 
     private void createAdapter(){
-        adapter = new ExpandableListAdapter(listItems, getActivity(), this);
+        adapter = new ExpandableListDrawerAdapter(listItems, getActivity(), this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
-
-        adapter.openAllHeaders();
     }
-    List<ExpandableListAdapter.Item> listItems;
+
+    List<ExpandableListDrawerAdapter.Item> listItems;
     private void refreshList(){
         listItems = getSuperGroupList();
     }
@@ -613,7 +612,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
         {
             adapter.notifyDataSetChanged();
             {/*
-                adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity(), this);
+                adapter = new ExpandableListDrawerAdapter(getSuperGroupList(), getActivity(), this);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
                 recyclerView.setAdapter(adapter);
             */}
@@ -650,9 +649,12 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 if(isFirstTimeDrawerOpen) {
-                    adapter.openAllHeaders();
+                    //adapter.openAllHeaders();
                     isFirstTimeDrawerOpen = false;
                 }
+
+                adapter.openHeader(ExpandableListDrawerAdapter.DRAWER_POSITION);
+
                 initialize();
                 refreshDrawerAdapter();
 
@@ -704,7 +706,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
     public void fragmentOpen() {
         /*if (HomeScreen.updateNavDrawer) {
             HomeScreen.updateNavDrawer = false;
-            adapter = new ExpandableListAdapter(getSuperGroupList(), getActivity(), this);
+            adapter = new ExpandableListDrawerAdapter(getSuperGroupList(), getActivity(), this);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
             recyclerView.setAdapter(adapter);
         }*/

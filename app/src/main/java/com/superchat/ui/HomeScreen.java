@@ -4042,6 +4042,15 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
                 Toast.makeText(this, "Loading some data, please wait.", Toast.LENGTH_LONG).show();
                 return;
             }
+
+            boolean isOwnerDB = DBWrapper.getInstance().isSGOwner(sg_name);
+            if(isOwnerDB){
+                ExpandableListDrawerAdapter.DRAWER_POSITION = ExpandableListDrawerAdapter.POSITION_OWNED_HUBS;
+            } else {
+                ExpandableListDrawerAdapter.DRAWER_POSITION = ExpandableListDrawerAdapter.POSITION_JOINED_HUBS;
+            }
+
+            Log.e("Error HomeScreen", "sg_name : "+sg_name+" <-> username : "+username+"\nisOwnerDB : "+isOwnerDB);
             //Check if that group is deactivated then show alert
             if (DBWrapper.getInstance().isSGActive(sg_name)) {
                 //Update SG counter for clicked SG
