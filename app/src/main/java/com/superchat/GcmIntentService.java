@@ -408,7 +408,7 @@ public class GcmIntentService extends IntentService {
 			messageNotification.setSmallIcon(R.drawable.chatgreen);
 			messageNotification.setAutoCancel(true);
 			messageNotification.setLights(Color.RED, 3000, 3000);
-			
+
 		}
 		Notification note = messageNotification.build();
 		if(prefManager.isMute(from))
@@ -544,6 +544,7 @@ public class GcmIntentService extends IntentService {
 		messageNotification.setContentTitle(displayName);
 		messageNotification.setContentText(msg);
 		messageNotification.setContentIntent(contentIntent);
+		messageNotification.setPriority(Notification.PRIORITY_MAX);
 		int count = prefManager.getChatCountOfUser(user);
 		Notification notification = messageNotification.build();
 		if(R.layout.message_notifier != -1){

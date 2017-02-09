@@ -210,7 +210,6 @@
                         android:id="@id/id_edit_pic"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:onClick="onCurrentLocationClicked"
                         android:src="@drawable/dob_hint" />
 
                 </LinearLayout>
@@ -241,7 +240,6 @@
                         android:id="@id/id_edit_pic"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:onClick="onCurrentLocationClicked"
                         android:src="@drawable/gender_hint" />
 
                 </LinearLayout>

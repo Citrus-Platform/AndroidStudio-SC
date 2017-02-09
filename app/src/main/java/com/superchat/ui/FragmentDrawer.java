@@ -236,7 +236,7 @@ public class FragmentDrawer extends Fragment implements View.OnClickListener, Co
         return parentDataList;
     }
 
-    public static final String HEADER_OPEN_HUB = "Open Hubs";
+    public static final String HEADER_OPEN_HUB = "Public Hubs";
     public static final String HEADER_NEW_INVITATION = "New Invitation";
     public static final String HEADER_CREATE_NEW_HUB = "Create New Hub";
     public static final String HEADER_OWNED_HUB = "Owned Hub";

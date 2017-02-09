@@ -805,10 +805,19 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
 
     public static void updateDataLocally(String groupName, boolean isJoinning) {
         LoginResponseModel.GroupDetail tmpGroup = null;
-        for (LoginResponseModel.GroupDetail group : HomeScreen.groupsData) {
-            if (group.groupName.equals(groupName)) {
-                tmpGroup = group;
-                break;
+        if(isJoinning) {
+            for (LoginResponseModel.GroupDetail group : discoverGroups) {
+                if (group.groupName.equals(groupName)) {
+                    tmpGroup = group;
+                    break;
+                }
+            }
+        }else{
+            for (LoginResponseModel.GroupDetail group : HomeScreen.groupsData) {
+                if (group.groupName.equals(groupName)) {
+                    tmpGroup = group;
+                    break;
+                }
             }
         }
         if (tmpGroup == null)
@@ -820,8 +829,9 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (HomeScreen.groupsData.contains(tmpGroup)) {
-            HomeScreen.groupsData.remove(tmpGroup);
+//        if (HomeScreen.groupsData.contains(tmpGroup))
+        {
+//            HomeScreen.groupsData.remove(tmpGroup);
             if (!isJoinning) {
                 try {
                     if (tmpGroup.numberOfMembers != null && !tmpGroup.numberOfMembers.equals("")) {
@@ -835,6 +845,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                 tmpGroup.memberType = "USER";
                 SharedPrefManager.getInstance().saveUserGroupInfo(tmpGroup.groupName, SharedPrefManager.getInstance().getUserName(), SharedPrefManager.GROUP_ACTIVE_INFO, false);
                 SharedPrefManager.getInstance().saveUserGroupInfo(tmpGroup.groupName, SharedPrefManager.getInstance().getUserName(), SharedPrefManager.PUBLIC_CHANNEL, false);
+                HomeScreen.groupsData.remove(tmpGroup);
             } else {
                 try {
                     if (tmpGroup.numberOfMembers != null && !tmpGroup.numberOfMembers.equals("")) {
@@ -854,8 +865,27 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                 }
                 SharedPrefManager.getInstance().saveUserGroupInfo(tmpGroup.groupName, SharedPrefManager.getInstance().getUserName(), SharedPrefManager.GROUP_ACTIVE_INFO, true);
                 SharedPrefManager.getInstance().saveUserGroupInfo(tmpGroup.groupName, SharedPrefManager.getInstance().getUserName(), SharedPrefManager.PUBLIC_CHANNEL, true);
+
+                try{
+                    String groupUUID = tmpGroup.groupName;
+                    String groupModeType = tmpGroup.mode;
+                    String groupMode = "";
+                    if (groupModeType != null && groupModeType.equalsIgnoreCase("broadcast")){
+                        groupMode = KEY_GROUP_BROADCAST;
+                    } else {
+                        groupMode = KEY_GROUP_NORMAL;
+                    }
+                    // Save Meta info of group
+                    {
+                        GroupChatMetaInfo groupChatMetaInfo = new GroupChatMetaInfo();
+                        groupChatMetaInfo.setBroadCastActive(groupMode);
+                        SharedPrefManager.getInstance().setSubGroupMetaData(groupUUID, groupChatMetaInfo);
+                    }
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+                HomeScreen.groupsData.add(tmpGroup);
             }
-            HomeScreen.groupsData.add(tmpGroup);
 
             try {
                 if (adapter != null) {

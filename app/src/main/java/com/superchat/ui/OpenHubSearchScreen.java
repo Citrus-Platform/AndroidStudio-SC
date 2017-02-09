@@ -156,7 +156,7 @@ public class OpenHubSearchScreen extends AppCompatActivity implements OnClickLis
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Open Hubs");
+        getSupportActionBar().setTitle(getString(R.string.public_hubs));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 

@@ -563,6 +563,7 @@
     <string name="public_text">Public</string>
     <string name="private_hub">Private Hub</string>
     <string name="public_hub">Public Hub</string>
+    <string name="public_hubs">Public Hubs</string>
 
     <string name="shared_id">"Common official ID"</string>
     <string name="re_invite_confirmation">"Do you want to re-invite "</string>

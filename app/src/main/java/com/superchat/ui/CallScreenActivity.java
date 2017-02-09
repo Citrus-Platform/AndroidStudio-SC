@@ -102,6 +102,7 @@ public class CallScreenActivity extends Activity implements OnClickListener{
                                 myName = "New User";
                             if (myName != null && myName.contains("_"))
                                 myName = "+" + myName.substring(0, myName.indexOf("_"));
+                            isGroupCall = false;
                             setProfilePic(header.get("userName"));
                         }
                         mCallerName.setText(myName);
@@ -128,11 +129,16 @@ public class CallScreenActivity extends Activity implements OnClickListener{
                                 setProfilePic(call.getRemoteUserId());
                             }
                         }
-                        mCallerName.setText(myName);
+                        if(myName != null && myName.equals(call.getRemoteUserId())) {
+                            mCallerName.setText("Group Call");
+                            ((ImageView) findViewById(R.id.id_profile_pic)).setImageResource(R.drawable.group_call_def);
+                        }
+                        else
+                            mCallerName.setText(myName);
                         if(call.getState() != null && call.getState().toString().equalsIgnoreCase("ended"))
                             mCallState.setVisibility(View.GONE);
                         else
-                         mCallState.setText(call.getState().toString());
+                            mCallState.setText(call.getState().toString());
                     }
 
                     Log.e("Calling : ", "domainDisplayName : "+ domainDisplayName + "\ndomainName : "+domainName);
