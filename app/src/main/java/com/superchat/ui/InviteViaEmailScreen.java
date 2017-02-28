@@ -2,6 +2,7 @@ package com.superchat.ui;
 
 import java.util.List;
 
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.utils.SharedPrefManager;
 
@@ -21,7 +22,7 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class InviteViaEmailScreen extends Activity implements OnClickListener{
+public class InviteViaEmailScreen extends CustomAppCompatActivityViewImpl implements OnClickListener{
 
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);

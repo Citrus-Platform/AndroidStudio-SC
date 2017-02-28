@@ -50,6 +50,7 @@ import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
 import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DatabaseConstants;
@@ -64,7 +65,7 @@ import com.superchat.utils.SharedPrefManager;
 import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.MyriadSemiboldTextView;
 
-public class CreateBroadCastScreen extends Activity implements OnClickListener {
+public class CreateBroadCastScreen extends CustomAppCompatActivityViewImpl implements OnClickListener {
 //	ArrayList<String> inviters;
 	private static final String TAG = "CreateBroadCastScreen";
 	private String groupName;

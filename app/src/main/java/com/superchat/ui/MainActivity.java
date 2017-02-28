@@ -38,6 +38,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
@@ -119,7 +120,7 @@ import retrofit2.Call;
 
 import static com.chatsdk.org.jivesoftware.smackx.pubsub.FormType.result;
 
-public class MainActivity extends FragmentActivity implements
+public class MainActivity extends CustomAppCompatActivityViewImpl implements
         OnItemSelectedListener, OnClickListener {
     private String TAG = "MainActivity";
     public static final int CODE_COUNTRY_CHOOSER = 333;

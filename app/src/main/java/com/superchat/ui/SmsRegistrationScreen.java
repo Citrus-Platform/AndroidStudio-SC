@@ -1,5 +1,6 @@
 package com.superchat.ui;
 
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.utils.UtilSetFont;
 
@@ -9,7 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.Window;
 
-public class SmsRegistrationScreen extends FragmentActivity {
+public class SmsRegistrationScreen extends CustomAppCompatActivityViewImpl {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

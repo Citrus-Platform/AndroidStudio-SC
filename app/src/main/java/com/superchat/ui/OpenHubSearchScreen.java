@@ -44,6 +44,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
@@ -95,7 +96,7 @@ import static com.superchat.interfaces.interfaceInstances.objExceptione;
 import static com.superchat.interfaces.interfaceInstances.objGlobal;
 import static com.superchat.interfaces.interfaceInstances.objToast;
 
-public class OpenHubSearchScreen extends AppCompatActivity implements OnClickListener, SearchView.OnQueryTextListener, OpenGroupAdapterConnector {
+public class OpenHubSearchScreen extends CustomAppCompatActivityViewImpl implements OnClickListener, SearchView.OnQueryTextListener, OpenGroupAdapterConnector {
 
     public static final String KEY_IS_COMING_FROM_LOGIN_FLOW = "isComingFromLoginFlow";
 

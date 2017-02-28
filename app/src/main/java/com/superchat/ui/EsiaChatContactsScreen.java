@@ -40,6 +40,7 @@ import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
 import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
@@ -79,7 +80,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-public class EsiaChatContactsScreen extends Activity implements OnClickListener,
+public class EsiaChatContactsScreen extends CustomAppCompatActivityViewImpl implements OnClickListener,
         ChatConnectListener, ConnectionStatusListener, ProfileUpdateListener {
     private static final String TAG = "EsiaChatContactsScreen";
     public static byte SCREEN_TYPE = 0;

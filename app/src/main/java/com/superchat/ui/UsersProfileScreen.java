@@ -11,6 +11,7 @@ import com.chat.sdk.ChatService;
 import com.chat.sdk.db.ChatDBConstants;
 import com.chat.sdk.db.ChatDBWrapper;
 import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
@@ -61,7 +62,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class UsersProfileScreen extends Activity implements OnClickListener,VoiceMediaHandler{
+public class UsersProfileScreen extends CustomAppCompatActivityViewImpl implements OnClickListener,VoiceMediaHandler{
 	private String userName;
 	private String displayName = "";
 	private String statusMessage = "";

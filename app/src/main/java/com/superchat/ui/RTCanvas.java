@@ -34,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.colorpicker.ColorPickerView;
 import com.superchat.colorpicker.ColourPickerDialog;
@@ -59,7 +60,7 @@ import java.io.InputStream;
 //import com.kainat.app.android.YelatalkApplication.TrackerName;
 //import com.kainat.app.android.core.BusinessProxy;
 
-public class RTCanvas extends Activity implements OnColorChangedListener {
+public class RTCanvas extends CustomAppCompatActivityViewImpl implements OnColorChangedListener {
 	LinearLayout parent;
 	MyView view;
 	boolean blankCanvas =true;

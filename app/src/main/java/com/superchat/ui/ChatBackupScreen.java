@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.chat.sdk.db.ChatDBWrapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.model.ErrorModel;
@@ -62,7 +63,7 @@ import java.util.Vector;
 import ch.boye.httpclientandroidlib.entity.mime.content.FileBody;
 
 
-public class ChatBackupScreen extends Activity implements OnClickListener, OnCheckedChangeListener, FileDownloadResponseHandler{
+public class ChatBackupScreen extends CustomAppCompatActivityViewImpl implements OnClickListener, OnCheckedChangeListener, FileDownloadResponseHandler{
 
     LinearLayout backupSettings;
     LinearLayout backupNetworkSettings;

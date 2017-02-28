@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.model.ErrorModel;
@@ -53,7 +54,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class PublicGroupInfoScreen extends Activity implements OnClickListener{
+public class PublicGroupInfoScreen extends CustomAppCompatActivityViewImpl implements OnClickListener{
 	TextView membersCountView;
 	TextView channelOwnerView;
 	TextView channelDescriptionView;

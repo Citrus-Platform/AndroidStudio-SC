@@ -62,6 +62,7 @@ import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.sinch.android.rtc.calling.Call;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
@@ -102,7 +103,7 @@ import java.util.Locale;
 
 import static com.superchat.utils.Constants.SG_CREATE_RESET;
 
-public class ProfileScreen extends FragmentActivity implements OnClickListener, OnItemSelectedListener {
+public class ProfileScreen extends CustomAppCompatActivityViewImpl implements OnClickListener, OnItemSelectedListener {
     public static final String TAG = "ProfileScreen";
     Dialog picChooserDialog;
     LinearLayout currentLocationLayout;

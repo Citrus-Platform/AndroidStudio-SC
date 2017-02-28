@@ -41,6 +41,7 @@ import com.chat.sdk.ChatService;
 import com.chatsdk.org.jivesoftware.smack.packet.Message;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
@@ -78,7 +79,7 @@ import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SuperGroupProfileActivity extends Activity implements OnClickListener{
+public class SuperGroupProfileActivity extends CustomAppCompatActivityViewImpl implements OnClickListener{
 	TextView superGroupName;
 	TextView superGroupDisplayName;
 	boolean isClosed;

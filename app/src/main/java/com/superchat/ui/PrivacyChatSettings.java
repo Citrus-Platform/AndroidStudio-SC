@@ -19,6 +19,7 @@ import com.chat.sdk.ChatService;
 import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.model.ErrorModel;
@@ -51,7 +52,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class PrivacyChatSettings  extends Activity implements OnClickListener {
+public class PrivacyChatSettings  extends CustomAppCompatActivityViewImpl implements OnClickListener {
 	public static final String TAG = "PrivacyChatSettings";
 	LinearLayout allMessageAllowLayout;
 	LinearLayout noMessageAllowLayout;

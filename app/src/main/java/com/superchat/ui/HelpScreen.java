@@ -8,10 +8,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.utils.UtilSetFont;
 
-public class HelpScreen extends Activity{
+public class HelpScreen extends CustomAppCompatActivityViewImpl {
 
 
 	@Override

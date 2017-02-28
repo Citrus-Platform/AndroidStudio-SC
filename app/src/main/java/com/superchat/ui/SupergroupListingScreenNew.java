@@ -51,6 +51,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
@@ -103,7 +104,7 @@ import retrofit2.Response;
 import static com.superchat.interfaces.interfaceInstances.objApi;
 import static com.superchat.interfaces.interfaceInstances.objExceptione;
 
-public class SupergroupListingScreenNew extends Activity implements OnClickListener, OnItemClickListener {
+public class SupergroupListingScreenNew extends CustomAppCompatActivityViewImpl implements OnClickListener, OnItemClickListener {
 
     public final static String KEY_INVITED_DOMAIN_SET = "INVITEDDOMAINSET";
     public final static String KEY_SHOW_OWNED_ALERT = "SHOW_OWNED_ALERT";

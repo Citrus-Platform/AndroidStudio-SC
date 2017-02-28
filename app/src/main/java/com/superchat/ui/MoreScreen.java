@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chat.sdk.ChatService;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.helper.SuperGroupDownloadSettingsHandler;
@@ -60,7 +61,7 @@ import static com.superchat.R.drawable.i;
 import static com.superchat.R.id.switchBroadcast;
 import static com.superchat.R.id.tvWebConsoleLink;
 
-public class MoreScreen extends Activity implements OnClickListener {
+public class MoreScreen extends CustomAppCompatActivityViewImpl implements OnClickListener {
 
     RelativeLayout profileIconLayout;
     //	RelativeLayout sharedID;
@@ -816,16 +817,21 @@ public class MoreScreen extends Activity implements OnClickListener {
     }
 
     //-------------------------------------------------
+
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
+    public void onDestroy() {
+        super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
     }
 
     // Called in Android UI's main thread

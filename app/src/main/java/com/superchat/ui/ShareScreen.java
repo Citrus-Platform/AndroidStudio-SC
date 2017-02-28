@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
+
 /**
  * Created by Prakash on 11-12-2015.
  */
-public class ShareScreen extends Activity {
+public class ShareScreen extends CustomAppCompatActivityViewImpl {
     @Override
     protected void onCreate(Bundle bundle){
         super.onCreate(bundle);

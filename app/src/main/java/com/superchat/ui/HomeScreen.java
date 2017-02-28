@@ -19,6 +19,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -68,6 +69,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.sinch.android.rtc.SinchError;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
@@ -156,13 +158,15 @@ import retrofit2.Response;
 
 import static com.superchat.R.drawable.i;
 
-//import com.viewpagerindicator.TabPageIndicator;
-//import com.viewpagerindicator.TitlePageIndicator;
-
-public class HomeScreen extends AppCompatActivity implements ServiceConnection, SinchService.StartFailedListener, OnClickListener,
+public class HomeScreen extends CustomAppCompatActivityViewImpl implements ServiceConnection, SinchService.StartFailedListener, OnClickListener,
         interfaceInstances, FileDownloadResponseHandler, FragmentDrawer.FragmentDrawerListener,
         SmartTabLayout.TabProvider {
 
+    public static void start(Context context) {
+        Intent intent = new Intent(context, HomeScreen.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);//intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(intent);
+    }
     public static int fragmentLoadWaitTime = 1000;
     private Toolbar mToolbar;
 
@@ -486,6 +490,20 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     TextView id_sg_name_label;
     SmartTabLayout viewPagerTab;
 
+    LinearLayout llShadowLayout;
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+
+        llShadowLayout.setVisibility(View.VISIBLE);
+        return super.onMenuOpened(featureId, menu);
+    }
+
+    @Override
+    public void onPanelClosed(int featureId, Menu menu) {
+        llShadowLayout.setVisibility(View.GONE);
+        super.onPanelClosed(featureId, menu);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -523,6 +541,8 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(null);
         getSupportActionBar().setDisplayShowHomeEnabled(false);
+
+        llShadowLayout = (LinearLayout) findViewById(R.id.llShadowLayout);
 
         // Setting SuperGroup name in toolbar
         String superGroupName = SharedPrefManager.getInstance().getCurrentSGDisplayName();
@@ -2588,7 +2608,7 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
         clearBackPressSearch(flagFrag);
     }
 
-    protected void onDestroy() {
+    public void onDestroy() {
         if (contactLoadingTask != null) {
             contactLoadingTask.cancel(true);
         }
@@ -4451,13 +4471,14 @@ public class HomeScreen extends AppCompatActivity implements ServiceConnection, 
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
     }
 
     // Called in Android UI's main thread

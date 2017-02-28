@@ -49,6 +49,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
@@ -85,7 +86,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 
-public class BulkInvitationScreen extends Activity implements OnClickListener, OnItemClickListener {
+public class BulkInvitationScreen extends CustomAppCompatActivityViewImpl implements OnClickListener, OnItemClickListener {
     private static final String TAG = "BulkInvitationScreen";
     public static final int CODE_COUNTRY_CHOOSER = 333;
     HashMap<String, AppContact> allContacts = new HashMap<String, AppContact>();

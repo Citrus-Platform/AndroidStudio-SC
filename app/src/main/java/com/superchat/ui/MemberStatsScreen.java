@@ -17,6 +17,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.model.ErrorModel;
@@ -46,7 +47,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class MemberStatsScreen extends Activity implements OnClickListener {
+public class MemberStatsScreen extends CustomAppCompatActivityViewImpl implements OnClickListener {
     public final static String TAG = "MemberStatsScreen";
     MemberStatsAdapter statsAdapter;
     ListView statsList;

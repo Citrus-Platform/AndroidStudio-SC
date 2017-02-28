@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.model.ErrorModel;
@@ -43,7 +44,7 @@ import android.widget.Toast;
 
 
 
-public class GenerateConsolePasswordActivity extends Activity implements OnClickListener{
+public class GenerateConsolePasswordActivity extends CustomAppCompatActivityViewImpl implements OnClickListener{
 
 	EditText password;
 	EditText confirmPassword;

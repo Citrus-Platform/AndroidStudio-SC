@@ -15,10 +15,11 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.chat.sdk.db.ChatDBWrapper;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.utils.UtilSetFont;
 
-public class ContactUsScreen extends Activity{
+public class ContactUsScreen extends CustomAppCompatActivityViewImpl {
 
 
 	@Override

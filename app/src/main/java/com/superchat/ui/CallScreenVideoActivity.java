@@ -59,6 +59,12 @@ import static com.superchat.R.id.sg_name;
 
 public class CallScreenVideoActivity extends Activity implements OnClickListener{
 
+    public static void start(Context context, final String callId) {
+        Intent starter = new Intent(context, CallScreenVideoActivity.class);
+        starter.putExtra(SinchService.CALL_ID, callId);
+        context.startActivity(starter);
+    }
+
     static final String TAG = CallScreenVideoActivity.class.getSimpleName();
     static final String CALL_START_TIME = "callStartTime";
     static final String ADDED_LISTENER = "addedListener";
@@ -307,11 +313,13 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
         mTimer.schedule(mDurationTask, 0, 500);
         updateUI();
     }
+/*
 
     @Override
     public void onBackPressed() {
         // User should exit activity by ending call, not by going back.
     }
+*/
 
     private void updateUI() {
         if (mSinchServiceInterface == null) {
@@ -353,7 +361,26 @@ public class CallScreenVideoActivity extends Activity implements OnClickListener
 
     private void updateCallDuration() {
         if (mCallStart > 0) {
-            mCallDuration.setText(formatTimespan(System.currentTimeMillis() - mCallStart));
+            if(mSinchServiceInterface != null) {
+                Call call = mSinchServiceInterface.getCall(mCallId);
+                if(call != null){
+                    long startedTime = call.getDetails().getStartedTime();
+                    long establishedTime = call.getDetails().getEstablishedTime();
+                    long currentTime = System.currentTimeMillis();
+
+                    currentTime = currentTime / 1000;
+
+                    Log.e(TAG, "startedTime : "+ startedTime +
+                            " -> establishedTime : " + establishedTime +
+                            " -> currentTime : " + currentTime);
+
+                    if(establishedTime > 0) {
+                        mCallDuration.setText(formatTimespan(currentTime - establishedTime));
+                    }
+                }
+            } else {
+                //mCallDuration.setText(formatTimespan(System.currentTimeMillis() - mCallStart));
+            }
         }
     }
 

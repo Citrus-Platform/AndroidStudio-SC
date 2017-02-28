@@ -32,6 +32,7 @@ import android.widget.TextView;
 
 import com.chat.sdk.ChatService;
 import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.model.LoginResponseModel;
@@ -47,7 +48,7 @@ import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class SharedIDScreen extends Activity implements OnClickListener{//, OnMenuItemClickListener{
+public class SharedIDScreen extends CustomAppCompatActivityViewImpl implements OnClickListener{//, OnMenuItemClickListener{
 	public static final String TAG = "PublicGroupScreen";
 	Cursor cursor;
 //	RelativeLayout myChannelTabLayout;

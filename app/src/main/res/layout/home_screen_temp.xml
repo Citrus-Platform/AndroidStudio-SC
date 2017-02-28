@@ -9,6 +9,7 @@
         android:id="@+id/id_home_screen"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:background="@color/activity_bg"
         android:orientation="vertical">
 
         <LinearLayout
@@ -24,31 +25,31 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/colorPrimary"
                 android:minHeight="?attr/actionBarSize"
-                local:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                local:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                local:contentInsetStart="0dp"
                 local:contentInsetLeft="0dp"
-                local:contentInsetStartWithNavigation="0dp">
+                local:contentInsetStart="0dp"
+                local:contentInsetStartWithNavigation="0dp"
+                local:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                local:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
                 <TextView
                     android:id="@+id/id_sg_name_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:maxWidth="250dp"
                     android:text="Mahesh chandra"
                     android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="normal"
-                    android:visibility="visible"
-                    android:maxLines="1"
-                    android:maxWidth="250dp"
-                    android:ellipsize="end"/>
+                    android:visibility="visible" />
 
             </android.support.v7.widget.Toolbar>
 
 
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -64,27 +65,26 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                    <com.ogaclejapan.smarttablayout.SmartTabLayout
-                        xmlns:android="http://schemas.android.com/apk/res/android"
+                    <com.ogaclejapan.smarttablayout.SmartTabLayout xmlns:android="http://schemas.android.com/apk/res/android"
                         xmlns:app="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/viewPagerTab"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/viewpager_height"
                         android:background="?attr/colorPrimary"
                         app:stl_defaultTabBackground="?attr/colorPrimary"
+                        app:stl_defaultTabTextAllCaps="true"
+                        app:stl_defaultTabTextColor="?attr/colorPrimary"
                         app:stl_distributeEvenly="true"
+                        app:stl_dividerColor="?attr/colorPrimary"
+                        app:stl_dividerThickness="0dp"
                         app:stl_indicatorColor="?attr/colorPrimary"
+                        app:stl_indicatorCornerRadius="0dp"
                         app:stl_indicatorThickness="0dp"
                         app:stl_indicatorWidth="0dp"
-                        app:stl_indicatorCornerRadius="0dp"
                         app:stl_overlineColor="?attr/colorPrimary"
                         app:stl_overlineThickness="0dp"
                         app:stl_underlineColor="?attr/colorPrimary"
                         app:stl_underlineThickness="0dp"
-                        app:stl_dividerColor="?attr/colorPrimary"
-                        app:stl_dividerThickness="0dp"
-                        app:stl_defaultTabTextAllCaps="true"
-                        app:stl_defaultTabTextColor="?attr/colorPrimary"
                         app:tabMode="scrollable" />
 
                     <com.superchat.ui.CustomViewPager
@@ -95,7 +95,15 @@
 
                 </LinearLayout>
             </FrameLayout>
-        </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llShadowLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#80000000"
+                android:orientation="vertical"
+                android:visibility="gone"></LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 

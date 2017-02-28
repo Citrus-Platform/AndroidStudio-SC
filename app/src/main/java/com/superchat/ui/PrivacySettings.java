@@ -30,6 +30,7 @@ import com.chat.sdk.ChatService;
 import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.model.ErrorModel;
@@ -57,7 +58,7 @@ import java.util.Set;
 import static android.R.attr.mode;
 import static com.superchat.R.id.switchBroadcast;
 
-public class PrivacySettings extends Activity implements OnClickListener {
+public class PrivacySettings extends CustomAppCompatActivityViewImpl implements OnClickListener {
 
     public static void start(Context context) {
         Intent starter = new Intent(context, PrivacySettings.class);

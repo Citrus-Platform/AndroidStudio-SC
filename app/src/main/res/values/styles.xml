@@ -1,26 +1,5 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-
-
-    -->
-    <!--
-        <style name="MyMaterialTheme" parent="MyMaterialTheme.Base">
-
-        </style>
-
-        <style name="MyMaterialTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
-            <item name="windowNoTitle">true</item>
-            <item name="windowActionBar">false</item>
-            <item name="colorPrimary">@color/colorPrimary</item>
-            <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-            <item name="colorAccent">@color/colorAccent</item>
-        </style>-->
-
-    <style name="AppBaseTheme" parent="android:Theme.Light"></style>
-
     <style name="DTP">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -58,10 +37,10 @@
         <item name="toolbarStyle">@style/myToolbarStyle</item>
         <item name="toolbarNavigationButtonStyle">@style/myToolbarNavigationButtonStyle</item>
 
-    </style>
+        <item name="android:actionModeBackground">@color/colorPrimary</item>
+        <item name="actionModeBackground">@color/colorPrimary</item>
 
-    <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme"></style>
+    </style>
 
     <style name="CustomProgressBar" parent="android:Widget.ProgressBar.Horizontal">
         <item name="android:indeterminateOnly">false</item>
@@ -93,7 +72,7 @@
         <item name="android:popupMenuStyle">@style/style_popup_menu</item>
     </style>
 
-    <style name="chat_bg" parent="AppBaseTheme">
+    <style name="chat_bg" parent="MyMaterialTheme">
         <item name="android:windowBackground">@drawable/chat_bg_img</item>
         <item name="android:actionModeCloseDrawable">@drawable/back_arrow_green</item>
     </style>

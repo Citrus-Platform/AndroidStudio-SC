@@ -56,6 +56,7 @@ import android.widget.Toast;
 
 import com.chat.sdk.ChatService;
 import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -76,7 +77,7 @@ import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.MyriadSemiboldTextView;
 import com.superchat.widgets.RoundedImageView;
 
-public class ContactViewScreen extends FragmentActivity implements OnClickListener{
+public class ContactViewScreen extends CustomAppCompatActivityViewImpl implements OnClickListener{
 	public static final String TAG = "ProfileScreen";
 	TextView displayNameView;
 	TextView saveContactView;

@@ -27,6 +27,7 @@ import com.chat.sdk.db.ChatDBWrapper;
 import com.chatsdk.org.jivesoftware.smack.packet.Message;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
@@ -77,7 +78,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class MemberInviteWithGroupOrBroadCast extends Activity implements OnClickListener{
+public class MemberInviteWithGroupOrBroadCast extends CustomAppCompatActivityViewImpl implements OnClickListener{
 	public final static String TAG = "MemberInviteWithGroupOrBroadCast"; 
 	private String groupUUID;
 	private String selectedMessageId;

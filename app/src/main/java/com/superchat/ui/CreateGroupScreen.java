@@ -37,6 +37,7 @@ import com.chatsdk.org.jivesoftware.smack.XMPPConnection;
 import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.model.ErrorModel;
@@ -68,7 +69,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.UUID;
 
-public class CreateGroupScreen extends Activity implements OnClickListener {
+public class CreateGroupScreen extends CustomAppCompatActivityViewImpl implements OnClickListener {
     //	ArrayList<String> inviters;
     private static final String TAG = "CreateGroupScreen";
     private String groupName;

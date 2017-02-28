@@ -62,6 +62,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
@@ -130,7 +131,7 @@ import static com.superchat.R.id.switchChatSettings;
 import static com.superchat.utils.Constants.KEY_GROUP_BROADCAST;
 import static com.superchat.utils.Constants.KEY_GROUP_NORMAL;
 
-public class GroupProfileScreen extends Activity implements OnClickListener, ProfileUpdateListener, VoiceMediaHandler, OnMenuItemClickListener {
+public class GroupProfileScreen extends CustomAppCompatActivityViewImpl implements OnClickListener, ProfileUpdateListener, VoiceMediaHandler, OnMenuItemClickListener {
     public final static String TAG = "GroupProfileScreen";
     private RelativeLayout adminLayout;
     private RelativeLayout ownerLayout;
@@ -3375,16 +3376,21 @@ public class GroupProfileScreen extends Activity implements OnClickListener, Pro
     }
 
     //-------------------------------------------
+
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
+    public void onDestroy() {
+        super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
     }
 
     // Called in Android UI's main thread

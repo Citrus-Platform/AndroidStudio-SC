@@ -1,6 +1,7 @@
 package com.superchat.ui;
 
 
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.utils.SharedPrefManager;
 
@@ -14,7 +15,7 @@ import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class AboutScreen extends Activity{
+public class AboutScreen extends CustomAppCompatActivityViewImpl {
 
 TextView versionNumberView;
 RelativeLayout termsView;

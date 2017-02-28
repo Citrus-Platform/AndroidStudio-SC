@@ -11,6 +11,7 @@ import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.helper.SuperGroupDownloadSettingsHandler;
 import com.superchat.model.SuperGroupDownloadDataSettings;
@@ -27,7 +28,7 @@ import static com.superchat.ui.DataUsageSetting.PopupDialog.MOBILE;
  * Created by lalitjoshi on 15/11/16.
  */
 
-public class DataUsageSetting extends Activity implements View.OnClickListener {
+public class DataUsageSetting extends CustomAppCompatActivityViewImpl implements View.OnClickListener {
 
     private Context context = this;
 

@@ -56,6 +56,7 @@ import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
@@ -109,7 +110,7 @@ import static com.superchat.interfaces.interfaceInstances.objToast;
 import static com.superchat.ui.HomeScreen.firstTimeAdmin;
 import static com.superchat.ui.HomeScreen.isContactRefreshed;
 
-public class GroupMediaInfoScreen extends AppCompatActivity implements OnClickListener, SmartTabLayout.TabProvider {
+public class GroupMediaInfoScreen extends CustomAppCompatActivityViewImpl implements OnClickListener, SmartTabLayout.TabProvider {
 
     private static final String KEY_groupUUID = "groupUUID";
     private static final String KEY_displayName = "displayName";

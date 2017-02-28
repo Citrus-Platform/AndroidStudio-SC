@@ -33,6 +33,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
@@ -84,7 +85,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class GroupStausInfoScreen extends Activity implements OnClickListener{
+public class GroupStausInfoScreen extends CustomAppCompatActivityViewImpl implements OnClickListener{
 	public final static String TAG = "GroupStausInfoScreen"; 
 	private RelativeLayout ownerLayout;
 	private boolean isGroupAdmin;

@@ -267,7 +267,6 @@
 					android:layout_height="wrap_content"
 					android:hint="@string/work_address"
 					android:inputType="textCapSentences|textMultiLine"
-					android:maxLines="1"
 					android:maxLength="100"
 					android:imeOptions="actionNext"/>
 			</android.support.design.widget.TextInputLayout>
@@ -303,7 +302,6 @@
 					  android:layout_height="wrap_content"
 					  android:hint="@string/share_location"
 					  android:inputType="textCapSentences|textMultiLine"
-					  android:maxLines="1"
 					  android:maxLength="160"
 					  android:imeOptions="actionNext"/>
 			  </android.support.design.widget.TextInputLayout>

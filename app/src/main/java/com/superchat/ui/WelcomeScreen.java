@@ -8,12 +8,13 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.utils.UtilSetFont;
 import com.superchat.widgets.MyriadRegularTextView;
 
-public class WelcomeScreen extends Activity implements OnClickListener {
+public class WelcomeScreen extends CustomAppCompatActivityViewImpl implements OnClickListener {
 
 	SharedPrefManager iPrefManager = null;
 	

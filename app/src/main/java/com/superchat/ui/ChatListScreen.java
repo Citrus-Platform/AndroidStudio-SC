@@ -111,6 +111,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.sinch.android.rtc.PushPair;
 import com.sinch.android.rtc.calling.CallListener;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
@@ -200,9 +201,10 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 import static com.superchat.R.id.create_doodle;
+import static com.superchat.ui.HomeScreen.createHeaderForCalling;
 
 //import com.superchat.utils.SharedPrefManager;
-public class ChatListScreen extends FragmentActivity implements MultiChoiceModeListener, VoiceMediaHandler, TypingListener, ChatCountListener, ProfileUpdateListener,
+public class ChatListScreen extends CustomAppCompatActivityViewImpl implements MultiChoiceModeListener, VoiceMediaHandler, TypingListener, ChatCountListener, ProfileUpdateListener,
         OnClickListener, OnChatEditInterFace, ConnectionStatusListener, DatePickerDialog.OnDateSetListener,
         TimePickerDialog.OnTimeSetListener, OnMenuItemClickListener, interfaceInstances {
     public final static String TAG = "ChatListScreen";
@@ -1133,72 +1135,80 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         callOption.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                if(iChatPref.isGroupChat(userName)){
-                    android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(ChatListScreen.this);
-                    dialog.setMessage(getString(R.string.start_gp_call));
-                    dialog.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                if(isCallOngoing()){
+                    Toast.makeText(ChatListScreen.this, "Call already in progress", Toast.LENGTH_LONG).show();
+                } else {
+                    // TODO Auto-generated method stub
+                    if (iChatPref.isGroupChat(userName)) {
+                        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(ChatListScreen.this);
+                        dialog.setMessage(getString(R.string.start_gp_call));
+                        dialog.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
 
-                        @Override
-                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                            // TODO Auto-generated method stub
+                            @Override
+                            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                                // TODO Auto-generated method stub
 
-                        }
-                    });
-                    dialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                            // TODO Auto-generated method stub
-                            //Check if group Information is available, else first get the Group information and do a call-out to all members.
-                            if (mSinchServiceInterface != null) {
-                                try {
-                                    com.sinch.android.rtc.calling.Call call = mSinchServiceInterface.callGroup(userName, createHeaderForCalling(userName));
-                                    String callId = call.getCallId();
-                                    Intent callScreen = new Intent(ChatListScreen.this, CallScreenActivity.class);
-                                    callScreen.putExtra(SinchService.CALL_ID, callId);
-                                    callScreen.putExtra(SinchService.GROUP_CALL, true);
-                                    startActivity(callScreen);
-                                    call.addCallListener(new CallListener() {
-                                        @Override
-                                        public void onCallProgressing(com.sinch.android.rtc.calling.Call call) {
-                                            System.out.println("callGroup :: onCallProgressing - "+call.getCallId());
-                                            conferenceCallOutFromServer(userName);
-                                        }
-
-                                        @Override
-                                        public void onCallEstablished(com.sinch.android.rtc.calling.Call call) {
-
-                                        }
-
-                                        @Override
-                                        public void onCallEnded(com.sinch.android.rtc.calling.Call call) {
-
-                                        }
-
-                                        @Override
-                                        public void onShouldSendPushNotification(com.sinch.android.rtc.calling.Call call, List<PushPair> list) {
-
-                                        }
-                                    });
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
                             }
+                        });
+                        dialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
 
-                        }
-                    });
-                    dialog.show();
-                    return;
-                }else
-                    onCallClicked();
+                            @Override
+                            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                                // TODO Auto-generated method stub
+                                //Check if group Information is available, else first get the Group information and do a call-out to all members.
+                                if (mSinchServiceInterface != null) {
+                                    try {
+                                        com.sinch.android.rtc.calling.Call call = mSinchServiceInterface.callGroup(userName, createHeaderForCalling(userName));
+                                        String callId = call.getCallId();
+                                        Intent callScreen = new Intent(ChatListScreen.this, CallScreenActivity.class);
+                                        callScreen.putExtra(SinchService.CALL_ID, callId);
+                                        callScreen.putExtra(SinchService.GROUP_CALL, true);
+                                        startActivity(callScreen);
+                                        call.addCallListener(new CallListener() {
+                                            @Override
+                                            public void onCallProgressing(com.sinch.android.rtc.calling.Call call) {
+                                                System.out.println("callGroup :: onCallProgressing - " + call.getCallId());
+                                                conferenceCallOutFromServer(userName);
+                                            }
+
+                                            @Override
+                                            public void onCallEstablished(com.sinch.android.rtc.calling.Call call) {
+
+                                            }
+
+                                            @Override
+                                            public void onCallEnded(com.sinch.android.rtc.calling.Call call) {
+
+                                            }
+
+                                            @Override
+                                            public void onShouldSendPushNotification(com.sinch.android.rtc.calling.Call call, List<PushPair> list) {
+
+                                            }
+                                        });
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                            }
+                        });
+                        dialog.show();
+                        return;
+                    } else
+                        onCallClicked();
+                }
             }
         });
         call_option_video.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                onVideoCallClicked();
+                if(isCallOngoing()){
+                    Toast.makeText(ChatListScreen.this, "Call already in progress", Toast.LENGTH_LONG).show();
+                } else {
+                    onVideoCallClicked();
+                }
             }
         });
 
@@ -3173,7 +3183,8 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
         super.onPause();
     }
 
-    protected void onDestroy() {
+    @Override
+    public void onDestroy() {
         usersList.clear();
         if (!ChatListAdapter.cacheKeys.isEmpty())
             for (String key : ChatListAdapter.cacheKeys) {
@@ -3205,16 +3216,21 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
     }
 
     public void onCallClicked() {
-        if (!iChatPref.isGroupChat(userName)) {
-            if (iChatPref.isDNC(userName) && !iChatPref.isDomainAdminORSubAdmin()) {
-                Toast.makeText(this, getString(R.string.dnc_alert), Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (mSinchServiceInterface != null) {
-                try {
-                    HomeScreen.checkForCall(userName, this, mSinchServiceInterface);
-                } catch (Exception e) {
-                    e.printStackTrace();
+
+        if(isCallOngoing()){
+            Toast.makeText(ChatListScreen.this, "Call already in progress", Toast.LENGTH_LONG).show();
+        } else {
+            if (!iChatPref.isGroupChat(userName)) {
+                if (iChatPref.isDNC(userName) && !iChatPref.isDomainAdminORSubAdmin()) {
+                    Toast.makeText(this, getString(R.string.dnc_alert), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (mSinchServiceInterface != null) {
+                    try {
+                        HomeScreen.checkForCall(userName, this, mSinchServiceInterface);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -7564,13 +7580,10 @@ public class ChatListScreen extends FragmentActivity implements MultiChoiceModeL
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
-    }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     // Called in Android UI's main thread

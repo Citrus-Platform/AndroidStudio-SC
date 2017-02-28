@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.chat.sdk.ChatService;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.utils.Constants;
@@ -32,7 +33,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BlockListScreen extends Activity {
+public class BlockListScreen extends CustomAppCompatActivityViewImpl {
 
     public static void start(Context context) {
         Intent starter = new Intent(context, BlockListScreen.class);

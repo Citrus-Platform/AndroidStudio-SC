@@ -1,6 +1,5 @@
 package com.superchat.ui;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,10 +29,12 @@ import com.sinch.android.rtc.PushPair;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallEndCause;
 import com.sinch.android.rtc.calling.CallListener;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.retrofit.api.RetrofitRetrofitCallback;
 import com.superchat.retrofit.response.model.ConferenceInfoResponse;
+import com.superchat.service.MyAudioCallService;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.utils.UtilSetFont;
 
@@ -49,9 +51,17 @@ import retrofit2.Response;
 import static com.superchat.R.id.sg_name;
 import static com.superchat.interfaces.interfaceInstances.objApi;
 
-public class CallScreenActivity extends Activity implements OnClickListener{
+public class CallScreenActivity extends AppCompatActivity implements OnClickListener{
+
+    public static void start(Context context, final String callId) {
+        Intent starter = new Intent(context, CallScreenActivity.class);
+        starter.putExtra(SinchService.CALL_ID, callId);
+        context.startActivity(starter);
+    }
 
     static final String TAG = CallScreenActivity.class.getSimpleName();
+    private final Context context = this;
+
     private AudioPlayer mAudioPlayer;
     private Timer mTimer;
     private UpdateCallDurationTask mDurationTask;
@@ -70,11 +80,13 @@ public class CallScreenActivity extends Activity implements OnClickListener{
     ChatDBWrapper chatDBWrapper;
     ImageView muteButton;
     ImageView speakerButton;
+    ImageView chat_button;
     boolean isMute = false;
     boolean isSpeaker = false;
     private SinchService.SinchServiceInterface mSinchServiceInterface;
     AudioController audioController;
     AudioManager audioManager;
+
     private ServiceConnection mCallConnection = new ServiceConnection() {
         // ------------ Changes for call ---------------
         @Override
@@ -231,8 +243,12 @@ public class CallScreenActivity extends Activity implements OnClickListener{
         audioManager=(AudioManager)getSystemService(AUDIO_SERVICE);
         muteButton = (ImageView)findViewById(R.id.mute_button);
         speakerButton = (ImageView)findViewById(R.id.speaker_button);
+        chat_button = (ImageView)findViewById(R.id.chat_button);
+
         muteButton.setOnClickListener(this);
         speakerButton.setOnClickListener(this);
+        chat_button.setOnClickListener(this);
+
         endCallButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -241,6 +257,11 @@ public class CallScreenActivity extends Activity implements OnClickListener{
         });
         mCallStart = System.currentTimeMillis();
         mCallId = getIntent().getStringExtra(SinchService.CALL_ID);
+        if(mCallId == null){
+            mCallId = CustomAppCompatActivityViewImpl.getCallID();
+        } else {
+            CustomAppCompatActivityViewImpl.callStarted(mCallId);
+        }
         isGroupCall = getIntent().getBooleanExtra(SinchService.GROUP_CALL, false);
         isReceived = getIntent().getBooleanExtra(SinchService.GROUP_CALL_RECEIVED, false);
     }
@@ -267,12 +288,18 @@ public class CallScreenActivity extends Activity implements OnClickListener{
         mTimer.schedule(mDurationTask, 0, 500);
         bindService(new Intent(this, SinchService.class), mCallConnection,Context.BIND_AUTO_CREATE);
     }
+
+    /*
     @Override
     public void onBackPressed() {
         // User should exit activity by ending call, not by going back.
-    }
+    }*/
 
     private void endCall() {
+        CustomAppCompatActivityViewImpl.callEnded();
+
+        stopService(new Intent(this, MyAudioCallService.class)); //start service which is MyAudioCallService.java
+
         if(mAudioPlayer!=null)
             mAudioPlayer.stopProgressTone();
         if(mSinchServiceInterface!=null){
@@ -290,6 +317,8 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 //			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 //			startActivity(intent);
 //		}
+
+
         finish();
     }
     //boolean isFirstActivity(){
@@ -305,16 +334,37 @@ public class CallScreenActivity extends Activity implements OnClickListener{
 //	}
 //	return true;
 //}
+
     private String formatTimespan(long timespan) {
-        long totalSeconds = timespan / 1000;
-        long minutes = totalSeconds / 60;
-        long seconds = totalSeconds % 60;
+        //long totalSeconds = timespan / 1000;
+        long minutes = timespan / 60;
+        long seconds = timespan % 60;
         return String.format(Locale.US, "%02d:%02d", minutes, seconds);
     }
 
     private void updateCallDuration() {
         if (mCallStart > 0) {
-            mCallDuration.setText(formatTimespan(System.currentTimeMillis() - mCallStart));
+            if(mSinchServiceInterface != null) {
+                Call call = mSinchServiceInterface.getCall(mCallId);
+                if(call != null){
+                    long startedTime = call.getDetails().getStartedTime();
+                    long establishedTime = call.getDetails().getEstablishedTime();
+                    long currentTime = System.currentTimeMillis();
+
+                    currentTime = currentTime / 1000;
+
+                    Log.e(TAG, "startedTime : "+ startedTime +
+                            " -> establishedTime : " + establishedTime +
+                            " -> currentTime : " + currentTime);
+
+                    if(establishedTime > 0) {
+                        String formatterTimeSpan = formatTimespan(currentTime - establishedTime);
+                        mCallDuration.setText(formatterTimeSpan);
+                    }
+                }
+            } else {
+                //mCallDuration.setText(formatTimespan(System.currentTimeMillis() - mCallStart));
+            }
         }
     }
 
@@ -347,6 +397,8 @@ public class CallScreenActivity extends Activity implements OnClickListener{
             }
 
             mCallStart = System.currentTimeMillis();
+
+            startService(new Intent(context, MyAudioCallService.class)); //start service which is MyAudioCallService.java
         }
 
         @Override
@@ -389,6 +441,11 @@ public class CallScreenActivity extends Activity implements OnClickListener{
                         isSpeaker = !isSpeaker;
                     }
                     break;
+                case R.id.chat_button:{
+                    HomeScreen.start(this);
+                    finish();
+                    break;
+                }
             }
         }catch(Exception e){
             e.printStackTrace();

@@ -33,10 +33,17 @@ android {
         useLibrary 'org.apache.http.legacy'
     }
     buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        debug {
+            shrinkResources false // This must be first
+            minifyEnabled false  // This must be after shrinkResources
             multiDexEnabled true
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+        release {
+            shrinkResources false
+            minifyEnabled false
+            multiDexEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     lintOptions {

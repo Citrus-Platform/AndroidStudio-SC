@@ -1,5 +1,6 @@
 package com.superchat.ui;
 
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.utils.UtilSetFont;
@@ -14,7 +15,7 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class TermAndConditionScreen extends FragmentActivity {
+public class TermAndConditionScreen extends CustomAppCompatActivityViewImpl {
 	private SharedPrefManager iPrefManager = null;
 
 	@Override

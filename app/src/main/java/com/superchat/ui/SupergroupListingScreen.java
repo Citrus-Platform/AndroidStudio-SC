@@ -53,6 +53,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.superchat.CustomAppComponents.Activity.CustomAppCompatActivityViewImpl;
 import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.data.db.DBWrapper;
@@ -104,7 +105,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class SupergroupListingScreen extends Activity implements OnClickListener, OnItemClickListener {
+public class SupergroupListingScreen extends CustomAppCompatActivityViewImpl implements OnClickListener, OnItemClickListener {
 	private static final String TAG = "HubListingScreen";
 	HashMap<String, AppContact> allContacts = new HashMap<String, AppContact>();
 	ArrayList<AppContact> dataList;
