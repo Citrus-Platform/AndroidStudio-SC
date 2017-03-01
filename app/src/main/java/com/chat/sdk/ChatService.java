@@ -4099,7 +4099,7 @@ public class ChatService extends Service implements interfaceInstances {
             msg.setBody(description);
         if (groupCreaterName != null && !groupCreaterName.equals(""))
             msg.setDisplayName(groupCreaterName);
-        msg.setGroupOwnerName(userName);
+//        msg.setGroupOwnerName(userName);
         if (groupCreaterFileID != null && !groupCreaterFileID.equals(""))
             msg.setPicId(groupCreaterFileID);
         msg.setGroupDisplayName(groupDisplayName);

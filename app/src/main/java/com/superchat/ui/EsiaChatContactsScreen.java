@@ -1,6 +1,5 @@
 package com.superchat.ui;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -1780,6 +1779,13 @@ public class EsiaChatContactsScreen extends CustomAppCompatActivityViewImpl impl
                             if (members.toString().length() > 0) {
                                 finalJSONbject.put("Members", members.toString());
                             }
+                            boolean isBroadCastMode = SharedPrefManager.getInstance().isGroupInBroadcastMode(groupUUID);
+                            if(isBroadCastMode){
+                                finalJSONbject.put("groupPermissionType", "1");
+                            }else{
+                                finalJSONbject.put("groupPermissionType", "0");
+                            }
+
                         } catch (JSONException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -1794,6 +1800,8 @@ public class EsiaChatContactsScreen extends CustomAppCompatActivityViewImpl impl
                         }
                         for (String addedUser : final_user) {
                             if (!SharedPrefManager.getInstance().isUserInvited(addedUser) || !SharedPrefManager.getInstance().isDomainAdminORSubAdmin()) {
+//                                service.sendGroupOwnerTaskMessage(SharedPrefManager.getInstance().getUserServerName(SharedPrefManager.getInstance().getUserName()),
+//                                        SharedPrefManager.getInstance().getUserFileId(SharedPrefManager.getInstance().getUserName()), SharedPrefManager.getInstance().getUserName(), groupUUID, displayName, groupDiscription, fileId, "0", XMPPMessageType.atMeXmppMessageTypeNewCreateGroup);
                                 service.sendGroupOwnerTaskMessage(SharedPrefManager.getInstance().getUserServerName(addedUser),
                                         SharedPrefManager.getInstance().getUserFileId(addedUser), addedUser, groupUUID, displayName, groupDiscription, fileId, "0", XMPPMessageType.atMeXmppMessageTypeNewCreateGroup);
                                 service.inviteUserInRoom(groupUUID, displayName, "", addedUser, json, false);
