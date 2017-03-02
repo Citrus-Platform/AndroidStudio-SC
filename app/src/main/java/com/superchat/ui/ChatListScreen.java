@@ -138,6 +138,7 @@ import com.superchat.retrofit.request.model.UserAdminRequest;
 import com.superchat.retrofit.response.model.ConferenceCalloutFromServerResponse;
 import com.superchat.retrofit.response.model.ConferenceCalloutResponse;
 import com.superchat.retrofit.response.model.UserAdminResponse;
+import com.superchat.service.MyAudioCallService;
 import com.superchat.time.RadialPickerLayout;
 import com.superchat.time.TimePickerDialog;
 import com.superchat.utils.AndroidBmpUtil;
@@ -207,6 +208,8 @@ import static com.superchat.ui.HomeScreen.createHeaderForCalling;
 public class ChatListScreen extends CustomAppCompatActivityViewImpl implements MultiChoiceModeListener, VoiceMediaHandler, TypingListener, ChatCountListener, ProfileUpdateListener,
         OnClickListener, OnChatEditInterFace, ConnectionStatusListener, DatePickerDialog.OnDateSetListener,
         TimePickerDialog.OnTimeSetListener, OnMenuItemClickListener, interfaceInstances {
+
+    private Context context = this;
     public final static String TAG = "ChatListScreen";
     public static final String CONTACT_ID = "contact_id";
     public final static String CREATE_GROUP_REQUEST = "create_group_request";
@@ -1173,11 +1176,14 @@ public class ChatListScreen extends CustomAppCompatActivityViewImpl implements M
 
                                             @Override
                                             public void onCallEstablished(com.sinch.android.rtc.calling.Call call) {
-
+                                                startService(new Intent(context, MyAudioCallService.class)); //start service which is MyAudioCallService.java
                                             }
 
                                             @Override
                                             public void onCallEnded(com.sinch.android.rtc.calling.Call call) {
+                                                CustomAppCompatActivityViewImpl.callEnded();
+
+                                                stopService(new Intent(context, MyAudioCallService.class)); //start service which is MyAudioCallService.java
 
                                             }
 
