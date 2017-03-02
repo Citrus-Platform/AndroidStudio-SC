@@ -1,27 +1,18 @@
 package com.superchat.utils;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.view.View;
-import android.widget.Toast;
-
-import com.chat.sdk.db.ChatDBWrapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.superchat.R;
 import com.superchat.SuperChatApplication;
 import com.superchat.model.BroadCastDetailsModel;
 import com.superchat.model.GroupChatMetaInfo;
 import com.superchat.model.GroupDetailsModel;
-import com.superchat.ui.GroupProfileScreen;
+import com.superchat.model.LoginResponseModel;
+import com.superchat.ui.HomeScreen;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 
 import static com.superchat.utils.Constants.KEY_GROUP_BROADCAST;
 import static com.superchat.utils.Constants.KEY_GROUP_NORMAL;
@@ -86,6 +77,11 @@ public class FetchGroupDetailUtil {
                             }
                         } else if (arg1 != null) {
                             GroupDetailsModel objUserModel = gson.fromJson(arg1, GroupDetailsModel.class);
+                            LoginResponseModel.GroupDetail groupDetail = gson.fromJson(arg1, LoginResponseModel.GroupDetail.class);
+                            if(groupDetail != null && HomeScreen.groupsData != null) {
+                                groupDetail.memberType = "MEMBER";
+                                HomeScreen.groupsData.add(groupDetail);
+                            }
                             if (arg1 == null || arg1.contains("error") || objUserModel == null) {
                                 return;
                             }

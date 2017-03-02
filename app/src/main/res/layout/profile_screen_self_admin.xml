@@ -268,6 +268,7 @@
 					android:hint="@string/work_address"
 					android:inputType="textCapSentences|textMultiLine"
 					android:maxLength="100"
+					android:maxLines="4"
 					android:imeOptions="actionNext"/>
 			</android.support.design.widget.TextInputLayout>
 
@@ -303,6 +304,7 @@
 					  android:hint="@string/share_location"
 					  android:inputType="textCapSentences|textMultiLine"
 					  android:maxLength="160"
+					  android:maxLines="4"
 					  android:imeOptions="actionNext"/>
 			  </android.support.design.widget.TextInputLayout>
 		

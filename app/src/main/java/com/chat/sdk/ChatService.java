@@ -4294,7 +4294,10 @@ public class ChatService extends Service implements interfaceInstances {
                 msg.setMediaTagMessage(finalJSONbject.toString());
             }
         }
-        msg.setBody(message);
+        if (type == XMPPMessageType.atMeXmppMessageTypeLeftGroup.ordinal())
+            msg.setBody("");
+        else
+            msg.setBody(message);
         msg.setPacketID(UUID.randomUUID().toString());
         Log.d(TAG, "sent packet: " + msg.toXML());
         if (connection != null && connection.isConnected()
