@@ -176,6 +176,7 @@ public class CallScreenActivity extends AppCompatActivity implements OnClickList
 */
 
                     audioController = mSinchServiceInterface.getAudioController();
+                    startService(new Intent(context, MyAudioCallService.class)); //start service which is MyAudioCallService.java
                 } else {
                     Log.e(TAG, "Started with invalid callId, aborting.");
                     finish();
@@ -189,6 +190,10 @@ public class CallScreenActivity extends AppCompatActivity implements OnClickList
             // (SinchService.class.getName().equals(componentName.getClassName()))
             {
                 mSinchServiceInterface = null;
+                CustomAppCompatActivityViewImpl.callEnded();
+
+                stopService(new Intent(context, MyAudioCallService.class)); //start service which is MyAudioCallService.java
+
                 onServiceDisconnected();
             }
         }
