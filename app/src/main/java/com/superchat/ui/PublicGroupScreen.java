@@ -637,10 +637,14 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
                         if (list != null && !isGroupAddedInList(list, groups.groupName))
                             list.add(groups);
                     }
-                    viewAllChannelLabel.setVisibility(View.GONE);
-                    viewMyChannelLabel.setVisibility(View.VISIBLE);
-                    allChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
-                    myChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
+                    if(viewAllChannelLabel != null) {
+                        viewAllChannelLabel.setVisibility(View.GONE);
+                        viewMyChannelLabel.setVisibility(View.VISIBLE);
+                    }
+                    if(allChannelLabel != null)
+                     allChannelLabel.setTextColor(getResources().getColor(R.color.darkest_gray));
+                    if(myChannelLabel != null)
+                        myChannelLabel.setTextColor(getResources().getColor(R.color.color_lite_blue));
                 }else{
                     for (LoginResponseModel.GroupDetail groups : discoverGroups) {
                         if (type == 0 && !groups.memberType.equals("USER")) {
@@ -992,7 +996,7 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
 
         @Override
         protected void onPreExecute() {
-            if (isLoading && (screenNumber == 1 || screenNumber == -1))
+            if (isLoading && (screenNumber == 1 || screenNumber == 2 || screenNumber == -1))
                 progressDialog = ProgressDialog.show(getActivity(), "", "Fetching data. Please wait...", true);
             super.onPreExecute();
         }

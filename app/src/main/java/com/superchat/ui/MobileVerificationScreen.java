@@ -645,6 +645,7 @@ public class MobileVerificationScreen extends FragmentActivity implements OnClic
                                 intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber.substring(mobileNumber.indexOf('-') + 1));
                             else
                                 intent.putExtra(Constants.MOBILE_NUMBER_TXT, mobileNumber);
+                                intent.putExtra(Constants.COUNTRY_CODE_TXT, countryCode);
                             intent.putExtra(Constants.REG_TYPE, "ADMIN");
                             intent.putExtra("REGISTER_SG", true);
                             startActivity(intent);

@@ -362,8 +362,8 @@ public class CallScreenActivity extends AppCompatActivity implements OnClickList
                             " -> establishedTime : " + establishedTime +
                             " -> currentTime : " + currentTime);
 
-                    if(establishedTime > 0) {
-                        String formatterTimeSpan = formatTimespan(currentTime - establishedTime);
+                    if(startedTime > 0) {
+                        String formatterTimeSpan = formatTimespan(currentTime - startedTime);
                         mCallDuration.setText(formatterTimeSpan);
                     }
                 }

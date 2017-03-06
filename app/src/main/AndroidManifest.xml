@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.superchat"
     android:installLocation="preferExternal"
-    android:versionCode="119"
-    android:versionName="5.0.2">
+    android:versionCode="120"
+    android:versionName="5.0.3">
 
     <uses-sdk
         android:minSdkVersion="13"
@@ -22,7 +22,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="2rrggg.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 

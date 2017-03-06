@@ -544,7 +544,7 @@ public class ChatService extends Service implements interfaceInstances {
                                         SharedPrefManager.getInstance().setSubGroupMetaData(user, groupChatMetaInfo);
                                         eventSetGroupBroadcastMode();
                                     }
-                                    return;
+//                                    return;
                                 }
                             } catch(Exception e){
                                 e.printStackTrace();

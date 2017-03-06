@@ -1082,7 +1082,16 @@ public class MainActivity extends CustomAppCompatActivityViewImpl implements
 //                sharedPrefManager.saveRecentDomains(input);
             }
 
-            formatedNumber = countryCodeView.getText().toString().replace("+", "") + "-" + mobileNumberView.getText();
+            String saved_number = sharedPrefManager.getUserPhone().trim();//If user is already registered with some number, then use that number only.
+            if(sgCreationAfterLogin && saved_number != null){
+//                if(saved_number.contains("-") && saved_number.length() > 8) {
+//                    saved_number = saved_number.replace("-", "");
+//                    if(!saved_number.startsWith("+"))
+//                        saved_number = "+" + saved_number;
+//                }
+                formatedNumber = saved_number;
+            }else
+                formatedNumber = countryCodeView.getText().toString().replace("+", "") + "-" + mobileNumberView.getText();
             String imei = SuperChatApplication.getDeviceId();
             String imsi = SuperChatApplication.getNetworkOperator();
             String version = "";

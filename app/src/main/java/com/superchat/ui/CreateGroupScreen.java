@@ -1,6 +1,5 @@
 package com.superchat.ui;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
@@ -114,6 +113,8 @@ public class CreateGroupScreen extends CustomAppCompatActivityViewImpl implement
     };
     private boolean onForeground;
     String mode = Constants.KEY_GROUP_NORMAL;;
+    boolean modeChanged;
+    boolean broadCastModeSaved;
 
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -136,6 +137,7 @@ public class CreateGroupScreen extends CustomAppCompatActivityViewImpl implement
         switchBroadcast = (Switch) findViewById(R.id.switchBroadcast);
         switchBroadcast.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                modeChanged = true;
                 if (isChecked) {
                     mode = Constants.KEY_GROUP_BROADCAST;
                 } else {
@@ -281,8 +283,8 @@ public class CreateGroupScreen extends CustomAppCompatActivityViewImpl implement
         onForeground = true;
         bindService(new Intent(this, ChatService.class), mMessageConnection, Context.BIND_AUTO_CREATE);
 
-        boolean isBroadCastMode = SharedPrefManager.getInstance().isGroupInBroadcastMode(groupUUID);
-        switchBroadcast.setChecked(isBroadCastMode);
+        broadCastModeSaved = SharedPrefManager.getInstance().isGroupInBroadcastMode(groupUUID);
+        switchBroadcast.setChecked(broadCastModeSaved);
     }
 
     protected void onPause() {
@@ -585,7 +587,8 @@ public class CreateGroupScreen extends CustomAppCompatActivityViewImpl implement
                     break;
                 case Constants.GROUP_USER_CHAT_INVITE:
                     model.setGroupName(groupUUID);
-                    model.setMode(mode);
+                    if(modeChanged)
+                        model.setMode(mode);
                     if (urls != null && urls[0] != null && !urls[0].equals(""))
                         model.setFileId(urls[0]);
                     urlInfo = "/tiger/rest/group/update";
@@ -620,7 +623,8 @@ public class CreateGroupScreen extends CustomAppCompatActivityViewImpl implement
             DefaultHttpClient client1 = new DefaultHttpClient();
             String line = "";
             String responseMsg = "";
-            Log.d(TAG, "serverUpdateCreateGroupInfo request: " + JSONstring);
+            System.out.println("JSONstring ====> "+JSONstring);
+            Log.i(TAG, "serverUpdateCreateGroupInfo request: " + JSONstring);
 
 //			if(isForCreateGroup)
 //				urlInfo = "create";
@@ -705,7 +709,14 @@ public class CreateGroupScreen extends CustomAppCompatActivityViewImpl implement
                 {
                     if (mode != null) {
                         GroupChatMetaInfo groupChatMetaInfo = new GroupChatMetaInfo();
-                        groupChatMetaInfo.setBroadCastActive(mode);
+                        if(modeChanged) {
+                            groupChatMetaInfo.setBroadCastActive(mode);
+                        }else {
+                            if(broadCastModeSaved)
+                                groupChatMetaInfo.setBroadCastActive(Constants.KEY_GROUP_BROADCAST);
+                            else
+                                groupChatMetaInfo.setBroadCastActive(Constants.KEY_GROUP_NORMAL);
+                        }
                         SharedPrefManager.getInstance().setSubGroupMetaData(groupUUID, groupChatMetaInfo);
 
                         GroupChatMetaInfo.GroupPermissions permissionMode;

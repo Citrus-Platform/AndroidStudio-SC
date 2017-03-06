@@ -714,6 +714,7 @@ public class EsiaChatContactsScreen extends CustomAppCompatActivityViewImpl impl
         return list;
     }
 
+    boolean groupCreation;
     @Override
     public void onClick(View v) {
 //		ArrayList<String> allUsers = null;
@@ -808,9 +809,11 @@ public class EsiaChatContactsScreen extends CustomAppCompatActivityViewImpl impl
                 if (SCREEN_TYPE == Constants.GROUP_USERS_ROLE_SELECTION) {
 
                     String owner = groupRoleCreationAdapter.getOwner();
-                    if (owner != null && !owner.equals(""))
+                    if (owner != null && !owner.equals("") && !groupCreation) {
+                        groupCreation = true;
                         new GroupAndBroadcastTaskOnServer(groupName, groupName, groupType, groupRoleCreationAdapter.getAllUsers(), groupRoleCreationAdapter.getSelectedMembers(),
                                 owner, groupDiscription, Constants.GROUP_USER_CHAT_CREATE).execute(groupFileId);
+                    }
                     else
                         showDialog("Please select owner of this group.", getString(R.string.ok));
                     break;
@@ -1357,6 +1360,7 @@ public class EsiaChatContactsScreen extends CustomAppCompatActivityViewImpl impl
 
         @Override
         protected void onPreExecute() {
+            doneView.setClickable(false);
             progressDialog = ProgressDialog.show(EsiaChatContactsScreen.this, "", "Loading. Please wait...", true);
             super.onPreExecute();
         }
@@ -1507,14 +1511,42 @@ public class EsiaChatContactsScreen extends CustomAppCompatActivityViewImpl impl
 //						showDialog("Network error in add participant.","Ok");
                 } catch (ClientProtocolException e) {
                     Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());
+                    groupCreation = false;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            doneView.setClickable(true);
+                        }
+                    });
                 } catch (IOException e) {
                     Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution ClientProtocolException:" + e.toString());
+                    groupCreation = false;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            doneView.setClickable(true);
+                        }
+                    });
                 }
 
             } catch (UnsupportedEncodingException e1) {
                 Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution UnsupportedEncodingException:" + e1.toString());
+                groupCreation = false;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        doneView.setClickable(true);
+                    }
+                });
             } catch (Exception e) {
                 Log.d(TAG, "serverUpdateCreateGroupInfo during HttpPost execution Exception:" + e.toString());
+                groupCreation = false;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        doneView.setClickable(true);
+                    }
+                });
             }
             return responseMsg;
         }
@@ -1522,10 +1554,12 @@ public class EsiaChatContactsScreen extends CustomAppCompatActivityViewImpl impl
         @Override
         protected void onPostExecute(String response) {
 
+            doneView.setVisibility(View.GONE);
             if (progressDialog != null) {
                 progressDialog.dismiss();
                 progressDialog = null;
             }
+            groupCreation = false;
             if (response != null && response.contains("error")) {
                 Gson gson = new GsonBuilder().create();
                 ErrorModel errorModel = null;

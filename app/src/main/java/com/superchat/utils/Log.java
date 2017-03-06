@@ -1,7 +1,7 @@
 package com.superchat.utils;
 
 public class Log {
-	private static int logLevel = 4;
+	private static int logLevel = 1;
 	
 	/**
 	 * Change current logging level
