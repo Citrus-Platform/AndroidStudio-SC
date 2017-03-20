@@ -36,13 +36,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.superchat.utils.Constants.PROPERTY_APP_VERSION;
+import static com.superchat.utils.Constants.PROPERTY_REG_ID;
+
 public class
 EsiaSplashScreen extends Activity {
 	Timer timer;
 	SharedPrefManager iPrefManager;
 	public static final String EXTRA_MESSAGE = "message";
-    public static final String PROPERTY_REG_ID = "registration_id";
-    private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     Handler handler = new Handler();
     GoogleCloudMessaging gcm;
@@ -147,9 +148,9 @@ EsiaSplashScreen extends Activity {
             Log.i(TAG, "onCreate :: getRegistrationId saved ===> " + Constants.regid);
 //            testPushMessage("");
 
-//            if (Constants.regid.isEmpty()){
-//                registerInBackgroundLocal();
-//            }
+            if (Constants.regid.isEmpty()){
+                registerInBackgroundLocal();
+            }
             registerInBackgroundLocal();
         }
         else
@@ -236,7 +237,7 @@ EsiaSplashScreen extends Activity {
 
     private String getRegistrationId(Context context) {
         final SharedPreferences prefs = getGcmPreferences(context);
-        String registrationId = prefs.getString(PROPERTY_REG_ID, "");
+        String registrationId = prefs.getString(Constants.PROPERTY_REG_ID, "");
         if (registrationId.isEmpty()) {
             Log.i(TAG, "getRegistrationId :: Registration not found.");
             return "";
@@ -268,7 +269,7 @@ EsiaSplashScreen extends Activity {
         Log.i(TAG, "storeRegistrationId :: Saving regId ==> "+regId+", on app version " + appVersion);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PROPERTY_REG_ID, regId);
-        editor.putInt(PROPERTY_APP_VERSION, appVersion);
+        editor.putInt(Constants.PROPERTY_APP_VERSION, appVersion);
         editor.commit();
 //        Utilities.sRegId = regId;//BusinessProxy.sSelf.getPushRegId(DBEngine.PUSH_TABLE);
 //        testPushMessage("");

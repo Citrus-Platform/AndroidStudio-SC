@@ -1250,6 +1250,14 @@ public class ChatListScreen extends CustomAppCompatActivityViewImpl implements M
         micView.setVisibility(TextView.VISIBLE);
         attachEmoView.setVisibility(ImageView.VISIBLE);
         attachMediaView.setVisibility(ImageView.VISIBLE);
+        micView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+            }
+        });
         typingEditText.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable editable) {
@@ -2378,7 +2386,7 @@ public class ChatListScreen extends CustomAppCompatActivityViewImpl implements M
         recordPanel = (RelativeLayout) findViewById(R.id.id_record_panel);// new
         // FrameLayout(this);
         recordPanel.setVisibility(RelativeLayout.GONE);
-        recordPanel.setBackgroundColor(0xff0a9cd5);
+        recordPanel.setBackgroundColor(0xff517DA1);
 
         // bottomLayout = (RelativeLayout)findViewById(R.id.bottom_write_bar1);
         // FrameLayout.LayoutParams params =

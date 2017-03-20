@@ -141,7 +141,7 @@
                         android:gravity="left"
                         android:hint="@string/enter_group_name_hinttxt"
                         android:inputType="textCapSentences"
-                        android:maxLength="22"
+                        android:maxLength="50"
                         android:padding="10dp"
                         android:text=""
                         android:textColor="@color/black"

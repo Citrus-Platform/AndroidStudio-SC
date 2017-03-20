@@ -71,7 +71,6 @@ import com.superchat.model.BroadCastDetailsModel;
 import com.superchat.model.ErrorModel;
 import com.superchat.model.GroupChatMetaInfo;
 import com.superchat.model.GroupChatServerModel;
-import com.superchat.model.GroupChatXmppCaptionData;
 import com.superchat.model.GroupChatXmppUserPermissionCaptionData;
 import com.superchat.model.GroupDetailsModel;
 import com.superchat.model.LoginModel;
@@ -125,9 +124,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static android.R.attr.data;
-import static com.superchat.R.drawable.popup;
-import static com.superchat.R.id.switchChatSettings;
 import static com.superchat.utils.Constants.KEY_GROUP_BROADCAST;
 import static com.superchat.utils.Constants.KEY_GROUP_NORMAL;
 
@@ -2159,11 +2155,9 @@ public class GroupProfileScreen extends CustomAppCompatActivityViewImpl implemen
             String myName = SharedPrefManager.getInstance().getUserName();
             contentvalues.put(ChatDBConstants.FROM_USER_FIELD, from);
             contentvalues.put(ChatDBConstants.TO_USER_FIELD, myName);
-            contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD,
-                    new Integer(1));
+            contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD, new Integer(1));
             contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, "");
-            contentvalues.put(ChatDBConstants.SEEN_FIELD,
-                    SeenState.sent.ordinal());
+            contentvalues.put(ChatDBConstants.SEEN_FIELD, SeenState.sent.ordinal());
 //			 if(msg!=null && msg.contains("#786#")){
 //				 msg = msg.replace("#786#"+from,"");
 //				 msg = msg.replace("#786#"+myName,"");
@@ -2208,11 +2202,11 @@ public class GroupProfileScreen extends CustomAppCompatActivityViewImpl implemen
             contentvalues.put(ChatDBConstants.LAST_UPDATE_FIELD, currentTime);
 
             contentvalues.put(ChatDBConstants.CONTACT_NAMES_FIELD, name);
-            ChatDBWrapper.getInstance().insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO,
-                    contentvalues);
+            ChatDBWrapper.getInstance().insertInDB(ChatDBConstants.TABLE_NAME_MESSAGE_INFO, contentvalues);
 //			if (chatListener != null)
 //				chatListener.notifyChatRecieve(from,msg);
         } catch (Exception e) {
+            e.printStackTrace();
 
         }
     }

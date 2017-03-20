@@ -2191,6 +2191,7 @@ public class MainActivity extends CustomAppCompatActivityViewImpl implements
                     Bundle bundle = new Bundle();
                     if (regAsAdmin) {
                         sharedPrefManager.setFirstTime(true);
+                        sharedPrefManager.saveActivationTime(System.currentTimeMillis());
                         if(profileDataInHubCreation){
                             //Hit Profile Update request
                             new UpdateProfileTaskOnServer().execute();

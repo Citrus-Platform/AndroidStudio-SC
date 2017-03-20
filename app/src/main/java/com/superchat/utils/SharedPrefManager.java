@@ -79,6 +79,7 @@ public class SharedPrefManager {
     private final String SG_FILE_ID = "sg_file_id";
     private final String SHARED_ID_DATA = "shared_id_data";
     private final String LAST_ONLINE = "last_online";
+    private final String ACTIVATION_TIME = "activation_time";
     private final String USER_VARIFIED = "varified";
     private final String GROUP_DISPLAY_NAME = "group_display_name_";
     private final String BROADCAST_DISPLAY_NAME = "broadcast_display_name_";
@@ -738,6 +739,17 @@ public class SharedPrefManager {
         editor.commit();
     }
 
+    public void saveActivationTime(long time) {
+        if (time > 0) {
+            editor.putLong(ACTIVATION_TIME, time);
+            editor.commit();
+        }
+    }
+
+    public long getActivationTime() {
+        long value = pref.getLong(ACTIVATION_TIME, 0);
+        return value;
+    }
     public void saveLastOnline(String domain, long time) { // new1
         if (domain != null && !domain.equals("")) {
             editor.putLong(LAST_ONLINE + domain, time);

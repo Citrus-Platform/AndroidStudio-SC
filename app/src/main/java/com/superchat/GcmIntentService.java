@@ -1,5 +1,6 @@
 package com.superchat;
 
+import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -11,6 +12,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
@@ -21,7 +24,6 @@ import android.widget.RemoteViews;
 import com.chat.sdk.ChatService;
 import com.chat.sdk.db.ChatDBConstants;
 import com.chat.sdk.db.ChatDBWrapper;
-import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.superchat.data.db.DBWrapper;
 import com.superchat.emojicon.EmojiconTextView;
@@ -33,8 +35,15 @@ import com.superchat.utils.SharedPrefManager;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.TimeZone;
+
+import static com.google.android.gms.internal.zzip.runOnUiThread;
 
 /**
  * Created by maheshsonker on 15/05/16.
@@ -129,7 +138,7 @@ public class GcmIntentService extends IntentService {
 //            			showNotificationForGroupMessage(senderUserName, groupName, senderDisplayName, message, 0, 0);
 //            		else
 //            			showNotificationForP2PMessage(senderUserName, senderDisplayName, message, (byte)0, 0);
-                Log.e(TAG, "GCM - Push Message Received: " + extras.toString());
+                System.out.println("GCM Push Message Received: " + extras.toString());
 
 					if(user == null)
 						return;
@@ -232,8 +241,8 @@ public class GcmIntentService extends IntentService {
 //		startService(new Intent(SuperChatApplication.context, SinchService.class));
     }
  //===================================================================================
-    public void showNotificationForGroupMessage(String screen, String domainName, String senderName, String groupID,
-			String displayName, String msg, int type, int mediaType, boolean forOtherSG) {
+    public void showNotificationForGroupMessage(final String screen, final String domainName, String senderName, String groupID,
+			String displayName, final String msg, int type, int mediaType, boolean forOtherSG) {
 		 if(senderName != null && senderName.contains("#786#"))
 			 senderName = senderName.substring(0, senderName.indexOf("#786#"));
 		CharSequence tickerText = msg;
@@ -284,9 +293,9 @@ public class GcmIntentService extends IntentService {
 			tickerText = "Message from " + notificationSenderName + "@" + grpDisplayName;
 		messageNotification.setWhen(System.currentTimeMillis());
 		messageNotification.setTicker(tickerText);
-		Intent notificationIntent = new Intent(context, HomeScreen.class);
+		final Intent notificationIntent = new Intent(context, HomeScreen.class);
 		Log.d(TAG, "notificationPackage: "+notificationPackage+" , "+notificationActivity);
-//		notificationIntent.setClassName(notificationPackage, "com.superchat.ui.Ho.meScreen");
+//		notificationIntent.setClassName(notificationPackage, "com.superchat.ui.HomeScreen");
 //		Intent notificationIntent = new Intent(context,
 //				ChatListScreen.class);
 		notificationIntent.putExtra(ChatDBConstants.CONTACT_NAMES_FIELD, grpDisplayName);
@@ -314,73 +323,85 @@ public class GcmIntentService extends IntentService {
 			messageNotification.setContentTitle(notificationSenderName);
 
 		messageNotification.setContentIntent(contentIntent);
-		int count = prefManager.getChatCountOfUser(user);
-		Notification notification = messageNotification.build();
-		if(R.layout.message_notifier!=-1){
-			RemoteViews contentView = new RemoteViews(
-					SuperChatApplication.context.getPackageName(),
-					R.layout.message_notifier_group);
-
-
-//			if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal())
-//				contentView.setTextViewText(R.id.chat_person_name, notificationSenderName+"@"+SharedPrefManager.getInstance().getSharedIDDisplayName(grpDisplayName));
+//		int count = prefManager.getChatCountOfUser(user);
+//		Notification notification = messageNotification.build();
+//		if(R.layout.message_notifier!=-1){
+//			RemoteViews contentView = new RemoteViews(
+//					SuperChatApplication.context.getPackageName(),
+//					R.layout.message_notifier_group);
+//
+//
+////			if(message.getStatusMessageType().ordinal() == Message.StatusMessageType.sharedID.ordinal())
+////				contentView.setTextViewText(R.id.chat_person_name, notificationSenderName+"@"+SharedPrefManager.getInstance().getSharedIDDisplayName(grpDisplayName));
+////			else
+////				contentView.setTextViewText(R.id.chat_person_name, notificationSenderName+"@"+grpDisplayName);
+//			if(notificationSenderName != null && notificationSenderName.contains("]")) {
+//				contentView.setTextViewText(R.id.chat_sg_name, notificationSenderName.substring(0, notificationSenderName.indexOf("]") + 1));
+//				contentView.setTextViewText(R.id.chat_person_name, notificationSenderName.substring(notificationSenderName.indexOf("]") + 1));
+//			}
+//			else {
+//				contentView.setTextViewText(R.id.chat_sg_name, notificationSenderName);
+//				contentView.setTextViewText(R.id.chat_person_name, notificationSenderName);
+//			}
+//			Uri uri = getPicUri(user);
+//			if(uri!=null)
+//				contentView.setImageViewUri(R.id.imagenotileft, uri);
 //			else
-//				contentView.setTextViewText(R.id.chat_person_name, notificationSenderName+"@"+grpDisplayName);
-			if(notificationSenderName != null && notificationSenderName.contains("]")) {
-				contentView.setTextViewText(R.id.chat_sg_name, notificationSenderName.substring(0, notificationSenderName.indexOf("]") + 1));
-				contentView.setTextViewText(R.id.chat_person_name, notificationSenderName.substring(notificationSenderName.indexOf("]") + 1));
-			}
-			else {
-				contentView.setTextViewText(R.id.chat_sg_name, notificationSenderName);
-				contentView.setTextViewText(R.id.chat_person_name, notificationSenderName);
-			}
-			Uri uri = getPicUri(user);
-			if(uri!=null)
-				contentView.setImageViewUri(R.id.imagenotileft, uri);
-			else
-				contentView.setImageViewResource(R.id.imagenotileft, R.drawable.chat_person);
-			if(mediaType == 0)
-				contentView.setTextViewText(R.id.chat_message, msg);
-			else{
-				if(mediaType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Video message");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Picture message");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Voice message");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Doc file");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypePdf.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Pdf file");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "XLS file");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypePPT.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "PPT file");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeLocation.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Shared a location");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeContact.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Shared contact");
-				else if(mediaType == XMPPMessageType.atMeXmppMessageTypePoll.ordinal())
-					contentView.setTextViewText(R.id.chat_message, "Poll");
-			}
-			if (count > 0) {
-				contentView.setTextViewText(R.id.chat_notification_bubble_text, String.valueOf(count));
-			}
-			notification.contentView = contentView;
-		}
+//				contentView.setImageViewResource(R.id.imagenotileft, R.drawable.chat_person);
+//			if(mediaType == 0)
+//				contentView.setTextViewText(R.id.chat_message, msg);
+//			else{
+//				if(mediaType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal())
+//					contentView.setTextViewText(R.id.chat_message, "Video message");
+//				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
+//					contentView.setTextViewText(R.id.chat_message, "Picture message");
+//				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal())
+//					contentView.setTextViewText(R.id.chat_message, "Voice message");
+//				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal())
+//					contentView.setTextViewText(R.id.chat_message, "Doc file");
+//				else if(mediaType == XMPPMessageType.atMeXmppMessageTypePdf.ordinal())
+//					contentView.setTextViewText(R.id.chat_message, "Pdf file");
+//				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal())
+//					contentView.setTextViewText(R.id.chat_message, "XLS file");
+//				else if(mediaType == XMPPMessageType.atMeXmppMessageTypePPT.ordinal())
+//					contentView.setTextViewText(R.id.chat_message, "PPT file");
+//				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeLocation.ordinal())
+//					contentView.setTextViewText(R.id.chat_message, "Shared a location");
+//				else if(mediaType == XMPPMessageType.atMeXmppMessageTypeContact.ordinal())
+//					contentView.setTextViewText(R.id.chat_message, "Shared contact");
+//				else if(mediaType == XMPPMessageType.atMeXmppMessageTypePoll.ordinal())
+//					contentView.setTextViewText(R.id.chat_message, "Poll");
+//			}
+//			if (count > 0) {
+//				contentView.setTextViewText(R.id.chat_notification_bubble_text, String.valueOf(count));
+//			}
+//			notification.contentView = contentView;
+//		}
 //		Random random = new Random();
 		int id = (senderName + "@" + grpDisplayName).hashCode();
 		if (id < -1)
 			id = -(id);
 //		Log.d(TAG, "showNotificationForMessage1: "+from+" , "+currentUser+" , "+onForeground);
 		if(prefManager.isSnoozeExpired(prefManager.getUserDomain()) && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
-										.equals(groupID)) || !ChatListScreen.onForeground))
-		notificationManager.notify(id, notification);
+										.equals(groupID)) || !ChatListScreen.onForeground)) {
+//			notificationManager.notify(id, notification);
+			final int unique_id = id;
+			final int count = prefManager.getChatCountOfUser(user);
+			final String disp = displayName;
+			final String imageID = SharedPrefManager.getInstance().getUserFileId(user);
+			runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					new showNotificationWithImage(notificationIntent, count, domainName, disp, msg, imageID, unique_id, (byte)2).execute();
+				}
+			});
+		}
 
 	}
    //========================================
-    public void showNotificationForP2PMessage(String screen, String domainName, String from, String displayName,
-			String msg, byte messageType, int mediaType, boolean forOtherSG) {
+    public void showNotificationForP2PMessage(final String screen, final String domainName, final String from, String displayName,
+			final String msg, byte messageType, int mediaType, boolean forOtherSG) {
 		if(screen != null && screen.equals("bulletin") && from != null && from.equals("admin")){
 			return;
 		}
@@ -426,8 +447,9 @@ public class GcmIntentService extends IntentService {
 		tickerText = "Message from " + displayName;
 		messageNotification.setWhen(System.currentTimeMillis());
 		messageNotification.setTicker(tickerText);
-		Intent notificationIntent = new Intent(context, HomeScreen.class);
 		Log.d(TAG, "notificationPackage: "+notificationPackage+" , "+notificationActivity);
+
+		final Intent notificationIntent = new Intent(context, HomeScreen.class);
 		notificationIntent.setClassName(notificationPackage, notificationPackage+notificationActivity);
 		notificationIntent.putExtra(ChatDBConstants.CONTACT_NAMES_FIELD, displayName);
 		notificationIntent.putExtra(ChatDBConstants.USER_NAME_FIELD, user);
@@ -448,56 +470,68 @@ public class GcmIntentService extends IntentService {
 		messageNotification.setContentTitle(displayName);
 		messageNotification.setContentText(msg);
 		messageNotification.setContentIntent(contentIntent);
-		int count = prefManager.getChatCountOfUser(user);
+//		int count = prefManager.getChatCountOfUser(user);
 		Notification notification = messageNotification.build();
 		try {
 
-			if (R.layout.message_notifier != -1) {
-				RemoteViews contentView = new RemoteViews(
-						SuperChatApplication.context.getPackageName(),
-						R.layout.message_notifier);
-				contentView.setTextViewText(R.id.chat_person_name, displayName);
-				Uri uri = getPicUri(user);
-				if (uri != null)
-					contentView.setImageViewUri(R.id.imagenotileft, uri);
-//			setProfilePic()
-
-				if (mediaType == 0)
-					contentView.setTextViewText(R.id.chat_message, msg);
-				else {
-					if (mediaType == XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
-						contentView.setTextViewText(R.id.chat_message, "Picture message");
-					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal())
-						contentView.setTextViewText(R.id.chat_message, "Voice message");
-					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal())
-						contentView.setTextViewText(R.id.chat_message, "Video message");
-					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal())
-						contentView.setTextViewText(R.id.chat_message, "Doc message");
-					else if (mediaType == XMPPMessageType.atMeXmppMessageTypePdf.ordinal())
-						contentView.setTextViewText(R.id.chat_message, "Pdf message");
-					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal())
-						contentView.setTextViewText(R.id.chat_message, "XLS message");
-					else if (mediaType == XMPPMessageType.atMeXmppMessageTypePPT.ordinal())
-						contentView.setTextViewText(R.id.chat_message, "PPT message");
-					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeLocation.ordinal())
-						contentView.setTextViewText(R.id.chat_message, "Shared a location");
-					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeContact.ordinal())
-						contentView.setTextViewText(R.id.chat_message, "Shared contact");
-					else if (mediaType == XMPPMessageType.atMeXmppMessageTypePoll.ordinal())
-						contentView.setTextViewText(R.id.chat_message, "Poll");
-				}
-				if (count > 0) {
-					contentView.setTextViewText(R.id.chat_notification_bubble_text, String.valueOf(count));
-				}
-				notification.contentView = contentView;
-			}
+//			if (R.layout.message_notifier != -1) {
+//				RemoteViews contentView = new RemoteViews(
+//						SuperChatApplication.context.getPackageName(),
+//						R.layout.message_notifier);
+//				contentView.setTextViewText(R.id.chat_person_name, displayName);
+//				Uri uri = getPicUri(user);
+//				if (uri != null)
+//					contentView.setImageViewUri(R.id.imagenotileft, uri);
+////			setProfilePic()
+//
+//				if (mediaType == 0)
+//					contentView.setTextViewText(R.id.chat_message, msg);
+//				else {
+//					if (mediaType == XMPPMessageType.atMeXmppMessageTypeImage.ordinal())
+//						contentView.setTextViewText(R.id.chat_message, "Picture message");
+//					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeAudio.ordinal())
+//						contentView.setTextViewText(R.id.chat_message, "Voice message");
+//					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeVideo.ordinal())
+//						contentView.setTextViewText(R.id.chat_message, "Video message");
+//					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeDoc.ordinal())
+//						contentView.setTextViewText(R.id.chat_message, "Doc message");
+//					else if (mediaType == XMPPMessageType.atMeXmppMessageTypePdf.ordinal())
+//						contentView.setTextViewText(R.id.chat_message, "Pdf message");
+//					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeXLS.ordinal())
+//						contentView.setTextViewText(R.id.chat_message, "XLS message");
+//					else if (mediaType == XMPPMessageType.atMeXmppMessageTypePPT.ordinal())
+//						contentView.setTextViewText(R.id.chat_message, "PPT message");
+//					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeLocation.ordinal())
+//						contentView.setTextViewText(R.id.chat_message, "Shared a location");
+//					else if (mediaType == XMPPMessageType.atMeXmppMessageTypeContact.ordinal())
+//						contentView.setTextViewText(R.id.chat_message, "Shared contact");
+//					else if (mediaType == XMPPMessageType.atMeXmppMessageTypePoll.ordinal())
+//						contentView.setTextViewText(R.id.chat_message, "Poll");
+//				}
+//				if (count > 0) {
+//					contentView.setTextViewText(R.id.chat_notification_bubble_text, String.valueOf(count));
+//				}
+//				notification.contentView = contentView;
+//			}
 			int id = user.hashCode();
 			if (id < -1)
 				id = -(id);
 			Log.d(TAG, "showNotificationForMessage: " + from + " , " + currentUser + " , " + onForeground);
+			final String imageID = SharedPrefManager.getInstance().getUserFileId(user);
 			if (prefManager.isSnoozeExpired(prefManager.getUserDomain()) && ((ChatListScreen.onForeground && !ChatListScreen.currentUser
-					.equals(from)) || !ChatListScreen.onForeground))
-				notificationManager.notify(id, notification);
+					.equals(from)) || !ChatListScreen.onForeground)) {
+//                notificationManager.notify(id, notification);
+				final int unique_id = id;
+				final String disp = displayName;
+				final int count = prefManager.getChatCountOfUser(user);
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        new showNotificationWithImage(notificationIntent, count, domainName, disp, msg, imageID, unique_id, (byte)1).execute();
+                    }
+                });
+            }
 			previousUser = from;
 			isFirstMessage = false;
 		}catch(Exception ex){
@@ -594,6 +628,116 @@ public class GcmIntentService extends IntentService {
 //		else
 //			view.setImageResource(R.drawable.avatar); // 
 		return null;
+	}
+	//---------------------------------------------------
+	class showNotificationWithImage extends AsyncTask<String, Void, Bitmap> {
+
+		private Context mContext;
+		private Bundle extras;
+		private Intent intent;
+		private String displayName;
+		private String title, message, imgURL, tickerMsg;
+		PendingIntent contentIntent = null;
+		int unique_id;
+		byte type;
+		int count;
+
+		public showNotificationWithImage(Intent intent, int count, String tickerMsg, String displayName,
+                                         String msg, String imgURL, int unique_id, byte type) {
+			super();
+			this.mContext = context;
+			this.extras = extras;
+//			if(extras != null) {
+//				if(extras.containsKey("imgURL")) {
+//					this.imgURL = extras.getString("imgURL");
+//					if(imgURL != null && imgURL.length() > 0)
+//						try {
+//							imgURL = URLDecoder.decode(imgURL, "UTF-8");
+//						} catch (UnsupportedEncodingException e) {
+//							e.printStackTrace();
+//						}
+//				}
+//				if(extras.containsKey("text1")) {
+//					this.title = extras.getString("text1");
+//				}
+//				if(extras.containsKey("text2")) {
+//					this.message = extras.getString("text2");
+//				}
+//			}
+            this.intent = intent;
+            this.displayName = displayName;
+            this.tickerMsg = tickerMsg;
+            this.title = msg;
+            this.message = msg;
+            this.imgURL = imgURL;
+			this.unique_id = unique_id;
+			this.type = type;
+			this.count = count;
+
+			if(imgURL != null)
+				this.imgURL = Constants.media_convertget_url + imgURL + ".jpg?height=100&width=100";
+		}
+
+		@Override
+		protected Bitmap doInBackground(String... params) {
+
+			InputStream in;
+			if(imgURL != null && imgURL.trim().length() > 0) {
+				try {
+					URL url = new URL(this.imgURL);
+					HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+					connection.setDoInput(true);
+					connection.connect();
+					in = connection.getInputStream();
+					Bitmap myBitmap = BitmapFactory.decodeStream(in);
+					return myBitmap;
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+					return null;
+				} catch (IOException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}else
+				return null;
+		}
+
+		@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+		@Override
+		protected void onPostExecute(Bitmap result) {
+			super.onPostExecute(result);
+//			System.out.println("GCM Push Message : unique_id = "+unique_id);
+			PendingIntent pendingIntent = PendingIntent.getActivity(mContext, unique_id, intent, PendingIntent.FLAG_ONE_SHOT);
+
+			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
+			Bitmap icon = null;
+			switch(type){
+				case 1:
+					icon = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.profile_pic);
+					break;
+				case 2:
+					icon = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.chat_person);
+					break;
+			}
+			if(result != null)
+				icon = result;
+			Notification notification = mBuilder.setSmallIcon(R.drawable.logo_small).setTicker(tickerMsg)
+					.setAutoCancel(true)
+					.setContentTitle(displayName)
+					.setContentText(message)
+					.setNumber(++count)
+//					.setStyle(result == null ? new NotificationCompat.BigTextStyle().bigText(message).setBigContentTitle(displayName) : new NotificationCompat.BigPictureStyle().bigPicture(result).setSummaryText(message))
+					.setStyle(new NotificationCompat.BigTextStyle().bigText(message).setBigContentTitle(displayName))
+					.setContentIntent(pendingIntent)
+					.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+					.setLargeIcon(icon)
+					.setPriority(Notification.PRIORITY_MAX)
+					.build();
+
+			notification.flags = Notification.FLAG_AUTO_CANCEL;
+			NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+			notificationManager.notify(unique_id, notification);
+		}
 	}
 }
 

@@ -54,6 +54,7 @@ import com.superchat.model.LoginResponseModel;
 import com.superchat.model.LoginResponseModel.GroupDetail;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.Constants;
+import com.superchat.utils.FetchGroupDetailUtil;
 import com.superchat.utils.Log;
 import com.superchat.utils.SharedPrefManager;
 import com.superchat.utils.UtilSetFont;
@@ -810,10 +811,21 @@ public class PublicGroupScreen extends CustomFragmentHomeTabs implements OnClick
     public static void updateDataLocally(String groupName, boolean isJoinning) {
         LoginResponseModel.GroupDetail tmpGroup = null;
         if(isJoinning) {
-            for (LoginResponseModel.GroupDetail group : discoverGroups) {
-                if (group.groupName.equals(groupName)) {
-                    tmpGroup = group;
-                    break;
+            if(discoverGroups != null && discoverGroups.size() > 0) {
+                for (LoginResponseModel.GroupDetail group : discoverGroups) {
+                    if (group.groupName.equals(groupName)) {
+                        tmpGroup = group;
+                        break;
+                    }
+                }
+            }else{
+                FetchGroupDetailUtil.getServerGroupProfile(groupName, false);
+                try {
+                    if (service != null && groupName != null) {
+                        service.sendGroupPresence(groupName, 0);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }else{

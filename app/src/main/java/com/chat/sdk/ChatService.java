@@ -683,10 +683,11 @@ public class ChatService extends Service implements interfaceInstances {
                                 String tmpUser = gp;
 //                                getUserProfile(tmpUser);
 //                                getUserProfileAsynch(tmpUser);
-                                if (SharedPrefManager.getInstance().isUserInvited(tmpUser)) {
-                                    System.out.println("[USER IS INVITED, MESSAGE WILL NOT GO :: " + tmpUser);
-                                    continue;
-                                }
+
+//                                if (SharedPrefManager.getInstance().isUserInvited(tmpUser)) {
+//                                    System.out.println("[USER IS INVITED, MESSAGE WILL NOT GO :: " + tmpUser);
+//                                    continue;
+//                                }
 //								boolean isNewAdded =  prefManager.saveUsersOfGroup(user, gp);
                                 if (!prefManager.isGroupMemberActive(user, gp)) {
                                     prefManager.saveUserGroupInfo(user, gp, SharedPrefManager.GROUP_ACTIVE_INFO, true);
@@ -782,6 +783,10 @@ public class ChatService extends Service implements interfaceInstances {
                                 if (membersSize > 0)
                                     membersSize = membersSize - 1;
                                 prefManager.saveGroupMemberCount(user, String.valueOf(membersSize));
+                            }
+                            if(list == null || (list != null && list.trim().length() == 0)) {
+                                if(removed_user != null && removed_user.length() > 0)
+                                list = removed_user;
                             }
                         if (list != null && !list.equals("")) {
 
@@ -5499,11 +5504,16 @@ public class ChatService extends Service implements interfaceInstances {
             if (last_online_time == 0 || last_msg_time == 0)
                 currentTime = 0;
 
-            System.out.println("sendGroupPresence : time : " + roomName + " - " + currentTime);
-
             if ((currentTime < 0 && currentTime > -100) || currentTime < 100) {
-                currentTime = 240;
+                long activation = prefManager.getActivationTime();
+                if(activation > 0) {
+                    System.out.println("sendGroupPresence : activation time : " + activation);
+                    currentTime = (int) ((System.currentTimeMillis() - activation) / 1000);
+                }
+                else
+                    currentTime = 240;
             }
+            System.out.println("sendGroupPresence : time : " + roomName + " - " + currentTime);
 
 
 //			if(prefManager.getLastOnline(prefManager.getUserDomain()) <= 0)
@@ -5884,11 +5894,9 @@ public class ChatService extends Service implements interfaceInstances {
                 contentvalues.put(ChatDBConstants.TO_USER_FIELD, myName);
             }
 
-            contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD,
-                    new Integer(1));
+            contentvalues.put(ChatDBConstants.UNREAD_COUNT_FIELD, new Integer(1));
             contentvalues.put(ChatDBConstants.FROM_GROUP_USER_FIELD, "");
-            contentvalues.put(ChatDBConstants.SEEN_FIELD,
-                    SeenState.sent.ordinal());
+            contentvalues.put(ChatDBConstants.SEEN_FIELD, SeenState.sent.ordinal());
 //			 if(msg!=null && msg.contains("#786#")){
 //				 msg = msg.replace("#786#"+from,"");
 //				 msg = msg.replace("#786#"+myName,"");

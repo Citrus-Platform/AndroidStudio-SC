@@ -12,6 +12,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -19,7 +22,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -41,7 +43,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -65,6 +66,7 @@ import com.chat.sdk.ChatService;
 import com.chat.sdk.db.ChatDBConstants;
 import com.chat.sdk.db.ChatDBWrapper;
 import com.chatsdk.org.jivesoftware.smack.packet.Message.XMPPMessageType;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
@@ -753,7 +755,66 @@ public class HomeScreen extends CustomAppCompatActivityViewImpl implements Servi
         }
 
         UtilSetFont.setFontMainScreen(this);
+        registerInBackgroundLocal();
 
+    }
+    GoogleCloudMessaging gcm;
+    private void registerInBackgroundLocal()
+    {
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg = "";
+                try {
+                    if (gcm == null) {
+                        gcm = GoogleCloudMessaging.getInstance(HomeScreen.this);
+                    }
+                    if(Constants.isBuildLive)
+                        Constants.regid = gcm.register(Constants.GOOGLE_PROJECT_ID_PROD);
+                    else
+                        Constants.regid = gcm.register(Constants.GOOGLE_PROJECT_ID_DEV);
+                    msg = "Device registered, registration ID=" + Constants.regid;
+                    System.out.println("registerInBackgroundLocal :: regid----> "+Constants.regid);
+                } catch (IOException ex) {
+                    msg = "Error :" + ex.getMessage();
+                    // If there is an error, don't just keep trying to register.
+                    // Require the user to click a button again, or perform
+                    // exponential back-off.
+                }
+                return msg;
+            }
+
+            @Override
+            protected void onPostExecute(String msg) {
+                // Persist the regID - no need to register again.
+                storeRegistrationId(HomeScreen.this, Constants.regid);
+            }
+        }.execute(null, null, null);
+    }
+    private SharedPreferences getGcmPreferences(Context context) {
+        // This sample app persists the registration ID in shared preferences, but
+        // how you store the regID in your app is up to you.
+        return getSharedPreferences(EsiaSplashScreen.class.getSimpleName(),
+                Context.MODE_PRIVATE);
+    }
+    private static int getAppVersion(Context context) {
+        try {
+            PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+            return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            // should never happen
+            throw new RuntimeException("Could not get package name: " + e);
+        }
+    }
+    private void storeRegistrationId(Context context, String regId) {
+        final SharedPreferences prefs = getGcmPreferences(context);
+        int appVersion = getAppVersion(context);
+        Log.i(TAG, "storeRegistrationId :: Saving regId ==> "+regId+", on app version " + appVersion);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(Constants.PROPERTY_REG_ID, regId);
+        editor.putInt(Constants.PROPERTY_APP_VERSION, appVersion);
+        editor.commit();
     }
 
     private boolean isVerifiedUser(String mobileNumber) {

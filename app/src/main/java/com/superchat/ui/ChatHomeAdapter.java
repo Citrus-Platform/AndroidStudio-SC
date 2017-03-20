@@ -31,6 +31,7 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chat.sdk.ChatCountListener;
 import com.chat.sdk.db.ChatDBConstants;
@@ -41,6 +42,7 @@ import com.superchat.SuperChatApplication;
 import com.superchat.data.beans.PhotoToLoad;
 import com.superchat.data.db.DBWrapper;
 import com.superchat.data.db.DatabaseConstants;
+import com.superchat.model.GroupChatMetaInfo;
 import com.superchat.task.ImageLoaderWorker;
 import com.superchat.utils.BitmapDownloader;
 import com.superchat.utils.ColorGenerator;
@@ -172,9 +174,19 @@ public class ChatHomeAdapter extends SimpleCursorAdapter implements OnClickListe
 						type = "MS XLS";
 						break;
 					}
-					showDialog(displayName,"You are sharing "+type+".");
-				}
-				else{
+					boolean isGroupAdmin = iChatPref.isAdmin(userName, iChatPref.getUserName());
+					boolean isGroupOwner = iChatPref.isOwner(userName, iChatPref.getUserName());
+					GroupChatMetaInfo groupChatMetaInfo = iChatPref.getSubGroupMetaData(userName);
+					boolean isUserGroupAdmin = iChatPref.isUserGroupAdmin(userName);
+					if (groupChatMetaInfo != null && groupChatMetaInfo.isBroadCastActive()){
+						if(isUserGroupAdmin || isGroupAdmin || isGroupOwner)
+							showDialog(displayName, "You are sharing " + type + ".");
+						else{
+							Toast.makeText(context, "Sorry you cannot post in this group because it is in a broadcast mode.", Toast.LENGTH_SHORT).show();
+						}
+					}else
+						showDialog(displayName, "You are sharing " + type + ".");
+				}else{
 					switch (v.getId()) {
 					case R.id.contact_icon_default:
 					case R.id.contact_icon:

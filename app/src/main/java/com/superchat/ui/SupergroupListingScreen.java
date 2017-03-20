@@ -1672,6 +1672,7 @@ public class SupergroupListingScreen extends CustomAppCompatActivityViewImpl imp
 					//Save SG data
 					sharedPrefManager.saveSGPassword(objUserModel.username, objUserModel.password);
 					sharedPrefManager.saveSGUserID(objUserModel.username, sharedPrefManager.getUserId());
+					sharedPrefManager.saveActivationTime(System.currentTimeMillis());
 
 					if (newUser || pendingProfile) {
 						if(newUser){

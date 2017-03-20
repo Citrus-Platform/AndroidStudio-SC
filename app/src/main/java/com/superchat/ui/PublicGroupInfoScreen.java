@@ -1,7 +1,6 @@
 package com.superchat.ui;
 
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -408,7 +407,7 @@ public class PublicGroupInfoScreen extends CustomAppCompatActivityViewImpl imple
 				if (str!=null && str.contains("\"status\":\"success\"")){
 					Gson gson = new GsonBuilder().create();
 					ErrorModel errorModel = gson.fromJson(str,ErrorModel.class);
-					PublicGroupScreen.updateDataLocally(channelName,isJoinning);
+					PublicGroupScreen.updateDataLocally(channelName, isJoinning);
 					if(isJoinning){
 						memberType = "MEMBER";
 //						joinLeaveBtnView.setImageResource(R.drawable.leave_btn);

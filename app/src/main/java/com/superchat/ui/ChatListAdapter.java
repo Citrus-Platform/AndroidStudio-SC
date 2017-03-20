@@ -2396,6 +2396,7 @@ public class ChatListAdapter extends SimpleCursorAdapter {
         if (viewholder.isDateShow && viewholder.time != 0) {
             String tmp = "";
             if (viewholder.message != null && (viewholder.message.contains("added")
+                    || viewholder.message.contains("removed")
                     || viewholder.message.contains("group created.")
                     || viewholder.message.contains("created by ")
                     || viewholder.message.endsWith("bulletin board ")))
