@@ -793,7 +793,7 @@ public class ChatService extends Service implements interfaceInstances {
                             for (String gp : list.split(",")) {
                                 String tmpUser = gp;
 
-                                if (prefManager.isOwner(user, tmpUser)) {
+                                if (prefManager.isOwner(user, removed_user)) {
                                     isGroupDeactivated = true;
                                     prefManager.saveUserGroupInfo(user, userMe, SharedPrefManager.GROUP_ACTIVE_INFO, false);
                                     prefManager.saveGroupInfo(user, SharedPrefManager.GROUP_ACTIVE_INFO, false);

@@ -106,6 +106,7 @@ public class BulkInvitationScreen extends CustomAppCompatActivityViewImpl implem
     TextView idBulkInfoLabel, copyLink;
     ImageView idBulkInfo;
     LinearLayout bottomLayout;
+    TextView inviteText;
 //    ImageView contactsIcon, otherAppsIcon;
     TextView contactsIcon, otherAppsIcon;
     Dialog inviteMenualDialog;
@@ -146,6 +147,7 @@ public class BulkInvitationScreen extends CustomAppCompatActivityViewImpl implem
         searchLayout = (RelativeLayout) findViewById(R.id.header_layout);
         contactTabLayout = (LinearLayout) findViewById(R.id.id_contacts);
         bottomLayout = (LinearLayout) findViewById(R.id.id_bottom_layout);
+        inviteText = (TextView) findViewById(R.id.id_invite);
         otherApssTabLayout = (LinearLayout) findViewById(R.id.id_other_apps);
         viewContacts = (View) findViewById(R.id.view_contacts);
         viewOtherApps = (View) findViewById(R.id.view_otherapps);
@@ -362,7 +364,8 @@ public class BulkInvitationScreen extends CustomAppCompatActivityViewImpl implem
                 isContactTabSelected = true;
                 searchLayout.setVisibility(View.VISIBLE);
                 viewOtherApps.setVisibility(View.GONE);
-                bottomLayout.setVisibility(View.VISIBLE);
+//                bottomLayout.setVisibility(View.VISIBLE);
+                inviteText.setVisibility(View.VISIBLE);
                 viewContacts.setVisibility(View.VISIBLE);
                 otherApps.setTextColor(R.color.black);
                 viewContacts.setBackgroundColor(getResources().getColor(R.color.color_lite_blue));
@@ -385,7 +388,8 @@ public class BulkInvitationScreen extends CustomAppCompatActivityViewImpl implem
             case R.id.id_other_apps:
                 isContactTabSelected = false;
                 viewContacts.setVisibility(View.GONE);
-                bottomLayout.setVisibility(View.GONE);
+                inviteText.setVisibility(View.GONE);
+//                bottomLayout.setVisibility(View.GONE);
                 viewOtherApps.setVisibility(View.VISIBLE);
                 searchLayout.setVisibility(View.GONE);
                 idBulkInfo.setVisibility(View.GONE);
